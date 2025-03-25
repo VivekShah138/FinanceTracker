@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.presentation
+package com.example.financetracker.main_page_feature.home_page.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,9 +18,7 @@ class HomePageViewModel @Inject constructor(
                 viewModelScope.launch {
                     logoutUseCase()
                 }
-
             }
         }
     }
-
 }

@@ -4,22 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.core.presentation.utils.Screens
-import com.example.financetracker.main_page_feature.presentation.components.HomePageScreen
-import com.example.financetracker.main_page_feature.presentation.HomePageViewModel
+import com.example.financetracker.main_page_feature.home_page.presentation.components.HomePageScreen
+import com.example.financetracker.main_page_feature.home_page.presentation.HomePageViewModel
 import com.example.financetracker.startup_page_feature.components.StartUpPageScreen
 import com.example.financetracker.startup_page_feature.StartPageViewModel
 import com.example.financetracker.auth_feature.presentation.login.LoginPageViewModel
@@ -28,6 +21,11 @@ import com.example.financetracker.auth_feature.presentation.register.register_co
 import com.example.financetracker.auth_feature.presentation.login.login_components.LogInPage
 import com.example.financetracker.auth_feature.presentation.forgot_password.ForgotPasswordViewModel
 import com.example.financetracker.auth_feature.presentation.forgot_password.forgot_password_components.ForgotPasswordPage
+import com.example.financetracker.main_page_feature.add_transactions.presentations.components.AddTransactionsPage
+import com.example.financetracker.main_page_feature.charts.presentation.components.ChartsPage
+import com.example.financetracker.main_page_feature.settings.presentation.SettingViewModel
+import com.example.financetracker.main_page_feature.settings.presentation.components.SettingsPage
+import com.example.financetracker.main_page_feature.view_transactions.presentation.components.TransactionsPage
 import com.example.financetracker.setup_account.presentation.ProfileSetUpViewModel
 import com.example.financetracker.setup_account.presentation.components.NewUserProfileOnBoardingScreens
 import com.example.financetracker.setup_account.presentation.components.ProfileSetUp
@@ -86,17 +84,44 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = Screens.ProfileSetUp.routes
+                            route = Screens.ProfileSetUpScreen.routes
                         ) {
                             val viewModel : ProfileSetUpViewModel = hiltViewModel()
                             ProfileSetUp(viewModel,navController)
                         }
 
                         composable(
-                            route = Screens.NewUserProfileOnBoardingScreens.routes
+                            route = Screens.NewUserProfileOnBoardingScreen.routes
                         ) {
                             val viewModel : ProfileSetUpViewModel = hiltViewModel()
                             NewUserProfileOnBoardingScreens(viewModel,navController)
+                        }
+
+                        composable(
+                            route = Screens.SettingScreen.routes
+                        ) {
+
+                            val viewModel: SettingViewModel = hiltViewModel()
+
+                            SettingsPage(navController = navController,viewModel = viewModel)
+                        }
+
+                        composable(
+                            route = Screens.GraphicalVisualizationScreen.routes
+                        ) {
+                            ChartsPage(navController)
+                        }
+
+                        composable(
+                            route = Screens.ViewTransactionsScreen.routes
+                        ) {
+                            TransactionsPage(navController)
+                        }
+
+                        composable(
+                            route = Screens.AddTransactionsScreen.routes
+                        ) {
+                            AddTransactionsPage(navController)
                         }
 
                     }

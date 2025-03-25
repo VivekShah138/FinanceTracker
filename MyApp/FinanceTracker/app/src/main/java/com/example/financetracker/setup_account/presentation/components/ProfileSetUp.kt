@@ -51,8 +51,7 @@ fun ProfileSetUp(
                 showMenu = false,
                 onBackClick = {
                     navController.popBackStack()
-                },
-                onMenuClick = {}
+                }
             )
         }
 

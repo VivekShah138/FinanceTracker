@@ -84,8 +84,7 @@ fun NewUserProfileOnBoardingScreens(
                 showMenu = false,
                 onBackClick = {
                     previousStep()
-                },
-                onMenuClick = {}
+                }
             )
         }
     ) { paddingValues ->

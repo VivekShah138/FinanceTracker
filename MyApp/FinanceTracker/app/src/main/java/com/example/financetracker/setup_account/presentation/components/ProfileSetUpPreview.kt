@@ -26,7 +26,7 @@ import com.example.financetracker.core.presentation.components.AppTopBar
 fun ProfileSetUpPreview(){
     Scaffold(
         topBar = {
-            AppTopBar(title = "Profile",showBackButton = true, showMenu = false, onBackClick = {}, onMenuClick = {} )
+            AppTopBar(title = "Profile",showBackButton = true, showMenu = false, onBackClick = {} )
         }
     ) { paddingValues ->
         Column(

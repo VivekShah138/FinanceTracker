@@ -3,7 +3,6 @@ package com.example.financetracker.setup_account.presentation
 sealed class ProfileSetUpEvents {
     object LoadCountries: ProfileSetUpEvents()
     object LoadCurrencies: ProfileSetUpEvents()
-    data class changeCloudSync(val isChecked: Boolean): ProfileSetUpEvents()
     data class SelectBaseCurrency(val currency: String): ProfileSetUpEvents()
     data class ChangeCurrencyExpanded(val expanded: Boolean): ProfileSetUpEvents()
     data class SelectCountry(val country: String): ProfileSetUpEvents()

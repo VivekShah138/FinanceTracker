@@ -32,11 +32,6 @@ class ProfileSetUpViewModel @Inject constructor(
 
     fun onEvent(profileSetUpEvents: ProfileSetUpEvents){
         when(profileSetUpEvents){
-            is ProfileSetUpEvents.changeCloudSync -> {
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    cloudSync = profileSetUpEvents.isChecked
-                )
-            }
             is ProfileSetUpEvents.ChangeCurrencyExpanded -> {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     baseCurrencyExpanded = profileSetUpEvents.expanded

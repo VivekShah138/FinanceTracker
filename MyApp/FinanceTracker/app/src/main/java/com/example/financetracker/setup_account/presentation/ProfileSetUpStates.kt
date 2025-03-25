@@ -4,7 +4,6 @@ import com.example.financetracker.setup_account.domain.model.Country
 
 data class ProfileSetUpStates(
     val email: String? = "",
-    val cloudSync: Boolean = false,
     val countries: List<Country> = emptyList(),
     val currencies: List<Country> = emptyList(),
     val firstName: String = "",
