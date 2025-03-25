@@ -1,9 +1,12 @@
 package com.example.financetracker.auth_feature.presentation.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
 import com.example.financetracker.auth_feature.presentation.forgot_password.ResetPasswordWithCredentialResult
+import com.example.financetracker.core.domain.model.UserProfile
+import com.example.financetracker.core.domain.usecases.UseCasesWrapperCore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginPageViewModel @Inject constructor(
-    private val useCasesWrapper: UseCasesWrapper
+    private val useCasesWrapper: UseCasesWrapper,
+    private val useCasesWrapperCore: UseCasesWrapperCore
 ): ViewModel(){
 
     private val _loginState = MutableStateFlow(LoginPageStates())
@@ -49,6 +53,7 @@ class LoginPageViewModel @Inject constructor(
                                 loggedInUser = loginPageEvents.result.username
                             )
                             useCasesWrapper.keepUserLoggedIn(_loginState.value.keepLoggedIn)
+                            handleUserProfile()
                             loginEventChannel.send(LoginEvent.Success(loginPageEvents.result.username))
                         }
                         is GoogleSignInResult.Cancelled->{
@@ -82,6 +87,7 @@ class LoginPageViewModel @Inject constructor(
             is LoginPageEvents.LoginSuccess -> {
                 viewModelScope.launch {
                     useCasesWrapper.keepUserLoggedIn(_loginState.value.keepLoggedIn)
+                    handleUserProfile()
                     loginEventChannel.send(LoginEvent.Success(loginPageEvents.userName))
                 }
 
@@ -120,6 +126,30 @@ class LoginPageViewModel @Inject constructor(
 
         loginEventChannel.send(LoginEvent.TriggerFirebaseLogIn)
 
+    }
+
+    private suspend fun handleUserProfile(){
+        try {
+            val userId = useCasesWrapperCore.getUserUIDUseCase() ?: "Unknown"
+            val userProfile = useCasesWrapperCore.getUserProfileUseCase(userId)
+            Log.d("LoginViewModel","state: ${userProfile}")
+            if(userProfile == null){
+                val email = useCasesWrapperCore.getUserEmailUserCase() ?: "Unknown"
+                val newUserProfile = UserProfile(email = email, profileSetUpCompleted = false)
+                useCasesWrapperCore.saveUserProfileUseCase(userId, newUserProfile)
+                _loginState.value = loginState.value.copy(
+                    userProfile = newUserProfile
+                )
+            }
+            else{
+                _loginState.value = loginState.value.copy(
+                    userProfile = userProfile
+                )
+            }
+        }catch (e:Exception){
+            val errorMessage = e.localizedMessage
+            loginEventChannel.send(LoginEvent.Error(errorMessage))
+        }
     }
 
     sealed class LoginEvent{

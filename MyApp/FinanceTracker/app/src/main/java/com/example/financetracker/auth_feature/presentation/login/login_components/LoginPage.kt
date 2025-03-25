@@ -70,7 +70,12 @@ fun LogInPage(
                         "Login Successful " + event.username,
                         Toast.LENGTH_SHORT).show()
 
-                    navController.navigate(Screens.HomePageScreen.routes)
+                    if(!state.userProfile.profileSetUpCompleted){
+                        navController.navigate(Screens.NewUserProfileOnBoardingScreens.routes)
+                    }
+                    else{
+                        navController.navigate(Screens.HomePageScreen.routes)
+                    }
                 }
                 is LoginPageViewModel.LoginEvent.Error->{
                     Toast.makeText(context,

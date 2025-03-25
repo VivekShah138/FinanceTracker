@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,8 +70,6 @@ dependencies {
     // Dagger Hilt (DI)
     implementation (libs.hilt.android)
     kapt(libs.hilt.android.compiler)
-
-//    implementation(libs.androidx.hilt.lifecycle.viewmodel)
     implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.androidx.hilt.compiler)
 
@@ -78,12 +77,22 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
-    //Firebase
+    // Google Sign In
+    implementation (libs.googleid)
+    implementation(libs.play.services.auth) // Includes Google Sign-In support
+
+    // Firebase Authentication
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.auth.ktx)
+
+    // Credential Manager
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.play.services.auth)
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.googleid)
+
+    // Retrofit
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 
 }

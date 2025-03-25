@@ -50,7 +50,7 @@ fun HomePageScreen(
 
             Button(
                 onClick ={
-                    navController.navigate(route = Screens.SetUpAccountPageScreen.routes)
+                    navController.navigate(route = Screens.ProfileSetUp.routes)
                 }
             ) {
                 Text("SetUpAccount")
