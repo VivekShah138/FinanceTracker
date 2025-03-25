@@ -100,7 +100,12 @@ fun ProfileSetUp(
                 },
                 onItemSelect = {
                     val country = it.name.common
-                    val phoneCode = ((it.idd?.root + it.idd?.suffixes?.joinToString("")) ?: "N/A")
+                    val phoneCode = when {
+                        it.idd?.root == null -> "N/A"
+                        it.idd.suffixes.isNullOrEmpty() -> it.idd.root
+                        it.idd.suffixes.size > 1 -> it.idd.root
+                        else -> it.idd.root + it.idd.suffixes.firstOrNull()
+                    }
                     val firstCurrency = it.currencies?.entries?.firstOrNull()
                     val currencyName = firstCurrency?.value?.name ?: "N/A"
                     val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"

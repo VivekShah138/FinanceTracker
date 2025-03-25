@@ -38,7 +38,9 @@ fun BottomNavigationBar(navController: NavController = rememberNavController()) 
                 items.forEach { screen ->
 
                     IconButton(onClick = {
-                        navController.navigate(screen.routes) // Navigate using NavController
+                        if(navController.currentDestination?.route != screen.routes){
+                            navController.navigate(screen.routes) // Navigate using NavController
+                        }
                     }) {
                         Icon(
                             imageVector = when (screen) {

@@ -54,7 +54,7 @@ fun SettingsPage(
             )
         },
         bottomBar = {
-            BottomNavigationBar()
+            BottomNavigationBar(navController)
         }
 
     ) { padding ->
