@@ -5,6 +5,7 @@ import com.example.financetracker.core.domain.model.UserProfile
 import com.example.financetracker.core.domain.repository.FirebaseRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.Source
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -29,13 +30,17 @@ class FirebaseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveUserProfile(userId: String, profile: UserProfile) {
-        firestore.collection("Users").document(userId).set(profile).await()
+        firestore.collection("Users").document(userId) // Users/userId
+            .set(mapOf("userProfile" to profile), SetOptions.merge()) // Stores userProfile as a field
+            .await()
     }
 
     override suspend fun getUserProfile(userId: String): UserProfile? {
-        return firestore.collection("Users").document(userId)
-            .get(Source.SERVER).await().toObject(UserProfile::class.java)
+        return firestore.collection("Users").document(userId) // Users/userId
+            .get().await()
+            .get("userProfile", UserProfile::class.java) // Fetch userProfile field as an object
     }
+
 
     override fun checkIsLoggedIn(): Boolean {
         return userPreferences.isLoggedIn()
