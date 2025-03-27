@@ -21,8 +21,9 @@ data class Idd(
 )
 
 data class Currency(
-    val name: String,
-    val symbol: String
+    val name: String = "",
+    val symbol: String = ""
 )
+
 
 

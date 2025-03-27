@@ -12,6 +12,8 @@ data class ProfileSetUpStates(
     val callingCode: String = "",
     val baseCurrencyExpanded: Boolean = false,
     val selectedBaseCurrency: String = "Select a Base Currency",
+    val baseCurrencyCode: String = "",
+    val baseCurrencySymbol: String = "",
     val countryExpanded: Boolean = false,
     val selectedCountry: String = "Select a Country",
     val currencyErrorMessage: String = "",

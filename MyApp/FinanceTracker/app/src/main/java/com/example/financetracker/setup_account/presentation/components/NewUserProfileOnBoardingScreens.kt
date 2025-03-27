@@ -120,13 +120,25 @@ fun NewUserProfileOnBoardingScreens(
                         expanded = states.countryExpanded,
                         list = states.countries,
                         onExpandedChange = {
-                            viewModel.onEvent(ProfileSetUpEvents.ChangeCountryExpanded(it))
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.SelectCountry(
+                                    country = states.selectedCountry,
+                                    callingCode = states.callingCode,
+                                    expanded = it
+                                )
+                            )
                             if (it) {
                                 viewModel.onEvent(ProfileSetUpEvents.LoadCountries)
                             }
                         },
                         onDismissRequest = {
-                            viewModel.onEvent(ProfileSetUpEvents.ChangeCountryExpanded(!states.countryExpanded))
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.SelectCountry(
+                                    country = states.selectedCountry,
+                                    callingCode = states.callingCode,
+                                    expanded = !states.countryExpanded
+                                )
+                            )
                         },
                         displayText = {
                             it.name.common
@@ -142,11 +154,23 @@ fun NewUserProfileOnBoardingScreens(
                             val firstCurrency = it.currencies?.entries?.firstOrNull()
                             val currencyName = firstCurrency?.value?.name ?: "N/A"
                             val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
+                            val currencyCode = firstCurrency?.key ?: "N/A"
 
-                            viewModel.onEvent(ProfileSetUpEvents.SelectBaseCurrency("$currencyName (${currencySymbol})"))
-                            viewModel.onEvent(ProfileSetUpEvents.SelectCountry(country))
-                            viewModel.onEvent(ProfileSetUpEvents.SelectCallingCode(phoneCode))
-                            viewModel.onEvent(ProfileSetUpEvents.ChangeCountryExpanded(!states.countryExpanded))
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.SelectBaseCurrency(
+                                    currency = currencyName,
+                                    currencyCode = currencyCode,
+                                    currencySymbol = currencySymbol,
+                                    expanded = false
+                                )
+                            )
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.SelectCountry(
+                                    country = country,
+                                    callingCode = phoneCode,
+                                    expanded = !states.countryExpanded
+                                )
+                            )
                         }
                     )
                 }
@@ -165,17 +189,29 @@ fun NewUserProfileOnBoardingScreens(
                 "Currency" -> {
                     SimpleDropdownMenu(
                         label = "Base Currency",
-                        selectedText = states.selectedBaseCurrency,
+                        selectedText = "${states.selectedBaseCurrency} (${states.baseCurrencyCode})",
                         expanded = states.baseCurrencyExpanded,
                         list = states.currencies,
                         onExpandedChange = {
-                            viewModel.onEvent(ProfileSetUpEvents.ChangeCurrencyExpanded(it))
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.SelectBaseCurrency(
+                                    currency = states.selectedBaseCurrency,
+                                    currencyCode = states.baseCurrencyCode,
+                                    currencySymbol = states.baseCurrencySymbol,
+                                    expanded = it
+                                )
+                            )
                             if (it) {
                                 viewModel.onEvent(ProfileSetUpEvents.LoadCurrencies)
                             }
                         },
                         onDismissRequest = {
-                            viewModel.onEvent(ProfileSetUpEvents.ChangeCurrencyExpanded(!states.baseCurrencyExpanded))
+                            ProfileSetUpEvents.SelectBaseCurrency(
+                                currency = states.selectedBaseCurrency,
+                                currencyCode = states.baseCurrencyCode,
+                                currencySymbol = states.baseCurrencySymbol,
+                                expanded = !states.baseCurrencyExpanded
+                            )
                         },
                         displayText = {
                             it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
@@ -184,9 +220,14 @@ fun NewUserProfileOnBoardingScreens(
                             val firstCurrency = it.currencies?.entries?.firstOrNull()
                             val currencyName = firstCurrency?.value?.name ?: "N/A"
                             val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
+                            val currencyCode = firstCurrency?.key ?: "N/A"
 
-                            viewModel.onEvent(ProfileSetUpEvents.SelectBaseCurrency("$currencyName (${currencySymbol})"))
-                            viewModel.onEvent(ProfileSetUpEvents.ChangeCurrencyExpanded(!states.baseCurrencyExpanded))
+                            ProfileSetUpEvents.SelectBaseCurrency(
+                                currency = currencyName,
+                                currencyCode = currencyCode,
+                                currencySymbol = currencySymbol,
+                                expanded = false
+                            )
                         }
                     )
                 }

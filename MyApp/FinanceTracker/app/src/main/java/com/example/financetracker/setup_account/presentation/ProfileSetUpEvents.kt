@@ -3,11 +3,8 @@ package com.example.financetracker.setup_account.presentation
 sealed class ProfileSetUpEvents {
     object LoadCountries: ProfileSetUpEvents()
     object LoadCurrencies: ProfileSetUpEvents()
-    data class SelectBaseCurrency(val currency: String): ProfileSetUpEvents()
-    data class ChangeCurrencyExpanded(val expanded: Boolean): ProfileSetUpEvents()
-    data class SelectCountry(val country: String): ProfileSetUpEvents()
-    data class SelectCallingCode(val callingCode: String): ProfileSetUpEvents()
-    data class ChangeCountryExpanded(val expanded: Boolean): ProfileSetUpEvents()
+    data class SelectBaseCurrency(val currency: String,val expanded: Boolean,val currencyCode: String,val currencySymbol: String): ProfileSetUpEvents()
+    data class SelectCountry(val country: String, val callingCode: String,val expanded: Boolean): ProfileSetUpEvents()
     data class ChangePhoneNumber(val phone:String): ProfileSetUpEvents()
     data class ChangeFirstName(val firstName: String): ProfileSetUpEvents()
     data class ChangeLastName(val lastName: String): ProfileSetUpEvents()
