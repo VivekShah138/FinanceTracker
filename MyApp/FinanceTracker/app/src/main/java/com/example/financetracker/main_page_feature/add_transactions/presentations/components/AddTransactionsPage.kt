@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.financetracker.core.presentation.components.AppTopBar
 import com.example.financetracker.core.presentation.utils.Screens
+import com.example.financetracker.main_page_feature.add_transactions.expense.presentation.AddExpenseTransactionsPage
+import com.example.financetracker.main_page_feature.add_transactions.income.presentation.AddIncomeTransactionsPage
+import com.example.financetracker.main_page_feature.add_transactions.saveItems.presentation.AddSaveItemsTransactionsPage
 import kotlinx.coroutines.launch
 
 @Composable
