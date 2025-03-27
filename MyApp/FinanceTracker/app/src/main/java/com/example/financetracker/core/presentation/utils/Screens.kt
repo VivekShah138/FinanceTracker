@@ -13,4 +13,7 @@ sealed class Screens(val routes : String) {
     object GraphicalVisualizationScreen: Screens("graphical_visualizations_screen")
     object SettingScreen: Screens("setting_screen")
     object AddTransactionsScreen: Screens("add_transactions_screen")
+    object AddIncomeTransactionsScreen: Screens("add_income_transactions_screen")
+    object AddExpenseTransactionsScreen: Screens("add_expense_transactions_screen")
+    object AddSaveItemsTransactionsScreen: Screens("add_save_items_transactions_screen")
 }
