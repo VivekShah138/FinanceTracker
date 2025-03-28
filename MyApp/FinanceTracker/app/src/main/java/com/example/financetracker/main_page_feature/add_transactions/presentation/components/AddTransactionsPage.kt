@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.add_transactions.presentations.components
+package com.example.financetracker.main_page_feature.add_transactions.presentation.components
 
 
 
@@ -18,15 +18,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.financetracker.core.presentation.components.AppTopBar
-import com.example.financetracker.core.presentation.utils.Screens
 import com.example.financetracker.main_page_feature.add_transactions.expense.presentation.AddExpenseTransactionsPage
+import com.example.financetracker.main_page_feature.add_transactions.expense.presentation.AddExpenseViewModel
 import com.example.financetracker.main_page_feature.add_transactions.income.presentation.AddIncomeTransactionsPage
 import com.example.financetracker.main_page_feature.add_transactions.saveItems.presentation.AddSaveItemsTransactionsPage
 import kotlinx.coroutines.launch
 
 @Composable
 fun AddTransactionsPage(
-    navController: NavController
+    navController: NavController,
+    viewModel: AddExpenseViewModel
 ){
     MaterialTheme {
         val pagerState = rememberPagerState(pageCount = { 3 }) // 3 tabs
@@ -88,7 +89,7 @@ fun AddTransactionsPage(
                 // Uncomment this to enable HorizontalPager
                  HorizontalPager(state = pagerState) { page ->
                      when (page) {
-                         0 -> AddExpenseTransactionsPage() // Transactions Screen
+                         0 -> AddExpenseTransactionsPage(viewModel = viewModel) // Transactions Screen
                          1 -> AddIncomeTransactionsPage() // Recurring Transactions
                          2 -> AddSaveItemsTransactionsPage() // Analytics & Reports
                      }

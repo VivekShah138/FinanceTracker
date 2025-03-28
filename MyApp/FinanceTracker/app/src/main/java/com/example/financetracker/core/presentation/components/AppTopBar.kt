@@ -1,14 +1,15 @@
 package com.example.financetracker.core.presentation.components
 
-import android.view.MenuItem
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,12 +22,14 @@ fun AppTopBar(
     showBackButton: Boolean = false,  // Optional Back Button
     showMenu: Boolean = false,        // Optional Menu Button
     onBackClick: () -> Unit,     // Non-nullable function
-    menuItems: List<MenuItems> = listOf()      // Non-nullable function
+    menuItems: List<MenuItems> = listOf(),      // Non-nullable function
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
+        modifier = modifier,
         title = {
-            if (showBackButton) Text(text = title, style = TextStyle(fontSize = 20.sp))
-            else Text(text = title, style = TextStyle(fontSize = 20.sp), modifier = Modifier.padding(start = 20.dp))
+            if (showBackButton) Text(text = title, style = TextStyle(fontSize = 20.sp), textAlign = TextAlign.Center,modifier = Modifier.padding(vertical = 5.dp))
+            else Text(text = title, style = TextStyle(fontSize = 20.sp), modifier = Modifier.padding(start = 20.dp).padding(vertical = 5.dp))
         },
         navigationIcon = {
             if(showBackButton){
