@@ -6,6 +6,7 @@ import com.example.financetracker.core.domain.repository.FirebaseRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -39,6 +40,7 @@ class FirebaseRepositoryImpl @Inject constructor(
             .get().await()
             .get("userProfile", UserProfile::class.java) // Fetch userProfile field as an object
     }
+
 
     override fun checkIsLoggedIn(): Boolean {
         return userPreferences.isLoggedIn()
