@@ -1,4 +1,4 @@
-package com.example.financetracker.core.domain.model
+package com.example.financetracker.core.local.domain.room.model
 
 import com.example.financetracker.setup_account.domain.model.Currency
 

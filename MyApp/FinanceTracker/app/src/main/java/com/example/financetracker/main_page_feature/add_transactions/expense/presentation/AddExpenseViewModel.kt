@@ -1,8 +1,7 @@
 package com.example.financetracker.main_page_feature.add_transactions.expense.presentation
 
 import androidx.lifecycle.ViewModel
-import com.example.financetracker.core.domain.model.PredefinedCategories
-import com.example.financetracker.setup_account.presentation.ProfileSetUpStates
+import com.example.financetracker.core.local.domain.room.model.Category
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,33 +30,40 @@ class AddExpenseViewModel @Inject constructor(
 
                 _addExpenseStates.value = addExpenseStates.value.copy(
                     categoryList = listOf(
-                        PredefinedCategories(
+                        Category(
                             name = "Food",
-                            type = "Expense"
+                            type = "Expense",
+                            icon = ""
                         ),
-                        PredefinedCategories(
+                        Category(
                             name = "Travel",
-                            type = "Expense"
+                            type = "Expense",
+                            icon = ""
                         ),
-                        PredefinedCategories(
+                        Category(
                             name = "Rent",
-                            type = "Expense"
+                            type = "Expense",
+                            icon = ""
                         ),
-                        PredefinedCategories(
+                        Category(
                             name = "Bills",
-                            type = "Expense"
+                            type = "Expense",
+                            icon = ""
                         ),
-                        PredefinedCategories(
+                        Category(
                             name = "Salary",
-                            type = "Income"
+                            type = "Income",
+                            icon = ""
                         ),
-                        PredefinedCategories(
+                        Category(
                             name = "Freelance",
-                            type = "Income"
+                            type = "Income",
+                            icon = ""
                         ),
-                        PredefinedCategories(
+                        Category(
                             name = "Rent",
-                            type = "Income"
+                            type = "Income",
+                            icon = ""
                         ),
                     ).filter { name  ->
                         name.type == "Expense"

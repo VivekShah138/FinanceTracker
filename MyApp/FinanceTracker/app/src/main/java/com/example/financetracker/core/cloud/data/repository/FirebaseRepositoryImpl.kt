@@ -1,8 +1,8 @@
-package com.example.financetracker.core.data.cloud.repository
+package com.example.financetracker.core.cloud.data.repository
 
-import com.example.financetracker.core.data.local.data_source.UserPreferences
-import com.example.financetracker.core.domain.model.UserProfile
-import com.example.financetracker.core.domain.repository.FirebaseRepository
+import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
+import com.example.financetracker.core.local.domain.room.model.UserProfile
+import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -12,12 +12,11 @@ import javax.inject.Inject
 class FirebaseRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth,
-    private val userPreferences: UserPreferences
+
 ): FirebaseRepository {
 
     override suspend fun logoutUser() {
         firebaseAuth.signOut()
-        userPreferences.setLoggedInState(false)
     }
 
     override suspend fun getCurrentUserID(): String? {
@@ -38,13 +37,5 @@ class FirebaseRepositoryImpl @Inject constructor(
         return firestore.collection("Users").document(userId) // Users/userId
             .get().await()
             .get("userProfile", UserProfile::class.java) // Fetch userProfile field as an object
-    }
-
-    override fun checkIsLoggedIn(): Boolean {
-        return userPreferences.isLoggedIn()
-    }
-
-    override fun keepUserLoggedIn(keepLoggedIn: Boolean) {
-        return userPreferences.setLoggedInState(keepLoggedIn)
     }
 }

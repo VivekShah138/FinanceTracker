@@ -3,21 +3,32 @@ package com.example.financetracker.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.example.financetracker.auth_feature.domain.usecases.KeepUserLoggedIn
 import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
 import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
 import com.example.financetracker.auth_feature.domain.usecases.ValidateEmail
 import com.example.financetracker.auth_feature.domain.usecases.ValidatePassword
-import com.example.financetracker.core.data.local.data_source.UserPreferences
-import com.example.financetracker.core.data.cloud.repository.FirebaseRepositoryImpl
-import com.example.financetracker.core.domain.repository.FirebaseRepository
-import com.example.financetracker.core.domain.usecases.CheckIsLoggedInUseCase
-import com.example.financetracker.core.domain.usecases.GetUserEmailUserCase
-import com.example.financetracker.core.domain.usecases.GetUserProfileUseCase
-import com.example.financetracker.core.domain.usecases.GetUserUIDUseCase
-import com.example.financetracker.core.domain.usecases.LogoutUseCase
-import com.example.financetracker.core.domain.usecases.SaveUserProfileUseCase
-import com.example.financetracker.core.domain.usecases.UseCasesWrapperCore
+import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
+import com.example.financetracker.core.cloud.data.repository.FirebaseRepositoryImpl
+import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.CheckIsLoggedInUseCase
+import com.example.financetracker.core.cloud.domain.usecases.GetUserEmailUserCase
+import com.example.financetracker.core.cloud.domain.usecases.GetUserProfileUseCase
+import com.example.financetracker.core.cloud.domain.usecases.GetUserUIDUseCase
+import com.example.financetracker.core.domain.usecase.LogoutUseCase
+import com.example.financetracker.core.cloud.domain.usecases.SaveUserProfileUseCase
+import com.example.financetracker.core.domain.usecase.UseCasesWrapperCore
+import com.example.financetracker.core.local.data.room.data_source.CategoryDao
+import com.example.financetracker.core.local.data.room.data_source.CategoryDatabase
+import com.example.financetracker.core.local.data.room.repository.CategoryRepositoryImpl
+import com.example.financetracker.core.local.data.shared_preferences.repository.SharedPreferencesRepositoryImpl
+import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
+import com.example.financetracker.core.local.domain.room.usecases.GetPredefinedCategories
+import com.example.financetracker.core.local.domain.room.usecases.InsertPredefinedCategories
+import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 import com.example.financetracker.setup_account.data.remote.ApiClient
 import com.example.financetracker.setup_account.data.remote.CountryApi
 import com.example.financetracker.setup_account.data.repository.CountryRepositoryImpl
@@ -68,23 +79,36 @@ object AppModule {
     @Singleton
     fun provideFirebaseRepository(
         firebaseAuth: FirebaseAuth,
-        userPreferences: UserPreferences,
         firestore: FirebaseFirestore
     ): FirebaseRepository {
         return FirebaseRepositoryImpl(
             firebaseAuth = firebaseAuth,
-            userPreferences = userPreferences,
             firestore = firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferenceRepository(
+        userPreferences: UserPreferences
+    ): SharedPreferencesRepository {
+        return SharedPreferencesRepositoryImpl(
+            userPreferences = userPreferences
+        )
     }
 
 
     // Core UseCases
     @Provides
     @Singleton
-    fun provideCoreUseCases(firebaseRepository: FirebaseRepository): UseCasesWrapperCore {
+    fun provideCoreUseCases(
+        firebaseRepository: FirebaseRepository,
+        sharedPreferencesRepository: SharedPreferencesRepository): UseCasesWrapperCore {
         return UseCasesWrapperCore(
-            logoutUseCase = LogoutUseCase(firebaseRepository),
-            checkIsLoggedInUseCase = CheckIsLoggedInUseCase(firebaseRepository),
+            logoutUseCase = LogoutUseCase(
+                firebaseRepository = firebaseRepository,
+                sharedPreferencesRepository = sharedPreferencesRepository
+            ),
+            checkIsLoggedInUseCase = CheckIsLoggedInUseCase(sharedPreferencesRepository),
             getUserUIDUseCase = GetUserUIDUseCase(firebaseRepository),
             getUserEmailUserCase = GetUserEmailUserCase(firebaseRepository),
             getUserProfileUseCase = GetUserProfileUseCase(firebaseRepository),
@@ -95,12 +119,12 @@ object AppModule {
     // Auth UseCases
     @Provides
     @Singleton
-    fun provideAuthUseCases(firebaseRepository: FirebaseRepository): UseCasesWrapper {
+    fun provideAuthUseCases(sharedPreferencesRepository: SharedPreferencesRepository): UseCasesWrapper {
         return UseCasesWrapper(
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validateConfirmPassword = ValidateConfirmPassword(),
-            keepUserLoggedIn = KeepUserLoggedIn(firebaseRepository)
+            keepUserLoggedIn = KeepUserLoggedIn(sharedPreferencesRepository)
         )
     }
 
@@ -127,6 +151,34 @@ object AppModule {
             validateCountry = ValidateCountry(),
             updateUserProfile = UpdateUserProfile(firebaseRepository),
             getUserProfileUseCase = GetUserProfileUseCase(firebaseRepository)
+        )
+    }
+
+    // CategoryDatabase
+    @Provides
+    @Singleton
+    fun provideCategoryDatabase(app: Application): CategoryDatabase{
+        return Room.databaseBuilder(
+            context = app,
+            klass = CategoryDatabase::class.java,
+            name = CategoryDatabase.DATABASE_NAME
+        ).build()
+    }
+
+    // Category Dao
+    @Provides
+    @Singleton
+    fun provideCategoryRepository(db: CategoryDatabase): CategoryRepository {
+        return CategoryRepositoryImpl(db.categoryDao)
+    }
+
+    // CategoryUseCases
+    @Provides
+    @Singleton
+    fun provideCategoryUseCase(categoryRepository: CategoryRepository): PredefinedCategoriesUseCaseWrapper {
+        return PredefinedCategoriesUseCaseWrapper(
+            getPredefinedCategories = GetPredefinedCategories(categoryRepository),
+            insertPredefinedCategories = InsertPredefinedCategories(categoryRepository)
         )
     }
 }

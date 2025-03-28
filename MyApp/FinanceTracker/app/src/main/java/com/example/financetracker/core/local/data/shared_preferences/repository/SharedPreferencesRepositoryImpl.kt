@@ -1,0 +1,18 @@
+package com.example.financetracker.core.local.data.shared_preferences.repository
+
+import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
+import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
+import javax.inject.Inject
+
+class SharedPreferencesRepositoryImpl @Inject constructor(
+    private val userPreferences: UserPreferences
+): SharedPreferencesRepository {
+
+    override fun checkIsLoggedIn(): Boolean {
+        return userPreferences.isLoggedIn()
+    }
+
+    override fun setLoggedInState(keepLoggedIn: Boolean) {
+        return userPreferences.setLoggedInState(keepLoggedIn)
+    }
+}

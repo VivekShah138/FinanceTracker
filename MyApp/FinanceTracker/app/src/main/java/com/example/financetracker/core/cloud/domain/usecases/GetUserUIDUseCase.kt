@@ -1,6 +1,6 @@
-package com.example.financetracker.core.domain.usecases
+package com.example.financetracker.core.cloud.domain.usecases
 
-import com.example.financetracker.core.domain.repository.FirebaseRepository
+import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
 import javax.inject.Inject
 
 class GetUserUIDUseCase @Inject constructor(
