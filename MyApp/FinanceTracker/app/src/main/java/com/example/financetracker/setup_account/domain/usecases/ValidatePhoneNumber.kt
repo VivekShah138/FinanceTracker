@@ -1,11 +1,11 @@
-package com.example.financetracker.auth_feature.domain.usecases
+package com.example.financetracker.setup_account.domain.usecases
 
 
-import android.util.Patterns
+import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
 
 class ValidatePhoneNumber {
 
-    suspend operator fun invoke(phone : String) : ValidationResult{
+    suspend operator fun invoke(phone : String) : ValidationResult {
 
         if(phone.isBlank()){
             return ValidationResult(
@@ -13,10 +13,10 @@ class ValidatePhoneNumber {
                 errorMessage = "Please Enter The Mobile Number"
             )
         }
-        if(!Patterns.PHONE.matcher(phone).matches()){
+        if(!phone.matches(Regex(pattern = "^\\d{10}$"))){
             return ValidationResult(
                 isSuccessful = false,
-                errorMessage = "Please Enter a Valid Phone Number"
+                errorMessage = "Please enter a valid phone number"
             )
         }
         return ValidationResult(

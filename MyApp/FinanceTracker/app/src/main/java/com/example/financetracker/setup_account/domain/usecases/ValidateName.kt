@@ -1,9 +1,11 @@
-package com.example.financetracker.auth_feature.domain.usecases
+package com.example.financetracker.setup_account.domain.usecases
+
+import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
 
 
 class ValidateName {
 
-    suspend operator fun invoke(name : String) : ValidationResult{
+    suspend operator fun invoke(name : String) : ValidationResult {
 
         if(name.isBlank()){
             return ValidationResult(
@@ -11,10 +13,10 @@ class ValidateName {
                 errorMessage = "Please Enter The Name"
             )
         }
-        if(!name.matches(Regex("^[a-zA-Z][a-zA-Z0-9]*\$"))){
+        if(!name.matches(Regex("^[a-zA-Z ]+\$"))){
             return ValidationResult(
                 isSuccessful = false,
-                errorMessage = "Your Username Should Begin With an Alphabet And No Special Characters Are Allowed"
+                errorMessage = "Your name should not contain any special characters or digits"
             )
         }
         return ValidationResult(

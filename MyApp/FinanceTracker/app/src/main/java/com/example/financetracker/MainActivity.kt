@@ -18,8 +18,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.core.presentation.utils.Screens
-import com.example.financetracker.setup_account.presentation.SetUpAccountPageViewModel
-import com.example.financetracker.setup_account.presentation.components.SetUpAccountPage
 import com.example.financetracker.main_page_feature.presentation.components.HomePageScreen
 import com.example.financetracker.main_page_feature.presentation.HomePageViewModel
 import com.example.financetracker.startup_page_feature.components.StartUpPageScreen
@@ -30,6 +28,9 @@ import com.example.financetracker.auth_feature.presentation.register.register_co
 import com.example.financetracker.auth_feature.presentation.login.login_components.LogInPage
 import com.example.financetracker.auth_feature.presentation.forgot_password.ForgotPasswordViewModel
 import com.example.financetracker.auth_feature.presentation.forgot_password.forgot_password_components.ForgotPasswordPage
+import com.example.financetracker.setup_account.presentation.ProfileSetUpViewModel
+import com.example.financetracker.setup_account.presentation.components.NewUserProfileOnBoardingScreens
+import com.example.financetracker.setup_account.presentation.components.ProfileSetUp
 import com.example.financetracker.ui.theme.FinanceTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -85,11 +86,19 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = Screens.SetUpAccountPageScreen.routes
+                            route = Screens.ProfileSetUp.routes
                         ) {
-                            val viewModel: SetUpAccountPageViewModel = hiltViewModel()
-                            SetUpAccountPage(viewModel, navController)
+                            val viewModel : ProfileSetUpViewModel = hiltViewModel()
+                            ProfileSetUp(viewModel,navController)
                         }
+
+                        composable(
+                            route = Screens.NewUserProfileOnBoardingScreens.routes
+                        ) {
+                            val viewModel : ProfileSetUpViewModel = hiltViewModel()
+                            NewUserProfileOnBoardingScreens(viewModel,navController)
+                        }
+
                     }
                 }
             }
