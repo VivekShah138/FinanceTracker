@@ -1,4 +1,4 @@
-package com.example.financetracker.core.presentation.utils
+package com.example.financetracker.core.core_presentation.utils
 
 sealed class Screens(val routes : String) {
 

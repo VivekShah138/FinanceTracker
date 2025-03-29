@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.financetracker.core.presentation.components.AppTopBar
+import com.example.financetracker.core.core_presentation.components.AppTopBar
 import com.example.financetracker.main_page_feature.add_transactions.expense.presentation.AddExpenseTransactionsPage
 import com.example.financetracker.main_page_feature.add_transactions.expense.presentation.AddExpenseViewModel
 import com.example.financetracker.main_page_feature.add_transactions.income.presentation.AddIncomeTransactionsPage

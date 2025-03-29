@@ -1,4 +1,4 @@
-package com.example.financetracker.core.presentation.components
+package com.example.financetracker.core.core_presentation.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
@@ -6,14 +6,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.financetracker.core.presentation.MenuItems
+import com.example.financetracker.core.core_presentation.MenuItems
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

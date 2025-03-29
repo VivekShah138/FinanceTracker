@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
-import androidx.room.RoomDatabase
 import com.example.financetracker.auth_feature.domain.usecases.KeepUserLoggedIn
 import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
 import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
@@ -17,10 +16,9 @@ import com.example.financetracker.core.local.domain.shared_preferences.usecases.
 import com.example.financetracker.core.cloud.domain.usecases.GetUserEmailUserCase
 import com.example.financetracker.core.cloud.domain.usecases.GetUserProfileUseCase
 import com.example.financetracker.core.cloud.domain.usecases.GetUserUIDUseCase
-import com.example.financetracker.core.domain.usecase.LogoutUseCase
+import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.core.cloud.domain.usecases.SaveUserProfileUseCase
-import com.example.financetracker.core.domain.usecase.UseCasesWrapperCore
-import com.example.financetracker.core.local.data.room.data_source.CategoryDao
+import com.example.financetracker.core.core_domain.usecase.UseCasesWrapperCore
 import com.example.financetracker.core.local.data.room.data_source.CategoryDatabase
 import com.example.financetracker.core.local.data.room.repository.CategoryRepositoryImpl
 import com.example.financetracker.core.local.data.shared_preferences.repository.SharedPreferencesRepositoryImpl
@@ -44,6 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -93,6 +92,34 @@ object AppModule {
     ): SharedPreferencesRepository {
         return SharedPreferencesRepositoryImpl(
             userPreferences = userPreferences
+        )
+    }
+
+    // CategoryDatabase
+    @Provides
+    @Singleton
+    fun provideCategoryDatabase(app: Application): CategoryDatabase{
+        return Room.databaseBuilder(
+            context = app,
+            klass = CategoryDatabase::class.java,
+            name = CategoryDatabase.DATABASE_NAME
+        ).build()
+    }
+
+    // Category Dao
+    @Provides
+    @Singleton
+    fun provideCategoryRepository(db: CategoryDatabase,@ApplicationContext context: Context): CategoryRepository {
+        return CategoryRepositoryImpl(categoryDao = db.categoryDao, context = context)
+    }
+
+    // CategoryUseCases
+    @Provides
+    @Singleton
+    fun provideCategoryUseCase(categoryRepository: CategoryRepository): PredefinedCategoriesUseCaseWrapper {
+        return PredefinedCategoriesUseCaseWrapper(
+            getPredefinedCategories = GetPredefinedCategories(categoryRepository),
+            insertPredefinedCategories = InsertPredefinedCategories(categoryRepository)
         )
     }
 
@@ -154,33 +181,7 @@ object AppModule {
         )
     }
 
-    // CategoryDatabase
-    @Provides
-    @Singleton
-    fun provideCategoryDatabase(app: Application): CategoryDatabase{
-        return Room.databaseBuilder(
-            context = app,
-            klass = CategoryDatabase::class.java,
-            name = CategoryDatabase.DATABASE_NAME
-        ).build()
-    }
 
-    // Category Dao
-    @Provides
-    @Singleton
-    fun provideCategoryRepository(db: CategoryDatabase): CategoryRepository {
-        return CategoryRepositoryImpl(db.categoryDao)
-    }
-
-    // CategoryUseCases
-    @Provides
-    @Singleton
-    fun provideCategoryUseCase(categoryRepository: CategoryRepository): PredefinedCategoriesUseCaseWrapper {
-        return PredefinedCategoriesUseCaseWrapper(
-            getPredefinedCategories = GetPredefinedCategories(categoryRepository),
-            insertPredefinedCategories = InsertPredefinedCategories(categoryRepository)
-        )
-    }
 }
 
 

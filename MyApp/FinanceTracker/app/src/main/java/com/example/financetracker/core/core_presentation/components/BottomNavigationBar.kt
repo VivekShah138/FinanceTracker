@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Home
@@ -20,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.financetracker.core.presentation.utils.Screens
+import com.example.financetracker.core.core_presentation.utils.Screens
 
 @Composable
 fun BottomNavigationBar(navController: NavController = rememberNavController()) {

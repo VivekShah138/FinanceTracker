@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.startup_page_feature.StartPageViewModel
-import com.example.financetracker.core.presentation.utils.Screens
+import com.example.financetracker.core.core_presentation.utils.Screens
 
 
 

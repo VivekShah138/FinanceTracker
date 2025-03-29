@@ -10,7 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.financetracker.core.presentation.utils.Screens
+import com.example.financetracker.core.core_presentation.utils.Screens
 import com.example.financetracker.main_page_feature.home_page.presentation.components.HomePageScreen
 import com.example.financetracker.main_page_feature.home_page.presentation.HomePageViewModel
 import com.example.financetracker.startup_page_feature.components.StartUpPageScreen

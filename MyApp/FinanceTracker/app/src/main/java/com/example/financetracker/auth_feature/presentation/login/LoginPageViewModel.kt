@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
 import com.example.financetracker.auth_feature.presentation.forgot_password.ResetPasswordWithCredentialResult
 import com.example.financetracker.core.local.domain.room.model.UserProfile
-import com.example.financetracker.core.domain.usecase.UseCasesWrapperCore
+import com.example.financetracker.core.core_domain.usecase.UseCasesWrapperCore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow

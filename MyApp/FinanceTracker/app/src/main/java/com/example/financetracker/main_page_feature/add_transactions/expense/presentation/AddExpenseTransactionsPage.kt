@@ -1,5 +1,6 @@
 package com.example.financetracker.main_page_feature.add_transactions.expense.presentation
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -54,7 +55,7 @@ fun AddExpenseTransactionsPage(
                         bottomSheetState = true
                     )
                 )
-                viewModel.onEvent(AddExpenseEvents.LoadCategory)
+                viewModel.onEvent(AddExpenseEvents.LoadCategory(type = "expense"))
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -94,6 +95,10 @@ fun AddExpenseTransactionsPage(
                 },
                 displayText = {category ->
                     category.name
+                },
+                onCustomAddClick = {
+                    viewModel.saveFromJSON()
+                    Log.d("Reached","Reached Page")
                 }
             )
         }

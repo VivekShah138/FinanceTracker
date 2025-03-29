@@ -1,4 +1,4 @@
-package com.example.financetracker.core.presentation.components
+package com.example.financetracker.core.core_presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

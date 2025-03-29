@@ -6,7 +6,7 @@ import com.example.financetracker.core.local.domain.room.repository.CategoryRepo
 class InsertPredefinedCategories(
     private val categoryRepository: CategoryRepository
 ) {
-    suspend operator fun invoke(categories: List<Category>) {
-        return categoryRepository.insertCategories(categories)
+    suspend operator fun invoke() {
+        return categoryRepository.insertPredefinedCategories()
     }
 }

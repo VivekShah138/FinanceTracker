@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.financetracker.core.presentation.components.AppTopBar
-import com.example.financetracker.core.presentation.utils.Screens
+import com.example.financetracker.core.core_presentation.components.AppTopBar
+import com.example.financetracker.core.core_presentation.utils.Screens
 import com.example.financetracker.setup_account.presentation.ProfileSetUpEvents
 import com.example.financetracker.setup_account.presentation.ProfileSetUpViewModel
 
