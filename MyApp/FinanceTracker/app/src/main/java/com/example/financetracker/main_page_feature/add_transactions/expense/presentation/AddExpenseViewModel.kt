@@ -32,61 +32,27 @@ class AddExpenseViewModel @Inject constructor(
                     category = addExpenseEvents.categoryName,
                     bottomSheetState = addExpenseEvents.bottomSheetState
                 )
+                Log.d("AddExpense","BottomSheetState Changed")
             }
             is AddExpenseEvents.LoadCategory -> {
                 viewModelScope.launch {
                     predefinedCategoriesUseCaseWrapper.getPredefinedCategories(addExpenseEvents.type.lowercase())
                         .collect { categoryList -> // Collect the flow to get the list
-                            _addExpenseStates.value = addExpenseStates.value.copy(
-                                categoryList = categoryList
-                            )
+                             _addExpenseStates.value = addExpenseStates.value.copy(
+                                 categoryList = categoryList
+                             )
                         }
-                    }
-
-
-                // Right Now just for UI testing loading manually later will load it in JSON file and update ROOM
-
-//                _addExpenseStates.value = addExpenseStates.value.copy(
-//                    categoryList = listOf(
-//                        Category(
-//                            name = "Food",
-//                            type = "Expense",
-//                            icon = ""
-//                        ),
-//                        Category(
-//                            name = "Travel",
-//                            type = "Expense",
-//                            icon = ""
-//                        ),
-//                        Category(
-//                            name = "Rent",
-//                            type = "Expense",
-//                            icon = ""
-//                        ),
-//                        Category(
-//                            name = "Bills",
-//                            type = "Expense",
-//                            icon = ""
-//                        ),
-//                        Category(
-//                            name = "Salary",
-//                            type = "Income",
-//                            icon = ""
-//                        ),
-//                        Category(
-//                            name = "Freelance",
-//                            type = "Income",
-//                            icon = ""
-//                        ),
-//                        Category(
-//                            name = "Rent",
-//                            type = "Income",
-//                            icon = ""
-//                        ),
-//                    ).filter { name  ->
-//                        name.type == "Expense"
-//                    }
-//                )
+                }
+            }
+            is AddExpenseEvents.ChangeSavedItemState -> {
+                _addExpenseStates.value = addExpenseStates.value.copy(
+                    saveItemState = addExpenseEvents.state
+                )
+            }
+            is AddExpenseEvents.ChangeTransactionName -> {
+                _addExpenseStates.value = addExpenseStates.value.copy(
+                    transactionName = addExpenseEvents.name
+                )
             }
         }
     }

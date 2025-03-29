@@ -12,5 +12,7 @@ data class UseCasesWrapperSetupAccount(
     val validatePhoneNumber: ValidatePhoneNumber,
     val validateCountry: ValidateCountry,
     val updateUserProfile: UpdateUserProfile,
-    val getUserProfileUseCase: GetUserProfileUseCase
+    val getUserProfileUseCase: GetUserProfileUseCase,
+    val getCountryLocally: GetCountryLocally,
+    val insertCountryLocally: InsertCountryLocally
 )

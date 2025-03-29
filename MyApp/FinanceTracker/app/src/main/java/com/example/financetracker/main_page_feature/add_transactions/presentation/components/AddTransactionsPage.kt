@@ -18,7 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.components.AppTopBar
-import com.example.financetracker.main_page_feature.add_transactions.expense.presentation.AddExpenseTransactionsPage
+import com.example.financetracker.main_page_feature.add_transactions.expense.presentation.AddExpensePage
 import com.example.financetracker.main_page_feature.add_transactions.expense.presentation.AddExpenseViewModel
 import com.example.financetracker.main_page_feature.add_transactions.income.presentation.AddIncomeTransactionsPage
 import com.example.financetracker.main_page_feature.add_transactions.saveItems.presentation.AddSaveItemsTransactionsPage
@@ -89,7 +89,7 @@ fun AddTransactionsPage(
                 // Uncomment this to enable HorizontalPager
                  HorizontalPager(state = pagerState) { page ->
                      when (page) {
-                         0 -> AddExpenseTransactionsPage(viewModel = viewModel) // Transactions Screen
+                         0 -> AddExpensePage(viewModel = viewModel) // Transactions Screen
                          1 -> AddIncomeTransactionsPage() // Recurring Transactions
                          2 -> AddSaveItemsTransactionsPage() // Analytics & Reports
                      }

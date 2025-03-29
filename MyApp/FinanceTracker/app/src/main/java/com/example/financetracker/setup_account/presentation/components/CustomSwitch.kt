@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -19,27 +18,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.financetracker.setup_account.presentation.ProfileSetUpEvents
+import androidx.compose.ui.unit.sp
 
 @Composable
-fun MySwitch(text:String,
-             isCheck: Boolean,
-             onCheckChange: () -> Unit
+fun CustomSwitch(text:String,
+                 isCheck: Boolean,
+                 onCheckChange: (Boolean) -> Unit
 ){
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .height(IntrinsicSize.Min), // To align items vertically
+            .fillMaxWidth(),
+//            .padding(16.dp)
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = text)
-        Spacer(modifier = Modifier.weight(1f))
+        Text(text = text, textAlign = TextAlign.Start,fontSize = 16.sp, color = Color.Black,modifier = Modifier.weight(1f))
+//        Spacer(modifier = Modifier.weight(1f))
         Switch(
             checked = isCheck,
             onCheckedChange = {
-                onCheckChange()
+                onCheckChange(it)
             },
             modifier = Modifier.scale(0.7f)
         )

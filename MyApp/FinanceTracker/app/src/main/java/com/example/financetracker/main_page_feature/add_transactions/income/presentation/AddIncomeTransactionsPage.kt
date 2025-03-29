@@ -9,5 +9,4 @@ import androidx.compose.ui.Modifier
 fun AddIncomeTransactionsPage(){
     Text("Income Transactions Screen", modifier = Modifier.fillMaxSize())
 
-
 }

@@ -1,12 +1,12 @@
-package com.example.financetracker.setup_account.data.repository
+package com.example.financetracker.setup_account.data.remote.repository
 
 import com.example.financetracker.setup_account.data.remote.CountryApi
 import com.example.financetracker.setup_account.domain.model.Country
-import com.example.financetracker.setup_account.domain.repository.CountryRepository
+import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
 
-class CountryRepositoryImpl(
+class CountryRemoteRepositoryImpl(
     private val api: CountryApi
-): CountryRepository {
+): CountryRemoteRepository {
     override suspend fun getCountries(): List<Country> {
         return api.getCountries()
     }

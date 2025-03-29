@@ -208,27 +208,51 @@ class ProfileSetUpViewModel @Inject constructor(
     private suspend fun fetchCountries() {
         withContext(Dispatchers.IO) {
             try {
-                val sortedCountries = useCasesWrapperSetupAccount.getCountryDetailsUseCase().sortedBy {
-                    it.name.common
-                }.distinctBy {
-                   it.name.common
+                val sortedCountries = useCasesWrapperSetupAccount.getCountryDetailsUseCase()
+                    .sortedBy { it.name.common }
+                    .distinctBy { it.name.common }
+
+//                Log.d("RoomDatabase","Loaded Countries: $sortedCountries")
+
+                // Insert into Room
+                useCasesWrapperSetupAccount.insertCountryLocally(sortedCountries)
+//                Log.d("RoomDatabase","Inserted Executed")
+
+
+
+                // Update state on the Main Thread
+                withContext(Dispatchers.Main) {
+                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+                        countries = sortedCountries
+                    )
                 }
 
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    countries = sortedCountries
-                )
             } catch (e: Exception) {
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
-                )
+                withContext(Dispatchers.Main) {
+                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+                        currencyErrorMessage = "Error Occurred Couldn't Fetch API Data"
+                    )
+
+                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(_profileSetUpStates.value.currencyErrorMessage))
+
+                    // Fetch back from Room after insertion
+                    val countriesFromLocalDb = useCasesWrapperSetupAccount.getCountryLocally()
+                        .sortedBy { it.name.common }
+                        .distinctBy { it.name.common }
+                    Log.d("RoomDatabase", "Countries from Room after insert: $countriesFromLocalDb")
+                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+                        countries = countriesFromLocalDb
+                    )
+                }
             }
         }
     }
 
+
     private suspend fun fetchBaseCurrencies() {
         withContext(Dispatchers.IO) {
             try {
-                val sortedCurrencies = useCasesWrapperSetupAccount.getCountryDetailsUseCase()
+                val sortedRemoteCurrencies = useCasesWrapperSetupAccount.getCountryDetailsUseCase()
                     .filter {
                         it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
                     }
@@ -239,13 +263,29 @@ class ProfileSetUpViewModel @Inject constructor(
                         it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
                     }
 
+//                Log.d("RoomDatabase","Loaded Countries: $sortedRemoteCurrencies")
+
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    currencies = sortedCurrencies
+                    currencies = sortedRemoteCurrencies
                 )
 
             } catch (e: Exception) {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
+                    currencyErrorMessage = "Error Occurred Couldn't Fetch API Data"
+                )
+                profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(_profileSetUpStates.value.currencyErrorMessage))
+                val currenciesFromLocalDb = useCasesWrapperSetupAccount.getCountryLocally()
+                    .filter {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase()?.isNotEmpty() == true
+                    }
+                    .sortedBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                    }
+                    .distinctBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                    }
+                _profileSetUpStates.value = profileSetUpStates.value.copy(
+                    currencies = currenciesFromLocalDb
                 )
             }
         }

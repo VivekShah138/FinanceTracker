@@ -27,11 +27,16 @@ import com.example.financetracker.core.local.domain.room.usecases.GetPredefinedC
 import com.example.financetracker.core.local.domain.room.usecases.InsertPredefinedCategories
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
+import com.example.financetracker.setup_account.data.local.data_source.CountryDatabase
+import com.example.financetracker.setup_account.data.local.repository.CountryLocalRepositoryImpl
 import com.example.financetracker.setup_account.data.remote.ApiClient
 import com.example.financetracker.setup_account.data.remote.CountryApi
-import com.example.financetracker.setup_account.data.repository.CountryRepositoryImpl
-import com.example.financetracker.setup_account.domain.repository.CountryRepository
+import com.example.financetracker.setup_account.data.remote.repository.CountryRemoteRepositoryImpl
+import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
+import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryDetailsUseCase
+import com.example.financetracker.setup_account.domain.usecases.GetCountryLocally
+import com.example.financetracker.setup_account.domain.usecases.InsertCountryLocally
 import com.example.financetracker.setup_account.domain.usecases.UpdateUserProfile
 import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
 import com.example.financetracker.setup_account.domain.usecases.ValidateCountry
@@ -124,6 +129,9 @@ object AppModule {
     }
 
 
+
+
+
     // Core UseCases
     @Provides
     @Singleton
@@ -155,33 +163,54 @@ object AppModule {
         )
     }
 
+    // Country Database
+    @Provides
+    @Singleton
+    fun provideCountryDatabase(app: Application): CountryDatabase{
+        return Room.databaseBuilder(
+            context = app,
+            klass = CountryDatabase::class.java,
+            name = CountryDatabase.DATABASE_NAME
+        ).build()
+    }
+
+    // Country Local Repository
+    @Provides
+    @Singleton
+    fun provideLocalCountryRepository(db: CountryDatabase): CountryLocalRepository {
+        return CountryLocalRepositoryImpl(countryDao = db.countryDao)
+    }
+
+    // Country API
     @Provides
     @Singleton
     fun provideApi(): CountryApi = ApiClient.instance
 
+    // CountryRemoteRepository
     @Provides
     @Singleton
-    fun provideCountryRepository(api: CountryApi): CountryRepository = CountryRepositoryImpl(api)
+    fun provideRemoteCountryRepository(api: CountryApi): CountryRemoteRepository = CountryRemoteRepositoryImpl(api)
 
     // SetUpPage UseCases
     @Provides
     @Singleton
     fun provideSetupAccountUseCases(firebaseRepository: FirebaseRepository,
-                                    countryRepository: CountryRepository
+                                    countryRemoteRepository: CountryRemoteRepository,
+                                    countryLocalRepository: CountryLocalRepository
     ): UseCasesWrapperSetupAccount {
         return UseCasesWrapperSetupAccount(
             getUserEmailUserCase = GetUserEmailUserCase(firebaseRepository),
             getUserUIDUseCase = GetUserUIDUseCase(firebaseRepository),
-            getCountryDetailsUseCase = GetCountryDetailsUseCase(countryRepository),
+            getCountryDetailsUseCase = GetCountryDetailsUseCase(countryRemoteRepository),
             validateName = ValidateName(),
             validatePhoneNumber = ValidatePhoneNumber(),
             validateCountry = ValidateCountry(),
             updateUserProfile = UpdateUserProfile(firebaseRepository),
-            getUserProfileUseCase = GetUserProfileUseCase(firebaseRepository)
+            getUserProfileUseCase = GetUserProfileUseCase(firebaseRepository),
+            getCountryLocally = GetCountryLocally(countryLocalRepository),
+            insertCountryLocally = InsertCountryLocally(countryLocalRepository)
         )
     }
-
-
 }
 
 
