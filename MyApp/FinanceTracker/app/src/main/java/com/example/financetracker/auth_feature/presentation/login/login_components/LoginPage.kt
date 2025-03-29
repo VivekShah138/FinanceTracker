@@ -71,7 +71,7 @@ fun LogInPage(
                         Toast.LENGTH_SHORT).show()
 
                     if(!state.userProfile.profileSetUpCompleted){
-                        navController.navigate(Screens.NewUserProfileOnBoardingScreens.routes)
+                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
                     }
                     else{
                         navController.navigate(Screens.HomePageScreen.routes)

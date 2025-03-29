@@ -1,5 +1,6 @@
 package com.example.financetracker.core.presentation.components
 
+import android.view.MenuItem
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
@@ -11,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.financetracker.core.presentation.MenuItems
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,7 +21,7 @@ fun AppTopBar(
     showBackButton: Boolean = false,  // Optional Back Button
     showMenu: Boolean = false,        // Optional Menu Button
     onBackClick: () -> Unit,     // Non-nullable function
-    onMenuClick: () -> Unit      // Non-nullable function
+    menuItems: List<MenuItems> = listOf()      // Non-nullable function
 ) {
     TopAppBar(
         title = {
@@ -34,7 +36,7 @@ fun AppTopBar(
             }
         },
         actions = {
-            if (showMenu) {
+            if (showMenu && menuItems.isNotEmpty()) {
                 var menuExpanded by remember { mutableStateOf(false) }
 
                 IconButton(onClick = { menuExpanded = !menuExpanded }) {
@@ -45,13 +47,15 @@ fun AppTopBar(
                     expanded = menuExpanded,
                     onDismissRequest = { menuExpanded = false }
                 ) {
-                    DropdownMenuItem(
-                        text = { Text("Settings") },
-                        onClick = {
-                            menuExpanded = false
-                            onMenuClick()  // Directly invoke onMenuClick()
-                        }
-                    )
+                    menuItems.forEach{ menuItem ->
+                        DropdownMenuItem(
+                            text = { Text(menuItem.text) },
+                            onClick = {
+                                menuExpanded = false
+                                menuItem.onClick()  // Directly invoke onMenuClick()
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -61,5 +65,5 @@ fun AppTopBar(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomePagePreviewScreen() {
-    AppTopBar(title = "Title", showBackButton = false, showMenu = false, onBackClick = {}, onMenuClick = {})
+    AppTopBar(title = "Title", showBackButton = true, showMenu = true, onBackClick = {}, menuItems = emptyList<MenuItems>())
 }
