@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.financetracker.core.presentation.components.AppTopBar
+import com.example.financetracker.core.core_presentation.components.AppTopBar
 
 
 @Composable

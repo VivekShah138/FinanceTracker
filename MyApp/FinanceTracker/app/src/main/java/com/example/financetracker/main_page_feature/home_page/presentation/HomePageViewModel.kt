@@ -2,7 +2,7 @@ package com.example.financetracker.main_page_feature.home_page.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.core.domain.usecases.LogoutUseCase
+import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

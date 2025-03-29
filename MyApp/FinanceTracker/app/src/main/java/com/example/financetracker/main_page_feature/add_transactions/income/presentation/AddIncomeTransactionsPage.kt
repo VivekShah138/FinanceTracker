@@ -7,5 +7,6 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun AddIncomeTransactionsPage(){
-    Text("Expense Transactions Screen", modifier = Modifier.fillMaxSize())
+    Text("Income Transactions Screen", modifier = Modifier.fillMaxSize())
+
 }
