@@ -30,6 +30,8 @@ class ProfileSetUpViewModel @Inject constructor(
 
     init {
         getProfileInfo()
+        val userId = useCasesWrapperSetupAccount.getUIDLocally()
+        Log.d("UserId","UserId $userId")
     }
 
     fun onEvent(profileSetUpEvents: ProfileSetUpEvents){

@@ -33,6 +33,12 @@ class UserPreferences @Inject constructor(
         }
     }
 
+    fun removeUserIdLocally(){
+        sharedPreferences.edit(){
+            remove(KEY_USER_ID)
+        }
+    }
+
     fun clearLogInPreference(){
         sharedPreferences.edit() {
             clear()

@@ -41,6 +41,7 @@ import com.example.financetracker.core.local.domain.room.usecases.InsertPredefin
 import com.example.financetracker.core.local.domain.room.usecases.InsertUserProfileToLocalDb
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
+import com.example.financetracker.main_page_feature.home_page.usecases.HomePageUseCaseWrapper
 import com.example.financetracker.setup_account.data.local.data_source.CountryDatabase
 import com.example.financetracker.setup_account.data.local.repository.CountryLocalRepositoryImpl
 import com.example.financetracker.setup_account.data.remote.ApiClient
@@ -241,6 +242,20 @@ object AppModule {
             insertUserProfileToLocalDb = InsertUserProfileToLocalDb(userProfileRepository),
             getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository),
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideHomePageUseCases(
+        sharedPreferencesRepository: SharedPreferencesRepository,
+        firebaseRepository: FirebaseRepository
+    ): HomePageUseCaseWrapper{
+        return HomePageUseCaseWrapper(
+            logoutUseCase = LogoutUseCase(
+                sharedPreferencesRepository = sharedPreferencesRepository
+                , firebaseRepository = firebaseRepository
+            )
         )
     }
 }

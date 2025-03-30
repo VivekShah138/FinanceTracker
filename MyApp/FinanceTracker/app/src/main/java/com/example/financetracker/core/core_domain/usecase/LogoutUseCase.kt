@@ -12,5 +12,6 @@ class LogoutUseCase @Inject constructor(
     suspend operator fun invoke(){
         firebaseRepository.logoutUser()
         sharedPreferencesRepository.setLoggedInState(false)
+        sharedPreferencesRepository.removeUserIdLocally()
     }
 }

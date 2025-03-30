@@ -23,4 +23,8 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
     override fun setUserIdLocally(userId: String) {
         userPreferences.setUserIdLocally(userId)
     }
+
+    override fun removeUserIdLocally() {
+        userPreferences.removeUserIdLocally()
+    }
 }

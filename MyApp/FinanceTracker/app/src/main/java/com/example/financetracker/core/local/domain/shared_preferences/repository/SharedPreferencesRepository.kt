@@ -5,4 +5,5 @@ interface SharedPreferencesRepository {
     fun setLoggedInState(keepLoggedIn: Boolean)
     fun getUserIdLocally(): String?
     fun setUserIdLocally(userId: String)
+    fun removeUserIdLocally()
 }
