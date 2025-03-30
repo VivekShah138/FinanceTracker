@@ -27,12 +27,12 @@ import com.example.financetracker.core.cloud.domain.usecases.SaveUserProfileUseC
 import com.example.financetracker.core.core_domain.usecase.GetUIDLocally
 import com.example.financetracker.core.core_domain.usecase.UseCasesWrapperCore
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDatabase
+import com.example.financetracker.core.local.data.room.data_source.category.migration.CATEGORY_MIGRATION_1_2
 import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDatabase
-import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileEntity
+import com.example.financetracker.core.local.data.room.data_source.userprofile.migration.USER_PROFILE_MIGRATION_1_2
 import com.example.financetracker.core.local.data.room.repository.CategoryRepositoryImpl
 import com.example.financetracker.core.local.data.room.repository.UserProfileRepositoryImpl
 import com.example.financetracker.core.local.data.shared_preferences.repository.SharedPreferencesRepositoryImpl
-import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
 import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
 import com.example.financetracker.core.local.domain.room.usecases.GetPredefinedCategories
@@ -118,7 +118,7 @@ object AppModule {
             context = app,
             klass = CategoryDatabase::class.java,
             name = CategoryDatabase.DATABASE_NAME
-        ).build()
+        ).addMigrations(CATEGORY_MIGRATION_1_2).build()
     }
 
     // Category Dao
@@ -181,7 +181,7 @@ object AppModule {
             context = app,
             klass = UserProfileDatabase::class.java,
             name = UserProfileDatabase.DATABASE_NAME
-        ).build()
+        ).addMigrations(USER_PROFILE_MIGRATION_1_2).build()
     }
 
     // UserProfile Local Repository

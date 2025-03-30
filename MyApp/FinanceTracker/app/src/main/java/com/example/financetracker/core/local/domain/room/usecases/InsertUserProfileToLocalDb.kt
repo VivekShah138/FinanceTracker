@@ -7,7 +7,7 @@ import com.example.financetracker.core.local.domain.room.repository.UserProfileR
 class InsertUserProfileToLocalDb(
     private val userProfileRepository: UserProfileRepository
 ) {
-    suspend operator fun invoke(userProfile: UserProfile) {
-        return userProfileRepository.insertUserProfile(userProfile)
+    suspend operator fun invoke(userProfile: UserProfile,uid: String) {
+        return userProfileRepository.insertUserProfile(userProfile,uid)
     }
 }

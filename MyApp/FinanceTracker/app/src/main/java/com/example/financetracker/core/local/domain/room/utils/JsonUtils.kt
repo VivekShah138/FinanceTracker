@@ -6,6 +6,7 @@ import com.example.financetracker.core.local.domain.room.model.Category
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
+import java.util.UUID
 
 object JsonUtils {
 
@@ -29,7 +30,16 @@ object JsonUtils {
 
     fun parseJsonToCategories(jsonString: String): List<Category> {
         val listType = object : TypeToken<List<Category>>() {}.type
-        return Gson().fromJson(jsonString, listType)
+        val categories: List<Category> = Gson().fromJson(jsonString, listType)
+        Log.d("Categories", "Categories $categories")
+
+        return categories.mapIndexed {index,category->
+            // For each category, generate a unique uid and set isCustom to false
+            category.copy(
+                uid = (index+1).toString(),
+                isCustom = false  // Assuming these categories are predefined
+            )
+        }
     }
 
 }

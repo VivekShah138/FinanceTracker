@@ -13,10 +13,10 @@ import javax.inject.Inject
 class UserProfileRepositoryImpl @Inject constructor(
     private val userProfileDao: UserProfileDao
 ): UserProfileRepository {
-    override suspend fun getUserProfile(email: String): UserProfile? {
+    override suspend fun getUserProfile(uid: String): UserProfile? {
         try {
             // Retrieve the UserProfileEntity from the database using UID
-            val userProfileEntity = userProfileDao.getUserProfile(email)
+            val userProfileEntity = userProfileDao.getUserProfile(uid)
             Log.d("RoomDatabaseUser", "userProfileEntity $userProfileEntity")
             if (userProfileEntity == null) {
                 Log.d("RoomDatabaseUser", "userProfile is null")
@@ -32,9 +32,9 @@ class UserProfileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertUserProfile(userProfile: UserProfile) {
+    override suspend fun insertUserProfile(userProfile: UserProfile,uid: String) {
         try {
-            val userProfileEntity = userProfile.toEntity()
+            val userProfileEntity = userProfile.toEntity(uid)
             Log.d("RoomDatabaseUser", "userProfileEntity $userProfileEntity")
             userProfileDao.insertUserProfile(userProfileEntity)
         }

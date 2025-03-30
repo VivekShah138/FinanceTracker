@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [UserProfileEntity::class],
-    version = 1
+    version = 2
 )
 abstract class UserProfileDatabase:RoomDatabase() {
 

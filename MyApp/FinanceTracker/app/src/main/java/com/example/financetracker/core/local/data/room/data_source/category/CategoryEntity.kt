@@ -1,11 +1,16 @@
 package com.example.financetracker.core.local.data.room.data_source.category
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 
-@Entity(primaryKeys = ["name", "type"])
+@Entity
 data class CategoryEntity(
+
+    @PrimaryKey
+    val uid: String,
     val name: String,
     val type: String,
-    val icon: String
+    val icon: String,
+    val isCustom: Boolean
 )

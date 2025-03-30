@@ -126,7 +126,7 @@ class ProfileSetUpViewModel @Inject constructor(
         }
         else{
             try {
-                val userId = useCasesWrapperSetupAccount.getUserUIDUseCase()
+                val userId = useCasesWrapperSetupAccount.getUserUIDUseCase() ?: useCasesWrapperSetupAccount.getUIDLocally() ?: "Unknown"
 
 
                 val baseCurrencyCode = profileSetUpStates.value.baseCurrencyCode
@@ -143,7 +143,7 @@ class ProfileSetUpViewModel @Inject constructor(
 
                 // Save To LocalDb
                 useCasesWrapperSetupAccount.insertUserProfileToLocalDb(
-                    UserProfile(
+                    userProfile = UserProfile(
                         firstName = profileSetUpStates.value.firstName,
                         lastName = profileSetUpStates.value.lastName,
                         email = profileSetUpStates.value.email ?: "Unknown",
@@ -152,7 +152,8 @@ class ProfileSetUpViewModel @Inject constructor(
                         callingCode = profileSetUpStates.value.callingCode,
                         phoneNumber = profileSetUpStates.value.phoneNumber,
                         profileSetUpCompleted = true
-                    )
+                    ),
+                    uid = userId
                 )
 
 
@@ -226,6 +227,8 @@ class ProfileSetUpViewModel @Inject constructor(
                 }.distinctBy {
                    it.name.common
                 }
+
+                useCasesWrapperSetupAccount.insertCountryLocally(sortedCountries)
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     countries = sortedCountries

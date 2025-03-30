@@ -7,9 +7,10 @@ import com.example.financetracker.setup_account.domain.model.Currency
 @Entity
 data class UserProfileEntity(
 
+    @PrimaryKey
+    val uid: String,
     val firstName: String ,
     val lastName: String ,
-    @PrimaryKey
     val email: String,
     val baseCurrency: String?,
     val country: String ,

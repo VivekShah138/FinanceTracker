@@ -15,7 +15,7 @@ data class UserProfile(
     val profileSetUpCompleted: Boolean = false
 )
 
-fun UserProfile.toEntity(): UserProfileEntity {
+fun UserProfile.toEntity(uid: String): UserProfileEntity {
     return UserProfileEntity(
         firstName = this.firstName,
         lastName = this.lastName,
@@ -24,7 +24,8 @@ fun UserProfile.toEntity(): UserProfileEntity {
         country = this.country,
         callingCode = this.callingCode,
         phoneNumber = this.phoneNumber,
-        profileSetUpCompleted = this.profileSetUpCompleted
+        profileSetUpCompleted = this.profileSetUpCompleted,
+        uid = uid
     )
 }
 

@@ -27,7 +27,6 @@ class CategoryRepositoryImpl @Inject constructor(
     override suspend fun insertCategories(categories: List<Category>) {
         return categoryDao.insertCategories(
             categories = categories.map {
-
                 it.toEntity()
             }
         )
@@ -39,7 +38,7 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun insertPredefinedCategories() {
         Log.d("Reached","Reached CategoryImplementation")
-        if (getCategoriesCount() == 0) {
+//        if (getCategoriesCount() == 0) {
             Log.d("Reached","Reached CategoryImplementation inside if")
             val jsonString = JsonUtils.loadJsonFromAssets(context, "categories.json")
             if (jsonString != null) {
@@ -51,6 +50,6 @@ class CategoryRepositoryImpl @Inject constructor(
                 Log.d("Reached","predefinedCategories: $predefinedCategories")
                 insertCategories(predefinedCategories)
             }
-        }
+//        }
     }
 }
