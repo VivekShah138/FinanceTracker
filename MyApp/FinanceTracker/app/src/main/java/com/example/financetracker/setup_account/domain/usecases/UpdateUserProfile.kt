@@ -1,7 +1,8 @@
 package com.example.financetracker.setup_account.domain.usecases
 
-import com.example.financetracker.core.domain.model.UserProfile
-import com.example.financetracker.core.domain.repository.FirebaseRepository
+import com.example.financetracker.core.local.domain.room.model.UserProfile
+import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
+import com.example.financetracker.setup_account.domain.model.Currency
 
 
 class UpdateUserProfile (
@@ -13,10 +14,10 @@ class UpdateUserProfile (
         firstName: String,
         lastName: String,
         email: String,
-        baseCurrency: String,
+        baseCurrency: Map<String,Currency>,
         country: String,
-        callingCode: String ,
-        phoneNumber: String ,
+        callingCode: String,
+        phoneNumber: String,
         isProfileSetupComplete: Boolean = true
     ) {
         val userProfileUpdated = UserProfile(

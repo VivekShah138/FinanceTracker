@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.financetracker.core.presentation.components.AppTopBar
+import com.example.financetracker.core.core_presentation.components.AppTopBar
 
 @Preview(
     showBackground = true,
@@ -26,7 +26,7 @@ import com.example.financetracker.core.presentation.components.AppTopBar
 fun ProfileSetUpPreview(){
     Scaffold(
         topBar = {
-            AppTopBar(title = "Profile",showBackButton = true, showMenu = false, onBackClick = {}, onMenuClick = {} )
+            AppTopBar(title = "Profile",showBackButton = true, showMenu = false, onBackClick = {} )
         }
     ) { paddingValues ->
         Column(

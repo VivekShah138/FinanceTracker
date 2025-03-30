@@ -42,7 +42,7 @@ import com.example.financetracker.auth_feature.presentation.forgot_password.Rese
 import com.example.financetracker.auth_feature.presentation.login.LogInResult
 import com.example.financetracker.auth_feature.presentation.login.LoginPageEvents
 import com.example.financetracker.auth_feature.presentation.login.LoginPageViewModel
-import com.example.financetracker.core.presentation.utils.Screens
+import com.example.financetracker.core.core_presentation.utils.Screens
 
 import kotlinx.coroutines.launch
 
@@ -71,7 +71,7 @@ fun LogInPage(
                         Toast.LENGTH_SHORT).show()
 
                     if(!state.userProfile.profileSetUpCompleted){
-                        navController.navigate(Screens.NewUserProfileOnBoardingScreens.routes)
+                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
                     }
                     else{
                         navController.navigate(Screens.HomePageScreen.routes)

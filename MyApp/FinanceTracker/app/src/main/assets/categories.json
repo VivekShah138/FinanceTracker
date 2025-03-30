@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Food",
+    "type": "expense",
+    "icon": "ic_food"
+  },
+  {
+    "name": "Restaurant",
+    "type": "expense",
+    "icon": "ic_restaurant"
+  },
+  {
+    "name": "Groceries",
+    "type": "expense",
+    "icon": "ic_groceries"
+  },
+  {
+    "name": "Rent",
+    "type": "expense",
+    "icon": "ic_rent"
+  },
+  {
+    "name": "Vehicle Maintenance",
+    "type": "expense",
+    "icon": "ic_vehicle_maintenance"
+  },
+  {
+    "name": "Travel",
+    "type": "expense",
+    "icon": "ic_travel"
+  },
+  {
+    "name": "Shopping",
+    "type": "expense",
+    "icon": "ic_shopping"
+  },
+  {
+    "name": "Medicine",
+    "type": "expense",
+    "icon": "ic_medicine"
+  },
+  {
+    "name": "Salary",
+    "type": "income",
+    "icon": "ic_salary"
+  },
+  {
+    "name": "Rent",
+    "type": "income",
+    "icon": "ic_rent_income"
+  },
+  {
+    "name": "Freelance",
+    "type": "income",
+    "icon": "ic_freelance"
+  },
+  {
+    "name": "Business",
+    "type": "income",
+    "icon": "ic_business"
+  },
+  {
+    "name": "Studies",
+    "type": "income",
+    "icon": "ic_studies"
+  },
+  {
+    "name": "Interest",
+    "type": "income",
+    "icon": "ic_interest"
+  }
+]

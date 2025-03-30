@@ -1,11 +1,12 @@
 package com.example.financetracker.auth_feature.domain.usecases
 
-import com.example.financetracker.core.domain.repository.FirebaseRepository
+import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
+import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 
 class KeepUserLoggedIn(
-    private val firebaseRepository: FirebaseRepository
+    private val sharedPreferencesRepository: SharedPreferencesRepository
 ) {
     operator fun invoke (keepLoggedIn: Boolean){
-        return firebaseRepository.keepUserLoggedIn(keepLoggedIn)
+        return sharedPreferencesRepository.setLoggedInState(keepLoggedIn)
     }
 }

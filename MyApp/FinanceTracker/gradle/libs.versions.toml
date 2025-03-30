@@ -16,17 +16,19 @@ materialIconsExtended = "1.7.8"
 composeNavigation = "2.8.9"
 playServicesAuth = "21.3.0"
 playServicesAuthApiIdentity = "20.0.0"
+roomVersion = "2.6.1"
 serialization = "1.6.3"
 googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.2.0"
 credentials = "1.5.0"
 credentialsPlayServicesAuth = "1.5.0"
 googleid = "1.1.1"
-firebaseBom = "33.10.0"
+firebaseBom = "33.11.0"
 kotlinxCoroutinesAndroid = "1.7.3"
 retrofit = "2.9.0"
 converterGson = "2.9.0"
 firebaseFirestoreKtx = "25.1.3"
+kspVersion = "2.0.21-1.0.27"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -83,6 +85,10 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 
+#Room
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomVersion" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -97,4 +103,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 
 #Google Firebase
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+
+#Room
+google-devtools-ksp = {id = "com.google.devtools.ksp", version.ref = "kspVersion"}
 

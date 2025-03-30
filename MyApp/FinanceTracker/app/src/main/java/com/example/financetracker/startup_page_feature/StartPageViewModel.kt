@@ -1,7 +1,7 @@
 package com.example.financetracker.startup_page_feature
 
 import androidx.lifecycle.ViewModel
-import com.example.financetracker.core.domain.usecases.UseCasesWrapperCore
+import com.example.financetracker.core.core_domain.usecase.UseCasesWrapperCore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
