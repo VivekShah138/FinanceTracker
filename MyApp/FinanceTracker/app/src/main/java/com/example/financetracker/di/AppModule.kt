@@ -8,6 +8,7 @@ import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
 import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
 import com.example.financetracker.auth_feature.domain.usecases.ValidateEmail
 import com.example.financetracker.auth_feature.domain.usecases.ValidatePassword
+<<<<<<< Updated upstream
 import com.example.financetracker.core.data.local.data_source.UserPreferences
 import com.example.financetracker.core.data.cloud.repository.FirebaseRepositoryImpl
 import com.example.financetracker.core.domain.repository.FirebaseRepository
@@ -18,6 +19,35 @@ import com.example.financetracker.core.domain.usecases.GetUserUIDUseCase
 import com.example.financetracker.core.domain.usecases.LogoutUseCase
 import com.example.financetracker.core.domain.usecases.SaveUserProfileUseCase
 import com.example.financetracker.core.domain.usecases.UseCasesWrapperCore
+=======
+import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
+import com.example.financetracker.core.cloud.data.repository.FirebaseRepositoryImpl
+import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.CheckIsLoggedInUseCase
+import com.example.financetracker.core.cloud.domain.usecases.GetUserEmailUserCase
+import com.example.financetracker.core.cloud.domain.usecases.GetUserProfileUseCase
+import com.example.financetracker.core.cloud.domain.usecases.GetUserUIDUseCase
+import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
+import com.example.financetracker.core.cloud.domain.usecases.SaveUserProfileUseCase
+import com.example.financetracker.core.core_domain.usecase.UseCasesWrapperCore
+import com.example.financetracker.core.local.data.room.data_source.category.CategoryDatabase
+import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDatabase
+import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileEntity
+import com.example.financetracker.core.local.data.room.repository.CategoryRepositoryImpl
+import com.example.financetracker.core.local.data.room.repository.UserProfileRepositoryImpl
+import com.example.financetracker.core.local.data.shared_preferences.repository.SharedPreferencesRepositoryImpl
+import com.example.financetracker.core.local.domain.room.model.UserProfile
+import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
+import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
+import com.example.financetracker.core.local.domain.room.usecases.GetPredefinedCategories
+import com.example.financetracker.core.local.domain.room.usecases.GetUserProfileFromLocalDb
+import com.example.financetracker.core.local.domain.room.usecases.InsertPredefinedCategories
+import com.example.financetracker.core.local.domain.room.usecases.InsertUserProfileToLocalDb
+import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
+import com.example.financetracker.setup_account.data.local.data_source.CountryDatabase
+import com.example.financetracker.setup_account.data.local.repository.CountryLocalRepositoryImpl
+>>>>>>> Stashed changes
 import com.example.financetracker.setup_account.data.remote.ApiClient
 import com.example.financetracker.setup_account.data.remote.CountryApi
 import com.example.financetracker.setup_account.data.repository.CountryRepositoryImpl
@@ -77,6 +107,50 @@ object AppModule {
             firestore = firestore)
     }
 
+<<<<<<< Updated upstream
+=======
+    @Provides
+    @Singleton
+    fun provideSharedPreferenceRepository(
+        userPreferences: UserPreferences
+    ): SharedPreferencesRepository {
+        return SharedPreferencesRepositoryImpl(
+            userPreferences = userPreferences
+        )
+    }
+
+    // CategoryDatabase
+    @Provides
+    @Singleton
+    fun provideCategoryDatabase(app: Application): CategoryDatabase {
+        return Room.databaseBuilder(
+            context = app,
+            klass = CategoryDatabase::class.java,
+            name = CategoryDatabase.DATABASE_NAME
+        ).build()
+    }
+
+    // Category Dao
+    @Provides
+    @Singleton
+    fun provideCategoryRepository(db: CategoryDatabase, @ApplicationContext context: Context): CategoryRepository {
+        return CategoryRepositoryImpl(categoryDao = db.categoryDao, context = context)
+    }
+
+    // CategoryUseCases
+    @Provides
+    @Singleton
+    fun provideCategoryUseCase(categoryRepository: CategoryRepository): PredefinedCategoriesUseCaseWrapper {
+        return PredefinedCategoriesUseCaseWrapper(
+            getPredefinedCategories = GetPredefinedCategories(categoryRepository),
+            insertPredefinedCategories = InsertPredefinedCategories(categoryRepository)
+        )
+    }
+
+
+
+
+>>>>>>> Stashed changes
 
     // Core UseCases
     @Provides
@@ -104,6 +178,46 @@ object AppModule {
         )
     }
 
+<<<<<<< Updated upstream
+=======
+    // UserProfile Database
+    @Provides
+    @Singleton
+    fun provideUserProfileDatabase(app: Application): UserProfileDatabase{
+        return Room.databaseBuilder(
+            context = app,
+            klass = UserProfileDatabase::class.java,
+            name = UserProfileDatabase.DATABASE_NAME
+        ).build()
+    }
+
+    // UserProfile Local Repository
+    @Provides
+    @Singleton
+    fun provideUserProfileRepository(db: UserProfileDatabase): UserProfileRepository {
+        return UserProfileRepositoryImpl(userProfileDao = db.userProfileDao)
+    }
+
+    // Country Database
+    @Provides
+    @Singleton
+    fun provideCountryDatabase(app: Application): CountryDatabase{
+        return Room.databaseBuilder(
+            context = app,
+            klass = CountryDatabase::class.java,
+            name = CountryDatabase.DATABASE_NAME
+        ).build()
+    }
+
+    // Country Local Repository
+    @Provides
+    @Singleton
+    fun provideLocalCountryRepository(db: CountryDatabase): CountryLocalRepository {
+        return CountryLocalRepositoryImpl(countryDao = db.countryDao)
+    }
+
+    // Country API
+>>>>>>> Stashed changes
     @Provides
     @Singleton
     fun provideApi(): CountryApi = ApiClient.instance
@@ -116,7 +230,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSetupAccountUseCases(firebaseRepository: FirebaseRepository,
+<<<<<<< Updated upstream
                                     countryRepository: CountryRepository
+=======
+                                    countryRemoteRepository: CountryRemoteRepository,
+                                    countryLocalRepository: CountryLocalRepository,
+                                    userProfileRepository: UserProfileRepository
+>>>>>>> Stashed changes
     ): UseCasesWrapperSetupAccount {
         return UseCasesWrapperSetupAccount(
             getUserEmailUserCase = GetUserEmailUserCase(firebaseRepository),
@@ -126,7 +246,15 @@ object AppModule {
             validatePhoneNumber = ValidatePhoneNumber(),
             validateCountry = ValidateCountry(),
             updateUserProfile = UpdateUserProfile(firebaseRepository),
+<<<<<<< Updated upstream
             getUserProfileUseCase = GetUserProfileUseCase(firebaseRepository)
+=======
+            getUserProfileUseCase = GetUserProfileUseCase(firebaseRepository),
+            getCountryLocally = GetCountryLocally(countryLocalRepository),
+            insertCountryLocally = InsertCountryLocally(countryLocalRepository),
+            insertUserProfileToLocalDb = InsertUserProfileToLocalDb(userProfileRepository),
+            getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository)
+>>>>>>> Stashed changes
         )
     }
 }

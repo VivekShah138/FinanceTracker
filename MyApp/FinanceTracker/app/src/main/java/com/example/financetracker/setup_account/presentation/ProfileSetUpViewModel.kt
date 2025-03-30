@@ -3,6 +3,11 @@ package com.example.financetracker.setup_account.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+<<<<<<< Updated upstream
+=======
+import com.example.financetracker.core.local.domain.room.model.UserProfile
+import com.example.financetracker.setup_account.domain.model.Currency
+>>>>>>> Stashed changes
 import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -141,6 +146,37 @@ class ProfileSetUpViewModel @Inject constructor(
         else{
             try {
                 val userId = useCasesWrapperSetupAccount.getUserUIDUseCase()
+<<<<<<< Updated upstream
+=======
+
+                val baseCurrencyCode = profileSetUpStates.value.baseCurrencyCode
+                val baseCurrencyName = profileSetUpStates.value.selectedBaseCurrency
+                val baseCurrencySymbol = profileSetUpStates.value.baseCurrencySymbol
+
+                // Create the Currency object
+                val selectedCurrency = Currency(name = baseCurrencyName, symbol = baseCurrencySymbol)
+
+                // Create the baseCurrency map with the code as key and the map as value
+                val baseCurrency: Map<String, Currency> = mapOf(
+                    baseCurrencyCode to selectedCurrency  // Map the code to the map of currency details
+                )
+
+                // Save To LocalDb
+                useCasesWrapperSetupAccount.insertUserProfileToLocalDb(
+                    UserProfile(
+                        firstName = profileSetUpStates.value.firstName,
+                        lastName = profileSetUpStates.value.lastName,
+                        email = profileSetUpStates.value.email ?: "Unknown",
+                        baseCurrency = baseCurrency,
+                        country = profileSetUpStates.value.selectedCountry,
+                        callingCode = profileSetUpStates.value.callingCode,
+                        phoneNumber = profileSetUpStates.value.phoneNumber,
+                        profileSetUpCompleted = true
+                    )
+                )
+
+
+>>>>>>> Stashed changes
                 useCasesWrapperSetupAccount.updateUserProfile(
                     userId = userId ?: "Unknown",
                     firstName = profileSetUpStates.value.firstName,
