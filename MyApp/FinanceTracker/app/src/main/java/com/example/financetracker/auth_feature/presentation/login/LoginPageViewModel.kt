@@ -40,17 +40,13 @@ class LoginPageViewModel @Inject constructor(
                     password = loginPageEvents.password
                 )
             }
-            is LoginPageEvents.ChangeKeepLoggedIn -> {
-                _loginState.value = loginState.value.copy(
-                    keepLoggedIn = loginPageEvents.keepLoggedIn
-                )
-            }
             is LoginPageEvents.ClickLoginWithGoogle -> {
                 viewModelScope.launch {
                     when(loginPageEvents.result){
                         is GoogleSignInResult.Success->{
                             _loginState.value = loginState.value.copy(
-                                loggedInUser = loginPageEvents.result.username
+                                loggedInUser = loginPageEvents.result.username,
+                                keepLoggedIn = true
                             )
                             useCasesWrapper.keepUserLoggedIn(_loginState.value.keepLoggedIn)
                             handleUserProfile()
@@ -86,6 +82,11 @@ class LoginPageViewModel @Inject constructor(
             }
             is LoginPageEvents.LoginSuccess -> {
                 viewModelScope.launch {
+
+                    _loginState.value = loginState.value.copy(
+                        keepLoggedIn = true
+                    )
+
                     useCasesWrapper.keepUserLoggedIn(_loginState.value.keepLoggedIn)
                     handleUserProfile()
                     loginEventChannel.send(LoginEvent.Success(loginPageEvents.userName))
@@ -131,6 +132,8 @@ class LoginPageViewModel @Inject constructor(
     private suspend fun handleUserProfile(){
         try {
             val userId = useCasesWrapperCore.getUserUIDUseCase() ?: "Unknown"
+            useCasesWrapper.insertUIDLocally(userId)
+
             val userProfile = useCasesWrapperCore.getUserProfileUseCase(userId)
             Log.d("LoginViewModel","state: ${userProfile}")
             if(userProfile == null){

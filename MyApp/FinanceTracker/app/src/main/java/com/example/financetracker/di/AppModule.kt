@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import com.example.financetracker.auth_feature.domain.usecases.InsertUIDLocally
 import com.example.financetracker.auth_feature.domain.usecases.KeepUserLoggedIn
 import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
 import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
@@ -23,6 +24,7 @@ import com.example.financetracker.core.cloud.domain.usecases.GetUserProfileUseCa
 import com.example.financetracker.core.cloud.domain.usecases.GetUserUIDUseCase
 import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.core.cloud.domain.usecases.SaveUserProfileUseCase
+import com.example.financetracker.core.core_domain.usecase.GetUIDLocally
 import com.example.financetracker.core.core_domain.usecase.UseCasesWrapperCore
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDatabase
 import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDatabase
@@ -166,7 +168,8 @@ object AppModule {
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validateConfirmPassword = ValidateConfirmPassword(),
-            keepUserLoggedIn = KeepUserLoggedIn(sharedPreferencesRepository = sharedPreferencesRepository)
+            keepUserLoggedIn = KeepUserLoggedIn(sharedPreferencesRepository = sharedPreferencesRepository),
+            insertUIDLocally = InsertUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository)
         )
     }
 
@@ -221,7 +224,8 @@ object AppModule {
     fun provideSetupAccountUseCases(firebaseRepository: FirebaseRepository,
                                     countryRepository: CountryRemoteRepository,
                                     countryLocalRepository: CountryLocalRepository,
-                                    userProfileRepository: UserProfileRepository
+                                    userProfileRepository: UserProfileRepository,
+                                    sharedPreferencesRepository: SharedPreferencesRepository
     ): UseCasesWrapperSetupAccount {
         return UseCasesWrapperSetupAccount(
             getUserEmailUserCase = GetUserEmailUserCase(firebaseRepository),
@@ -235,7 +239,8 @@ object AppModule {
             getCountryLocally = GetCountryLocally(countryLocalRepository),
             insertCountryLocally = InsertCountryLocally(countryLocalRepository),
             insertUserProfileToLocalDb = InsertUserProfileToLocalDb(userProfileRepository),
-            getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository)
+            getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository),
+            getUIDLocally = GetUIDLocally(sharedPreferencesRepository)
         )
     }
 }

@@ -10,6 +10,7 @@ class UserPreferences @Inject constructor(
 
     companion object{
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
+        private const val KEY_USER_ID = "user_id"
     }
 
     fun isLoggedIn(): Boolean{
@@ -19,6 +20,16 @@ class UserPreferences @Inject constructor(
     fun setLoggedInState(isLoggedIn: Boolean) {
         sharedPreferences.edit() {
             putBoolean(KEY_IS_LOGGED_IN, isLoggedIn)
+        }
+    }
+
+    fun getUserIdLocally(): String? {
+        return sharedPreferences.getString(KEY_USER_ID, null)
+    }
+
+    fun setUserIdLocally(userId: String) {
+        sharedPreferences.edit {
+            putString(KEY_USER_ID, userId)
         }
     }
 

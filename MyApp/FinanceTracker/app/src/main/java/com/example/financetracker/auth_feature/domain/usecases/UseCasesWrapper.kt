@@ -4,5 +4,6 @@ data class UseCasesWrapper(
     val validateEmail: ValidateEmail,
     val validatePassword: ValidatePassword,
     val validateConfirmPassword: ValidateConfirmPassword,
-    val keepUserLoggedIn: KeepUserLoggedIn
+    val keepUserLoggedIn: KeepUserLoggedIn,
+    val insertUIDLocally: InsertUIDLocally
 )

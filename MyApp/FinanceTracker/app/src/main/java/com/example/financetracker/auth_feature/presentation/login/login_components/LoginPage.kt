@@ -170,26 +170,26 @@ fun LogInPage(
             }
         }
 
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ){
-            Checkbox(
-                checked = state.keepLoggedIn,
-                onCheckedChange = {
-                    // Add Function
-                    viewModel.onEvent(LoginPageEvents.ChangeKeepLoggedIn(it))
-                }
-            )
-
-            CustomText(
-                text = "Keep LoggedIn",
-                size = 20.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Start
-            )
-        }
+//        Row (
+//            modifier = Modifier.fillMaxWidth(),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.Start
+//        ){
+//            Checkbox(
+//                checked = state.keepLoggedIn,
+//                onCheckedChange = {
+//                    // Add Function
+//                    viewModel.onEvent(LoginPageEvents.ChangeKeepLoggedIn(it))
+//                }
+//            )
+//
+//            CustomText(
+//                text = "Keep LoggedIn",
+//                size = 20.sp,
+//                fontWeight = FontWeight.Bold,
+//                textAlign = TextAlign.Start
+//            )
+//        }
 
         Button(
             onClick = {

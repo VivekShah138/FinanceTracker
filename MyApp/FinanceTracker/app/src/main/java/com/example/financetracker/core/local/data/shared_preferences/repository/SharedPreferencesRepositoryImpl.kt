@@ -15,4 +15,12 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
     override fun setLoggedInState(keepLoggedIn: Boolean) {
         return userPreferences.setLoggedInState(keepLoggedIn)
     }
+
+    override fun getUserIdLocally(): String? {
+        return userPreferences.getUserIdLocally()
+    }
+
+    override fun setUserIdLocally(userId: String) {
+        userPreferences.setUserIdLocally(userId)
+    }
 }

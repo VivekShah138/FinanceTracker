@@ -5,7 +5,6 @@ import com.example.financetracker.auth_feature.presentation.forgot_password.Rese
 sealed class LoginPageEvents{
     data class ChangeEmail(val email: String) : LoginPageEvents()
     data class ChangePassword(val password: String) : LoginPageEvents()
-    data class ChangeKeepLoggedIn(val keepLoggedIn: Boolean): LoginPageEvents()
     data object SubmitLogIn: LoginPageEvents()
     data class ClickLoginWithGoogle(val result: GoogleSignInResult) : LoginPageEvents()
     data class LoginSuccess(val userName: String): LoginPageEvents()

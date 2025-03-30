@@ -3,4 +3,6 @@ package com.example.financetracker.core.local.domain.shared_preferences.reposito
 interface SharedPreferencesRepository {
     fun checkIsLoggedIn(): Boolean
     fun setLoggedInState(keepLoggedIn: Boolean)
+    fun getUserIdLocally(): String?
+    fun setUserIdLocally(userId: String)
 }
