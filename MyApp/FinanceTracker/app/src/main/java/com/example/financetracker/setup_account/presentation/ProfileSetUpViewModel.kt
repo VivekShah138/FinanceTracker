@@ -3,11 +3,8 @@ package com.example.financetracker.setup_account.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-<<<<<<< Updated upstream
-=======
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.setup_account.domain.model.Currency
->>>>>>> Stashed changes
 import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,19 +34,11 @@ class ProfileSetUpViewModel @Inject constructor(
 
     fun onEvent(profileSetUpEvents: ProfileSetUpEvents){
         when(profileSetUpEvents){
-            is ProfileSetUpEvents.changeCloudSync -> {
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    cloudSync = profileSetUpEvents.isChecked
-                )
-            }
-            is ProfileSetUpEvents.ChangeCurrencyExpanded -> {
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    baseCurrencyExpanded = profileSetUpEvents.expanded
-                )
-            }
+
             is ProfileSetUpEvents.SelectBaseCurrency -> {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    selectedBaseCurrency = profileSetUpEvents.currency
+                    selectedBaseCurrency = profileSetUpEvents.currency,
+                    baseCurrencyExpanded = profileSetUpEvents.expanded
                 )
             }
             ProfileSetUpEvents.LoadCountries -> {
@@ -59,11 +48,8 @@ class ProfileSetUpViewModel @Inject constructor(
             }
             is ProfileSetUpEvents.SelectCountry -> {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    selectedCountry = profileSetUpEvents.country
-                )
-            }
-            is ProfileSetUpEvents.ChangeCountryExpanded -> {
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
+                    selectedCountry = profileSetUpEvents.country,
+                    callingCode = profileSetUpEvents.callingCode,
                     countryExpanded = profileSetUpEvents.expanded
                 )
             }
@@ -80,11 +66,6 @@ class ProfileSetUpViewModel @Inject constructor(
             is ProfileSetUpEvents.ChangePhoneNumber -> {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     phoneNumber = profileSetUpEvents.phone
-                )
-            }
-            is ProfileSetUpEvents.SelectCallingCode -> {
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    callingCode = profileSetUpEvents.callingCode
                 )
             }
             ProfileSetUpEvents.LoadCurrencies -> {
@@ -146,8 +127,7 @@ class ProfileSetUpViewModel @Inject constructor(
         else{
             try {
                 val userId = useCasesWrapperSetupAccount.getUserUIDUseCase()
-<<<<<<< Updated upstream
-=======
+
 
                 val baseCurrencyCode = profileSetUpStates.value.baseCurrencyCode
                 val baseCurrencyName = profileSetUpStates.value.selectedBaseCurrency
@@ -176,13 +156,12 @@ class ProfileSetUpViewModel @Inject constructor(
                 )
 
 
->>>>>>> Stashed changes
                 useCasesWrapperSetupAccount.updateUserProfile(
                     userId = userId ?: "Unknown",
                     firstName = profileSetUpStates.value.firstName,
                     lastName = profileSetUpStates.value.lastName,
                     email = profileSetUpStates.value.email ?: "Unknown",
-                    baseCurrency = profileSetUpStates.value.selectedBaseCurrency,
+                    baseCurrency = baseCurrency,
                     country = profileSetUpStates.value.selectedCountry,
                     callingCode = profileSetUpStates.value.callingCode,
                     phoneNumber = profileSetUpStates.value.phoneNumber,
@@ -289,12 +268,16 @@ class ProfileSetUpViewModel @Inject constructor(
                 if(userProfile == null){
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details"))
                 }
-                else{
+                else {
+                    val baseCurrencyCode = userProfile.baseCurrency.keys.firstOrNull() ?: "N/A"
+                    val baseCurrencyName = userProfile.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
+
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
                         firstName = userProfile.firstName,
                         lastName = userProfile.lastName,
                         email = userProfile.email,
-                        selectedBaseCurrency = userProfile.baseCurrency,
+                        selectedBaseCurrency = baseCurrencyName,
+                        baseCurrencyCode = baseCurrencyCode,
                         selectedCountry =  userProfile.country,
                         callingCode = userProfile.callingCode,
                         phoneNumber = userProfile.phoneNumber
