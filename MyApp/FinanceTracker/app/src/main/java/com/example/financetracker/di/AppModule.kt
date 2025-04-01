@@ -44,6 +44,7 @@ import com.example.financetracker.core.local.domain.room.usecases.InsertUserProf
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 import com.example.financetracker.main_page_feature.home_page.usecases.HomePageUseCaseWrapper
+import com.example.financetracker.setup_account.data.local.data_source.CountryDao
 import com.example.financetracker.setup_account.data.local.data_source.CountryDatabase
 import com.example.financetracker.setup_account.data.local.repository.CountryLocalRepositoryImpl
 import com.example.financetracker.setup_account.data.remote.ApiClient
@@ -219,11 +220,17 @@ object AppModule {
         ).build()
     }
 
+    @Provides
+    @Singleton
+    fun provideCountryDao(db: CountryDatabase): CountryDao{
+        return db.countryDao
+    }
+
     // Country Local Repository
     @Provides
     @Singleton
-    fun provideLocalCountryRepository(db: CountryDatabase): CountryLocalRepository {
-        return CountryLocalRepositoryImpl(countryDao = db.countryDao)
+    fun provideLocalCountryRepository(db: CountryDatabase,workManager: WorkManager): CountryLocalRepository {
+        return CountryLocalRepositoryImpl(countryDao = db.countryDao,workManager)
     }
 
     // Country API

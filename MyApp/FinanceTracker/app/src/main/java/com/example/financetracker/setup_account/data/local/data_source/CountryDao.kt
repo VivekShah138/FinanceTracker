@@ -12,4 +12,7 @@ interface CountryDao {
 
     @Query("SELECT * FROM CountryEntity")
     suspend fun getAllCountries(): List<CountryEntity>
+
+    @Query("SELECT COUNT(*) FROM CountryEntity")
+    suspend fun getCountryCount(): Int
 }

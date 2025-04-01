@@ -230,7 +230,7 @@ class ProfileSetUpViewModel @Inject constructor(
                    it.name.common
                 }
 
-                useCasesWrapperSetupAccount.insertCountryLocally(sortedCountries)
+//                useCasesWrapperSetupAccount.insertCountryLocally()
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     countries = sortedCountries

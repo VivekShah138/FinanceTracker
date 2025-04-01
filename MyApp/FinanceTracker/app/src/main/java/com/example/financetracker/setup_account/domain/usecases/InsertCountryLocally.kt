@@ -6,7 +6,7 @@ import com.example.financetracker.setup_account.domain.repository.local.CountryL
 class InsertCountryLocally(
     private val countryLocalRepository: CountryLocalRepository
 ) {
-    suspend operator fun invoke(countries: List<Country>){
-        return countryLocalRepository.insertCountries(countries)
+    suspend operator fun invoke(){
+        return countryLocalRepository.insertCountries()
     }
 }

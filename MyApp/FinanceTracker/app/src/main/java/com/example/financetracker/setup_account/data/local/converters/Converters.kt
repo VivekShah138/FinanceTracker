@@ -10,22 +10,40 @@ object Converters {
 
     @TypeConverter
     fun fromIddSuffixes(suffixes: List<String>?): String? {
-        return suffixes?.joinToString(",")
+        return try{
+            suffixes?.joinToString(",")
+        }catch (e: Exception){
+            "N/A ${e.localizedMessage}"
+        }
     }
 
     @TypeConverter
     fun toIddSuffixes(data: String?): List<String>? {
-        return data?.split(",")?.map { it.trim() }
+        return try{
+            data?.split(",")?.map { it.trim() }
+        }catch (e: Exception){
+            emptyList()
+        }
+
     }
 
     @TypeConverter
     fun fromCurrencies(currencies: Map<String, Currency>?): String? {
-        return gson.toJson(currencies)
+        return try{
+            gson.toJson(currencies)
+        }catch (e: Exception){
+            "N/A ${e.localizedMessage}"
+        }
+
     }
 
     @TypeConverter
     fun toCurrencies(data: String?): Map<String, Currency>? {
-        val type = object : TypeToken<Map<String, Currency>>() {}.type
-        return gson.fromJson(data, type)
+        try {
+            val type = object : TypeToken<Map<String, Currency>>() {}.type
+            return gson.fromJson(data, type)
+        }catch (e: Exception){
+            return emptyMap()
+        }
     }
 }

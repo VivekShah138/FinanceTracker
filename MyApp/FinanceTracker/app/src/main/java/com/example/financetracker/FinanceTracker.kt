@@ -10,6 +10,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.financetracker.core.local.data.room.data_source.category.PrepopulateCategoryDatabaseWorker
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.setup_account.data.local.data_source.PrepopulateCountryDatabaseWorker
+import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,14 +23,21 @@ class FinanceTracker : Application(), Configuration.Provider {
 
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var predefinedCategoriesUseCaseWrapper: PredefinedCategoriesUseCaseWrapper
+    @Inject lateinit var useCasesWrapperSetupAccount: UseCasesWrapperSetupAccount
+
+    private val applicationScope = CoroutineScope(Dispatchers.IO)
 
     override fun onCreate() {
         super.onCreate()
 
-        Log.d("WorkManager", "Enqueuing PrepopulateCategoryDatabaseWorker task")
-        CoroutineScope(Dispatchers.Main).launch {
+        Log.d("WorkManager", "Enqueuing Workers")
+
+        applicationScope.launch {
             predefinedCategoriesUseCaseWrapper.insertPredefinedCategories()
+            useCasesWrapperSetupAccount.insertCountryLocally()
         }
+
+
 
     }
 

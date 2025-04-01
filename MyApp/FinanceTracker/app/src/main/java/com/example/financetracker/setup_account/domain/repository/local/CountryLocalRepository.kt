@@ -5,6 +5,6 @@ import com.example.financetracker.setup_account.domain.model.Country
 interface CountryLocalRepository {
 
     suspend fun getCountries(): List<Country>
-    suspend fun insertCountries(countries: List<Country>)
+    suspend fun insertCountries()
 
 }
