@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.androidx.hilt.work)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -97,13 +98,14 @@ dependencies {
     implementation(libs.converter.gson)
 
     // Room
-    val roomVersion = "2.6.1" // Use the latest version
-
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
 
     // KSP dependency for Room compiler
     ksp(libs.androidx.room.compiler)
+
+    //Work Manager
+    implementation(libs.androidx.work.runtime.ktx)
 
 
 }

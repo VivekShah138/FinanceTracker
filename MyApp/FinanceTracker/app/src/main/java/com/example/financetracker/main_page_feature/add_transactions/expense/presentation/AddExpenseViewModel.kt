@@ -22,7 +22,7 @@ class AddExpenseViewModel @Inject constructor(
     val addExpenseStates : StateFlow<AddExpenseStates> = _addExpenseStates.asStateFlow()
 
     init {
-        saveFromJSON()
+//        saveFromJSON()
     }
 
     fun onEvent(addExpenseEvents: AddExpenseEvents){

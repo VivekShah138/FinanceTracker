@@ -2,7 +2,11 @@ package com.example.financetracker.core.local.data.room.repository
 
 import android.content.Context
 import android.util.Log
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDao
+import com.example.financetracker.core.local.data.room.data_source.category.PrepopulateCategoryDatabaseWorker
 import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.core.local.domain.room.model.toDomain
 import com.example.financetracker.core.local.domain.room.model.toEntity
@@ -14,7 +18,8 @@ import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(
     private val categoryDao: CategoryDao,
-    private val context: Context
+//    private val context: Context,
+    private val workManager: WorkManager
 ): CategoryRepository {
     override suspend fun getCategories(type: String): Flow<List<Category>> {
         return categoryDao.getCategories(type).map { entities ->
@@ -37,19 +42,12 @@ class CategoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertPredefinedCategories() {
-        Log.d("Reached","Reached CategoryImplementation")
-//        if (getCategoriesCount() == 0) {
-            Log.d("Reached","Reached CategoryImplementation inside if")
-            val jsonString = JsonUtils.loadJsonFromAssets(context, "categories.json")
-            if (jsonString != null) {
-                Log.d("Reached","Reached CategoryImplementation inside if jsonString not null")
-                Log.d("Reached","jsonString: $jsonString")
-            }
-            jsonString?.let {
-                val predefinedCategories = JsonUtils.parseJsonToCategories(it)
-                Log.d("Reached","predefinedCategories: $predefinedCategories")
-                insertCategories(predefinedCategories)
-            }
-//        }
+        val workRequest = OneTimeWorkRequestBuilder<PrepopulateCategoryDatabaseWorker>()
+            .build()
+        workManager.enqueueUniqueWork(
+            "prepopulate_db",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }

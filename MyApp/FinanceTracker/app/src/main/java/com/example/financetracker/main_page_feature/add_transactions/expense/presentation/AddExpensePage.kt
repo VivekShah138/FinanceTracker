@@ -135,7 +135,7 @@ fun AddExpensePage(
                     category.name
                 },
                 onCustomAddClick = {
-                    viewModel.saveFromJSON()
+//                    viewModel.saveFromJSON()
                     Log.d("Reached","Reached Page")
                 },
                 selectedCategory = states.category,

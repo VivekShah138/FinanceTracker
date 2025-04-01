@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.example.financetracker.auth_feature.domain.usecases.InsertUIDLocally
 import com.example.financetracker.auth_feature.domain.usecases.KeepUserLoggedIn
 import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
@@ -26,6 +27,7 @@ import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.core.cloud.domain.usecases.SaveUserProfileUseCase
 import com.example.financetracker.core.core_domain.usecase.GetUIDLocally
 import com.example.financetracker.core.core_domain.usecase.UseCasesWrapperCore
+import com.example.financetracker.core.local.data.room.data_source.category.CategoryDao
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDatabase
 import com.example.financetracker.core.local.data.room.data_source.category.migration.CATEGORY_MIGRATION_1_2
 import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDatabase
@@ -54,9 +56,11 @@ import com.example.financetracker.setup_account.domain.usecases.ValidateName
 import com.example.financetracker.setup_account.domain.usecases.ValidatePhoneNumber
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -122,11 +126,25 @@ object AppModule {
         ).addMigrations(CATEGORY_MIGRATION_1_2).build()
     }
 
-    // Category Dao
     @Provides
     @Singleton
-    fun provideCategoryRepository(db: CategoryDatabase, @ApplicationContext context: Context): CategoryRepository {
-        return CategoryRepositoryImpl(categoryDao = db.categoryDao, context = context)
+    fun provideCategoryDao(db:CategoryDatabase): CategoryDao{
+        return db.categoryDao
+    }
+
+    //CategoryWorkManager
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
+        return WorkManager.getInstance(context)
+    }
+
+
+    // Category Repository
+    @Provides
+    @Singleton
+    fun provideCategoryRepository(db: CategoryDatabase, workManager: WorkManager): CategoryRepository {
+        return CategoryRepositoryImpl(categoryDao = db.categoryDao, workManager = workManager)
     }
 
     // CategoryUseCases
@@ -138,8 +156,6 @@ object AppModule {
             insertPredefinedCategories = InsertPredefinedCategories(categoryRepository)
         )
     }
-
-
 
 
 
@@ -245,6 +261,7 @@ object AppModule {
         )
     }
 
+    // HomePageUseCases
     @Provides
     @Singleton
     fun provideHomePageUseCases(
