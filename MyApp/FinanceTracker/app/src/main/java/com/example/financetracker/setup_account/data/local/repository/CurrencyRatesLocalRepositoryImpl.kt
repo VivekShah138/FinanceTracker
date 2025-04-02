@@ -85,12 +85,16 @@ class CurrencyRatesLocalRepositoryImpl(
                     .setRequiredNetworkType(NetworkType.CONNECTED) // Only run if internet is available
                     .build()
             )
+            .setBackoffCriteria(
+                BackoffPolicy.EXPONENTIAL, // Ensures exponential retry delay
+                10, TimeUnit.MINUTES       // Starts retrying after 10 minutes, doubles each time
+            )
             .addTag("CurrencyUpdateWorker")
             .build()
 
         workManager.enqueueUniquePeriodicWork(
             "CurrencyUpdateWorker",
-            ExistingPeriodicWorkPolicy.UPDATE, // Ensures only one instance runs
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE, // Ensures it re-enqueues correctly if rescheduled
             workRequest
         )
 

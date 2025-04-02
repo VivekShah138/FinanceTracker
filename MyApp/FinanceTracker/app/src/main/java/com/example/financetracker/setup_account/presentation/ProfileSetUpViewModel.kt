@@ -368,7 +368,7 @@ class ProfileSetUpViewModel @Inject constructor(
             Log.d("WorkManagerCurrencies","one time function called inside setUp")
             Log.d("WorkManagerCurrencyRates","currentBaseCurrency ${_profileSetUpStates.value.selectedBaseCurrency}")
             Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
-            if(!oldBaseCurrency.isNullOrEmpty() || oldBaseCurrency != _profileSetUpStates.value.selectedBaseCurrency){
+            if(!oldBaseCurrency.isNullOrEmpty() && oldBaseCurrency != _profileSetUpStates.value.selectedBaseCurrency){
                 Log.d("WorkManagerCurrencyRates","insideIf ProfileSetUpViewModel")
                 useCasesWrapperSetupAccount.setCurrencyRatesUpdated(isUpdated = false)
                 useCasesWrapperSetupAccount.insertCurrencyRatesLocalOneTime()
