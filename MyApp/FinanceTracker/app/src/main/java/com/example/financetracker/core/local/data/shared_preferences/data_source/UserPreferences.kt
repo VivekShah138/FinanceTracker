@@ -11,6 +11,7 @@ class UserPreferences @Inject constructor(
     companion object{
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
         private const val KEY_USER_ID = "user_id"
+        private const val CURRENCY_RATES_UPDATED = "currency_rates_updated"
     }
 
     fun isLoggedIn(): Boolean{
@@ -37,6 +38,16 @@ class UserPreferences @Inject constructor(
         sharedPreferences.edit(){
             remove(KEY_USER_ID)
         }
+    }
+
+    fun setCurrencyRatesUpdated(isUpdated: Boolean){
+        sharedPreferences.edit(){
+            putBoolean(CURRENCY_RATES_UPDATED,isUpdated)
+        }
+    }
+
+    fun getCurrencyRatesUpdated(): Boolean{
+        return sharedPreferences.getBoolean(CURRENCY_RATES_UPDATED,false)
     }
 
     fun clearLogInPreference(){

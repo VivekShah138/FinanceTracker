@@ -4,5 +4,6 @@ import com.example.financetracker.setup_account.domain.model.CurrencyResponse
 
 interface CurrencyRatesLocalRepository {
     suspend fun getCurrencyRatesLocal(baseCurrency: String): CurrencyResponse?
-    suspend fun insertCurrencyRatesLocal()
+    suspend fun insertCurrencyRatesLocalOneTime()
+    suspend fun insertCurrencyRatesLocalPeriodically()
 }

@@ -6,4 +6,6 @@ interface SharedPreferencesRepository {
     fun getUserIdLocally(): String?
     fun setUserIdLocally(userId: String)
     fun removeUserIdLocally()
+    fun setCurrencyRatesUpdated(isUpdated: Boolean)
+    fun getCurrencyRatesUpdated(): Boolean
 }

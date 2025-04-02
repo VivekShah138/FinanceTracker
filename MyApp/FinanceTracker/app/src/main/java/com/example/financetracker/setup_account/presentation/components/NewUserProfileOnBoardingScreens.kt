@@ -1,6 +1,7 @@
 package com.example.financetracker.setup_account.presentation.components
 
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -228,6 +229,8 @@ fun NewUserProfileOnBoardingScreens(
                                 currencySymbol = currencySymbol,
                                 expanded = false
                             )
+
+//                            viewModel.updateCurrencyRates()
                         }
                     )
                 }

@@ -27,4 +27,12 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
     override fun removeUserIdLocally() {
         userPreferences.removeUserIdLocally()
     }
+
+    override fun setCurrencyRatesUpdated(isUpdated: Boolean) {
+        userPreferences.setCurrencyRatesUpdated(isUpdated)
+    }
+
+    override fun getCurrencyRatesUpdated(): Boolean {
+        return userPreferences.getCurrencyRatesUpdated()
+    }
 }

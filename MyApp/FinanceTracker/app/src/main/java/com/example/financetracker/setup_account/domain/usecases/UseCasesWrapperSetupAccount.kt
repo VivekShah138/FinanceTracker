@@ -6,6 +6,8 @@ import com.example.financetracker.core.cloud.domain.usecases.GetUserUIDUseCase
 import com.example.financetracker.core.core_domain.usecase.GetUIDLocally
 import com.example.financetracker.core.local.domain.room.usecases.GetUserProfileFromLocalDb
 import com.example.financetracker.core.local.domain.room.usecases.InsertUserProfileToLocalDb
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
 
 
 data class UseCasesWrapperSetupAccount(
@@ -22,5 +24,8 @@ data class UseCasesWrapperSetupAccount(
     val insertUserProfileToLocalDb: InsertUserProfileToLocalDb,
     val getUserProfileFromLocalDb: GetUserProfileFromLocalDb,
     val getUIDLocally: GetUIDLocally,
-    val insertCurrencyRatesLocal: InsertCurrencyRatesLocal
+    val insertCurrencyRatesLocalOneTime: InsertCurrencyRatesLocalOneTime,
+    val insertCurrencyRatesLocalPeriodically: InsertCurrencyRatesLocalPeriodically,
+    val getCurrencyRatesUpdated: GetCurrencyRatesUpdated,
+    val setCurrencyRatesUpdated: SetCurrencyRatesUpdated
 )

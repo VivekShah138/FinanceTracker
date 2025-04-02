@@ -31,9 +31,6 @@ class FinanceTracker : Application(), Configuration.Provider {
             predefinedCategoriesUseCaseWrapper.insertPredefinedCategories()
             useCasesWrapperSetupAccount.insertCountryLocally()
         }
-
-
-
     }
 
     // Correctly override getWorkManagerConfiguration

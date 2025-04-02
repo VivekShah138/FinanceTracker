@@ -182,12 +182,15 @@ fun ProfileSetUp(
                     }
                 },
                 onDismissRequest = {
-                    ProfileSetUpEvents.SelectBaseCurrency(
-                        currency = states.selectedBaseCurrency,
-                        currencyCode = states.baseCurrencyCode,
-                        currencySymbol = states.baseCurrencySymbol,
-                        expanded = !states.baseCurrencyExpanded
+                    viewModel.onEvent(
+                        ProfileSetUpEvents.SelectBaseCurrency(
+                            currency = states.selectedBaseCurrency,
+                            currencyCode = states.baseCurrencyCode,
+                            currencySymbol = states.baseCurrencySymbol,
+                            expanded = !states.baseCurrencyExpanded
+                        )
                     )
+
                 },
                 displayText = {
                     it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
@@ -206,11 +209,13 @@ fun ProfileSetUp(
                     Log.d("ProfileSetUp","currencyCode BaseCurrency $currencySymbol")
                     Log.d("ProfileSetUp","currencySymbol BaseCurrency $currencyCode")
 
-                    ProfileSetUpEvents.SelectBaseCurrency(
-                        currency = currencyName,
-                        currencyCode = currencyCode,
-                        currencySymbol = currencySymbol,
-                        expanded = false
+                    viewModel.onEvent(
+                        ProfileSetUpEvents.SelectBaseCurrency(
+                            currency = currencyName,
+                            currencyCode = currencyCode,
+                            currencySymbol = currencySymbol,
+                            expanded = false
+                        )
                     )
                 }
             )

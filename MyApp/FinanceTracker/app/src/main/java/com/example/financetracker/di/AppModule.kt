@@ -44,6 +44,8 @@ import com.example.financetracker.core.local.domain.room.usecases.InsertPredefin
 import com.example.financetracker.core.local.domain.room.usecases.InsertUserProfileToLocalDb
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
 import com.example.financetracker.main_page_feature.home_page.data.repository.HomePageRepositoryImpl
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
@@ -61,7 +63,8 @@ import com.example.financetracker.setup_account.data.remote.repository.CurrencyR
 import com.example.financetracker.setup_account.domain.repository.local.CurrencyRatesLocalRepository
 import com.example.financetracker.setup_account.domain.repository.remote.CurrencyRatesRemoteRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryDetailsUseCase
-import com.example.financetracker.setup_account.domain.usecases.InsertCurrencyRatesLocal
+import com.example.financetracker.setup_account.domain.usecases.InsertCurrencyRatesLocalOneTime
+import com.example.financetracker.setup_account.domain.usecases.InsertCurrencyRatesLocalPeriodically
 import com.example.financetracker.setup_account.domain.usecases.UpdateUserProfile
 import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
 import com.example.financetracker.setup_account.domain.usecases.ValidateCountry
@@ -69,7 +72,6 @@ import com.example.financetracker.setup_account.domain.usecases.ValidateName
 import com.example.financetracker.setup_account.domain.usecases.ValidatePhoneNumber
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.User
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -294,10 +296,11 @@ object AppModule {
     // Currency Rates Local Repository
     @Provides
     @Singleton
-    fun provideCurrencyRatesLocalRepository(currencyRatesDao: CurrencyRatesDao,workManager: WorkManager): CurrencyRatesLocalRepository{
+    fun provideCurrencyRatesLocalRepository(currencyRatesDao: CurrencyRatesDao,workManager: WorkManager,userPreferences: UserPreferences): CurrencyRatesLocalRepository{
         return CurrencyRatesLocalRepositoryImpl(
             currencyRatesDao =  currencyRatesDao,
-            workManager = workManager
+            workManager = workManager,
+            userPreferences = userPreferences
         )
     }
 
@@ -326,7 +329,10 @@ object AppModule {
             insertUserProfileToLocalDb = InsertUserProfileToLocalDb(userProfileRepository),
             getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository),
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository),
-            insertCurrencyRatesLocal = InsertCurrencyRatesLocal(currencyRatesLocalRepository)
+            insertCurrencyRatesLocalOneTime = InsertCurrencyRatesLocalOneTime(currencyRatesLocalRepository),
+            insertCurrencyRatesLocalPeriodically = InsertCurrencyRatesLocalPeriodically(currencyRatesLocalRepository),
+            getCurrencyRatesUpdated = GetCurrencyRatesUpdated(sharedPreferencesRepository),
+            setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository)
         )
     }
 
@@ -349,7 +355,9 @@ object AppModule {
                 sharedPreferencesRepository = sharedPreferencesRepository
                 , firebaseRepository = firebaseRepository
             ),
-            getUserProfileLocal = GetUserProfileLocal(homePageRepository)
+            getUserProfileLocal = GetUserProfileLocal(homePageRepository),
+            setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository),
+            getCurrencyRatesUpdated = GetCurrencyRatesUpdated(sharedPreferencesRepository)
         )
     }
 }

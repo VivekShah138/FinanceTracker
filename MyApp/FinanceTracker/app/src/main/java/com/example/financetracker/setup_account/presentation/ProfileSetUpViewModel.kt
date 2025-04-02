@@ -3,7 +3,6 @@ package com.example.financetracker.setup_account.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.setup_account.domain.model.Currency
 import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
@@ -29,14 +28,33 @@ class ProfileSetUpViewModel @Inject constructor(
     private val profileSetUpEventChannel = Channel<ProfileUpdateEvent>()
     val profileSetUpValidationEvents = profileSetUpEventChannel.receiveAsFlow()
 
+    private var oldBaseCurrency = _profileSetUpStates.value.selectedBaseCurrency
+
+
+
     init {
         getProfileInfo()
-        val userId = useCasesWrapperSetupAccount.getUIDLocally()
+        val userId = useCasesWrapperSetupAccount.getUIDLocally() ?: "N/A"
         Log.d("UserId","UserId $userId")
 
-        testCurrencyRateWorkManager()
-        Log.d("WorkManagerCurrencyRates","function called")
+        setOldBaseCurrency()
 
+        Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
+
+//        Log.d("WorkManagerCurrencyRates","function called")
+
+    }
+
+    private fun setOldBaseCurrency() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val userId = useCasesWrapperSetupAccount.getUIDLocally() ?: "N/A"
+            val userProfile = useCasesWrapperSetupAccount.getUserProfileFromLocalDb(userId)
+            val baseCurrency = userProfile?.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
+            Log.d("WorkManagerCurrencyRates","baseCurrency $baseCurrency")
+
+            oldBaseCurrency = baseCurrency
+            Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
+        }
     }
 
     fun onEvent(profileSetUpEvents: ProfileSetUpEvents){
@@ -185,6 +203,9 @@ class ProfileSetUpViewModel @Inject constructor(
                     callingCode = profileSetUpStates.value.callingCode,
                     phoneNumber = profileSetUpStates.value.phoneNumber,
                 )
+
+                updateCurrencyRates()
+
                 profileSetUpEventChannel.send(ProfileUpdateEvent.Success)
             }catch (e:Exception){
                 val errorMessage = e.localizedMessage
@@ -255,6 +276,15 @@ class ProfileSetUpViewModel @Inject constructor(
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
                 )
+
+                val sortedCountriesLocal = useCasesWrapperSetupAccount.getCountryLocally().sortedBy {
+                    it.name.common
+                }.distinctBy {
+                    it.name.common
+                }
+                _profileSetUpStates.value = profileSetUpStates.value.copy(
+                    countries = sortedCountriesLocal
+                )
             }
         }
     }
@@ -277,6 +307,17 @@ class ProfileSetUpViewModel @Inject constructor(
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
                 )
+                val sortedCurrenciesLocally = useCasesWrapperSetupAccount.getCountryLocally().sortedBy {
+                    it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+
+                }.distinctBy {
+                    it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                }
+
+                _profileSetUpStates.value = profileSetUpStates.value.copy(
+                    currencies = sortedCurrenciesLocally
+                )
+
             }
         }
     }
@@ -321,9 +362,18 @@ class ProfileSetUpViewModel @Inject constructor(
         }
     }
 
-    private fun testCurrencyRateWorkManager(){
+
+    fun updateCurrencyRates(){
         viewModelScope.launch(Dispatchers.IO) {
-            useCasesWrapperSetupAccount.insertCurrencyRatesLocal()
+            Log.d("WorkManagerCurrencies","one time function called inside setUp")
+            Log.d("WorkManagerCurrencyRates","currentBaseCurrency ${_profileSetUpStates.value.selectedBaseCurrency}")
+            Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
+            if(!oldBaseCurrency.isNullOrEmpty() || oldBaseCurrency != _profileSetUpStates.value.selectedBaseCurrency){
+                Log.d("WorkManagerCurrencyRates","insideIf ProfileSetUpViewModel")
+                useCasesWrapperSetupAccount.setCurrencyRatesUpdated(isUpdated = false)
+                useCasesWrapperSetupAccount.insertCurrencyRatesLocalOneTime()
+            }
+
         }
     }
 

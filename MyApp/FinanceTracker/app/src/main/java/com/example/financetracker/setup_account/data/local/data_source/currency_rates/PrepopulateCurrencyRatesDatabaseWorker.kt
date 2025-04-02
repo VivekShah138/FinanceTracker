@@ -27,16 +27,12 @@ class PrepopulateCurrencyRatesDatabaseWorker @AssistedInject constructor(
         val TAG = "WorkManagerCurrencies"
         Log.d(TAG, "Worker started")
 
-        // Fetch user ID
         val userUID = userPreferences.getUserIdLocally()
         if (userUID.isNullOrEmpty()) {
             Log.e(TAG, "User ID is null or empty. Cannot proceed.")
             return Result.failure()
         }
 
-        Log.d(TAG, "UserUID: $userUID")
-
-        // Fetch user profile and base currency
         val baseCurrency = userProfileDao.getUserProfile(userUID)?.baseCurrency
         val baseCurrencyCode = CountryMapper.toCurrencies(baseCurrency)?.keys?.firstOrNull()
 
@@ -45,49 +41,32 @@ class PrepopulateCurrencyRatesDatabaseWorker @AssistedInject constructor(
             return Result.failure()
         }
 
-        Log.d(TAG, "Base Currency: $baseCurrencyCode")
-
         return try {
             Log.d(TAG, "Fetching exchange rates for base currency: $baseCurrencyCode")
-
             val currencyRates = try {
                 api.getExchangeRates(baseCurrency = baseCurrencyCode)
             } catch (e: Exception) {
                 Log.e(TAG, "Error fetching exchange rates from API: ${e.message}")
 
                 return if (e is java.net.UnknownHostException || e is java.net.ConnectException) {
-                    Log.d(TAG, "No Internet. Retrying...")
-                    Result.retry()
+                    Log.d(TAG, "No Internet. Retrying in 30 seconds...")
+                    Result.retry()  // Retry after backoff delay (30s)
                 } else {
                     Result.failure()
                 }
             }
 
-            Log.d(TAG, "Received exchange rates: $currencyRates")
-
-            // Convert to Room entity
-            val currencyRatesEntity = try {
-                CurrencyRatesMapper.fromResponseToEntity(currencyRates)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error mapping currency rates: ${e.message}")
-                return Result.failure()
-            }
-
-            Log.d(TAG, "Mapped CurrencyRatesEntity: $currencyRatesEntity")
-
-            // Insert into Room database
+            val currencyRatesEntity = CurrencyRatesMapper.fromResponseToEntity(currencyRates)
             currencyRatesDao.insertCurrencyRates(currencyRatesEntity)
             Log.d(TAG, "Currency rates inserted successfully.")
-
-            // Verify insertion
-            val insertedData = currencyRatesDao.getCurrencyRates(baseCurrencyCode)
-            Log.d(TAG, "Retrieved after insertion: $insertedData")
+            userPreferences.setCurrencyRatesUpdated(true)
+            Log.d(TAG, "Set Currency rates updated to TRUE successfully.")
 
             Result.success()
         } catch (e: Exception) {
             Log.e(TAG, "Error inserting currency rates: ${e.message}")
-            e.printStackTrace()
             Result.failure()
         }
     }
 }
+

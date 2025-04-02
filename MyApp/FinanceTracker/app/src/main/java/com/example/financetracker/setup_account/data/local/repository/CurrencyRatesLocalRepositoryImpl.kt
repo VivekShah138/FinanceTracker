@@ -9,6 +9,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
 import com.example.financetracker.setup_account.data.local.data_source.country.PrepopulateCountryDatabaseWorker
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesDao
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesMapper
@@ -19,6 +20,7 @@ import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class CurrencyRatesLocalRepositoryImpl(
+    private val userPreferences: UserPreferences,
     private val currencyRatesDao: CurrencyRatesDao,
     private val workManager: WorkManager
 ): CurrencyRatesLocalRepository {
@@ -44,33 +46,72 @@ class CurrencyRatesLocalRepositoryImpl(
     }
 
 
-    override suspend fun insertCurrencyRatesLocal() {
-        try {
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED) // Ensures work runs only when connected
-                .build()
-
+    override suspend fun insertCurrencyRatesLocalOneTime() {
+        if (!userPreferences.getCurrencyRatesUpdated()) {
+            Log.d("WorkManagerCurrencies", "Currency rates is not updated One Time Request Started.")
             val workRequest = OneTimeWorkRequestBuilder<PrepopulateCurrencyRatesDatabaseWorker>()
-//            .setConstraints(constraints) // Uncomment if network check is needed
-                .setBackoffCriteria( // Set retry strategy
-                    BackoffPolicy.EXPONENTIAL,
-                    30, TimeUnit.SECONDS // Minimum delay before retry
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build()
                 )
-                .addTag("PrepopulateCurrencyRates") // Corrected tag name for better tracking
+                .setBackoffCriteria(
+                    BackoffPolicy.EXPONENTIAL,
+                    30, TimeUnit.SECONDS
+                )
+                .addTag("PrepopulateCurrencyRates")
                 .build()
-
-            Log.d("WorkManagerCurrencyRates", "Enqueuing WorkManager task: $workRequest")
 
             workManager.enqueueUniqueWork(
-                "PrepopulateCurrencyRates",  // Unique work name for currency rates
-                ExistingWorkPolicy.KEEP,  // Prevents duplicate work requests
+                "PrepopulateCurrencyRates",
+                ExistingWorkPolicy.KEEP,
                 workRequest
             )
 
-            Log.d("WorkManagerCurrencyRates", "WorkManager task successfully enqueued.")
-        } catch (e: Exception) {
-            Log.e("WorkManagerCurrencyRates", "Error enqueuing WorkManager task: ${e.message}")
-            e.printStackTrace()
+            Log.d("WorkManagerCurrencyRates", "One-time WorkManager task successfully enqueued.")
+        } else {
+            Log.d("WorkManagerCurrencyRates", "Currency rates already updated. Skipping one-time worker.")
         }
+
     }
+
+    override suspend fun insertCurrencyRatesLocalPeriodically() {
+        val workRequest = PeriodicWorkRequestBuilder<PrepopulateCurrencyRatesDatabaseWorker>(
+            24, TimeUnit.HOURS
+        )
+            .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS) // Start at 6:00 AM
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED) // Only run if internet is available
+                    .build()
+            )
+            .addTag("CurrencyUpdateWorker")
+            .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            "CurrencyUpdateWorker",
+            ExistingPeriodicWorkPolicy.UPDATE, // Ensures only one instance runs
+            workRequest
+        )
+
+        Log.d("WorkManagerCurrencyRates", "Scheduled daily currency update at 6:00 AM")
+    }
+
+
+    private fun calculateInitialDelay(): Long {
+        val now = Calendar.getInstance()
+        val targetTime = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 6)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
+
+        if (now.after(targetTime)) {
+            targetTime.add(Calendar.DAY_OF_YEAR, 1) // Schedule for next day if time has passed
+        }
+
+        return targetTime.timeInMillis - now.timeInMillis
+    }
+
+
 }
