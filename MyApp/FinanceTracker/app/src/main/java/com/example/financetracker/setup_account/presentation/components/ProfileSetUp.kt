@@ -1,5 +1,6 @@
 package com.example.financetracker.setup_account.presentation.components
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -130,6 +131,11 @@ fun ProfileSetUp(
                     val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                     val currencyCode = firstCurrency?.key ?: "N/A"
 
+                    Log.d("ProfileSetUp","firstCurrency Country $firstCurrency")
+                    Log.d("ProfileSetUp","currencyName Country $currencyName")
+                    Log.d("ProfileSetUp","currencyCode Country $currencySymbol")
+                    Log.d("ProfileSetUp","currencySymbol Country $currencyCode")
+
                     viewModel.onEvent(
                         ProfileSetUpEvents.SelectBaseCurrency(
                             currency = currencyName,
@@ -188,9 +194,17 @@ fun ProfileSetUp(
                 },
                 onItemSelect = {
                     val firstCurrency = it.currencies?.entries?.firstOrNull()
+
+
+
                     val currencyName = firstCurrency?.value?.name ?: "N/A"
                     val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                     val currencyCode = firstCurrency?.key ?: "N/A"
+
+                    Log.d("ProfileSetUp","firstCurrency BaseCurrency $firstCurrency")
+                    Log.d("ProfileSetUp","currencyName BaseCurrency $currencyName")
+                    Log.d("ProfileSetUp","currencyCode BaseCurrency $currencySymbol")
+                    Log.d("ProfileSetUp","currencySymbol BaseCurrency $currencyCode")
 
                     ProfileSetUpEvents.SelectBaseCurrency(
                         currency = currencyName,

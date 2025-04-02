@@ -1,11 +1,11 @@
-package com.example.financetracker.setup_account.data.local.converters
+package com.example.financetracker.setup_account.data.local.data_source.country
 
 import androidx.room.TypeConverter
 import com.example.financetracker.setup_account.domain.model.Currency
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-object Converters {
+object CountryMapper {
     private val gson = Gson()
 
     @TypeConverter

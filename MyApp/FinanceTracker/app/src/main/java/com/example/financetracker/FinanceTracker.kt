@@ -5,12 +5,7 @@ import android.app.Application
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import com.example.financetracker.core.local.data.room.data_source.category.PrepopulateCategoryDatabaseWorker
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
-import com.example.financetracker.setup_account.data.local.data_source.PrepopulateCountryDatabaseWorker
 import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope

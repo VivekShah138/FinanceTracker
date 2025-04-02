@@ -1,4 +1,4 @@
-package com.example.financetracker.setup_account.data.local.data_source
+package com.example.financetracker.setup_account.data.local.data_source.country
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

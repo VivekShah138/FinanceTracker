@@ -21,5 +21,6 @@ data class UseCasesWrapperSetupAccount(
     val insertCountryLocally: InsertCountryLocally,
     val insertUserProfileToLocalDb: InsertUserProfileToLocalDb,
     val getUserProfileFromLocalDb: GetUserProfileFromLocalDb,
-    val getUIDLocally: GetUIDLocally
+    val getUIDLocally: GetUIDLocally,
+    val insertCurrencyRatesLocal: InsertCurrencyRatesLocal
 )

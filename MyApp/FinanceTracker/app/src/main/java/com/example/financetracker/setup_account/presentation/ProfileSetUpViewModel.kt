@@ -3,6 +3,7 @@ package com.example.financetracker.setup_account.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.setup_account.domain.model.Currency
 import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
@@ -32,6 +33,10 @@ class ProfileSetUpViewModel @Inject constructor(
         getProfileInfo()
         val userId = useCasesWrapperSetupAccount.getUIDLocally()
         Log.d("UserId","UserId $userId")
+
+        testCurrencyRateWorkManager()
+        Log.d("WorkManagerCurrencyRates","function called")
+
     }
 
     fun onEvent(profileSetUpEvents: ProfileSetUpEvents){
@@ -40,7 +45,9 @@ class ProfileSetUpViewModel @Inject constructor(
             is ProfileSetUpEvents.SelectBaseCurrency -> {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     selectedBaseCurrency = profileSetUpEvents.currency,
-                    baseCurrencyExpanded = profileSetUpEvents.expanded
+                    baseCurrencyExpanded = profileSetUpEvents.expanded,
+                    baseCurrencyCode = profileSetUpEvents.currencyCode,
+                    baseCurrencySymbol = profileSetUpEvents.currencySymbol
                 )
             }
             ProfileSetUpEvents.LoadCountries -> {
@@ -135,13 +142,22 @@ class ProfileSetUpViewModel @Inject constructor(
                 val baseCurrencyName = profileSetUpStates.value.selectedBaseCurrency
                 val baseCurrencySymbol = profileSetUpStates.value.baseCurrencySymbol
 
+                Log.d("ProfileSetUpViewModel","BaseCurrencyCode firebaseUpdate $baseCurrencyCode")
+                Log.d("ProfileSetUpViewModel","BaseCurrencyName firebaseUpdate $baseCurrencyName")
+                Log.d("ProfileSetUpViewModel","BaseCurrencySymbol firebaseUpdate $baseCurrencySymbol")
+
                 // Create the Currency object
                 val selectedCurrency = Currency(name = baseCurrencyName, symbol = baseCurrencySymbol)
+
+                Log.d("ProfileSetUpViewModel","selectedCurrency firebaseUpdate $selectedCurrency")
 
                 // Create the baseCurrency map with the code as key and the map as value
                 val baseCurrency: Map<String, Currency> = mapOf(
                     baseCurrencyCode to selectedCurrency  // Map the code to the map of currency details
                 )
+
+                Log.d("ProfileSetUpViewModel","baseCurrency firebaseUpdate $baseCurrency")
+
 
                 // Save To LocalDb
                 useCasesWrapperSetupAccount.insertUserProfileToLocalDb(
@@ -276,6 +292,11 @@ class ProfileSetUpViewModel @Inject constructor(
                 else {
                     val baseCurrencyCode = userProfile.baseCurrency.keys.firstOrNull() ?: "N/A"
                     val baseCurrencyName = userProfile.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
+                    val baseCurrencySymbol = userProfile.baseCurrency?.values?.firstOrNull()?.symbol ?: "N/A"
+
+                    Log.d("ProfileSetUpViewModel","baseCurrencyCode Firebase Receive $baseCurrencyCode")
+                    Log.d("ProfileSetUpViewModel","baseCurrencyName Firebase Receive $baseCurrencyName")
+                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol Firebase Receive $baseCurrencySymbol")
 
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
                         firstName = userProfile.firstName,
@@ -283,14 +304,26 @@ class ProfileSetUpViewModel @Inject constructor(
                         email = userProfile.email,
                         selectedBaseCurrency = baseCurrencyName,
                         baseCurrencyCode = baseCurrencyCode,
+                        baseCurrencySymbol = baseCurrencySymbol,
                         selectedCountry =  userProfile.country,
                         callingCode = userProfile.callingCode,
                         phoneNumber = userProfile.phoneNumber
                     )
+
+                    Log.d("ProfileSetUpViewModel","baseCurrencyCode state ${_profileSetUpStates.value.baseCurrencyCode}")
+                    Log.d("ProfileSetUpViewModel","baseCurrencyName state ${_profileSetUpStates.value.selectedBaseCurrency}")
+                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol state ${_profileSetUpStates.value.baseCurrencySymbol}")
+
                 }
             }catch (e:Exception){
                 profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details"))
             }
+        }
+    }
+
+    private fun testCurrencyRateWorkManager(){
+        viewModelScope.launch(Dispatchers.IO) {
+            useCasesWrapperSetupAccount.insertCurrencyRatesLocal()
         }
     }
 

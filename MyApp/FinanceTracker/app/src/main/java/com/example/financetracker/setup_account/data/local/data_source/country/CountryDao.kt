@@ -1,7 +1,6 @@
-package com.example.financetracker.setup_account.data.local.data_source
+package com.example.financetracker.setup_account.data.local.data_source.country
 
 import androidx.room.Dao
-import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Upsert
 
