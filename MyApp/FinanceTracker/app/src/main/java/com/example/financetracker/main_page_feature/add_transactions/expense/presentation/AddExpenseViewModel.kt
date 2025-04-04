@@ -3,10 +3,11 @@ package com.example.financetracker.main_page_feature.add_transactions.expense.pr
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.main_page_feature.add_transactions.domain.model.Transactions
 import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.AddExpenseUseCasesWrapper
+import com.example.financetracker.setup_account.domain.model.Currency
 import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -70,6 +72,12 @@ class AddExpenseViewModel @Inject constructor(
                 )
             }
 
+            is AddExpenseEvents.ChangeRecurringItemState -> {
+                _addExpenseStates.value = addExpenseStates.value.copy(
+                    isRecurring = addExpenseEvents.state
+                )
+            }
+
             is AddExpenseEvents.ChangeTransactionName -> {
                 _addExpenseStates.value = addExpenseStates.value.copy(
                     transactionName = addExpenseEvents.name
@@ -113,24 +121,19 @@ class AddExpenseViewModel @Inject constructor(
                     transactionPrice = addExpenseEvents.price
                 )
             }
-            is AddExpenseEvents.ChangeTransactionQuantity -> {
-                _addExpenseStates.value = addExpenseStates.value.copy(
-                    transactionQuantity = addExpenseEvents.quantity
-                )
-            }
-            is AddExpenseEvents.SetConvertedTransactionPrice -> {
-                fetchCurrenciesExchangeRates()
-            }
-            is AddExpenseEvents.SetTransactionFinalPrice -> {
-                val quantity = addExpenseEvents.quantity?.toDoubleOrNull() ?: 0.0
-                val price = addExpenseEvents.price?.toDoubleOrNull() ?: 0.0
-                val finalPrice = quantity * price
-                val finalPriceString = finalPrice.toString()
 
-                _addExpenseStates.value = addExpenseStates.value.copy(
-                    transactionFinalPrice = finalPriceString
-                )
+            is AddExpenseEvents.SetConvertedTransactionPrice -> {
+                if(_addExpenseStates.value.transactionPrice.isEmpty()){
+                    AddTransactionEvent.Failure(
+                        errorMessage = "Please Enter the Price"
+                    )
+                }
+                else{
+                    fetchCurrenciesExchangeRates()
+                }
+
             }
+
             is AddExpenseEvents.ShowConversion -> {
                 _addExpenseStates.value = addExpenseStates.value.copy(
                     showConversion = addExpenseEvents.showConversion
@@ -139,20 +142,47 @@ class AddExpenseViewModel @Inject constructor(
 
             AddExpenseEvents.AddExpenseTransaction -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val quantityResult = addExpenseUseCasesWrapper.validateTransactionQuantity(_addExpenseStates.value.transactionQuantity)
                     val nameResult = addExpenseUseCasesWrapper.validateTransactionName(_addExpenseStates.value.transactionName)
                     val priceResult = addExpenseUseCasesWrapper.validateTransactionPrice(_addExpenseStates.value.transactionPrice)
                     val categoryResult = addExpenseUseCasesWrapper.validateTransactionCategory(_addExpenseStates.value.category)
 
 
-                    if(!quantityResult.isSuccessful || !nameResult.isSuccessful || !priceResult.isSuccessful || !categoryResult.isSuccessful){
+                    if(!nameResult.isSuccessful || !priceResult.isSuccessful || !categoryResult.isSuccessful){
                         addTransactionEventChannel.send(
                             AddTransactionEvent.Failure(
-                                errorMessage = quantityResult.errorMessage ?: nameResult.errorMessage ?: priceResult.errorMessage ?: categoryResult.errorMessage
+                                errorMessage = nameResult.errorMessage ?: priceResult.errorMessage ?: categoryResult.errorMessage
                             )
                         )
                     }
                     else {
+
+                        val transactionCurrencyName = _addExpenseStates.value.transactionCurrencyName
+                        val transactionCurrencySymbol = _addExpenseStates.value.transactionCurrencySymbol
+                        val transactionCurrencyCode = _addExpenseStates.value.transactionCurrencyCode
+
+                        val selectedTransactionCurrency = Currency(name = transactionCurrencyName, symbol = transactionCurrencySymbol)
+                        val transactionCurrency: Map<String, Currency> = mapOf(
+                            transactionCurrencyCode to selectedTransactionCurrency
+                        )
+
+                        val transaction = Transactions(
+                            amount = _addExpenseStates.value.transactionPrice?.toDoubleOrNull() ?: 0.0,
+                            currency = transactionCurrency,
+                            convertedAmount = _addExpenseStates.value.convertedPrice?.toDoubleOrNull() ?: 0.0,
+                            exchangeRate = _addExpenseStates.value.transactionExchangeRate?.toDoubleOrNull() ?: 0.0,
+                            transactionType = "expense",
+                            category = _addExpenseStates.value.category,
+                            dateTime = System.currentTimeMillis(),
+                            userUid = uid,
+                            description = _addExpenseStates.value.transactionDescription,
+                            isRecurring = _addExpenseStates.value.isRecurring,
+                            cloudSync = false
+                        )
+                        try{
+                            addExpenseUseCasesWrapper.insertTransactionsLocally(transaction)
+                        }catch (e:Exception){
+                            addTransactionEventChannel.send(AddTransactionEvent.Failure(errorMessage = e.localizedMessage))
+                        }
                         addTransactionEventChannel.send(AddTransactionEvent.Success)
                     }
 
@@ -188,7 +218,7 @@ class AddExpenseViewModel @Inject constructor(
                 transactionExchangeRate = selectedCurrencyRate
             )
 
-            val priceString = _addExpenseStates.value.transactionFinalPrice
+            val priceString = _addExpenseStates.value.transactionPrice
             val rateString = _addExpenseStates.value.transactionExchangeRate
             val price = priceString.toDoubleOrNull() ?: 0.0
             val rate = rateString.toDoubleOrNull() ?: 0.0

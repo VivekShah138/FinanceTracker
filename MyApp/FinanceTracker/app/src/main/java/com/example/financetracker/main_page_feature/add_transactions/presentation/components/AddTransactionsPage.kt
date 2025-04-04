@@ -89,7 +89,7 @@ fun AddTransactionsPage(
                 // Uncomment this to enable HorizontalPager
                  HorizontalPager(state = pagerState) { page ->
                      when (page) {
-                         0 -> AddExpensePage(viewModel = viewModel) // Transactions Screen
+                         0 -> AddExpensePage(viewModel = viewModel, navController = navController) // Transactions Screen
                          1 -> AddIncomeTransactionsPage() // Recurring Transactions
                          2 -> AddSaveItemsTransactionsPage() // Analytics & Reports
                      }

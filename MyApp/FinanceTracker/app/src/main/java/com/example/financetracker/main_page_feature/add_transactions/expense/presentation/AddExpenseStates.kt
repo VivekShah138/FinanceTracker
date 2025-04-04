@@ -33,12 +33,12 @@ data class AddExpenseStates(
     val transactionDescription: String = "",
 
     // Transaction Price
-    val transactionQuantity: String = "1",
     val transactionPrice: String = "",
-    val transactionFinalPrice: String = "",
     val showConversion: Boolean = false,
     val convertedPrice: String = "",
     val transactionExchangeRate: String = "",
+
+    val isRecurring: Boolean = false,
 
     val errorMessage: String = ""
 )

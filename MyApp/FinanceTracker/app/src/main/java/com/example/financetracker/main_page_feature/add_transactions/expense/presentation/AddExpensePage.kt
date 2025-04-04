@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -31,12 +32,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.financetracker.core.core_presentation.utils.Screens
 import com.example.financetracker.main_page_feature.add_transactions.presentation.components.CustomBottomSheet
 import com.example.financetracker.main_page_feature.add_transactions.presentation.components.CustomTextAlertBox
-import com.example.financetracker.setup_account.presentation.ProfileSetUpEvents
 import com.example.financetracker.setup_account.presentation.components.CustomSwitch
 import com.example.financetracker.setup_account.presentation.components.SimpleDropdownMenu
 
@@ -44,6 +49,7 @@ import com.example.financetracker.setup_account.presentation.components.SimpleDr
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddExpensePage(
+    navController: NavController,
     viewModel: AddExpenseViewModel
 ){
     val addTransactionValidationEvents = viewModel.addTransactionsValidationEvents
@@ -58,7 +64,8 @@ fun AddExpensePage(
                     Toast.makeText(context,event.errorMessage,Toast.LENGTH_SHORT).show()
                 }
                 AddExpenseViewModel.AddTransactionEvent.Success -> {
-                    Toast.makeText(context,"Profile Successfully Update",Toast.LENGTH_LONG).show()
+                    Toast.makeText(context,"Transaction Successfully Added",Toast.LENGTH_LONG).show()
+                    navController.navigate(route = Screens.HomePageScreen.routes)
                 }
             }
         }
@@ -71,6 +78,20 @@ fun AddExpensePage(
             .verticalScroll(scrollState)
     ) {
 
+        Spacer(modifier = Modifier.height(5.dp))
+
+        CustomSwitch(
+            text = "Recurring Transaction?",
+            isCheck = states.isRecurring,
+            onCheckChange = {
+                viewModel.onEvent(
+                    AddExpenseEvents.ChangeRecurringItemState(it)
+                )
+            }
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
         CustomSwitch(
             text = "Saved Item?",
             isCheck = states.saveItemState,
@@ -81,6 +102,8 @@ fun AddExpensePage(
         )
 
         Spacer(modifier = Modifier.height(10.dp))
+
+
 
         if (states.saveItemState) {
             OutlinedTextField(
@@ -234,35 +257,31 @@ fun AddExpensePage(
             },
             label = { Text("Enter Item Description") },
             modifier = Modifier.fillMaxWidth(),
-            maxLines = 2,
-            readOnly = true // if save item
+            maxLines = 2
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
 
         // Price
-        QuantityPriceRow(
-            quantity = states.transactionQuantity,
-            price = states.transactionPrice,
-            onPriceChange = {
+        OutlinedTextField(
+            value = states.transactionPrice,
+            onValueChange = {
                 viewModel.onEvent(
                     AddExpenseEvents.ChangeTransactionPrice(it)
                 )
-                viewModel.onEvent(
-                    AddExpenseEvents.SetTransactionFinalPrice(price = it, quantity = states.transactionQuantity)
-                )
             },
-            onQuantityChange = {
-                viewModel.onEvent(
-                    AddExpenseEvents.ChangeTransactionQuantity(it)
+            label = { Text("Price") },
+            textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            leadingIcon = {
+                Text(
+                    text = states.transactionCurrencySymbol, // Change this to $, €, etc.
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
                 )
-                viewModel.onEvent(
-                    AddExpenseEvents.SetTransactionFinalPrice(price = states.transactionPrice, quantity = it)
-                )
-            },
-            finalPrice = states.transactionFinalPrice,
-            currencySymbol = states.transactionCurrencySymbol
+            }
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -337,7 +356,7 @@ fun AddExpensePage(
                 convertedAmount = states.convertedPrice,
                 onConvertClick = {
                     viewModel.onEvent(
-                        AddExpenseEvents.SetConvertedTransactionPrice(price = states.transactionFinalPrice,rate = states.transactionExchangeRate)
+                        AddExpenseEvents.SetConvertedTransactionPrice(price = states.transactionPrice,rate = states.transactionExchangeRate)
                     )
                 },
                 baseCurrencySymbol = states.baseCurrencySymbol,

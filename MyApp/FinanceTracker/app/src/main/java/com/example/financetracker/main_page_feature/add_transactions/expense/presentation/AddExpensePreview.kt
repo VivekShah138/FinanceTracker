@@ -58,6 +58,16 @@ fun AddExpensePagePreview(){
             verticalArrangement = Arrangement.Center
         ){
 
+            Spacer(modifier = Modifier.height(5.dp))
+
+            CustomSwitch(
+                text = "Recurring Transaction?",
+                isCheck = false,
+                onCheckChange = {}
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
 //            Text("Category", style = MaterialTheme.typography.bodyLarge)
             CustomSwitch(
                 text = "Saved Item?",
@@ -123,7 +133,21 @@ fun AddExpensePagePreview(){
             Spacer(modifier = Modifier.height(10.dp))
 
             // Price
-            QuantityPriceRow(quantity = "5", onPriceChange = {}, onQuantityChange = {}, price = "10", finalPrice = "Final", currencySymbol = "$")
+            OutlinedTextField(
+                value = "finalPrice",
+                onValueChange = {},  // Read-only field
+                label = { Text("Final Price") },
+                readOnly = true,
+                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Text(
+                        text = "$", // Change this to $, €, etc.
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            )
 
             Spacer(modifier = Modifier.height(10.dp))
 

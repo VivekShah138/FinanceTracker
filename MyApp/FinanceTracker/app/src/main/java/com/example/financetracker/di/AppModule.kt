@@ -46,12 +46,16 @@ import com.example.financetracker.core.local.domain.room.usecases.PredefinedCate
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
+import com.example.financetracker.main_page_feature.add_transactions.data.local.data_source.TransactionDao
+import com.example.financetracker.main_page_feature.add_transactions.data.local.data_source.TransactionDatabase
+import com.example.financetracker.main_page_feature.add_transactions.data.local.repository.TransactionsLocalRepositoryImpl
+import com.example.financetracker.main_page_feature.add_transactions.domain.repository.TransactionLocalRepository
+import com.example.financetracker.main_page_feature.add_transactions.domain.use_cases.InsertTransactionsLocally
 import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.AddExpenseUseCasesWrapper
 import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.InsertCustomCategory
 import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionCategory
 import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionName
 import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionPrice
-import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionQuantity
 import com.example.financetracker.main_page_feature.home_page.data.repository.HomePageRepositoryImpl
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
@@ -311,6 +315,31 @@ object AppModule {
         )
     }
 
+    //TransactionDatabase
+    @Provides
+    @Singleton
+    fun provideTransactionDatabase(app : Application) : TransactionDatabase{
+        return Room.databaseBuilder(
+            app,
+            TransactionDatabase::class.java,
+            TransactionDatabase.DATABASE_NAME
+        ).build()
+    }
+
+    // Transaction Dao
+    @Provides
+    @Singleton
+    fun provideTransactionDao(db: TransactionDatabase): TransactionDao{
+        return db.transactionDao
+    }
+
+    // Transaction Repository
+    @Provides
+    @Singleton
+    fun provideTransactionLocalRepository(transactionDao: TransactionDao): TransactionLocalRepository{
+        return TransactionsLocalRepositoryImpl(transactionDao)
+    }
+
 
     // SetUpPage UseCases
     @Provides
@@ -374,7 +403,8 @@ object AppModule {
     @Singleton
     fun provideAddExpenseUseCases(
         currencyRatesLocalRepository: CurrencyRatesLocalRepository,
-        categoryRepository: CategoryRepository
+        categoryRepository: CategoryRepository,
+        transactionLocalRepository: TransactionLocalRepository
     ): AddExpenseUseCasesWrapper{
         return AddExpenseUseCasesWrapper(
             getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository),
@@ -382,7 +412,7 @@ object AppModule {
             validateTransactionPrice = ValidateTransactionPrice(),
             validateTransactionName = ValidateTransactionName(),
             validateTransactionCategory = ValidateTransactionCategory(),
-            validateTransactionQuantity = ValidateTransactionQuantity()
+            insertTransactionsLocally = InsertTransactionsLocally(transactionLocalRepository)
         )
     }
 
