@@ -8,6 +8,8 @@ import androidx.work.WorkerParameters
 import com.example.financetracker.setup_account.data.remote.CountryApi
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import retrofit2.HttpException
+import java.io.IOException
 
 @HiltWorker
 class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
@@ -15,13 +17,14 @@ class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val countryDao: CountryDao,
     private val api: CountryApi
-) : CoroutineWorker(context, workerParams){
+) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
         Log.d("WorkManagerCountries", "Worker started")
 
-        if (countryDao.getCountryCount() > 0) {
-            Log.d("WorkManagerCountries", "Countries Already Inserted ${countryDao.getCountryCount()}")
+        val existingCount = countryDao.getCountryCount()
+        if (existingCount > 0) {
+            Log.d("WorkManagerCountries", "Countries already inserted: $existingCount")
             return Result.success()
         }
 
@@ -31,18 +34,22 @@ class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
             val countries = try {
                 api.getCountries()
             } catch (e: Exception) {
-                Log.e("WorkManagerCountries", "Error fetching countries from API: ${e.message}")
+                Log.e("WorkManagerCountries", "Error fetching countries from API", e)
 
-                // Check if error is due to no internet
-                return if (e is java.net.UnknownHostException || e is java.net.ConnectException) {
-                    Log.d("WorkManagerCountries", "No Internet. Retrying...")
-                    Result.retry() // Will retry when network is available
-                } else {
-                    Result.failure()
+                return when (e) {
+                    is IOException,
+                    is HttpException -> {
+                        Log.d("WorkManagerCountries", "Recoverable issue, will retry...")
+                        Result.retry()
+                    }
+                    else -> {
+                        Log.d("WorkManagerCountries", "Unrecoverable error: ${e::class.java.simpleName}")
+                        Result.failure()
+                    }
                 }
             }
 
-            Log.d("WorkManagerCountries", "Received countries to insert: $countries")
+            Log.d("WorkManagerCountries", "Received countries: ${countries.size}")
 
             val countryEntities = countries.map { country ->
                 try {
@@ -50,23 +57,20 @@ class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
                     Log.d("WorkManagerCountries", "Mapped to Entity: $entity")
                     entity
                 } catch (e: Exception) {
-                    Log.e("WorkManagerCountries", "Error mapping country: $country, Error: ${e.message}")
+                    Log.e("WorkManagerCountries", "Error mapping country: $country", e)
                     throw e
                 }
             }
 
-            Log.d("WorkManagerCountries", "Inserting Countries into Room: $countryEntities")
+            Log.d("WorkManagerCountries", "Inserting countries into Room...")
             countryDao.insertAll(countryEntities)
 
-//             Verify insertion
             val insertedData = countryDao.getAllCountries()
-            Log.d("WorkManagerCountries", "Retrieved After Insertion: $insertedData")
-
-            Log.d("WorkManagerCountries", "Countries inserted successfully.")
+            Log.d("WorkManagerCountries", "Countries inserted successfully: ${insertedData.size}")
             Result.success()
+
         } catch (e: Exception) {
-            Log.e("WorkManagerCountries", "Error inserting countries: ${e.message}")
-            e.printStackTrace()
+            Log.e("WorkManagerCountries", "Unexpected error occurred", e)
             Result.failure()
         }
     }

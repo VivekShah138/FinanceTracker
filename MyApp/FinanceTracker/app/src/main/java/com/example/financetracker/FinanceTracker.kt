@@ -29,7 +29,7 @@ class FinanceTracker : Application(), Configuration.Provider {
 
         applicationScope.launch {
             predefinedCategoriesUseCaseWrapper.insertPredefinedCategories()
-            useCasesWrapperSetupAccount.insertCountryLocally()
+            useCasesWrapperSetupAccount.insertCountryLocallyWorkManager()
         }
     }
 

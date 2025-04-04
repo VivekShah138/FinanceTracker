@@ -223,14 +223,14 @@ fun NewUserProfileOnBoardingScreens(
                             val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                             val currencyCode = firstCurrency?.key ?: "N/A"
 
-                            ProfileSetUpEvents.SelectBaseCurrency(
-                                currency = currencyName,
-                                currencyCode = currencyCode,
-                                currencySymbol = currencySymbol,
-                                expanded = false
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.SelectBaseCurrency(
+                                    currency = currencyName,
+                                    currencyCode = currencyCode,
+                                    currencySymbol = currencySymbol,
+                                    expanded = false
+                                )
                             )
-
-//                            viewModel.updateCurrencyRates()
                         }
                     )
                 }

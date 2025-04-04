@@ -1,5 +1,6 @@
 package com.example.financetracker.di
 
+
 import TRANSACTIONS_MIGRATION_1_2
 import android.app.Application
 import android.content.Context
@@ -16,7 +17,7 @@ import com.example.financetracker.setup_account.data.remote.repository.CountryRe
 import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
 import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryLocally
-import com.example.financetracker.setup_account.domain.usecases.InsertCountryLocally
+import com.example.financetracker.setup_account.domain.usecases.InsertCountryLocallyWorkManager
 import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
 import com.example.financetracker.core.cloud.data.repository.FirebaseRepositoryImpl
 import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
@@ -69,7 +70,6 @@ import com.example.financetracker.setup_account.data.local.data_source.currency_
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesDatabase
 import com.example.financetracker.setup_account.data.local.repository.CountryLocalRepositoryImpl
 import com.example.financetracker.setup_account.data.local.repository.CurrencyRatesLocalRepositoryImpl
-import com.example.financetracker.setup_account.data.remote.ApiClient
 import com.example.financetracker.setup_account.data.remote.CountryApi
 import com.example.financetracker.setup_account.data.remote.CurrencyRatesApi
 import com.example.financetracker.setup_account.data.remote.repository.CurrencyRatesRemoteRepositoryImpl
@@ -77,6 +77,7 @@ import com.example.financetracker.setup_account.domain.repository.local.Currency
 import com.example.financetracker.setup_account.domain.repository.remote.CurrencyRatesRemoteRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryDetailsUseCase
 import com.example.financetracker.setup_account.domain.usecases.GetCurrencyRatesLocally
+import com.example.financetracker.setup_account.domain.usecases.InsertCountryLocally
 import com.example.financetracker.setup_account.domain.usecases.InsertCurrencyRatesLocalOneTime
 import com.example.financetracker.setup_account.domain.usecases.InsertCurrencyRatesLocalPeriodically
 import com.example.financetracker.setup_account.domain.usecases.UpdateUserProfile
@@ -267,11 +268,6 @@ object AppModule {
         return CountryLocalRepositoryImpl(countryDao = db.countryDao,workManager)
     }
 
-    // Country API
-    @Provides
-    @Singleton
-    fun provideCounrtyApi(): CountryApi = ApiClient.instance
-
     // Country Remote Repository
     @Provides
     @Singleton
@@ -294,11 +290,6 @@ object AppModule {
     fun provideCurrencyRatesDao(db: CurrencyRatesDatabase): CurrencyRatesDao {
         return db.currencyRatesDao
     }
-
-    // CurrencyRates API
-    @Provides
-    @Singleton
-    fun provideCurrencyRatesApi(): CurrencyRatesApi = ApiClient.instance2
 
     // Currency Rates Remote Repository
     @Provides
@@ -364,7 +355,7 @@ object AppModule {
             updateUserProfile = UpdateUserProfile(firebaseRepository),
             getUserProfileUseCase = GetUserProfileUseCase(firebaseRepository),
             getCountryLocally = GetCountryLocally(countryLocalRepository),
-            insertCountryLocally = InsertCountryLocally(countryLocalRepository),
+            insertCountryLocallyWorkManager = InsertCountryLocallyWorkManager(countryLocalRepository),
             insertUserProfileToLocalDb = InsertUserProfileToLocalDb(userProfileRepository),
             getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository),
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository),
@@ -372,7 +363,8 @@ object AppModule {
             insertCurrencyRatesLocalPeriodically = InsertCurrencyRatesLocalPeriodically(currencyRatesLocalRepository),
             getCurrencyRatesUpdated = GetCurrencyRatesUpdated(sharedPreferencesRepository),
             setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository),
-            getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository)
+            getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository),
+            insertCountryLocally = InsertCountryLocally(countryLocalRepository)
         )
     }
 
@@ -419,7 +411,7 @@ object AppModule {
         )
     }
 
-    // ViewTransactiosUseCases
+    // ViewTransactionsUseCases
     @Provides
     @Singleton
     fun provideViewTransactionsUsesCases(

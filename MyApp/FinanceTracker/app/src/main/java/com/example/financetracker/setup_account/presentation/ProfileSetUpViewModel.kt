@@ -28,13 +28,14 @@ class ProfileSetUpViewModel @Inject constructor(
     private val profileSetUpEventChannel = Channel<ProfileUpdateEvent>()
     val profileSetUpValidationEvents = profileSetUpEventChannel.receiveAsFlow()
 
+    private val userId = useCasesWrapperSetupAccount.getUIDLocally() ?: "Unknown"
+
     private var oldBaseCurrency = _profileSetUpStates.value.selectedBaseCurrency
 
 
 
     init {
         getProfileInfo()
-        val userId = useCasesWrapperSetupAccount.getUIDLocally() ?: "N/A"
         Log.d("UserId","UserId $userId")
 
         setOldBaseCurrency()
@@ -47,7 +48,6 @@ class ProfileSetUpViewModel @Inject constructor(
 
     private fun setOldBaseCurrency() {
         viewModelScope.launch(Dispatchers.IO) {
-            val userId = useCasesWrapperSetupAccount.getUIDLocally() ?: "N/A"
             val userProfile = useCasesWrapperSetupAccount.getUserProfileFromLocalDb(userId)
             val baseCurrency = userProfile?.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
             Log.d("WorkManagerCurrencyRates","baseCurrency $baseCurrency")
@@ -153,7 +153,7 @@ class ProfileSetUpViewModel @Inject constructor(
         }
         else{
             try {
-                val userId = useCasesWrapperSetupAccount.getUserUIDUseCase() ?: useCasesWrapperSetupAccount.getUIDLocally() ?: "Unknown"
+                val userId = useCasesWrapperSetupAccount.getUserUIDUseCase() ?: userId
 
 
                 val baseCurrencyCode = profileSetUpStates.value.baseCurrencyCode
@@ -272,6 +272,7 @@ class ProfileSetUpViewModel @Inject constructor(
                         it.name.common
                     }
 
+                useCasesWrapperSetupAccount.insertCountryLocally(sortedCountries)
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     countries = sortedCountries
@@ -281,7 +282,7 @@ class ProfileSetUpViewModel @Inject constructor(
                     currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
                 )
 
-                val sortedCountriesLocal = useCasesWrapperSetupAccount.getCountryLocally()
+                val sortedCountriesLocally = useCasesWrapperSetupAccount.getCountryLocally()
                     .filter {
                         it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
                     }
@@ -291,11 +292,18 @@ class ProfileSetUpViewModel @Inject constructor(
                     .distinctBy {
                         it.name.common
                     }
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    countries = sortedCountriesLocal
-                )
 
-                profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
+                if(sortedCountriesLocally.isEmpty()){
+                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Country From internet.Try Again Later"))
+                    useCasesWrapperSetupAccount.insertCountryLocallyWorkManager()
+                }
+                else{
+                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+                        currencies = sortedCountriesLocally
+                    )
+
+                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Country From internet.Using Locally Saved Details"))
+                }
             }
         }
     }
@@ -313,6 +321,8 @@ class ProfileSetUpViewModel @Inject constructor(
                     .distinctBy {
                         it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
                     }
+
+                useCasesWrapperSetupAccount.insertCountryLocally(sortedCurrencies)
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     currencies = sortedCurrencies
@@ -334,11 +344,17 @@ class ProfileSetUpViewModel @Inject constructor(
                         it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
                     }
 
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    currencies = sortedCurrenciesLocally
-                )
+                if(sortedCurrenciesLocally.isEmpty()){
+                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Try Again Later"))
+                    useCasesWrapperSetupAccount.insertCountryLocallyWorkManager()
+                }
+                else{
+                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+                        currencies = sortedCurrenciesLocally
+                    )
 
-                profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
+                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
+                }
 
             }
         }
@@ -347,7 +363,7 @@ class ProfileSetUpViewModel @Inject constructor(
     private fun getProfileInfo(){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val userId = useCasesWrapperSetupAccount.getUserUIDUseCase() ?: "Unknown"
+
                 val userProfile = useCasesWrapperSetupAccount.getUserProfileUseCase(userId)
                 if(userProfile == null){
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details"))
@@ -413,7 +429,10 @@ class ProfileSetUpViewModel @Inject constructor(
             Log.d("WorkManagerCurrencies","one time function called inside setUp")
             Log.d("WorkManagerCurrencyRates","currentBaseCurrency ${_profileSetUpStates.value.selectedBaseCurrency}")
             Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
-            if(!oldBaseCurrency.isNullOrEmpty() && oldBaseCurrency != _profileSetUpStates.value.selectedBaseCurrency){
+
+            val userProfile = useCasesWrapperSetupAccount.getUserProfileFromLocalDb(userId)
+
+            if(((!oldBaseCurrency.isNullOrEmpty() && oldBaseCurrency != _profileSetUpStates.value.selectedBaseCurrency) || userProfile == null)){
                 Log.d("WorkManagerCurrencyRates","insideIf ProfileSetUpViewModel")
                 useCasesWrapperSetupAccount.setCurrencyRatesUpdated(isUpdated = false)
                 useCasesWrapperSetupAccount.insertCurrencyRatesLocalOneTime()
