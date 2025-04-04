@@ -176,12 +176,15 @@ class AddExpenseViewModel @Inject constructor(
                             userUid = uid,
                             description = _addExpenseStates.value.transactionDescription,
                             isRecurring = _addExpenseStates.value.isRecurring,
-                            cloudSync = false
+                            cloudSync = false,
+                            transactionName = _addExpenseStates.value.transactionName
                         )
                         try{
                             addExpenseUseCasesWrapper.insertTransactionsLocally(transaction)
                         }catch (e:Exception){
+                            Log.d("AddExpenseViewModel","Error ${e.localizedMessage}")
                             addTransactionEventChannel.send(AddTransactionEvent.Failure(errorMessage = e.localizedMessage))
+                            return@launch
                         }
                         addTransactionEventChannel.send(AddTransactionEvent.Success)
                     }

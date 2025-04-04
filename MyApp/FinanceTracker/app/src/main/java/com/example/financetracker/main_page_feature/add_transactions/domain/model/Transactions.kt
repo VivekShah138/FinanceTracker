@@ -3,6 +3,7 @@ package com.example.financetracker.main_page_feature.add_transactions.domain.mod
 import com.example.financetracker.main_page_feature.add_transactions.data.local.data_source.TransactionsEntity
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryMapper
 import com.example.financetracker.setup_account.domain.model.Currency
+import kotlin.concurrent.thread
 
 
 data class Transactions(
@@ -17,7 +18,8 @@ data class Transactions(
     val userUid: String,
     val description: String?,
     val isRecurring: Boolean,
-    val cloudSync: Boolean
+    val cloudSync: Boolean,
+    val transactionName: String
 )
 
 fun Transactions.toEntity(): TransactionsEntity {
@@ -33,7 +35,8 @@ fun Transactions.toEntity(): TransactionsEntity {
         userUid = this.userUid,
         description = this.description,
         isRecurring = this.isRecurring,
-        cloudSync = this.cloudSync
+        cloudSync = this.cloudSync,
+        transactionName = this.transactionName
     )
 }
 
@@ -50,7 +53,8 @@ fun TransactionsEntity.toDomain(): Transactions {
         userUid = this.userUid,
         description = this.description,
         isRecurring = this.isRecurring,
-        cloudSync = this.cloudSync
+        cloudSync = this.cloudSync,
+        transactionName = this.transactionName
     )
 }
 

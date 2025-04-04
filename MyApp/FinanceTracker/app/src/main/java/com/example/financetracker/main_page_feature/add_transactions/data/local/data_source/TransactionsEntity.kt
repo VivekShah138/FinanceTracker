@@ -8,6 +8,7 @@ import com.example.financetracker.setup_account.domain.model.Currency
 data class TransactionsEntity(
     @PrimaryKey(autoGenerate = true)
     val transactionId: Int,
+    val transactionName:String,
     val amount: Double,
     val currency: String?,
     val convertedAmount: Double?,
@@ -18,5 +19,6 @@ data class TransactionsEntity(
     val userUid: String,
     val description: String?,
     val isRecurring: Boolean,
-    val cloudSync: Boolean
+    val cloudSync: Boolean,
+
 )

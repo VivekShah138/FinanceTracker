@@ -26,6 +26,7 @@ import com.example.financetracker.main_page_feature.add_transactions.presentatio
 import com.example.financetracker.main_page_feature.charts.presentation.components.ChartsPage
 import com.example.financetracker.main_page_feature.settings.presentation.SettingViewModel
 import com.example.financetracker.main_page_feature.settings.presentation.components.SettingsPage
+import com.example.financetracker.main_page_feature.view_transactions.presentation.ViewTransactionsViewModel
 import com.example.financetracker.main_page_feature.view_transactions.presentation.components.TransactionsPage
 import com.example.financetracker.setup_account.presentation.ProfileSetUpViewModel
 import com.example.financetracker.setup_account.presentation.components.NewUserProfileOnBoardingScreens
@@ -116,7 +117,8 @@ class MainActivity : ComponentActivity() {
                         composable(
                             route = Screens.ViewTransactionsScreen.routes
                         ) {
-                            TransactionsPage(navController)
+                            val viewModel: ViewTransactionsViewModel = hiltViewModel()
+                            TransactionsPage(navController = navController,viewModel = viewModel)
                         }
 
                         composable(

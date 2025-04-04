@@ -12,7 +12,7 @@ interface TransactionDao {
     @Upsert
     suspend fun insertTransaction(transactionsEntity: TransactionsEntity)
 
-    @Query("SELECT * FROM TransactionsEntity")
-    fun getAllTransactions(): Flow<List<TransactionsEntity>>
+    @Query("SELECT * FROM TransactionsEntity WHERE userUid = :uid")
+    fun getAllTransactions(uid: String): Flow<List<TransactionsEntity>>
 
 }

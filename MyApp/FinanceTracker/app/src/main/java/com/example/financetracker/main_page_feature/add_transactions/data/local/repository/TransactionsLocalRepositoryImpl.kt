@@ -17,8 +17,8 @@ class TransactionsLocalRepositoryImpl(
         )
     }
 
-    override suspend fun getAllTransactions(): Flow<List<Transactions>> {
-        return transactionDao.getAllTransactions().map { transactions ->
+    override suspend fun getAllTransactions(uid: String): Flow<List<Transactions>> {
+        return transactionDao.getAllTransactions(uid).map { transactions ->
             transactions.map {
                 it.toDomain()
             }

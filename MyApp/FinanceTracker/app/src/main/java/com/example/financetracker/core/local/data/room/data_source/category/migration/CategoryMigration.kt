@@ -3,7 +3,6 @@ package com.example.financetracker.core.local.data.room.data_source.category.mig
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import java.util.*
 
 val CATEGORY_MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {

@@ -1,5 +1,6 @@
 package com.example.financetracker.di
 
+import TRANSACTIONS_MIGRATION_1_2
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
@@ -50,6 +51,7 @@ import com.example.financetracker.main_page_feature.add_transactions.data.local.
 import com.example.financetracker.main_page_feature.add_transactions.data.local.data_source.TransactionDatabase
 import com.example.financetracker.main_page_feature.add_transactions.data.local.repository.TransactionsLocalRepositoryImpl
 import com.example.financetracker.main_page_feature.add_transactions.domain.repository.TransactionLocalRepository
+import com.example.financetracker.main_page_feature.add_transactions.domain.use_cases.GetTransactionsLocally
 import com.example.financetracker.main_page_feature.add_transactions.domain.use_cases.InsertTransactionsLocally
 import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.AddExpenseUseCasesWrapper
 import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.InsertCustomCategory
@@ -60,6 +62,7 @@ import com.example.financetracker.main_page_feature.home_page.data.repository.Ho
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
+import com.example.financetracker.main_page_feature.view_transactions.ViewTransactionUseCaseWrapper
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryDao
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryDatabase
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesDao
@@ -323,7 +326,7 @@ object AppModule {
             app,
             TransactionDatabase::class.java,
             TransactionDatabase.DATABASE_NAME
-        ).build()
+        ).addMigrations(TRANSACTIONS_MIGRATION_1_2).build()
     }
 
     // Transaction Dao
@@ -413,6 +416,17 @@ object AppModule {
             validateTransactionName = ValidateTransactionName(),
             validateTransactionCategory = ValidateTransactionCategory(),
             insertTransactionsLocally = InsertTransactionsLocally(transactionLocalRepository)
+        )
+    }
+
+    // ViewTransactiosUseCases
+    @Provides
+    @Singleton
+    fun provideViewTransactionsUsesCases(
+        transactionLocalRepository: TransactionLocalRepository
+    ): ViewTransactionUseCaseWrapper{
+        return ViewTransactionUseCaseWrapper(
+            getTransactionsLocally = GetTransactionsLocally(transactionLocalRepository = transactionLocalRepository)
         )
     }
 
