@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface CategoryRepository {
     suspend fun getCategories(type: String): Flow<List<Category>>
     suspend fun insertCategories(categories: List<Category>)
+    suspend fun insertCategory(category: Category)
     suspend fun getCategoriesCount(): Int
     suspend fun insertPredefinedCategories()
 }

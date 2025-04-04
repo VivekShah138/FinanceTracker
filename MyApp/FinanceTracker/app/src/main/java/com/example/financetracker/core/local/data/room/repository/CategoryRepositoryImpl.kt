@@ -29,11 +29,18 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
+
     override suspend fun insertCategories(categories: List<Category>) {
         return categoryDao.insertCategories(
             categories = categories.map {
                 it.toEntity()
             }
+        )
+    }
+
+    override suspend fun insertCategory(category: Category) {
+        return categoryDao.insertCategory(
+            category = category.toEntity()
         )
     }
 

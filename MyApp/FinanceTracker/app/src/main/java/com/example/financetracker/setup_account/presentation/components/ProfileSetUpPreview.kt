@@ -33,6 +33,7 @@ fun ProfileSetUpPreview(){
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .padding(16.dp)
         ) {
             EmailDisplay(label = "Email", email = "Shahvivek138@gmail.com", onChangeEmailClick = {})
             ChangePasswordSection(onChangePasswordClick = {})
@@ -68,7 +69,7 @@ fun Names(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+//            .padding(16.dp)
     ) {
         // Country Code Input
         OutlinedTextField(

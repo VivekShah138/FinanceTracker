@@ -27,5 +27,6 @@ data class UseCasesWrapperSetupAccount(
     val insertCurrencyRatesLocalOneTime: InsertCurrencyRatesLocalOneTime,
     val insertCurrencyRatesLocalPeriodically: InsertCurrencyRatesLocalPeriodically,
     val getCurrencyRatesUpdated: GetCurrencyRatesUpdated,
-    val setCurrencyRatesUpdated: SetCurrencyRatesUpdated
+    val setCurrencyRatesUpdated: SetCurrencyRatesUpdated,
+    val getCurrencyRatesLocally: GetCurrencyRatesLocally
 )

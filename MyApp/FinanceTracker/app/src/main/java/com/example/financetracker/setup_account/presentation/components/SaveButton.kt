@@ -14,7 +14,7 @@ fun SaveButton(text: String,onClick: () -> Unit, modifier: Modifier = Modifier) 
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
+//            .padding(16.dp)
     ) {
         Text(text = text)
     }

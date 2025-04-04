@@ -30,6 +30,6 @@ fun ChangePasswordSection(onChangePasswordClick: () -> Unit) {
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+//            .padding(16.dp)
     )
 }

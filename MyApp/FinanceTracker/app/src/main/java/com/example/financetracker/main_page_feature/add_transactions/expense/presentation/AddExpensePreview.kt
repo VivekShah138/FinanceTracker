@@ -1,6 +1,5 @@
 package com.example.financetracker.main_page_feature.add_transactions.expense.presentation
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,31 +10,32 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.financetracker.main_page_feature.add_transactions.presentation.components.CustomBottomSheet
 import com.example.financetracker.setup_account.presentation.components.CustomSwitch
-import com.example.financetracker.setup_account.presentation.components.SettingsSwitchItem
+import com.example.financetracker.setup_account.presentation.components.SimpleDropdownMenu
+
 
 @Preview(
     showBackground = true,
@@ -86,6 +86,8 @@ fun AddExpensePagePreview(){
                 )
             }
 
+            Spacer(modifier = Modifier.height(10.dp))
+
             // Dropdown button to open Bottom Sheet
             OutlinedButton(
                 onClick = {
@@ -106,6 +108,8 @@ fun AddExpensePagePreview(){
                 }
             }
 
+            Spacer(modifier = Modifier.height(10.dp))
+
             // Description
             OutlinedTextField(
                 value = "newItemText",
@@ -116,7 +120,142 @@ fun AddExpensePagePreview(){
                 readOnly = true // if save item
             )
 
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Price
+            QuantityPriceRow(quantity = "5", onPriceChange = {}, onQuantityChange = {}, price = "10", finalPrice = "Final", currencySymbol = "$")
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Transaction Currency
+            SimpleDropdownMenu(label = "Base Currency",selectedText = "Rupee", expanded = false,
+                list = emptyList<String>(), onExpandedChange = {}, onDismissRequest = {}, displayText = { it }, onItemSelect = {})
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            CurrencyConversionSection(exchangeRate = "100", convertedAmount = "100", onConvertClick = {}, baseCurrencySymbol = "&", transactionCurrencySymbol = "$")
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Button(
+                onClick = {},
+                modifier = Modifier.fillMaxWidth()
+
+            ) {
+                Text("Add")
+            }
+
 
         }
     }
 }
+
+
+@Composable
+fun QuantityPriceRow(
+    quantity: String,
+    onQuantityChange: (String) -> Unit,
+    price: String,
+    finalPrice: String,
+    onPriceChange: (String) -> Unit,
+    currencySymbol: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+//            .padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        OutlinedTextField(
+            value = quantity,
+            onValueChange = onQuantityChange,
+            label = { Text("Quantity") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            modifier = Modifier.weight(1f)
+        )
+
+        OutlinedTextField(
+            value = price,
+            onValueChange = onPriceChange,
+            label = { Text("Price") },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+            modifier = Modifier.weight(1f),
+        )
+    }
+
+    OutlinedTextField(
+        value = finalPrice,
+        onValueChange = {},  // Read-only field
+        label = { Text("Final Price") },
+        readOnly = true,
+        textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+        modifier = Modifier.fillMaxWidth(),
+        leadingIcon = {
+            Text(
+                text = currencySymbol, // Change this to $, €, etc.
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    )
+}
+
+@Composable
+fun CurrencyConversionSection(
+    exchangeRate: String,
+    convertedAmount: String,
+    onConvertClick: () -> Unit,
+    baseCurrencySymbol: String,
+    transactionCurrencySymbol: String
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+//            .padding(16.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, Color.Gray)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Currency Conversion",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Convert Button
+            Button(
+                onClick = onConvertClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Convert to $baseCurrencySymbol")
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Exchange Rate
+            Text(
+                text = "Exchange Rate: 1$baseCurrencySymbol = $exchangeRate$transactionCurrencySymbol",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            // Converted Amount
+            Text(
+                text = "Converted Amount: $convertedAmount$baseCurrencySymbol",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF388E3C) // Green for emphasis
+            )
+        }
+    }
+}
+

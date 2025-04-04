@@ -26,6 +26,6 @@ fun EmailDisplay(label: String, email: String, onChangeEmailClick: () -> Unit) {
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+//            .padding(16.dp)
     )
 }

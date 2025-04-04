@@ -10,7 +10,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
-import com.example.financetracker.setup_account.data.local.data_source.country.PrepopulateCountryDatabaseWorker
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesDao
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesMapper
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.PrepopulateCurrencyRatesDatabaseWorker
@@ -34,7 +33,7 @@ class CurrencyRatesLocalRepositoryImpl(
                 return null
             }
 
-            val currencyResponse = CurrencyRatesMapper.fromEntityToResponse(currencyResponseEntity)
+            val currencyResponse = CurrencyRatesMapper.fromEntityToCurrencyResponse(currencyResponseEntity)
             Log.d("CurrencyRatesRepo", "Successfully retrieved currency rates for $baseCurrency: $currencyResponse")
 
             currencyResponse

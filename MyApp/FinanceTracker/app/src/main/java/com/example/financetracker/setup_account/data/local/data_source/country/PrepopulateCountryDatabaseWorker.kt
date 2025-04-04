@@ -6,7 +6,6 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.financetracker.setup_account.data.remote.CountryApi
-import com.example.financetracker.setup_account.domain.model.toEntity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -47,7 +46,7 @@ class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
 
             val countryEntities = countries.map { country ->
                 try {
-                    val entity = country.toEntity()
+                    val entity = CountryMapper.fromCountryResponseToEntity(country)
                     Log.d("WorkManagerCountries", "Mapped to Entity: $entity")
                     entity
                 } catch (e: Exception) {

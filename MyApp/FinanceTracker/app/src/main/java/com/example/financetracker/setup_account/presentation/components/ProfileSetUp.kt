@@ -3,7 +3,9 @@ package com.example.financetracker.setup_account.presentation.components
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -11,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.components.AppTopBar
@@ -38,7 +41,7 @@ fun ProfileSetUp(
                     Toast.makeText(context,event.errorMessage,Toast.LENGTH_SHORT).show()
                 }
                 is ProfileSetUpViewModel.ProfileUpdateEvent.Success -> {
-                    Toast.makeText(context,"Profile Successfully Update",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,"Profile Successfully Update",Toast.LENGTH_LONG).show()
                     navController.navigate(Screens.HomePageScreen.routes)
                 }
             }
@@ -62,6 +65,7 @@ fun ProfileSetUp(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .padding(16.dp)
         ) {
             // Email
             EmailDisplay(label = "Email",
@@ -69,8 +73,12 @@ fun ProfileSetUp(
                 onChangeEmailClick = {}
             )
 
+            Spacer(modifier = Modifier.height(10.dp))
+
             // Change Password
             ChangePasswordSection(onChangePasswordClick = {})
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Names
             Names(firstName = states.firstName,
@@ -82,6 +90,8 @@ fun ProfileSetUp(
                     viewModel.onEvent(ProfileSetUpEvents.ChangeLastName(it))
                 }
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Country/Region
             SimpleDropdownMenu(
@@ -154,6 +164,8 @@ fun ProfileSetUp(
                 }
             )
 
+            Spacer(modifier = Modifier.height(10.dp))
+
             // Phone Number
             PhoneNumberInput(countryCode = states.callingCode,
                 phoneNumber = states.phoneNumber,
@@ -161,6 +173,8 @@ fun ProfileSetUp(
                     viewModel.onEvent(ProfileSetUpEvents.ChangePhoneNumber(it))
                 }
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Base Currency
             SimpleDropdownMenu(
@@ -219,6 +233,8 @@ fun ProfileSetUp(
                     )
                 }
             )
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Submit
             SaveButton(text = "Save",

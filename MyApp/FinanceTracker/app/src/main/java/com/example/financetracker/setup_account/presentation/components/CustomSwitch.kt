@@ -31,7 +31,8 @@ fun CustomSwitch(text:String,
 
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .height(20.dp),
 //            .padding(16.dp)
         verticalAlignment = Alignment.CenterVertically
     ) {

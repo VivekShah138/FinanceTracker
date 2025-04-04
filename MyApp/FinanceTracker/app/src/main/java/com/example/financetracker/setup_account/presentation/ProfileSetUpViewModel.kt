@@ -261,13 +261,17 @@ class ProfileSetUpViewModel @Inject constructor(
     private suspend fun fetchCountries() {
         withContext(Dispatchers.IO) {
             try {
-                val sortedCountries = useCasesWrapperSetupAccount.getCountryDetailsUseCase().sortedBy {
-                    it.name.common
-                }.distinctBy {
-                   it.name.common
-                }
+                val sortedCountries = useCasesWrapperSetupAccount.getCountryDetailsUseCase()
+                    .filter {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                    }
+                    .sortedBy {
+                        it.name.common
+                    }
+                    .distinctBy {
+                        it.name.common
+                    }
 
-//                useCasesWrapperSetupAccount.insertCountryLocally()
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     countries = sortedCountries
@@ -277,14 +281,21 @@ class ProfileSetUpViewModel @Inject constructor(
                     currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
                 )
 
-                val sortedCountriesLocal = useCasesWrapperSetupAccount.getCountryLocally().sortedBy {
-                    it.name.common
-                }.distinctBy {
-                    it.name.common
-                }
+                val sortedCountriesLocal = useCasesWrapperSetupAccount.getCountryLocally()
+                    .filter {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                    }
+                    .sortedBy {
+                        it.name.common
+                    }
+                    .distinctBy {
+                        it.name.common
+                    }
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     countries = sortedCountriesLocal
                 )
+
+                profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
             }
         }
     }
@@ -292,12 +303,16 @@ class ProfileSetUpViewModel @Inject constructor(
     private suspend fun fetchBaseCurrencies() {
         withContext(Dispatchers.IO) {
             try {
-                val sortedCurrencies = useCasesWrapperSetupAccount.getCountryDetailsUseCase().sortedBy {
-                    it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
-
-                }.distinctBy {
-                    it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
-                }
+                val sortedCurrencies = useCasesWrapperSetupAccount.getCountryDetailsUseCase()
+                    .filter {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                    }
+                    .sortedBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                    }
+                    .distinctBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                    }
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     currencies = sortedCurrencies
@@ -307,23 +322,30 @@ class ProfileSetUpViewModel @Inject constructor(
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
                 )
-                val sortedCurrenciesLocally = useCasesWrapperSetupAccount.getCountryLocally().sortedBy {
-                    it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
 
-                }.distinctBy {
-                    it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
-                }
+                val sortedCurrenciesLocally = useCasesWrapperSetupAccount.getCountryLocally()
+                    .filter {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                    }
+                    .sortedBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                    }
+                    .distinctBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                    }
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     currencies = sortedCurrenciesLocally
                 )
+
+                profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
 
             }
         }
     }
 
     private fun getProfileInfo(){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val userId = useCasesWrapperSetupAccount.getUserUIDUseCase() ?: "Unknown"
                 val userProfile = useCasesWrapperSetupAccount.getUserProfileUseCase(userId)
@@ -357,7 +379,30 @@ class ProfileSetUpViewModel @Inject constructor(
 
                 }
             }catch (e:Exception){
-                profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details"))
+                profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details From Cloud.Using Locally Saved Details"))
+                val userId = useCasesWrapperSetupAccount.getUIDLocally() ?: "Unknown"
+                val userProfile = useCasesWrapperSetupAccount.getUserProfileFromLocalDb(userId)
+                if(userProfile == null){
+                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details"))
+                }
+                else{
+                    val baseCurrencyCode = userProfile.baseCurrency.keys.firstOrNull() ?: "N/A"
+                    val baseCurrencyName = userProfile.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
+                    val baseCurrencySymbol = userProfile.baseCurrency?.values?.firstOrNull()?.symbol ?: "N/A"
+
+
+                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+                        firstName = userProfile.firstName,
+                        lastName = userProfile.lastName,
+                        email = userProfile.email,
+                        selectedBaseCurrency = baseCurrencyName,
+                        baseCurrencyCode = baseCurrencyCode,
+                        baseCurrencySymbol = baseCurrencySymbol,
+                        selectedCountry =  userProfile.country,
+                        callingCode = userProfile.callingCode,
+                        phoneNumber = userProfile.phoneNumber
+                    )
+                }
             }
         }
     }

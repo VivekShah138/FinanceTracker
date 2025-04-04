@@ -21,7 +21,6 @@ fun UserProfile.toEntity(uid: String): UserProfileEntity {
         firstName = this.firstName,
         lastName = this.lastName,
         email = this.email,
-//        baseCurrency = Gson().toJson(this.baseCurrency), // Serialize Map to JSON string
         baseCurrency = CountryMapper.fromCurrencies(this.baseCurrency), // Serialize Map to JSON string
         country = this.country,
         callingCode = this.callingCode,
@@ -36,10 +35,6 @@ fun UserProfileEntity.toDomain(): UserProfile {
         firstName = this.firstName,
         lastName = this.lastName,
         email = this.email,
-//        baseCurrency = Gson().fromJson(
-//            this.baseCurrency,
-//            Map::class.java
-//        ) as Map<String, Currency>, // Deserialize JSON string back to Map
         baseCurrency =  CountryMapper.toCurrencies(this.baseCurrency) ?: emptyMap(),
         country = this.country,
         callingCode = this.callingCode,

@@ -56,7 +56,7 @@ class PrepopulateCurrencyRatesDatabaseWorker @AssistedInject constructor(
                 }
             }
 
-            val currencyRatesEntity = CurrencyRatesMapper.fromResponseToEntity(currencyRates)
+            val currencyRatesEntity = CurrencyRatesMapper.fromCurrencyResponseToEntity(currencyRates)
             currencyRatesDao.insertCurrencyRates(currencyRatesEntity)
             Log.d(TAG, "Currency rates inserted successfully.")
             userPreferences.setCurrencyRatesUpdated(true)

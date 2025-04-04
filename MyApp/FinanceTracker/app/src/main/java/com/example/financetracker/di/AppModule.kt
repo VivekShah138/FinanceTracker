@@ -46,6 +46,12 @@ import com.example.financetracker.core.local.domain.room.usecases.PredefinedCate
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
+import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.AddExpenseUseCasesWrapper
+import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.InsertCustomCategory
+import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionCategory
+import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionName
+import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionPrice
+import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionQuantity
 import com.example.financetracker.main_page_feature.home_page.data.repository.HomePageRepositoryImpl
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
@@ -63,6 +69,7 @@ import com.example.financetracker.setup_account.data.remote.repository.CurrencyR
 import com.example.financetracker.setup_account.domain.repository.local.CurrencyRatesLocalRepository
 import com.example.financetracker.setup_account.domain.repository.remote.CurrencyRatesRemoteRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryDetailsUseCase
+import com.example.financetracker.setup_account.domain.usecases.GetCurrencyRatesLocally
 import com.example.financetracker.setup_account.domain.usecases.InsertCurrencyRatesLocalOneTime
 import com.example.financetracker.setup_account.domain.usecases.InsertCurrencyRatesLocalPeriodically
 import com.example.financetracker.setup_account.domain.usecases.UpdateUserProfile
@@ -332,7 +339,8 @@ object AppModule {
             insertCurrencyRatesLocalOneTime = InsertCurrencyRatesLocalOneTime(currencyRatesLocalRepository),
             insertCurrencyRatesLocalPeriodically = InsertCurrencyRatesLocalPeriodically(currencyRatesLocalRepository),
             getCurrencyRatesUpdated = GetCurrencyRatesUpdated(sharedPreferencesRepository),
-            setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository)
+            setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository),
+            getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository)
         )
     }
 
@@ -360,6 +368,24 @@ object AppModule {
             getCurrencyRatesUpdated = GetCurrencyRatesUpdated(sharedPreferencesRepository)
         )
     }
+
+    // AddExpensePageUseCases
+    @Provides
+    @Singleton
+    fun provideAddExpenseUseCases(
+        currencyRatesLocalRepository: CurrencyRatesLocalRepository,
+        categoryRepository: CategoryRepository
+    ): AddExpenseUseCasesWrapper{
+        return AddExpenseUseCasesWrapper(
+            getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository),
+            insertCustomCategory = InsertCustomCategory(categoryRepository),
+            validateTransactionPrice = ValidateTransactionPrice(),
+            validateTransactionName = ValidateTransactionName(),
+            validateTransactionCategory = ValidateTransactionCategory(),
+            validateTransactionQuantity = ValidateTransactionQuantity()
+        )
+    }
+
 }
 
 

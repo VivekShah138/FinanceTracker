@@ -6,6 +6,7 @@ import com.example.financetracker.core.cloud.domain.repository.FirebaseRepositor
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -28,14 +29,32 @@ class FirebaseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveUserProfile(userId: String, profile: UserProfile) {
-        firestore.collection("Users").document(userId) // Users/userId
-            .set(mapOf("userProfile" to profile), SetOptions.merge()) // Stores userProfile as a field
-            .await()
+        try {
+            // Force a Firestore network call
+            firestore.collection("Users").document(userId)
+                .get(Source.SERVER) // Ensures Firebase tries fetching from the server
+                .await()
+
+            // Now perform the write operation
+            firestore.collection("Users").document(userId)
+                .set(mapOf("userProfile" to profile), SetOptions.merge())
+                .await()
+
+        } catch (e: Exception) {
+            throw Exception("No internet connection. Profile update failed.")
+        }
     }
 
+
     override suspend fun getUserProfile(userId: String): UserProfile? {
-        return firestore.collection("Users").document(userId) // Users/userId
-            .get().await()
-            .get("userProfile", UserProfile::class.java) // Fetch userProfile field as an object
+        return try {
+            firestore.collection("Users").document(userId)
+                .get(Source.SERVER) // Forces network request, throws exception if offline
+                .await()
+                .get("userProfile", UserProfile::class.java)
+        } catch (e: Exception) {
+            throw Exception("No internet connection. Cannot fetch user profile.")
+        }
     }
+
 }

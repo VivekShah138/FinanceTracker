@@ -8,9 +8,9 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryDao
+import com.example.financetracker.setup_account.data.local.data_source.country.CountryMapper
 import com.example.financetracker.setup_account.data.local.data_source.country.PrepopulateCountryDatabaseWorker
 import com.example.financetracker.setup_account.domain.model.Country
-import com.example.financetracker.setup_account.domain.model.toDomain
 import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -21,7 +21,9 @@ class CountryLocalRepositoryImpl @Inject constructor(
 ): CountryLocalRepository {
 
     override suspend fun getCountries(): List<Country> {
-        val countries = countryDao.getAllCountries().map { it.toDomain() }
+        val countries = countryDao.getAllCountries().map {
+            CountryMapper.fromEntityToCountryResponse(it)
+        }
         Log.d("RoomDatabase", "Fetched Countries from Room: $countries")
         return countries
     }

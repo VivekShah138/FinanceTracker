@@ -24,7 +24,7 @@ fun PhoneNumberInput(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+//            .padding(16.dp)
     ) {
         // Country Code Input
         OutlinedTextField(
