@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.setup_account.domain.model.Currency
-import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
+import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileSetUpViewModel @Inject constructor(
-    private val useCasesWrapperSetupAccount: UseCasesWrapperSetupAccount
+    private val setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper
 ): ViewModel() {
 
     private val _profileSetUpStates = MutableStateFlow(ProfileSetUpStates())
@@ -28,7 +28,7 @@ class ProfileSetUpViewModel @Inject constructor(
     private val profileSetUpEventChannel = Channel<ProfileUpdateEvent>()
     val profileSetUpValidationEvents = profileSetUpEventChannel.receiveAsFlow()
 
-    private val userId = useCasesWrapperSetupAccount.getUIDLocally() ?: "Unknown"
+    private val userId = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
 
     private var oldBaseCurrency = _profileSetUpStates.value.selectedBaseCurrency
 
@@ -48,7 +48,7 @@ class ProfileSetUpViewModel @Inject constructor(
 
     private fun setOldBaseCurrency() {
         viewModelScope.launch(Dispatchers.IO) {
-            val userProfile = useCasesWrapperSetupAccount.getUserProfileFromLocalDb(userId)
+            val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(userId)
             val baseCurrency = userProfile?.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
             Log.d("WorkManagerCurrencyRates","baseCurrency $baseCurrency")
 
@@ -130,16 +130,16 @@ class ProfileSetUpViewModel @Inject constructor(
     }
 
     private suspend fun validateFields(){
-        val firstName = useCasesWrapperSetupAccount.validateName(
+        val firstName = setupAccountUseCasesWrapper.validateName(
             _profileSetUpStates.value.firstName
         )
-        val lastName = useCasesWrapperSetupAccount.validateName(
+        val lastName = setupAccountUseCasesWrapper.validateName(
             _profileSetUpStates.value.lastName
         )
-        val phoneNumber = useCasesWrapperSetupAccount.validatePhoneNumber(
+        val phoneNumber = setupAccountUseCasesWrapper.validatePhoneNumber(
             _profileSetUpStates.value.phoneNumber
         )
-        val country = useCasesWrapperSetupAccount.validateCountry(
+        val country = setupAccountUseCasesWrapper.validateCountry(
             _profileSetUpStates.value.selectedCountry
         )
 
@@ -153,7 +153,7 @@ class ProfileSetUpViewModel @Inject constructor(
         }
         else{
             try {
-                val userId = useCasesWrapperSetupAccount.getUserUIDUseCase() ?: userId
+                val userId = setupAccountUseCasesWrapper.getUserUIDUseCase() ?: userId
 
 
                 val baseCurrencyCode = profileSetUpStates.value.baseCurrencyCode
@@ -178,7 +178,7 @@ class ProfileSetUpViewModel @Inject constructor(
 
 
                 // Save To LocalDb
-                useCasesWrapperSetupAccount.insertUserProfileToLocalDb(
+                setupAccountUseCasesWrapper.insertUserProfileToLocalDb(
                     userProfile = UserProfile(
                         firstName = profileSetUpStates.value.firstName,
                         lastName = profileSetUpStates.value.lastName,
@@ -193,7 +193,7 @@ class ProfileSetUpViewModel @Inject constructor(
                 )
 
 
-                useCasesWrapperSetupAccount.updateUserProfile(
+                setupAccountUseCasesWrapper.updateUserProfile(
                     userId = userId ?: "Unknown",
                     firstName = profileSetUpStates.value.firstName,
                     lastName = profileSetUpStates.value.lastName,
@@ -216,10 +216,10 @@ class ProfileSetUpViewModel @Inject constructor(
     }
 
     private suspend fun validateName(){
-        val firstName = useCasesWrapperSetupAccount.validateName(
+        val firstName = setupAccountUseCasesWrapper.validateName(
             _profileSetUpStates.value.firstName
         )
-        val lastName = useCasesWrapperSetupAccount.validateName(
+        val lastName = setupAccountUseCasesWrapper.validateName(
             _profileSetUpStates.value.lastName
         )
         if(!firstName.isSuccessful || !lastName.isSuccessful){
@@ -233,7 +233,7 @@ class ProfileSetUpViewModel @Inject constructor(
     }
 
     private suspend fun validatePhoneNumber(){
-        val phoneNumber = useCasesWrapperSetupAccount.validatePhoneNumber(
+        val phoneNumber = setupAccountUseCasesWrapper.validatePhoneNumber(
             _profileSetUpStates.value.phoneNumber
         )
         if(!phoneNumber.isSuccessful){
@@ -245,7 +245,7 @@ class ProfileSetUpViewModel @Inject constructor(
     }
 
     private suspend fun validateCountry(){
-        val country = useCasesWrapperSetupAccount.validateCountry(
+        val country = setupAccountUseCasesWrapper.validateCountry(
             _profileSetUpStates.value.selectedCountry
         )
         if(!country.isSuccessful){
@@ -261,7 +261,7 @@ class ProfileSetUpViewModel @Inject constructor(
     private suspend fun fetchCountries() {
         withContext(Dispatchers.IO) {
             try {
-                val sortedCountries = useCasesWrapperSetupAccount.getCountryDetailsUseCase()
+                val sortedCountries = setupAccountUseCasesWrapper.getCountryDetailsUseCase()
                     .filter {
                         it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
                     }
@@ -272,7 +272,7 @@ class ProfileSetUpViewModel @Inject constructor(
                         it.name.common
                     }
 
-                useCasesWrapperSetupAccount.insertCountryLocally(sortedCountries)
+                setupAccountUseCasesWrapper.insertCountryLocally(sortedCountries)
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     countries = sortedCountries
@@ -282,7 +282,7 @@ class ProfileSetUpViewModel @Inject constructor(
                     currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
                 )
 
-                val sortedCountriesLocally = useCasesWrapperSetupAccount.getCountryLocally()
+                val sortedCountriesLocally = setupAccountUseCasesWrapper.getCountryLocally()
                     .filter {
                         it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
                     }
@@ -295,7 +295,7 @@ class ProfileSetUpViewModel @Inject constructor(
 
                 if(sortedCountriesLocally.isEmpty()){
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Country From internet.Try Again Later"))
-                    useCasesWrapperSetupAccount.insertCountryLocallyWorkManager()
+                    setupAccountUseCasesWrapper.insertCountryLocallyWorkManager()
                 }
                 else{
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
@@ -311,7 +311,7 @@ class ProfileSetUpViewModel @Inject constructor(
     private suspend fun fetchBaseCurrencies() {
         withContext(Dispatchers.IO) {
             try {
-                val sortedCurrencies = useCasesWrapperSetupAccount.getCountryDetailsUseCase()
+                val sortedCurrencies = setupAccountUseCasesWrapper.getCountryDetailsUseCase()
                     .filter {
                         it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
                     }
@@ -322,7 +322,7 @@ class ProfileSetUpViewModel @Inject constructor(
                         it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
                     }
 
-                useCasesWrapperSetupAccount.insertCountryLocally(sortedCurrencies)
+                setupAccountUseCasesWrapper.insertCountryLocally(sortedCurrencies)
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     currencies = sortedCurrencies
@@ -333,7 +333,7 @@ class ProfileSetUpViewModel @Inject constructor(
                     currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
                 )
 
-                val sortedCurrenciesLocally = useCasesWrapperSetupAccount.getCountryLocally()
+                val sortedCurrenciesLocally = setupAccountUseCasesWrapper.getCountryLocally()
                     .filter {
                         it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
                     }
@@ -346,7 +346,7 @@ class ProfileSetUpViewModel @Inject constructor(
 
                 if(sortedCurrenciesLocally.isEmpty()){
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Try Again Later"))
-                    useCasesWrapperSetupAccount.insertCountryLocallyWorkManager()
+                    setupAccountUseCasesWrapper.insertCountryLocallyWorkManager()
                 }
                 else{
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
@@ -364,7 +364,7 @@ class ProfileSetUpViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
 
-                val userProfile = useCasesWrapperSetupAccount.getUserProfileUseCase(userId)
+                val userProfile = setupAccountUseCasesWrapper.getUserProfileUseCase(userId)
                 if(userProfile == null){
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details"))
                 }
@@ -396,8 +396,8 @@ class ProfileSetUpViewModel @Inject constructor(
                 }
             }catch (e:Exception){
                 profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details From Cloud.Using Locally Saved Details"))
-                val userId = useCasesWrapperSetupAccount.getUIDLocally() ?: "Unknown"
-                val userProfile = useCasesWrapperSetupAccount.getUserProfileFromLocalDb(userId)
+                val userId = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
+                val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(userId)
                 if(userProfile == null){
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details"))
                 }
@@ -430,12 +430,12 @@ class ProfileSetUpViewModel @Inject constructor(
             Log.d("WorkManagerCurrencyRates","currentBaseCurrency ${_profileSetUpStates.value.selectedBaseCurrency}")
             Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
 
-            val userProfile = useCasesWrapperSetupAccount.getUserProfileFromLocalDb(userId)
+            val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(userId)
 
             if(((!oldBaseCurrency.isNullOrEmpty() && oldBaseCurrency != _profileSetUpStates.value.selectedBaseCurrency) || userProfile == null)){
                 Log.d("WorkManagerCurrencyRates","insideIf ProfileSetUpViewModel")
-                useCasesWrapperSetupAccount.setCurrencyRatesUpdated(isUpdated = false)
-                useCasesWrapperSetupAccount.insertCurrencyRatesLocalOneTime()
+                setupAccountUseCasesWrapper.setCurrencyRatesUpdated(isUpdated = false)
+                setupAccountUseCasesWrapper.insertCurrencyRatesLocalOneTime()
             }
 
         }

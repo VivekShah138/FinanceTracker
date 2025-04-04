@@ -2,7 +2,7 @@ package com.example.financetracker.auth_feature.presentation.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
+import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterPageViewModel @Inject constructor(
-    private val useCasesWrapper: UseCasesWrapper
+    private val authFeatureUseCasesWrapper: AuthFeatureUseCasesWrapper
 ):ViewModel(){
 
     private val _registerState = MutableStateFlow(RegisterPageStates())
@@ -66,10 +66,10 @@ class RegisterPageViewModel @Inject constructor(
 
     private suspend fun validateFields(){
 
-        val emailResult = useCasesWrapper.validateEmail(registerState.value.email)
+        val emailResult = authFeatureUseCasesWrapper.validateEmail(registerState.value.email)
 //        val nameResult = useCasesWrapper.validateName(registerState.value.userName)
-        val passwordResult = useCasesWrapper.validatePassword(registerState.value.password)
-        val confirmPasswordResult = useCasesWrapper.validateConfirmPassword(
+        val passwordResult = authFeatureUseCasesWrapper.validatePassword(registerState.value.password)
+        val confirmPasswordResult = authFeatureUseCasesWrapper.validateConfirmPassword(
             registerState.value.password,
             registerState.value.confirmPassword
         )

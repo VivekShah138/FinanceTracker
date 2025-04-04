@@ -9,7 +9,7 @@ import androidx.room.Room
 import androidx.work.WorkManager
 import com.example.financetracker.auth_feature.domain.usecases.InsertUIDLocally
 import com.example.financetracker.auth_feature.domain.usecases.KeepUserLoggedIn
-import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
+import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCasesWrapper
 import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
 import com.example.financetracker.auth_feature.domain.usecases.ValidateEmail
 import com.example.financetracker.auth_feature.domain.usecases.ValidatePassword
@@ -28,7 +28,7 @@ import com.example.financetracker.core.cloud.domain.usecases.GetUserUIDUseCase
 import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.core.cloud.domain.usecases.SaveUserProfileUseCase
 import com.example.financetracker.core.core_domain.usecase.GetUIDLocally
-import com.example.financetracker.core.core_domain.usecase.UseCasesWrapperCore
+import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDao
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDatabase
 import com.example.financetracker.core.local.data.room.data_source.category.migration.CATEGORY_MIGRATION_1_2
@@ -48,17 +48,17 @@ import com.example.financetracker.core.local.domain.room.usecases.PredefinedCate
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
-import com.example.financetracker.main_page_feature.add_transactions.data.local.data_source.TransactionDao
-import com.example.financetracker.main_page_feature.add_transactions.data.local.data_source.TransactionDatabase
-import com.example.financetracker.main_page_feature.add_transactions.data.local.repository.TransactionsLocalRepositoryImpl
-import com.example.financetracker.main_page_feature.add_transactions.domain.repository.TransactionLocalRepository
-import com.example.financetracker.main_page_feature.add_transactions.domain.use_cases.GetTransactionsLocally
-import com.example.financetracker.main_page_feature.add_transactions.domain.use_cases.InsertTransactionsLocally
-import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.AddExpenseUseCasesWrapper
-import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.InsertCustomCategory
-import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionCategory
-import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionName
-import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.ValidateTransactionPrice
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDao
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDatabase
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.repository.TransactionsLocalRepositoryImpl
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionLocalRepository
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetTransactionsLocally
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertTransactionsLocally
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertCustomCategory
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionName
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionPrice
 import com.example.financetracker.main_page_feature.home_page.data.repository.HomePageRepositoryImpl
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
@@ -81,7 +81,7 @@ import com.example.financetracker.setup_account.domain.usecases.InsertCountryLoc
 import com.example.financetracker.setup_account.domain.usecases.InsertCurrencyRatesLocalOneTime
 import com.example.financetracker.setup_account.domain.usecases.InsertCurrencyRatesLocalPeriodically
 import com.example.financetracker.setup_account.domain.usecases.UpdateUserProfile
-import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
+import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import com.example.financetracker.setup_account.domain.usecases.ValidateCountry
 import com.example.financetracker.setup_account.domain.usecases.ValidateName
 import com.example.financetracker.setup_account.domain.usecases.ValidatePhoneNumber
@@ -192,8 +192,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideCoreUseCases(firebaseRepository: FirebaseRepository,
-                            sharedPreferencesRepository: SharedPreferencesRepository): UseCasesWrapperCore {
-        return UseCasesWrapperCore(
+                            sharedPreferencesRepository: SharedPreferencesRepository): CoreUseCasesWrapper {
+        return CoreUseCasesWrapper(
             logoutUseCase = LogoutUseCase(
                 firebaseRepository = firebaseRepository,
                 sharedPreferencesRepository = sharedPreferencesRepository
@@ -209,8 +209,8 @@ object AppModule {
     // Auth UseCases
     @Provides
     @Singleton
-    fun provideAuthUseCases(sharedPreferencesRepository: SharedPreferencesRepository): UseCasesWrapper {
-        return UseCasesWrapper(
+    fun provideAuthUseCases(sharedPreferencesRepository: SharedPreferencesRepository): AuthFeatureUseCasesWrapper {
+        return AuthFeatureUseCasesWrapper(
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validateConfirmPassword = ValidateConfirmPassword(),
@@ -312,7 +312,7 @@ object AppModule {
     //TransactionDatabase
     @Provides
     @Singleton
-    fun provideTransactionDatabase(app : Application) : TransactionDatabase{
+    fun provideTransactionDatabase(app : Application) : TransactionDatabase {
         return Room.databaseBuilder(
             app,
             TransactionDatabase::class.java,
@@ -323,14 +323,14 @@ object AppModule {
     // Transaction Dao
     @Provides
     @Singleton
-    fun provideTransactionDao(db: TransactionDatabase): TransactionDao{
+    fun provideTransactionDao(db: TransactionDatabase): TransactionDao {
         return db.transactionDao
     }
 
     // Transaction Repository
     @Provides
     @Singleton
-    fun provideTransactionLocalRepository(transactionDao: TransactionDao): TransactionLocalRepository{
+    fun provideTransactionLocalRepository(transactionDao: TransactionDao): TransactionLocalRepository {
         return TransactionsLocalRepositoryImpl(transactionDao)
     }
 
@@ -344,8 +344,8 @@ object AppModule {
                                     userProfileRepository: UserProfileRepository,
                                     sharedPreferencesRepository: SharedPreferencesRepository,
                                     currencyRatesLocalRepository: CurrencyRatesLocalRepository
-    ): UseCasesWrapperSetupAccount {
-        return UseCasesWrapperSetupAccount(
+    ): SetupAccountUseCasesWrapper {
+        return SetupAccountUseCasesWrapper(
             getUserEmailUserCase = GetUserEmailUserCase(firebaseRepository),
             getUserUIDUseCase = GetUserUIDUseCase(firebaseRepository),
             getCountryDetailsUseCase = GetCountryDetailsUseCase(countryRepository),
@@ -400,8 +400,8 @@ object AppModule {
         currencyRatesLocalRepository: CurrencyRatesLocalRepository,
         categoryRepository: CategoryRepository,
         transactionLocalRepository: TransactionLocalRepository
-    ): AddExpenseUseCasesWrapper{
-        return AddExpenseUseCasesWrapper(
+    ): AddTransactionUseCasesWrapper {
+        return AddTransactionUseCasesWrapper(
             getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository),
             insertCustomCategory = InsertCustomCategory(categoryRepository),
             validateTransactionPrice = ValidateTransactionPrice(),

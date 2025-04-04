@@ -2,7 +2,7 @@ package com.example.financetracker.auth_feature.presentation.forgot_password
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.auth_feature.domain.usecases.UseCasesWrapper
+import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCasesWrapper
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ForgotPasswordViewModel @Inject constructor(
-    private val useCasesWrapper: UseCasesWrapper
+    private val authFeatureUseCasesWrapper: AuthFeatureUseCasesWrapper
 ): ViewModel(){
 
     private val _forgotPasswordState = MutableStateFlow(ForgotPasswordStates())
@@ -52,7 +52,7 @@ class ForgotPasswordViewModel @Inject constructor(
     }
 
     private suspend fun emailValidationCheck(){
-        val emailResult = useCasesWrapper.validateEmail(forgotPasswordState.value.email)
+        val emailResult = authFeatureUseCasesWrapper.validateEmail(forgotPasswordState.value.email)
         if(!emailResult.isSuccessful){
             return
         }

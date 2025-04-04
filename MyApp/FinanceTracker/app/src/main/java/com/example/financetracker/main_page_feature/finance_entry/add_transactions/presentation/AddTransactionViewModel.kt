@@ -1,0 +1,360 @@
+package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.financetracker.core.local.domain.room.model.Category
+import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
+import com.example.financetracker.setup_account.domain.model.Currency
+import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import java.math.BigDecimal
+import java.math.RoundingMode
+import javax.inject.Inject
+
+@HiltViewModel
+class AddTransactionViewModel @Inject constructor(
+    private val predefinedCategoriesUseCaseWrapper: PredefinedCategoriesUseCaseWrapper,
+    private val setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper,
+    private val addTransactionUseCasesWrapper: AddTransactionUseCasesWrapper
+): ViewModel() {
+
+    private val _addTransactionStates = MutableStateFlow(AddTransactionStates())
+    val addTransactionStates : StateFlow<AddTransactionStates> = _addTransactionStates.asStateFlow()
+
+    private val uid = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
+
+    private val addTransactionEventChannel = Channel<AddTransactionEvent>()
+    val addTransactionsValidationEvents = addTransactionEventChannel.receiveAsFlow()
+
+
+    init {
+        setTransactionCurrencyToBase()
+    }
+
+
+    fun onEvent(addTransactionEvents: AddTransactionEvents){
+        when(addTransactionEvents){
+
+            is AddTransactionEvents.SelectCategory -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    category = addTransactionEvents.categoryName,
+                    bottomSheetState = addTransactionEvents.bottomSheetState,
+                    alertBoxState = addTransactionEvents.alertBoxState
+                )
+                Log.d("AddExpense","BottomSheetState Changed")
+            }
+
+            is AddTransactionEvents.LoadCategory -> {
+
+                viewModelScope.launch {
+
+                    if(_addTransactionStates.value.transactionType.isEmpty()){
+                        addTransactionEventChannel.send(AddTransactionEvent.Failure("please select transaction type"))
+                    }
+                    else{
+                        predefinedCategoriesUseCaseWrapper.getPredefinedCategories(addTransactionEvents.type.lowercase())
+                            .collect { categoryList -> // Collect the flow to get the list
+                                _addTransactionStates.value = addTransactionStates.value.copy(
+                                    categoryList = categoryList
+                                )
+                            }
+                    }
+                }
+            }
+
+            is AddTransactionEvents.ChangeSavedItemState -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    saveItemState = addTransactionEvents.state
+                )
+            }
+
+            is AddTransactionEvents.ChangeRecurringItemState -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    isRecurring = addTransactionEvents.state
+                )
+            }
+
+            is AddTransactionEvents.ChangeTransactionName -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    transactionName = addTransactionEvents.name
+                )
+            }
+
+            AddTransactionEvents.LoadCurrencyRates -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    Log.d("AddExpenseViewModel","uid $uid")
+                    val baseCurrency = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(uid)?.baseCurrency?.keys?.firstOrNull() ?: "N/A"
+                    Log.d("AddExpenseViewModel","baseCurrency $baseCurrency")
+                    val exchangeRates = addTransactionUseCasesWrapper.getCurrencyRatesLocally(baseCurrency)
+                    Log.d("AddExpenseViewModel","Exchange Rates $exchangeRates")
+                }
+            }
+
+            is AddTransactionEvents.SaveCustomCategories -> {
+                insertCustomCategory()
+            }
+
+            is AddTransactionEvents.ChangeTransactionCurrency -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    transactionCurrencyName = addTransactionEvents.currencyName,
+                    transactionCurrencyCode = addTransactionEvents.currencyCode,
+                    transactionCurrencySymbol = addTransactionEvents.currencySymbol,
+                    transactionCurrencyExpanded = addTransactionEvents.currencyExpanded
+                )
+            }
+
+            is AddTransactionEvents.LoadCurrenciesList -> {
+                fetchCurrencies()
+            }
+
+            is AddTransactionEvents.ChangeTransactionDescription -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    transactionDescription = addTransactionEvents.description
+                )
+            }
+            is AddTransactionEvents.ChangeTransactionPrice -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    transactionPrice = addTransactionEvents.price
+                )
+            }
+
+            is AddTransactionEvents.SetConvertedTransactionPrice -> {
+                if(_addTransactionStates.value.transactionPrice.isEmpty()){
+                    AddTransactionEvent.Failure(
+                        errorMessage = "Please Enter the Price"
+                    )
+                }
+                else{
+                    fetchCurrenciesExchangeRates()
+                }
+
+            }
+
+            is AddTransactionEvents.ShowConversion -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    showConversion = addTransactionEvents.showConversion
+                )
+            }
+
+            AddTransactionEvents.AddTransactionTransaction -> {
+                addTransactions()
+            }
+
+            is AddTransactionEvents.SelectTransactionType -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    transactionType = addTransactionEvents.type,
+                    transactionTypeExpanded = addTransactionEvents.expanded
+                )
+            }
+        }
+    }
+
+    private fun addTransactions(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val nameResult = addTransactionUseCasesWrapper.validateTransactionName(_addTransactionStates.value.transactionName)
+            val priceResult = addTransactionUseCasesWrapper.validateTransactionPrice(_addTransactionStates.value.transactionPrice)
+            val categoryResult = addTransactionUseCasesWrapper.validateTransactionCategory(_addTransactionStates.value.category)
+
+
+            if(!nameResult.isSuccessful || !priceResult.isSuccessful || !categoryResult.isSuccessful){
+                addTransactionEventChannel.send(
+                    AddTransactionEvent.Failure(
+                        errorMessage = nameResult.errorMessage ?: priceResult.errorMessage
+                        ?: categoryResult.errorMessage
+                    )
+                )
+            }
+            else {
+
+                val transactionCurrencyName = _addTransactionStates.value.transactionCurrencyName
+                val transactionCurrencySymbol = _addTransactionStates.value.transactionCurrencySymbol
+                val transactionCurrencyCode = _addTransactionStates.value.transactionCurrencyCode
+
+                val selectedTransactionCurrency = Currency(name = transactionCurrencyName, symbol = transactionCurrencySymbol)
+                val transactionCurrency: Map<String, Currency> = mapOf(
+                    transactionCurrencyCode to selectedTransactionCurrency
+                )
+
+                val transaction = Transactions(
+                    amount = _addTransactionStates.value.transactionPrice?.toDoubleOrNull() ?: 0.0,
+                    currency = transactionCurrency,
+                    convertedAmount = _addTransactionStates.value.convertedPrice?.toDoubleOrNull() ?: 0.0,
+                    exchangeRate = _addTransactionStates.value.transactionExchangeRate?.toDoubleOrNull() ?: 0.0,
+                    transactionType = "expense",
+                    category = _addTransactionStates.value.category,
+                    dateTime = System.currentTimeMillis(),
+                    userUid = uid,
+                    description = _addTransactionStates.value.transactionDescription,
+                    isRecurring = _addTransactionStates.value.isRecurring,
+                    cloudSync = false,
+                    transactionName = _addTransactionStates.value.transactionName
+                )
+                try{
+                    addTransactionUseCasesWrapper.insertTransactionsLocally(transaction)
+                }catch (e:Exception){
+                    Log.d("AddExpenseViewModel","Error ${e.localizedMessage}")
+                    addTransactionEventChannel.send(AddTransactionEvent.Failure(errorMessage = e.localizedMessage))
+                    return@launch
+                }
+                addTransactionEventChannel.send(AddTransactionEvent.Success)
+            }
+
+        }
+    }
+
+    private fun fetchCurrenciesExchangeRates(){
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val saveCurrencyMap = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(uid)?.baseCurrency
+            Log.d("AddExpenseViewModel", "saveCurrencyMap: $saveCurrencyMap")
+            val baseCurrencyName = saveCurrencyMap?.values?.firstOrNull()?.name ?: "N/A"
+            val baseCurrencyCode = saveCurrencyMap?.keys?.firstOrNull() ?: "N/A"
+            val baseCurrencySymbol = saveCurrencyMap?.values?.firstOrNull()?.symbol ?: "N/A"
+            Log.d("AddExpenseViewModel", "baseCurrencySymbol: $baseCurrencyCode")
+            Log.d("AddExpenseViewModel", "baseCurrencySymbol: $baseCurrencySymbol")
+
+            val currencyExchangeRate = setupAccountUseCasesWrapper.getCurrencyRatesLocally(baseCurrencyCode)?.conversion_rates
+            Log.d("AddExpenseViewModel", "currencyExchangeRate: $currencyExchangeRate")
+            // Check if the map contains the currency code
+            val selectedCurrencyRate = if (currencyExchangeRate != null && currencyExchangeRate.containsKey(_addTransactionStates.value.transactionCurrencyCode)) {
+                BigDecimal(currencyExchangeRate[_addTransactionStates.value.transactionCurrencyCode] ?: 1.0)
+                    .setScale(4, RoundingMode.HALF_UP)
+                    .toString()
+            } else {
+                "1.0000" // Default value with 4 decimal places
+            }
+            Log.d("AddExpenseViewModel", "selectedCurrencyRate: $selectedCurrencyRate")
+
+            _addTransactionStates.value = addTransactionStates.value.copy(
+                transactionExchangeRate = selectedCurrencyRate
+            )
+
+            val priceString = _addTransactionStates.value.transactionPrice
+            val rateString = _addTransactionStates.value.transactionExchangeRate
+            val price = priceString.toDoubleOrNull() ?: 0.0
+            val rate = rateString.toDoubleOrNull() ?: 0.0
+
+            Log.d("AddExpenseViewModel", "price: $price")
+            Log.d("AddExpenseViewModel", "rate: $rate")
+
+            if (rate != 0.0) {
+                // Perform conversion if both price and rate are valid
+                val conversion = try {
+                    val result = BigDecimal(price / rate)
+                        .setScale(2, RoundingMode.HALF_UP)
+                    result.toString()
+                } catch (e: ArithmeticException) {
+                    // Handle any potential math errors
+                    "Error: Invalid conversion"
+                }
+
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    convertedPrice = conversion
+                )
+            } else {
+                // Handle the error if rate is zero or invalid
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    convertedPrice = "Error: Invalid rate"
+                )
+            }
+
+        }
+    }
+
+    private fun insertCustomCategory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val uid = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
+            val category = Category(
+                uid = uid,
+                name = _addTransactionStates.value.category,
+                type = "expense",
+                icon = "ic_custom",
+                isCustom = true
+            )
+            addTransactionUseCasesWrapper.insertCustomCategory(category)
+        }
+    }
+
+    private fun setTransactionCurrencyToBase(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val saveCurrencyMap = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(uid)?.baseCurrency
+            val baseCurrencyName = saveCurrencyMap?.values?.firstOrNull()?.name ?: "N/A"
+            val baseCurrencyCode = saveCurrencyMap?.keys?.firstOrNull() ?: "N/A"
+            val baseCurrencySymbol = saveCurrencyMap?.values?.firstOrNull()?.symbol ?: "N/A"
+
+            _addTransactionStates.value = addTransactionStates.value.copy(
+                baseCurrencySymbol = baseCurrencySymbol,
+                baseCurrencyName = baseCurrencyName,
+                baseCurrencyCode = baseCurrencyCode
+            )
+
+            _addTransactionStates.value = addTransactionStates.value.copy(
+                transactionCurrencyName = baseCurrencyName,
+                transactionCurrencyCode = baseCurrencyCode,
+                transactionCurrencySymbol = baseCurrencySymbol,
+                transactionCurrencyExpanded = false
+            )
+
+        }
+    }
+
+    private fun fetchCurrencies() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val sortedCountries = setupAccountUseCasesWrapper.getCountryDetailsUseCase()
+                    .filter {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                    }
+                    .sortedBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                    }
+                    .distinctBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                    }
+
+                Log.d("AddExpenseViewModel","currencies $sortedCountries")
+
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    currencies = sortedCountries
+                )
+            } catch (e: Exception) {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    errorMessage = e.localizedMessage ?: " Error Occurred"
+                )
+
+                val sortedCountriesLocal = setupAccountUseCasesWrapper.getCountryLocally()
+                    .filter {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                    }
+                    .sortedBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                    }
+                    .distinctBy {
+                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                    }
+
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    currencies = sortedCountriesLocal
+                )
+
+                addTransactionEventChannel.send(AddTransactionEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
+            }
+        }
+    }
+
+    sealed class AddTransactionEvent{
+        data object Success: AddTransactionEvent()
+        data class Failure(val errorMessage: String?): AddTransactionEvent()
+    }
+
+}

@@ -3,12 +3,9 @@ package com.example.financetracker.main_page_feature.view_transactions.presentat
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
-import com.example.financetracker.main_page_feature.add_transactions.expense.domain.usecases.AddExpenseUseCasesWrapper
-import com.example.financetracker.main_page_feature.add_transactions.expense.presentation.AddExpenseStates
 import com.example.financetracker.main_page_feature.view_transactions.ViewTransactionUseCaseWrapper
 import com.example.financetracker.main_page_feature.view_transactions.presentation.components.ViewTransactionsStates
-import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
+import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,14 +16,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ViewTransactionsViewModel @Inject constructor(
-    private val useCasesWrapperSetupAccount: UseCasesWrapperSetupAccount,
+    private val setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper,
     private val viewTransactionUseCaseWrapper: ViewTransactionUseCaseWrapper
 ): ViewModel() {
 
     private val _viewTransactionStates = MutableStateFlow(ViewTransactionsStates())
     val viewTransactionStates : StateFlow<ViewTransactionsStates> = _viewTransactionStates.asStateFlow()
 
-    private val uid = useCasesWrapperSetupAccount.getUIDLocally() ?: "Unknown"
+    private val uid = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
 
     init {
         getTransactions()

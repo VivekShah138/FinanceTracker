@@ -11,6 +11,8 @@ import com.example.financetracker.setup_account.data.local.data_source.country.C
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryMapper
 import com.example.financetracker.setup_account.data.local.data_source.country.PrepopulateCountryDatabaseWorker
 import com.example.financetracker.setup_account.domain.model.Country
+import com.example.financetracker.setup_account.domain.model.toDomain
+import com.example.financetracker.setup_account.domain.model.toEntity
 import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -22,7 +24,7 @@ class CountryLocalRepositoryImpl @Inject constructor(
 
     override suspend fun getCountries(): List<Country> {
         val countries = countryDao.getAllCountries().map {
-            CountryMapper.fromEntityToCountryResponse(it)
+            it.toDomain()
         }
         Log.d("RoomDatabase", "Fetched Countries from Room: $countries")
         return countries
@@ -53,7 +55,7 @@ class CountryLocalRepositoryImpl @Inject constructor(
 
     override suspend fun insertCountries(countries: List<Country>) {
         val countriesEntity = countries.map {
-            CountryMapper.fromCountryResponseToEntity(it)
+            it.toEntity()
         }
         countryDao.insertAll(countriesEntity)
     }

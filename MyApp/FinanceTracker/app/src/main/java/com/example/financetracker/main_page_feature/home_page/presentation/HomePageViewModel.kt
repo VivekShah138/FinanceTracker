@@ -3,9 +3,8 @@ package com.example.financetracker.main_page_feature.home_page.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
-import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
+import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomePageViewModel @Inject constructor(
     private val homePageUseCaseWrapper: HomePageUseCaseWrapper,
-    private val userCasesWrapperSetupAccount: UseCasesWrapperSetupAccount
+    private val userCasesWrapperSetupAccount: SetupAccountUseCasesWrapper
 ): ViewModel(){
 
     init {

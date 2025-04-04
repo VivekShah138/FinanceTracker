@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
-import com.example.financetracker.setup_account.domain.usecases.UseCasesWrapperSetupAccount
+import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ class FinanceTracker : Application(), Configuration.Provider {
 
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var predefinedCategoriesUseCaseWrapper: PredefinedCategoriesUseCaseWrapper
-    @Inject lateinit var useCasesWrapperSetupAccount: UseCasesWrapperSetupAccount
+    @Inject lateinit var setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper
 
     private val applicationScope = CoroutineScope(Dispatchers.IO)
 
@@ -29,7 +29,7 @@ class FinanceTracker : Application(), Configuration.Provider {
 
         applicationScope.launch {
             predefinedCategoriesUseCaseWrapper.insertPredefinedCategories()
-            useCasesWrapperSetupAccount.insertCountryLocallyWorkManager()
+            setupAccountUseCasesWrapper.insertCountryLocallyWorkManager()
         }
     }
 

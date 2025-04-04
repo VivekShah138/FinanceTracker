@@ -6,10 +6,13 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.financetracker.setup_account.data.remote.CountryApi
+import com.example.financetracker.setup_account.domain.model.toEntity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import retrofit2.HttpException
 import java.io.IOException
+import java.net.ProtocolException
+import java.net.SocketTimeoutException
 
 @HiltWorker
 class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
@@ -37,13 +40,15 @@ class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
                 Log.e("WorkManagerCountries", "Error fetching countries from API", e)
 
                 return when (e) {
-                    is IOException,
-                    is HttpException -> {
-                        Log.d("WorkManagerCountries", "Recoverable issue, will retry...")
+                    is SocketTimeoutException,
+                    is ProtocolException,
+                    is HttpException,
+                    is IOException -> {
+                        Log.d("WorkManagerCountries", "Recoverable error: ${e::class.java.simpleName}, retrying...")
                         Result.retry()
                     }
                     else -> {
-                        Log.d("WorkManagerCountries", "Unrecoverable error: ${e::class.java.simpleName}")
+                        Log.d("WorkManagerCountries", "Unrecoverable: ${e::class.java.simpleName}")
                         Result.failure()
                     }
                 }
@@ -53,7 +58,7 @@ class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
 
             val countryEntities = countries.map { country ->
                 try {
-                    val entity = CountryMapper.fromCountryResponseToEntity(country)
+                    val entity = country.toEntity()
                     Log.d("WorkManagerCountries", "Mapped to Entity: $entity")
                     entity
                 } catch (e: Exception) {
