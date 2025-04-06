@@ -1,6 +1,6 @@
-package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation
+package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components
 
-import androidx.compose.foundation.BorderStroke
+import TransactionTypeSegmentedButton
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,22 +9,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -75,6 +72,20 @@ fun AddTransactionPagePreview(){
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            TransactionTypeSegmentedButton(
+                selectedType = "Expense",
+                onTypeSelected = {}
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            TransactionCategoryButton(
+                category = "",
+                onClick = {}
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             // Search Bar or Text Input based on Toggle
             // Outlined Text Field for Search or Input Mode
             if (false) {
@@ -93,43 +104,7 @@ fun AddTransactionPagePreview(){
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-
-            SimpleDropdownMenu(
-                label = "Type",
-                selectedText = "Expense",
-                expanded = false,
-                list = emptyList<String>(),
-                onDismissRequest = {},
-                onExpandedChange = {},
-                displayText = {it},
-                onItemSelect = {}
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Dropdown button to open Bottom Sheet
-            OutlinedButton(
-                onClick = {
-
-                },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                border = BorderStroke(1.dp, Color.Gray),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Category", fontSize = 16.sp, color = Color.Black)
-                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Dropdown")
-                }
-            }
-
+            
             Spacer(modifier = Modifier.height(10.dp))
 
             // Description
@@ -153,11 +128,16 @@ fun AddTransactionPagePreview(){
                 textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
                 modifier = Modifier.fillMaxWidth(),
                 leadingIcon = {
-                    Text(
-                        text = "$", // Change this to $, €, etc.
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp), // Controls the space between the icon and the text
+                    ) {
+                        Text(
+                            text = "$", // Display the currency symbol
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             )
 
@@ -169,7 +149,7 @@ fun AddTransactionPagePreview(){
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            CurrencyConversionSection(exchangeRate = "100", convertedAmount = "100", onConvertClick = {}, baseCurrencySymbol = "&", transactionCurrencySymbol = "$")
+            CurrencyConversionSection(exchangeRate = "100", convertedAmount = "100", onConvertClick = {}, baseCurrencySymbol = "&", transactionCurrencySymbol = "$", isConverted = true)
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -180,8 +160,6 @@ fun AddTransactionPagePreview(){
             ) {
                 Text("Add")
             }
-
-
         }
     }
 }
@@ -242,56 +220,64 @@ fun CurrencyConversionSection(
     convertedAmount: String,
     onConvertClick: () -> Unit,
     baseCurrencySymbol: String,
-    transactionCurrencySymbol: String
+    transactionCurrencySymbol: String,
+    isConverted: Boolean
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-//            .padding(16.dp),
-        shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, Color.Gray)
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Currency Conversion",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Convert Button
-            Button(
-                onClick = onConvertClick,
-                modifier = Modifier.fillMaxWidth()
+        // If conversion is not done, show the "Convert" button
+        if (!isConverted) {
+            TextButton(
+                onClick = {
+                    onConvertClick()
+                }
             ) {
                 Text("Convert to $baseCurrencySymbol")
             }
+        } else {
+            // After conversion, show the converted amount
+            OutlinedTextField(
+                value = convertedAmount,
+                onValueChange = {},  // Read-only field
+                label = { Text("Converted Price") },
+                readOnly = true,
+                textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Text(
+                        text = baseCurrencySymbol, // Display the currency symbol
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            )
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Exchange Rate
-            Text(
-                text = "Exchange Rate: 1$baseCurrencySymbol = $exchangeRate$transactionCurrencySymbol",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ){
 
-            Spacer(modifier = Modifier.height(5.dp))
+                // Display Exchange Rate information
+                Text(
+                    text = "Exchange Rate:",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(2.dp))
+                // Display Exchange Rate information
+                Text(
+                    text = "1$baseCurrencySymbol = $exchangeRate$transactionCurrencySymbol",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
 
-            // Converted Amount
-            Text(
-                text = "Converted Amount: $convertedAmount$baseCurrencySymbol",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF388E3C) // Green for emphasis
-            )
+            }
         }
     }
+
 }
 

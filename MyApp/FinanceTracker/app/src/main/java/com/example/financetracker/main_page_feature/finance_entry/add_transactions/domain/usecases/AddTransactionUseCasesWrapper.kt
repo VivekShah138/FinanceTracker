@@ -5,7 +5,7 @@ import com.example.financetracker.setup_account.domain.usecases.GetCurrencyRates
 data class AddTransactionUseCasesWrapper (
     val getCurrencyRatesLocally: GetCurrencyRatesLocally,
     val insertCustomCategory: InsertCustomCategory,
-    val validateTransactionName: ValidateTransactionName,
+    val validateEmptyField: ValidateEmptyField,
     val validateTransactionCategory: ValidateTransactionCategory,
     val validateTransactionPrice: ValidateTransactionPrice,
     val insertTransactionsLocally: InsertTransactionsLocally

@@ -37,12 +37,13 @@ data class AddTransactionStates(
     val showConversion: Boolean = false,
     val convertedPrice: String = "",
     val transactionExchangeRate: String = "",
+    val showExchangeRate: Boolean = false,
 
     val isRecurring: Boolean = false,
 
     val errorMessage: String = "",
 
-    val transactionType: String = "",
+    val transactionType: String = "Expense",
     val transactionTypeList: List<String> = listOf("Expense","Income"),
     val transactionTypeExpanded: Boolean = false
 )

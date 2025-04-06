@@ -40,7 +40,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl(ApiClient.BASE_URL_COUNTRY) // Use the base URL from ApiClient
             .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
+//            .client(okHttpClient)
             .build()
     }
 

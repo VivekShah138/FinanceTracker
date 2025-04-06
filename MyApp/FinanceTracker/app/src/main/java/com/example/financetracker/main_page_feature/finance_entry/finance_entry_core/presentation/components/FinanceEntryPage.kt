@@ -18,15 +18,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.components.AppTopBar
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionPage
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components.AddTransactionPage
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.AddSaveItemsTransactionsPage
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.SavedItemViewModel
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.components.SavedItemPage
 import kotlinx.coroutines.launch
 
 @Composable
 fun FinanceEntryPage(
     navController: NavController,
-    viewModel: AddTransactionViewModel
+    addTransactionViewModel: AddTransactionViewModel,
+    savedItemViewModel: SavedItemViewModel
 ){
     MaterialTheme {
         val pagerState = rememberPagerState(pageCount = { 2 })
@@ -79,8 +81,8 @@ fun FinanceEntryPage(
                 // Uncomment this to enable HorizontalPager
                  HorizontalPager(state = pagerState) { page ->
                      when (page) {
-                         0 -> AddTransactionPage(viewModel = viewModel, navController = navController) // Transactions Screen
-                         1 -> AddSaveItemsTransactionsPage() 
+                         0 -> AddTransactionPage(viewModel = addTransactionViewModel, navController = navController) // Transactions Screen
+                         1 -> SavedItemPage(viewModel = savedItemViewModel,navController = navController)
                      }
                  }
             }

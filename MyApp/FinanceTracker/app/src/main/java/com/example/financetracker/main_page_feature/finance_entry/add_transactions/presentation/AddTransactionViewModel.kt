@@ -33,8 +33,8 @@ class AddTransactionViewModel @Inject constructor(
 
     private val uid = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
 
-    private val addTransactionEventChannel = Channel<AddTransactionEvent>()
-    val addTransactionsValidationEvents = addTransactionEventChannel.receiveAsFlow()
+    private val addTransactionValidationEventChannel = Channel<AddTransactionValidationEvent>()
+    val addTransactionsValidationEvents = addTransactionValidationEventChannel.receiveAsFlow()
 
 
     init {
@@ -59,7 +59,7 @@ class AddTransactionViewModel @Inject constructor(
                 viewModelScope.launch {
 
                     if(_addTransactionStates.value.transactionType.isEmpty()){
-                        addTransactionEventChannel.send(AddTransactionEvent.Failure("please select transaction type"))
+                        addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Failure("please select transaction type"))
                     }
                     else{
                         predefinedCategoriesUseCaseWrapper.getPredefinedCategories(addTransactionEvents.type.lowercase())
@@ -130,7 +130,7 @@ class AddTransactionViewModel @Inject constructor(
 
             is AddTransactionEvents.SetConvertedTransactionPrice -> {
                 if(_addTransactionStates.value.transactionPrice.isEmpty()){
-                    AddTransactionEvent.Failure(
+                    AddTransactionValidationEvent.Failure(
                         errorMessage = "Please Enter the Price"
                     )
                 }
@@ -161,14 +161,14 @@ class AddTransactionViewModel @Inject constructor(
 
     private fun addTransactions(){
         viewModelScope.launch(Dispatchers.IO) {
-            val nameResult = addTransactionUseCasesWrapper.validateTransactionName(_addTransactionStates.value.transactionName)
+            val nameResult = addTransactionUseCasesWrapper.validateEmptyField(_addTransactionStates.value.transactionName)
             val priceResult = addTransactionUseCasesWrapper.validateTransactionPrice(_addTransactionStates.value.transactionPrice)
             val categoryResult = addTransactionUseCasesWrapper.validateTransactionCategory(_addTransactionStates.value.category)
 
 
             if(!nameResult.isSuccessful || !priceResult.isSuccessful || !categoryResult.isSuccessful){
-                addTransactionEventChannel.send(
-                    AddTransactionEvent.Failure(
+                addTransactionValidationEventChannel.send(
+                    AddTransactionValidationEvent.Failure(
                         errorMessage = nameResult.errorMessage ?: priceResult.errorMessage
                         ?: categoryResult.errorMessage
                     )
@@ -203,10 +203,10 @@ class AddTransactionViewModel @Inject constructor(
                     addTransactionUseCasesWrapper.insertTransactionsLocally(transaction)
                 }catch (e:Exception){
                     Log.d("AddExpenseViewModel","Error ${e.localizedMessage}")
-                    addTransactionEventChannel.send(AddTransactionEvent.Failure(errorMessage = e.localizedMessage))
+                    addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage))
                     return@launch
                 }
-                addTransactionEventChannel.send(AddTransactionEvent.Success)
+                addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Success)
             }
 
         }
@@ -347,14 +347,14 @@ class AddTransactionViewModel @Inject constructor(
                     currencies = sortedCountriesLocal
                 )
 
-                addTransactionEventChannel.send(AddTransactionEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
+                addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
             }
         }
     }
 
-    sealed class AddTransactionEvent{
-        data object Success: AddTransactionEvent()
-        data class Failure(val errorMessage: String?): AddTransactionEvent()
+    sealed class AddTransactionValidationEvent{
+        data object Success: AddTransactionValidationEvent()
+        data class Failure(val errorMessage: String?): AddTransactionValidationEvent()
     }
 
 }

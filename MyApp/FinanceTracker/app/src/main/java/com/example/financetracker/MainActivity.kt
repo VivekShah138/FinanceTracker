@@ -24,6 +24,7 @@ import com.example.financetracker.auth_feature.presentation.forgot_password.forg
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.FinanceEntryPage
 import com.example.financetracker.main_page_feature.charts.presentation.components.ChartsPage
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.SavedItemViewModel
 import com.example.financetracker.main_page_feature.settings.presentation.SettingViewModel
 import com.example.financetracker.main_page_feature.settings.presentation.components.SettingsPage
 import com.example.financetracker.main_page_feature.view_transactions.presentation.ViewTransactionsViewModel
@@ -124,8 +125,12 @@ class MainActivity : ComponentActivity() {
                         composable(
                             route = Screens.AddTransactionsScreen.routes
                         ) {
-                            val viewModel: AddTransactionViewModel = hiltViewModel()
-                            FinanceEntryPage(navController,viewModel)
+                            val addTransactionViewModel: AddTransactionViewModel = hiltViewModel()
+                            val savedItemViewModel: SavedItemViewModel = hiltViewModel()
+                            FinanceEntryPage(
+                                navController = navController,
+                                addTransactionViewModel = addTransactionViewModel,
+                                savedItemViewModel = savedItemViewModel)
                         }
 
                     }

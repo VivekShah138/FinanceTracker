@@ -2,7 +2,7 @@ package com.example.financetracker.main_page_feature.finance_entry.add_transacti
 
 import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
 
-class ValidateTransactionName {
+class ValidateEmptyField {
 
     suspend operator fun invoke(name : String) : ValidationResult {
         if(name.isBlank()){

@@ -1,4 +1,4 @@
-package com.example.financetracker.core.cloud.domain.usecases
+package com.example.financetracker.core.cloud.domain.usecase
 
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository

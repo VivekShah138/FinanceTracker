@@ -12,7 +12,7 @@ data class Country(
 
 data class Name(val common: String)
 
-data class Flags(val png: String)
+data class Flags(val svg: String)
 
 data class Idd(val root: String, val suffixes: List<String>)
 

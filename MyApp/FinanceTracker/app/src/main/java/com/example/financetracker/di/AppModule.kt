@@ -22,12 +22,12 @@ import com.example.financetracker.core.local.data.shared_preferences.data_source
 import com.example.financetracker.core.cloud.data.repository.FirebaseRepositoryImpl
 import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.CheckIsLoggedInUseCase
-import com.example.financetracker.core.cloud.domain.usecases.GetUserEmailUserCase
-import com.example.financetracker.core.cloud.domain.usecases.GetUserProfileUseCase
-import com.example.financetracker.core.cloud.domain.usecases.GetUserUIDUseCase
+import com.example.financetracker.core.cloud.domain.usecase.GetUserEmailUserCase
+import com.example.financetracker.core.cloud.domain.usecase.GetUserProfileUseCase
+import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
 import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
-import com.example.financetracker.core.cloud.domain.usecases.SaveUserProfileUseCase
-import com.example.financetracker.core.core_domain.usecase.GetUIDLocally
+import com.example.financetracker.core.cloud.domain.usecase.SaveUserProfileUseCase
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
 import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDao
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDatabase
@@ -57,8 +57,16 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertCustomCategory
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionName
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateEmptyField
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionPrice
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.local.SavedItemsDao
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.local.SavedItemsDatabase
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.repository.local.SavedItemsLocalRepositoryImpl
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.local.SavedItemsLocalRepository
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.SaveItemLocalUseCase
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsValidationUseCase
 import com.example.financetracker.main_page_feature.home_page.data.repository.HomePageRepositoryImpl
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
@@ -334,6 +342,49 @@ object AppModule {
         return TransactionsLocalRepositoryImpl(transactionDao)
     }
 
+    // SavedItem Database
+    @Provides
+    @Singleton
+    fun provideSavedItemDatabase(app : Application) : SavedItemsDatabase {
+        return Room.databaseBuilder(
+            app,
+            SavedItemsDatabase::class.java,
+            SavedItemsDatabase.DATABASE_NAME
+        ).build()
+    }
+
+    // SavedItemDao
+    @Provides
+    @Singleton
+    fun provideSavedItemDao(db: SavedItemsDatabase): SavedItemsDao {
+        return db.savedItemsDao
+    }
+
+    // Saved Item Repository
+    @Provides
+    @Singleton
+    fun provideSavedItemLocalRepository(savedItemsDao: SavedItemsDao): SavedItemsLocalRepository {
+        return SavedItemsLocalRepositoryImpl(savedItemsDao)
+    }
+
+    // Saved Item UseCaseWrapper
+    @Provides
+    @Singleton
+    fun provideSavedItemUseCases(
+        savedItemsLocalRepository: SavedItemsLocalRepository,
+        sharedPreferencesRepository: SharedPreferencesRepository,
+        homePageRepository: HomePageRepository
+    ): SavedItemsUseCasesWrapper {
+        return SavedItemsUseCasesWrapper(
+            saveItemLocalUseCase = SaveItemLocalUseCase(savedItemsLocalRepository),
+            getAllSavedItemLocalUseCase = GetAllSavedItemLocalUseCase(savedItemsLocalRepository),
+            getUIDLocally = GetUIDLocally(sharedPreferencesRepository),
+            getUserProfileLocal = GetUserProfileLocal(homePageRepository),
+            savedItemsValidationUseCase = SavedItemsValidationUseCase()
+
+        )
+    }
+
 
     // SetUpPage UseCases
     @Provides
@@ -405,7 +456,7 @@ object AppModule {
             getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository),
             insertCustomCategory = InsertCustomCategory(categoryRepository),
             validateTransactionPrice = ValidateTransactionPrice(),
-            validateTransactionName = ValidateTransactionName(),
+            validateEmptyField = ValidateEmptyField(),
             validateTransactionCategory = ValidateTransactionCategory(),
             insertTransactionsLocally = InsertTransactionsLocally(transactionLocalRepository)
         )

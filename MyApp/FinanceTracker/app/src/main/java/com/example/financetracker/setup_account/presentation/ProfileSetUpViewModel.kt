@@ -299,7 +299,7 @@ class ProfileSetUpViewModel @Inject constructor(
                 }
                 else{
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
-                        currencies = sortedCountriesLocally
+                        countries = sortedCountriesLocally
                     )
 
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Country From internet.Using Locally Saved Details"))

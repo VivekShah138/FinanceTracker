@@ -1,9 +1,9 @@
 package com.example.financetracker.core.core_domain.usecase
 
-import com.example.financetracker.core.cloud.domain.usecases.GetUserEmailUserCase
-import com.example.financetracker.core.cloud.domain.usecases.GetUserProfileUseCase
-import com.example.financetracker.core.cloud.domain.usecases.GetUserUIDUseCase
-import com.example.financetracker.core.cloud.domain.usecases.SaveUserProfileUseCase
+import com.example.financetracker.core.cloud.domain.usecase.GetUserEmailUserCase
+import com.example.financetracker.core.cloud.domain.usecase.GetUserProfileUseCase
+import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
+import com.example.financetracker.core.cloud.domain.usecase.SaveUserProfileUseCase
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.CheckIsLoggedInUseCase
 
 data class CoreUseCasesWrapper(

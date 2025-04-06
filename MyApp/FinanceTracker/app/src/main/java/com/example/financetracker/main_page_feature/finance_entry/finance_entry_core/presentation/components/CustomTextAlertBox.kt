@@ -14,17 +14,19 @@ fun CustomTextAlertBox(
     selectedCategory: String,
     onCategoryChange: (String) -> Unit,
     onDismissRequest: () -> Unit,
-    onSaveCategory: () -> Unit
+    onSaveCategory: () -> Unit,
+    title: String,
+    label: String
 ){
     AlertDialog(
         onDismissRequest =  onDismissRequest ,
-        title = { Text(text = "Enter Title") },
+        title = { Text(text = title) },
         text = {
             Column {
                 TextField(
                     value = selectedCategory,
                     onValueChange =  onCategoryChange,
-                    label = { Text("Title") }
+                    label = { Text(label) }
                 )
             }
         },

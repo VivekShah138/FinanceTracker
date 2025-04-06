@@ -24,15 +24,14 @@ fun <T> SimpleDropdownMenu(
     selectedText: String,
     expanded: Boolean,
     list: List<T>,
-    onExpandedChange: (Boolean) -> Unit, // Change of expansion for dropdown
-    onDismissRequest: () -> Unit, // Dismiss request to close expand
-    displayText: (T) -> String, // Lambda to provide display text for each item
-    onItemSelect: (T) -> Unit  // Lambda to handle item selection
+    onExpandedChange: (Boolean) -> Unit,
+    onDismissRequest: () -> Unit,
+    displayText: (T) -> String,
+    onItemSelect: (T) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth(),
-//            .padding(16.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

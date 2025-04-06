@@ -1,36 +1,30 @@
-package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation
+package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components
 
+import TransactionTypeSegmentedButton
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.utils.Screens
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionEvents
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomBottomSheet
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomTextAlertBox
 import com.example.financetracker.setup_account.presentation.components.CustomSwitch
@@ -60,10 +56,10 @@ fun AddTransactionPage(
     LaunchedEffect(key1 = context) {
         addTransactionValidationEvents.collect { event ->
             when (event) {
-                is AddTransactionViewModel.AddTransactionEvent.Failure -> {
+                is AddTransactionViewModel.AddTransactionValidationEvent.Failure -> {
                     Toast.makeText(context,event.errorMessage,Toast.LENGTH_SHORT).show()
                 }
-                AddTransactionViewModel.AddTransactionEvent.Success -> {
+                AddTransactionViewModel.AddTransactionValidationEvent.Success -> {
                     Toast.makeText(context,"Transaction Successfully Added",Toast.LENGTH_LONG).show()
                     navController.navigate(route = Screens.HomePageScreen.routes)
                 }
@@ -76,10 +72,12 @@ fun AddTransactionPage(
             .fillMaxSize()
             .padding(20.dp)
             .verticalScroll(scrollState)
+            .imePadding()
     ) {
 
         Spacer(modifier = Modifier.height(5.dp))
 
+        // Recurring Transaction
         CustomSwitch(
             text = "Recurring Transaction?",
             isCheck = states.isRecurring,
@@ -92,6 +90,7 @@ fun AddTransactionPage(
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Saved Item Transaction
         CustomSwitch(
             text = "Saved Item?",
             isCheck = states.saveItemState,
@@ -103,56 +102,11 @@ fun AddTransactionPage(
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Transaction Type
+        TransactionTypeSegmentedButton(
+            selectedType = states.transactionType,
+            onTypeSelected = { type->
 
-
-        if (states.saveItemState) {
-            OutlinedTextField(
-                value = states.transactionName,
-                onValueChange = {
-                    viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(it))
-                },
-                label = { Text("Search for items") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
-                modifier = Modifier.fillMaxWidth()
-            )
-        } else {
-            OutlinedTextField(
-                value = states.transactionName,
-                onValueChange = {
-                    viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(it))
-                },
-                label = { Text("Enter new item name") },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        SimpleDropdownMenu(
-            label = "Select Transaction Type",
-            selectedText = states.transactionType,
-            expanded = states.transactionTypeExpanded,
-            list = states.transactionTypeList,
-            onDismissRequest = {
-                viewModel.onEvent(
-                    AddTransactionEvents.SelectTransactionType(
-                        type = states.transactionType,
-                        expanded = false
-                    )
-                )
-            },
-            onExpandedChange = {
-                viewModel.onEvent(
-                    AddTransactionEvents.SelectTransactionType(
-                        type = states.transactionType,
-                        expanded = true
-                    )
-                )
-            },
-            displayText = {type ->
-                type
-            },
-            onItemSelect = { type->
                 viewModel.onEvent(
                     AddTransactionEvents.SelectTransactionType(
                         type = type,
@@ -171,46 +125,23 @@ fun AddTransactionPage(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Dropdown button to open Bottom Sheet
-        OutlinedButton(
+        // Transaction Category
+        TransactionCategoryButton(
+            category = states.category,
             onClick = {
+                viewModel.onEvent(AddTransactionEvents.LoadCategory(type = states.transactionType))
 
-                if(states.transactionType.isNotEmpty()){
-                    viewModel.onEvent(AddTransactionEvents.LoadCategory(type = states.transactionType))
-
-                    viewModel.onEvent(
-                        AddTransactionEvents.SelectCategory(
-                            categoryName = states.category,
-                            bottomSheetState = true,
-                            alertBoxState = states.alertBoxState
-                        )
+                viewModel.onEvent(
+                    AddTransactionEvents.SelectCategory(
+                        categoryName = states.category,
+                        bottomSheetState = true,
+                        alertBoxState = states.alertBoxState
                     )
-                }
-                else{
-                    viewModel.onEvent(AddTransactionEvents.LoadCategory(type = states.transactionType))
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-            border = BorderStroke(1.dp, Color.Gray),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    states.category.ifEmpty {
-                        "Select a Category"
-                    },
-                    fontSize = 16.sp,
-                    color = Color.Black
                 )
-                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Dropdown")
             }
-        }
+        )
 
+        // If view BottomSheet is true
         if(states.bottomSheetState){
             CustomBottomSheet(
                 categories = states.categoryList,
@@ -258,6 +189,7 @@ fun AddTransactionPage(
             )
         }
 
+        // if view alert box is true
         if(states.alertBoxState){
             CustomTextAlertBox(
                 selectedCategory = states.category,
@@ -290,7 +222,35 @@ fun AddTransactionPage(
                             alertBoxState = false
                         )
                     )
-                }
+                },
+                title = "Enter Custom Category",
+                label = "Category Title"
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Transaction Name
+        if (states.saveItemState) {
+            OutlinedTextField(
+                value = states.transactionName,
+                onValueChange = {
+                    viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(it))
+                },
+                singleLine = true,
+                label = { Text("Search for items") },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
+                modifier = Modifier.fillMaxWidth()
+            )
+        } else {
+            OutlinedTextField(
+                value = states.transactionName,
+                onValueChange = {
+                    viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(it))
+                },
+                label = { Text("Enter new item name") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
@@ -306,7 +266,7 @@ fun AddTransactionPage(
             },
             label = { Text("Enter Item Description") },
             modifier = Modifier.fillMaxWidth(),
-            maxLines = 2
+            maxLines = 5
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -323,10 +283,11 @@ fun AddTransactionPage(
             label = { Text("Price") },
             textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
             modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             leadingIcon = {
                 Text(
-                    text = states.transactionCurrencySymbol, // Change this to $, €, etc.
+                    text = states.transactionCurrencySymbol,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -392,7 +353,10 @@ fun AddTransactionPage(
                 )
 
                 viewModel.onEvent(
-                    AddTransactionEvents.ShowConversion(true)
+                    AddTransactionEvents.ShowConversion(
+                        showConversion = true,
+                        showExchangeRate = false
+                    )
                 )
             }
         )
@@ -407,9 +371,16 @@ fun AddTransactionPage(
                     viewModel.onEvent(
                         AddTransactionEvents.SetConvertedTransactionPrice(price = states.transactionPrice,rate = states.transactionExchangeRate)
                     )
+                    viewModel.onEvent(
+                        AddTransactionEvents.ShowConversion(
+                            showConversion = true,
+                            showExchangeRate = true
+                        )
+                    )
                 },
                 baseCurrencySymbol = states.baseCurrencySymbol,
-                transactionCurrencySymbol = states.transactionCurrencySymbol
+                transactionCurrencySymbol = states.transactionCurrencySymbol,
+                isConverted = states.showExchangeRate
             )
         }
 

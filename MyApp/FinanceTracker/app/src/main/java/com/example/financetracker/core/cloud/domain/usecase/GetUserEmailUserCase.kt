@@ -1,12 +1,13 @@
-package com.example.financetracker.core.cloud.domain.usecases
+package com.example.financetracker.core.cloud.domain.usecase
 
 import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
 import javax.inject.Inject
 
-class GetUserUIDUseCase @Inject constructor(
+class GetUserEmailUserCase @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) {
+
     suspend operator fun invoke(): String?{
-        return firebaseRepository.getCurrentUserID()
+        return firebaseRepository.getCurrentUserEmail()
     }
 }

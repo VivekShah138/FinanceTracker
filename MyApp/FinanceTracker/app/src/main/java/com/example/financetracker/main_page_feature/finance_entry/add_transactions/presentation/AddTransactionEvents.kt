@@ -13,7 +13,7 @@ sealed class AddTransactionEvents {
     data class SelectTransactionType(val type: String,val expanded:Boolean): AddTransactionEvents()
     data class ChangeTransactionDescription(val description: String): AddTransactionEvents()
     data class ChangeTransactionPrice(val price: String): AddTransactionEvents()
-    data class ShowConversion(val showConversion: Boolean): AddTransactionEvents()
+    data class ShowConversion(val showConversion: Boolean, val showExchangeRate: Boolean): AddTransactionEvents()
     data class SetConvertedTransactionPrice(val price: String, val rate:String): AddTransactionEvents()
     data object AddTransactionTransaction: AddTransactionEvents()
 }

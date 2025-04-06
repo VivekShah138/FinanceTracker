@@ -1,11 +1,8 @@
 package com.example.financetracker.setup_account.data.local.data_source.country
 
 import androidx.room.TypeConverter
-import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesEntity
-import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesMapper
 import com.example.financetracker.setup_account.domain.model.Country
 import com.example.financetracker.setup_account.domain.model.Currency
-import com.example.financetracker.setup_account.domain.model.CurrencyResponse
 import com.example.financetracker.setup_account.domain.model.Flags
 import com.example.financetracker.setup_account.domain.model.Idd
 import com.example.financetracker.setup_account.domain.model.Name
@@ -35,7 +32,7 @@ object CountryMapper {
     }
 
     @TypeConverter
-    fun fromCurrencies(currencies: Map<String, Currency>?): String? {
+    fun fromCurrencies(currencies: Map<String, Currency>?): String {
         return try{
             gson.toJson(currencies)
         }catch (e: Exception){
@@ -45,7 +42,7 @@ object CountryMapper {
     }
 
     @TypeConverter
-    fun toCurrencies(data: String?): Map<String, Currency>? {
+    fun toCurrencies(data: String?): Map<String, Currency> {
         try {
             val type = object : TypeToken<Map<String, Currency>>() {}.type
             return gson.fromJson(data, type)
@@ -57,7 +54,7 @@ object CountryMapper {
     fun fromCountryResponseToEntity(response: Country): CountryEntity {
         return CountryEntity(
             commonName = response.name.common ?: "N/A",
-            flagUrl = response.flags.png ?: "N/A",
+            flagUrl = response.flags.svg ?: "N/A",
             iddRoot = response.idd.root ?: "N/A",
             iddSuffixes = fromIddSuffixes(suffixes = response.idd.suffixes),
             currencies = fromCurrencies(response.currencies)
@@ -67,7 +64,7 @@ object CountryMapper {
     fun fromEntityToCountryResponse(entity: CountryEntity): Country {
         return Country(
             name = Name(common = entity.commonName),
-            flags = Flags(png = entity.flagUrl),
+            flags = Flags(svg = entity.flagUrl),
             idd = Idd(
                 root = entity.iddRoot ?: "N/A",
                 suffixes = toIddSuffixes(entity.iddSuffixes) ?: emptyList()
