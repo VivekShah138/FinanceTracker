@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SavedItemsDao {
+
     @Upsert
     suspend fun insertSavedItems(savedItemsEntity: SavedItemsEntity)
 

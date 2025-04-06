@@ -3,6 +3,7 @@ package com.example.financetracker.main_page_feature.finance_entry.add_transacti
 import TransactionTypeSegmentedButton
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -71,8 +74,15 @@ fun AddTransactionPage(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .verticalScroll(scrollState)
             .imePadding()
+//            .let {
+//                if (states.saveItemState && states.transactionSearchFilteredList.isEmpty()) {
+//                    it.verticalScroll(scrollState) // Only scroll when no saved items and no list
+//                } else {
+//                    it
+//                }
+//            }
+            .verticalScroll(scrollState)
     ) {
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -97,6 +107,7 @@ fun AddTransactionPage(
             onCheckChange = {
                 viewModel.onEvent(AddTransactionEvents.ChangeSavedItemState(it))
                 viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(""))
+                viewModel.onEvent(AddTransactionEvents.LoadSavedItemList)
             }
         )
 
@@ -108,10 +119,7 @@ fun AddTransactionPage(
             onTypeSelected = { type->
 
                 viewModel.onEvent(
-                    AddTransactionEvents.SelectTransactionType(
-                        type = type,
-                        expanded = false
-                    )
+                    AddTransactionEvents.SelectTransactionType(type = type)
                 )
                 viewModel.onEvent(
                     AddTransactionEvents.SelectCategory(
@@ -236,6 +244,13 @@ fun AddTransactionPage(
                 value = states.transactionName,
                 onValueChange = {
                     viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(it))
+                    Log.d("AddTransactionPage","List ${states.transactionSearchList}")
+//                    viewModel.onEvent(
+//                        AddTransactionEvents.FilterSavedItemList(
+//                            list = states.transactionSearchList,
+//                            newWord = it
+//                        )
+//                    )
                 },
                 singleLine = true,
                 label = { Text("Search for items") },
@@ -253,6 +268,32 @@ fun AddTransactionPage(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
+//        // Display filtered items in a list
+//        if (states.transactionSearchFilteredList.isNotEmpty()) {
+//            Log.d("AddTransactionPage","FilteredListNot Empty")
+//            Log.d("AddTransactionPage","FilteredList ${states.transactionSearchFilteredList}")
+//            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+//                items(states.transactionSearchFilteredList) { item ->
+//                    Log.d("AddTransactionPage", "Rendering item: ${item.itemName}")
+//                    Text(
+//                        text = item.itemName,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .clickable {
+////                                transactionName = item
+////                                filteredItems = emptyList() // Hide suggestions after selecting an item
+//                                viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(item.itemName))
+//                                viewModel.onEvent(AddTransactionEvents.FilterSavedItemList(emptyList(),""))
+//                            }
+//                            .padding(8.dp)
+//                    )
+//                }
+//            }
+//        }
+////        else {
+////            Text(text = "No items found")
+////        }
 
         Spacer(modifier = Modifier.height(10.dp))
 

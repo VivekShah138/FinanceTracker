@@ -1,6 +1,7 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation
 
 import com.example.financetracker.core.local.domain.room.model.Category
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
 import com.example.financetracker.setup_account.domain.model.Country
 
 data class AddTransactionStates(
@@ -13,9 +14,12 @@ data class AddTransactionStates(
 
     //SavedItem
     val saveItemState: Boolean = false,
+    val transactionSearchList: List<SavedItems> = emptyList(),
+    val transactionSearchFilteredList: List<SavedItems> = emptyList(),
 
     // Transaction Name
     val transactionName: String = "",
+
 
     // BaseCurrency
     val baseCurrencyName: String = "",
@@ -39,11 +43,11 @@ data class AddTransactionStates(
     val transactionExchangeRate: String = "",
     val showExchangeRate: Boolean = false,
 
+    // Recurring Transaction
     val isRecurring: Boolean = false,
-
     val errorMessage: String = "",
 
+    // Transaction Type
     val transactionType: String = "Expense",
     val transactionTypeList: List<String> = listOf("Expense","Income"),
-    val transactionTypeExpanded: Boolean = false
 )

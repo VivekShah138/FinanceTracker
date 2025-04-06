@@ -199,6 +199,7 @@ class SavedItemViewModel @Inject constructor(
                     savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItem)
                     savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Success)
                 }catch (e: Exception){
+                    Log.d("SavedItemViewModel","error: ${e.localizedMessage}")
                     savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Failure("Saving Item Failed"))
                 }
 

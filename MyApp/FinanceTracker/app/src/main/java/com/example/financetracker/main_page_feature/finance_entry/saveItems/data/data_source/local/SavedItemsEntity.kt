@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class SavedItemsEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val itemId: Int,
     val itemName: String,
     val itemCurrency: String,

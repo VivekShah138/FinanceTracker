@@ -23,7 +23,6 @@ data class Transactions(
 
 fun Transactions.toEntity(): TransactionsEntity {
     return TransactionsEntity(
-        transactionId = 0,
         amount = this.amount,
         currency = CountryMapper.fromCurrencies(this.currency),  // Assuming you want the first currency's key for storage
         convertedAmount = this.convertedAmount,
@@ -35,7 +34,8 @@ fun Transactions.toEntity(): TransactionsEntity {
         description = this.description,
         isRecurring = this.isRecurring,
         cloudSync = this.cloudSync,
-        transactionName = this.transactionName
+        transactionName = this.transactionName,
+        transactionId = 0
     )
 }
 

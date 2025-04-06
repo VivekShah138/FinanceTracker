@@ -7,6 +7,7 @@ import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
 import com.example.financetracker.setup_account.domain.model.Currency
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class AddTransactionViewModel @Inject constructor(
     private val predefinedCategoriesUseCaseWrapper: PredefinedCategoriesUseCaseWrapper,
     private val setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper,
-    private val addTransactionUseCasesWrapper: AddTransactionUseCasesWrapper
+    private val addTransactionUseCasesWrapper: AddTransactionUseCasesWrapper,
+    private val savedItemUseCasesWrapper: SavedItemsUseCasesWrapper
 ): ViewModel() {
 
     private val _addTransactionStates = MutableStateFlow(AddTransactionStates())
@@ -45,6 +47,7 @@ class AddTransactionViewModel @Inject constructor(
     fun onEvent(addTransactionEvents: AddTransactionEvents){
         when(addTransactionEvents){
 
+            // Category
             is AddTransactionEvents.SelectCategory -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     category = addTransactionEvents.categoryName,
@@ -53,7 +56,6 @@ class AddTransactionViewModel @Inject constructor(
                 )
                 Log.d("AddExpense","BottomSheetState Changed")
             }
-
             is AddTransactionEvents.LoadCategory -> {
 
                 viewModelScope.launch {
@@ -71,39 +73,48 @@ class AddTransactionViewModel @Inject constructor(
                     }
                 }
             }
+            is AddTransactionEvents.SaveCustomCategories -> {
+                insertCustomCategory()
+            }
 
+            // Saved Item Transaction
             is AddTransactionEvents.ChangeSavedItemState -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     saveItemState = addTransactionEvents.state
                 )
             }
+            is AddTransactionEvents.LoadSavedItemList -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    loadSavedItemList()
+                }
+            }
+            is AddTransactionEvents.FilterSavedItemList -> {
+                val filterList = addTransactionEvents.list.filter {
+                    it.itemName.contains(
+                        addTransactionEvents.newWord,
+                        ignoreCase = true
+                    )
+                }
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    transactionSearchFilteredList = filterList
+                )
+            }
 
+            // Recurring Transaction
             is AddTransactionEvents.ChangeRecurringItemState -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     isRecurring = addTransactionEvents.state
                 )
             }
 
+            // Transaction Name
             is AddTransactionEvents.ChangeTransactionName -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     transactionName = addTransactionEvents.name
                 )
             }
 
-            AddTransactionEvents.LoadCurrencyRates -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    Log.d("AddExpenseViewModel","uid $uid")
-                    val baseCurrency = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(uid)?.baseCurrency?.keys?.firstOrNull() ?: "N/A"
-                    Log.d("AddExpenseViewModel","baseCurrency $baseCurrency")
-                    val exchangeRates = addTransactionUseCasesWrapper.getCurrencyRatesLocally(baseCurrency)
-                    Log.d("AddExpenseViewModel","Exchange Rates $exchangeRates")
-                }
-            }
-
-            is AddTransactionEvents.SaveCustomCategories -> {
-                insertCustomCategory()
-            }
-
+            // Transaction Currency
             is AddTransactionEvents.ChangeTransactionCurrency -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     transactionCurrencyName = addTransactionEvents.currencyName,
@@ -112,22 +123,14 @@ class AddTransactionViewModel @Inject constructor(
                     transactionCurrencyExpanded = addTransactionEvents.currencyExpanded
                 )
             }
-
             is AddTransactionEvents.LoadCurrenciesList -> {
                 fetchCurrencies()
             }
-
-            is AddTransactionEvents.ChangeTransactionDescription -> {
+            is AddTransactionEvents.ShowConversion -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
-                    transactionDescription = addTransactionEvents.description
+                    showConversion = addTransactionEvents.showConversion
                 )
             }
-            is AddTransactionEvents.ChangeTransactionPrice -> {
-                _addTransactionStates.value = addTransactionStates.value.copy(
-                    transactionPrice = addTransactionEvents.price
-                )
-            }
-
             is AddTransactionEvents.SetConvertedTransactionPrice -> {
                 if(_addTransactionStates.value.transactionPrice.isEmpty()){
                     AddTransactionValidationEvent.Failure(
@@ -137,25 +140,41 @@ class AddTransactionViewModel @Inject constructor(
                 else{
                     fetchCurrenciesExchangeRates()
                 }
-
             }
 
-            is AddTransactionEvents.ShowConversion -> {
+            // Transaction Type
+            is AddTransactionEvents.SelectTransactionType -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
-                    showConversion = addTransactionEvents.showConversion
+                    transactionType = addTransactionEvents.type
                 )
             }
 
+            // Transaction Description
+            is AddTransactionEvents.ChangeTransactionDescription -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    transactionDescription = addTransactionEvents.description
+                )
+            }
+
+            // Transaction Price
+            is AddTransactionEvents.ChangeTransactionPrice -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    transactionPrice = addTransactionEvents.price
+                )
+            }
+
+            // Add Transaction
             AddTransactionEvents.AddTransactionTransaction -> {
                 addTransactions()
             }
+        }
+    }
 
-            is AddTransactionEvents.SelectTransactionType -> {
-                _addTransactionStates.value = addTransactionStates.value.copy(
-                    transactionType = addTransactionEvents.type,
-                    transactionTypeExpanded = addTransactionEvents.expanded
-                )
-            }
+    private suspend fun loadSavedItemList(){
+        savedItemUseCasesWrapper.getAllSavedItemLocalUseCase(userUID = uid).collect{
+            _addTransactionStates.value = addTransactionStates.value.copy(
+                transactionSearchList = it
+            )
         }
     }
 

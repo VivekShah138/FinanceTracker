@@ -33,6 +33,7 @@ fun SavedItemsEntity.toDomain(): SavedItems {
         itemDescription = this.itemDescription,
         itemShopName = this.itemShopName,
         itemCurrency = CountryMapper.toCurrencies(this.itemCurrency),
-        userUID = this.userUID
+        userUID = this.userUID,
+        itemId = this.itemId
     )
 }

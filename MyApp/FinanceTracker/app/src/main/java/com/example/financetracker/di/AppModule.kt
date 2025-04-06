@@ -61,6 +61,7 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionPrice
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.local.SavedItemsDao
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.local.SavedItemsDatabase
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.local.migration.SAVED_ITEM_MIGRATION_1_2
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.repository.local.SavedItemsLocalRepositoryImpl
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.local.SavedItemsLocalRepository
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
@@ -350,7 +351,9 @@ object AppModule {
             app,
             SavedItemsDatabase::class.java,
             SavedItemsDatabase.DATABASE_NAME
-        ).build()
+        )
+            .addMigrations(SAVED_ITEM_MIGRATION_1_2)
+            .build()
     }
 
     // SavedItemDao
