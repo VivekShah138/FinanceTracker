@@ -1,14 +1,19 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components
 
+import QuantityBottomSheet
 import TransactionTypeSegmentedButton
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,7 +33,12 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,11 +49,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.utils.Screens
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionEvents
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionStates
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomBottomSheet
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomTextAlertBox
 import com.example.financetracker.setup_account.presentation.components.CustomSwitch
 import com.example.financetracker.setup_account.presentation.components.SimpleDropdownMenu
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +68,9 @@ fun AddTransactionPage(
     val states by viewModel.addTransactionStates.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val focusRequester = remember { FocusRequester() }
+
+
 
     LaunchedEffect(key1 = context) {
         addTransactionValidationEvents.collect { event ->
@@ -70,19 +86,188 @@ fun AddTransactionPage(
         }
     }
 
+
+
+
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ){
+        if(states.isFocusedSearchBar){
+
+            WithSearchableMode(
+                viewModel = viewModel,
+                states = states,
+                focusRequester = focusRequester
+            )
+        }
+        else{
+            WithoutSearchableMode(
+                scrollState = scrollState,
+                viewModel = viewModel,
+                states = states,
+                focusRequester = focusRequester
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WithSearchableMode(
+    viewModel: AddTransactionViewModel,
+    states: AddTransactionStates,
+    focusRequester: FocusRequester
+){
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top
+    ) {
+        // Search Bar
+        OutlinedTextField(
+            value = states.transactionName,
+            onValueChange = {
+                viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(it))
+                viewModel.onEvent(
+                    AddTransactionEvents.FilterSavedItemList(
+                        list = states.transactionSearchList,
+                        newWord = it
+                    )
+                )
+            },
+            singleLine = true,
+            label = { Text("Search for items") },
+            leadingIcon = {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Back Arrow",
+                    modifier = Modifier.clickable {
+                        viewModel.onEvent(
+                            AddTransactionEvents.ChangeSavedItemSearchState(false)
+                        )
+                    }
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .align(Alignment.CenterHorizontally)
+                .padding(16.dp)
+        )
+
+        LaunchedEffect(Unit){
+            focusRequester.requestFocus()
+        }
+
+        // Display filtered items in a list
+        if (states.transactionSearchFilteredList.isNotEmpty()) {
+            Log.d("AddTransactionPage", "FilteredListNot Empty")
+            Log.d("AddTransactionPage", "FilteredList ${states.transactionSearchFilteredList}")
+
+            LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 800.dp)) {
+                items(states.transactionSearchFilteredList) { item ->
+                    Log.d("AddTransactionPage", "Rendering item: ${item.itemName}")
+
+                    ItemCard(
+                        itemName = item.itemName,
+                        itemId = item.itemId.toString(),
+                        itemDescription = item.itemDescription ?: "N/A",
+                        price = item.itemPrice.toString(),
+                        shopName = item.itemShopName ?: "N/A",
+                        onClick = {
+
+                            viewModel.onEvent(
+                                AddTransactionEvents.ChangeQuantity(true)
+                            )
+
+                        }
+                    )
+
+                    if(states.itemQuantityState){
+                        QuantityBottomSheet(
+                            onDismiss = {
+                                viewModel.onEvent(
+                                    AddTransactionEvents.ChangeQuantity(false)
+                                )
+                            },
+                            onConfirm = { quantity ->
+
+
+                                val currency = item.itemCurrency
+                                val currencyName = currency.entries.firstOrNull()?.value?.name ?: "N/A"
+                                val currencySymbol = currency.entries.firstOrNull()?.value?.symbol ?: "N/A"
+                                val currencyCode = currency.entries.firstOrNull()?.key ?: "N/A"
+                                val itemDescription = "$quantity * ${item.itemPrice} $currencySymbol \n" + item.itemDescription
+
+                                // Name
+                                viewModel.onEvent(
+                                    AddTransactionEvents.ChangeTransactionName(item.itemName)
+                                )
+
+                                // Currency
+                                viewModel.onEvent(
+                                    AddTransactionEvents.ChangeTransactionCurrency(
+                                        currencyName = currencyName,
+                                        currencySymbol = currencySymbol,
+                                        currencyCode = currencyCode,
+                                        currencyExpanded = false
+                                    )
+                                )
+
+                                // Description
+                                viewModel.onEvent(
+                                    AddTransactionEvents.ChangeTransactionDescription(itemDescription)
+                                )
+
+                                // Price
+                                viewModel.onEvent(
+                                    AddTransactionEvents.CalculateFinalPrice(
+                                        quantity = quantity,
+                                        price = item.itemPrice ?: 0.0
+                                    )
+                                )
+
+                                // To Normal State
+                                viewModel.onEvent(
+                                    AddTransactionEvents.ChangeSavedItemSearchState(false)
+                                )
+
+                                viewModel.onEvent(
+                                    AddTransactionEvents.ChangeQuantity(false)
+                                )
+
+                            },
+                            sheetState = rememberModalBottomSheetState()
+                        )
+                    }
+
+                }
+            }
+        }
+
+    }
+
+
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WithoutSearchableMode(
+    scrollState: ScrollState,
+    viewModel: AddTransactionViewModel,
+    states: AddTransactionStates,
+    focusRequester: FocusRequester
+){
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
-            .imePadding()
-//            .let {
-//                if (states.saveItemState && states.transactionSearchFilteredList.isEmpty()) {
-//                    it.verticalScroll(scrollState) // Only scroll when no saved items and no list
-//                } else {
-//                    it
-//                }
-//            }
+            .padding(horizontal = 20.dp)
             .verticalScroll(scrollState)
+            .imePadding()
     ) {
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -245,17 +430,22 @@ fun AddTransactionPage(
                 onValueChange = {
                     viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(it))
                     Log.d("AddTransactionPage","List ${states.transactionSearchList}")
-//                    viewModel.onEvent(
-//                        AddTransactionEvents.FilterSavedItemList(
-//                            list = states.transactionSearchList,
-//                            newWord = it
-//                        )
-//                    )
+                    viewModel.onEvent(
+                        AddTransactionEvents.FilterSavedItemList(
+                            list = states.transactionSearchList,
+                            newWord = it
+                        )
+                    )
                 },
+
                 singleLine = true,
                 label = { Text("Search for items") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged {
+                    viewModel.onEvent(AddTransactionEvents.ChangeSavedItemSearchState(it.hasFocus))
+                }
             )
         } else {
             OutlinedTextField(
@@ -268,32 +458,6 @@ fun AddTransactionPage(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-
-//        // Display filtered items in a list
-//        if (states.transactionSearchFilteredList.isNotEmpty()) {
-//            Log.d("AddTransactionPage","FilteredListNot Empty")
-//            Log.d("AddTransactionPage","FilteredList ${states.transactionSearchFilteredList}")
-//            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-//                items(states.transactionSearchFilteredList) { item ->
-//                    Log.d("AddTransactionPage", "Rendering item: ${item.itemName}")
-//                    Text(
-//                        text = item.itemName,
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .clickable {
-////                                transactionName = item
-////                                filteredItems = emptyList() // Hide suggestions after selecting an item
-//                                viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(item.itemName))
-//                                viewModel.onEvent(AddTransactionEvents.FilterSavedItemList(emptyList(),""))
-//                            }
-//                            .padding(8.dp)
-//                    )
-//                }
-//            }
-//        }
-////        else {
-////            Text(text = "No items found")
-////        }
 
         Spacer(modifier = Modifier.height(10.dp))
 

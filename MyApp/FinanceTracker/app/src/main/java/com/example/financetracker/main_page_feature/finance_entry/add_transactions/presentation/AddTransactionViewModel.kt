@@ -99,6 +99,27 @@ class AddTransactionViewModel @Inject constructor(
                     transactionSearchFilteredList = filterList
                 )
             }
+            is AddTransactionEvents.ChangeSavedItemSearchState -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    isFocusedSearchBar = addTransactionEvents.state
+                )
+            }
+            is AddTransactionEvents.ChangeQuantity -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    itemQuantityState = addTransactionEvents.state
+                )
+            }
+            is AddTransactionEvents.CalculateFinalPrice -> {
+                val quantity = addTransactionEvents.quantity
+                val price = addTransactionEvents.price
+                val finalPrice = BigDecimal(price * quantity)
+                    .setScale(2, RoundingMode.HALF_UP)
+                val finalPriceString = finalPrice.toString()
+
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    transactionPrice = finalPriceString
+                )
+            }
 
             // Recurring Transaction
             is AddTransactionEvents.ChangeRecurringItemState -> {
@@ -209,7 +230,7 @@ class AddTransactionViewModel @Inject constructor(
                     currency = transactionCurrency,
                     convertedAmount = _addTransactionStates.value.convertedPrice?.toDoubleOrNull() ?: 0.0,
                     exchangeRate = _addTransactionStates.value.transactionExchangeRate?.toDoubleOrNull() ?: 0.0,
-                    transactionType = "expense",
+                    transactionType = _addTransactionStates.value.transactionType,
                     category = _addTransactionStates.value.category,
                     dateTime = System.currentTimeMillis(),
                     userUid = uid,
