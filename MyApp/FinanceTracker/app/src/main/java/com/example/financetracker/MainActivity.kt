@@ -21,6 +21,8 @@ import com.example.financetracker.auth_feature.presentation.register.register_co
 import com.example.financetracker.auth_feature.presentation.login.login_components.LogInPage
 import com.example.financetracker.auth_feature.presentation.forgot_password.ForgotPasswordViewModel
 import com.example.financetracker.auth_feature.presentation.forgot_password.forgot_password_components.ForgotPasswordPage
+import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesViewModel
+import com.example.financetracker.categories_feature.income.presentation.components.IncomeCategoriesViewModel
 import com.example.financetracker.categories_feature.presentation.components.CategoriesScreen
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.FinanceEntryPage
@@ -137,8 +139,14 @@ class MainActivity : ComponentActivity() {
                         composable(
                             route = Screens.CategoriesScreen.routes
                         ) {
+
+                            val expenseCategoriesViewModel: ExpenseCategoriesViewModel = hiltViewModel()
+                            val incomeCategoriesViewModel: IncomeCategoriesViewModel = hiltViewModel()
+
                             CategoriesScreen(
-                                navController = navController
+                                navController = navController,
+                                expenseCategoriesViewModel = expenseCategoriesViewModel,
+                                incomeCategoriesViewModel = incomeCategoriesViewModel
                             )
                         }
 

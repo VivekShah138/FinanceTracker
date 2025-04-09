@@ -6,11 +6,11 @@ import com.example.financetracker.core.local.domain.room.repository.CategoryRepo
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetPredefinedCategories (
+class GetCustomCategories (
    private val categoryRepository: CategoryRepository
 ) {
 
     suspend operator fun invoke(type: String,uid: String): Flow<List<Category>> {
-        return categoryRepository.getPredefinedCategories(type)
+        return categoryRepository.getCustomCategories(type,uid)
     }
 }

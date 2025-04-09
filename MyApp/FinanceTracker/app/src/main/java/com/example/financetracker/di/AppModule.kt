@@ -41,6 +41,8 @@ import com.example.financetracker.core.local.data.room.repository.UserProfileRep
 import com.example.financetracker.core.local.data.shared_preferences.repository.SharedPreferencesRepositoryImpl
 import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
 import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
+import com.example.financetracker.core.local.domain.room.usecases.GetCustomCategories
+import com.example.financetracker.core.local.domain.room.usecases.GetAllCategories
 import com.example.financetracker.core.local.domain.room.usecases.GetPredefinedCategories
 import com.example.financetracker.core.local.domain.room.usecases.GetUserProfileFromLocalDb
 import com.example.financetracker.core.local.domain.room.usecases.InsertPredefinedCategories
@@ -194,8 +196,10 @@ object AppModule {
     @Singleton
     fun provideCategoryUseCase(categoryRepository: CategoryRepository): PredefinedCategoriesUseCaseWrapper {
         return PredefinedCategoriesUseCaseWrapper(
-            getPredefinedCategories = GetPredefinedCategories(categoryRepository),
-            insertPredefinedCategories = InsertPredefinedCategories(categoryRepository)
+            getAllCategories = GetAllCategories(categoryRepository),
+            insertPredefinedCategories = InsertPredefinedCategories(categoryRepository),
+            getCustomCategories = GetCustomCategories(categoryRepository),
+            getPredefinedCategories = GetPredefinedCategories(categoryRepository)
         )
     }
 

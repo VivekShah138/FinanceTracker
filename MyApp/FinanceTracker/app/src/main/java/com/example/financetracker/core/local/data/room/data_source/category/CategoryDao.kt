@@ -12,6 +12,12 @@ interface CategoryDao {
     @Query(" SELECT * FROM CategoryEntity WHERE (type = :type AND uid = :uid) OR (type = :type AND isCustom = 0)")
     fun getCategories(type: String, uid: String): Flow<List<CategoryEntity>>
 
+    @Query(" SELECT * FROM CategoryEntity WHERE (type = :type AND uid = :uid AND isCustom = 1)")
+    fun getCustomCategories(type: String, uid: String): Flow<List<CategoryEntity>>
+
+    @Query(" SELECT * FROM CategoryEntity WHERE (type = :type AND isCustom = 0)")
+    fun getPredefinedCategories(type: String): Flow<List<CategoryEntity>>
+
     @Upsert
     suspend fun insertCategories(categories: List<CategoryEntity>)
 

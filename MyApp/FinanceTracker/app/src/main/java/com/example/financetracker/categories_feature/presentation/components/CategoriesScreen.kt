@@ -13,6 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesViewModel
+import com.example.financetracker.categories_feature.expense.presentation.components.ExpenseCategoriesPage
+import com.example.financetracker.categories_feature.income.presentation.components.IncomeCategoriesPage
+import com.example.financetracker.categories_feature.income.presentation.components.IncomeCategoriesViewModel
 import com.example.financetracker.core.core_presentation.components.AppTopBar
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components.AddTransactionPage
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.components.SavedItemPage
@@ -20,7 +24,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CategoriesScreen(
-    navController: NavController
+    navController: NavController,
+    expenseCategoriesViewModel: ExpenseCategoriesViewModel,
+    incomeCategoriesViewModel: IncomeCategoriesViewModel
 ){
 
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -67,15 +73,13 @@ fun CategoriesScreen(
                 )
             }
 
-//            // Uncomment this to enable HorizontalPager
-//            HorizontalPager(state = pagerState) { page ->
-//                when (page) {
-//                    0 -> AddTransactionPage(viewModel = addTransactionViewModel, navController = navController) // Transactions Screen
-//                    1 -> SavedItemPage(viewModel = savedItemViewModel,navController = navController)
-//                }
-//            }
-
-
+            // Uncomment this to enable HorizontalPager
+            HorizontalPager(state = pagerState) { page ->
+                when (page) {
+                    0 -> ExpenseCategoriesPage(viewModel = expenseCategoriesViewModel)
+                    1 -> IncomeCategoriesPage(viewModel = incomeCategoriesViewModel)
+                }
+            }
         }
     }
 

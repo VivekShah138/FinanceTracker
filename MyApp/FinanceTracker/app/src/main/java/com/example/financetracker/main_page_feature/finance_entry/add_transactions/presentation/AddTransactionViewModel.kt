@@ -70,7 +70,7 @@ class AddTransactionViewModel @Inject constructor(
                         addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Failure("please select transaction type"))
                     }
                     else{
-                        predefinedCategoriesUseCaseWrapper.getPredefinedCategories(type = addTransactionEvents.type.lowercase(),uid = uid)
+                        predefinedCategoriesUseCaseWrapper.getAllCategories(type = addTransactionEvents.type.lowercase(),uid = uid)
                             .collect { categoryList ->
                                 _addTransactionStates.value = addTransactionStates.value.copy(
                                     categoryList = categoryList

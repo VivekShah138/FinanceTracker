@@ -28,6 +28,22 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getCustomCategories(type: String, uid: String): Flow<List<Category>> {
+        return categoryDao.getCustomCategories(type = type,uid = uid).map { entities ->
+            entities.map {
+                it.toDomain()
+            }
+        }
+    }
+
+    override suspend fun getPredefinedCategories(type: String): Flow<List<Category>> {
+        return categoryDao.getPredefinedCategories(type = type).map { entities ->
+            entities.map {
+                it.toDomain()
+            }
+        }
+    }
+
 
     override suspend fun insertCategories(categories: List<Category>) {
         return categoryDao.insertCategories(
