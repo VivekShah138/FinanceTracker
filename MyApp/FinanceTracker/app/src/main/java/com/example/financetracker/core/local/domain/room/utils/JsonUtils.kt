@@ -28,15 +28,15 @@ object JsonUtils {
     }
 
 
-    fun parseJsonToCategories(jsonString: String): List<Category> {
+    fun parseJsonToCategories(jsonString: String, uid: String): List<Category> {
         val listType = object : TypeToken<List<Category>>() {}.type
         val categories: List<Category> = Gson().fromJson(jsonString, listType)
         Log.d("Categories", "Categories $categories")
 
-        return categories.mapIndexed {index,category->
+        return categories.map {category->
             // For each category, generate a unique uid and set isCustom to false
             category.copy(
-                uid = (index+1).toString(),
+                uid = uid,
                 isCustom = false  // Assuming these categories are predefined
             )
         }

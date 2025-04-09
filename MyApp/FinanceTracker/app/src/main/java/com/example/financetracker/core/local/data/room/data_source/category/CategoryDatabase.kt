@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [CategoryEntity::class],
-    version = 2
+    version = 3
 )
 abstract class CategoryDatabase: RoomDatabase() {
     abstract val categoryDao: CategoryDao

@@ -1,5 +1,6 @@
 package com.example.financetracker.setup_account.domain.usecases
 
+import com.example.financetracker.auth_feature.domain.usecases.KeepUserLoggedIn
 import com.example.financetracker.core.cloud.domain.usecase.GetUserEmailUserCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserProfileUseCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
@@ -29,5 +30,6 @@ data class SetupAccountUseCasesWrapper(
     val getCurrencyRatesUpdated: GetCurrencyRatesUpdated,
     val setCurrencyRatesUpdated: SetCurrencyRatesUpdated,
     val getCurrencyRatesLocally: GetCurrencyRatesLocally,
-    val insertCountryLocally: InsertCountryLocally
+    val insertCountryLocally: InsertCountryLocally,
+    val keepUserLoggedIn: KeepUserLoggedIn
 )

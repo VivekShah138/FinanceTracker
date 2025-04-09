@@ -14,10 +14,10 @@ data class AddTransactionStates(
 
     //SavedItem
     val saveItemState: Boolean = false,
-    val isFocusedSearchBar: Boolean = false,
+    val searchBarFocusedState: Boolean = false,
     val transactionSearchList: List<SavedItems> = emptyList(),
     val transactionSearchFilteredList: List<SavedItems> = emptyList(),
-    val itemQuantityState: Boolean = false,
+    val quantityBottomSheetState: Boolean = false,
 
     // Transaction Name
     val transactionName: String = "",

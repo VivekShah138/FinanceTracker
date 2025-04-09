@@ -7,6 +7,7 @@ import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
 import com.example.financetracker.setup_account.domain.model.Currency
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
@@ -32,6 +33,11 @@ class AddTransactionViewModel @Inject constructor(
 
     private val _addTransactionStates = MutableStateFlow(AddTransactionStates())
     val addTransactionStates : StateFlow<AddTransactionStates> = _addTransactionStates.asStateFlow()
+
+    private val _selectedItem = MutableStateFlow<SavedItems?>(null)
+    val selectedItem: StateFlow<SavedItems?> = _selectedItem.asStateFlow()
+
+
 
     private val uid = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
 
@@ -64,8 +70,8 @@ class AddTransactionViewModel @Inject constructor(
                         addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Failure("please select transaction type"))
                     }
                     else{
-                        predefinedCategoriesUseCaseWrapper.getPredefinedCategories(addTransactionEvents.type.lowercase())
-                            .collect { categoryList -> // Collect the flow to get the list
+                        predefinedCategoriesUseCaseWrapper.getPredefinedCategories(type = addTransactionEvents.type.lowercase(),uid = uid)
+                            .collect { categoryList ->
                                 _addTransactionStates.value = addTransactionStates.value.copy(
                                     categoryList = categoryList
                                 )
@@ -101,12 +107,12 @@ class AddTransactionViewModel @Inject constructor(
             }
             is AddTransactionEvents.ChangeSavedItemSearchState -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
-                    isFocusedSearchBar = addTransactionEvents.state
+                    searchBarFocusedState = addTransactionEvents.state
                 )
             }
             is AddTransactionEvents.ChangeQuantity -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
-                    itemQuantityState = addTransactionEvents.state
+                    quantityBottomSheetState = addTransactionEvents.state
                 )
             }
             is AddTransactionEvents.CalculateFinalPrice -> {
@@ -119,6 +125,9 @@ class AddTransactionViewModel @Inject constructor(
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     transactionPrice = finalPriceString
                 )
+            }
+            is AddTransactionEvents.ChangeSelectedItem -> {
+                _selectedItem.value = addTransactionEvents.item
             }
 
             // Recurring Transaction
@@ -321,7 +330,14 @@ class AddTransactionViewModel @Inject constructor(
                 icon = "ic_custom",
                 isCustom = true
             )
-            addTransactionUseCasesWrapper.insertCustomCategory(category)
+            try{
+                addTransactionUseCasesWrapper.insertCustomCategory(category)
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    category = ""
+                )
+            }catch (e: Exception){
+                Log.d("AddTransactionViewModel", "error: ${e.localizedMessage}")
+            }
         }
     }
 

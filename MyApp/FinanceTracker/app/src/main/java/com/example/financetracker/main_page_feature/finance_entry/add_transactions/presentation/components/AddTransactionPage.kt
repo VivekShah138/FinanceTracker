@@ -53,6 +53,7 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomBottomSheet
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomTextAlertBox
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
 import com.example.financetracker.setup_account.presentation.components.CustomSwitch
 import com.example.financetracker.setup_account.presentation.components.SimpleDropdownMenu
 
@@ -66,6 +67,7 @@ fun AddTransactionPage(
 ){
     val addTransactionValidationEvents = viewModel.addTransactionsValidationEvents
     val states by viewModel.addTransactionStates.collectAsStateWithLifecycle()
+    val selectedItem by viewModel.selectedItem.collectAsStateWithLifecycle()
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
@@ -92,12 +94,13 @@ fun AddTransactionPage(
     Box(
         modifier = Modifier.fillMaxSize()
     ){
-        if(states.isFocusedSearchBar){
+        if(states.searchBarFocusedState){
 
             WithSearchableMode(
                 viewModel = viewModel,
                 states = states,
-                focusRequester = focusRequester
+                focusRequester = focusRequester,
+                selectedItem = selectedItem
             )
         }
         else{
@@ -116,7 +119,8 @@ fun AddTransactionPage(
 fun WithSearchableMode(
     viewModel: AddTransactionViewModel,
     states: AddTransactionStates,
-    focusRequester: FocusRequester
+    focusRequester: FocusRequester,
+    selectedItem: SavedItems?
 ){
 
 
@@ -182,74 +186,75 @@ fun WithSearchableMode(
                                 AddTransactionEvents.ChangeQuantity(true)
                             )
 
+                            viewModel.onEvent(
+                                AddTransactionEvents.ChangeSelectedItem(item)
+                            )
+
                         }
                     )
-
-                    if(states.itemQuantityState){
-                        QuantityBottomSheet(
-                            onDismiss = {
-                                viewModel.onEvent(
-                                    AddTransactionEvents.ChangeQuantity(false)
-                                )
-                            },
-                            onConfirm = { quantity ->
-
-
-                                val currency = item.itemCurrency
-                                val currencyName = currency.entries.firstOrNull()?.value?.name ?: "N/A"
-                                val currencySymbol = currency.entries.firstOrNull()?.value?.symbol ?: "N/A"
-                                val currencyCode = currency.entries.firstOrNull()?.key ?: "N/A"
-                                val itemDescription = "$quantity * ${item.itemPrice} $currencySymbol \n" + item.itemDescription
-
-                                // Name
-                                viewModel.onEvent(
-                                    AddTransactionEvents.ChangeTransactionName(item.itemName)
-                                )
-
-                                // Currency
-                                viewModel.onEvent(
-                                    AddTransactionEvents.ChangeTransactionCurrency(
-                                        currencyName = currencyName,
-                                        currencySymbol = currencySymbol,
-                                        currencyCode = currencyCode,
-                                        currencyExpanded = false
-                                    )
-                                )
-
-                                // Description
-                                viewModel.onEvent(
-                                    AddTransactionEvents.ChangeTransactionDescription(itemDescription)
-                                )
-
-                                // Price
-                                viewModel.onEvent(
-                                    AddTransactionEvents.CalculateFinalPrice(
-                                        quantity = quantity,
-                                        price = item.itemPrice ?: 0.0
-                                    )
-                                )
-
-                                // To Normal State
-                                viewModel.onEvent(
-                                    AddTransactionEvents.ChangeSavedItemSearchState(false)
-                                )
-
-                                viewModel.onEvent(
-                                    AddTransactionEvents.ChangeQuantity(false)
-                                )
-
-                            },
-                            sheetState = rememberModalBottomSheetState()
-                        )
-                    }
-
                 }
             }
         }
 
+
+        if(states.quantityBottomSheetState){
+            QuantityBottomSheet(
+                onDismiss = {
+                    viewModel.onEvent(
+                        AddTransactionEvents.ChangeQuantity(false)
+                    )
+                },
+                onConfirm = { quantity ->
+
+
+                    val currency = selectedItem?.itemCurrency ?: emptyMap()
+                    val currencyName = currency.entries.firstOrNull()?.value?.name ?: "N/A"
+                    val currencySymbol = currency.entries.firstOrNull()?.value?.symbol ?: "N/A"
+                    val currencyCode = currency.entries.firstOrNull()?.key ?: "N/A"
+                    val itemDescription = "$quantity * ${selectedItem?.itemPrice} $currencySymbol \n" + selectedItem?.itemDescription
+
+                    // Name
+                    viewModel.onEvent(
+                        AddTransactionEvents.ChangeTransactionName(selectedItem?.itemName ?: "Unknown")
+                    )
+
+                    // Currency
+                    viewModel.onEvent(
+                        AddTransactionEvents.ChangeTransactionCurrency(
+                            currencyName = currencyName,
+                            currencySymbol = currencySymbol,
+                            currencyCode = currencyCode,
+                            currencyExpanded = false
+                        )
+                    )
+
+                    // Description
+                    viewModel.onEvent(
+                        AddTransactionEvents.ChangeTransactionDescription(itemDescription)
+                    )
+
+                    // Price
+                    viewModel.onEvent(
+                        AddTransactionEvents.CalculateFinalPrice(
+                            quantity = quantity,
+                            price = selectedItem?.itemPrice ?: 0.0
+                        )
+                    )
+
+                    // To Normal State
+                    viewModel.onEvent(
+                        AddTransactionEvents.ChangeSavedItemSearchState(false)
+                    )
+
+                    viewModel.onEvent(
+                        AddTransactionEvents.ChangeQuantity(false)
+                    )
+
+                },
+                sheetState = rememberModalBottomSheetState()
+            )
+        }
     }
-
-
 }
 
 

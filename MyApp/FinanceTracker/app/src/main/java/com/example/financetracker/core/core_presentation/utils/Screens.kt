@@ -16,4 +16,5 @@ sealed class Screens(val routes : String) {
     object AddIncomeTransactionsScreen: Screens("add_income_transactions_screen")
     object AddExpenseTransactionsScreen: Screens("add_expense_transactions_screen")
     object AddSaveItemsTransactionsScreen: Screens("add_save_items_transactions_screen")
+    object CategoriesScreen: Screens("categories_screen")
 }

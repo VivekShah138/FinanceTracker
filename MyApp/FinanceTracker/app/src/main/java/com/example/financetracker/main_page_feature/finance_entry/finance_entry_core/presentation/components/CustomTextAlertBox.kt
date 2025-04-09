@@ -35,7 +35,6 @@ fun CustomTextAlertBox(
                 onClick = {
                     if (selectedCategory.isNotBlank()) {
                         onSaveCategory()
-                        onDismissRequest()
                     }
                 }
             ) {

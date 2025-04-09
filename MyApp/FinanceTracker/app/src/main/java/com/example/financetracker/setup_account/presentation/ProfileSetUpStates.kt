@@ -18,4 +18,5 @@ data class ProfileSetUpStates(
     val selectedCountry: String = "Select a Country",
     val currencyErrorMessage: String = "",
     val onBoardingSteps: Int = 0
+//    val keepLoggedIn: Boolean = false
 )

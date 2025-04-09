@@ -21,6 +21,7 @@ import com.example.financetracker.auth_feature.presentation.register.register_co
 import com.example.financetracker.auth_feature.presentation.login.login_components.LogInPage
 import com.example.financetracker.auth_feature.presentation.forgot_password.ForgotPasswordViewModel
 import com.example.financetracker.auth_feature.presentation.forgot_password.forgot_password_components.ForgotPasswordPage
+import com.example.financetracker.categories_feature.presentation.components.CategoriesScreen
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.FinanceEntryPage
 import com.example.financetracker.main_page_feature.charts.presentation.components.ChartsPage
@@ -131,6 +132,14 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 addTransactionViewModel = addTransactionViewModel,
                                 savedItemViewModel = savedItemViewModel)
+                        }
+
+                        composable(
+                            route = Screens.CategoriesScreen.routes
+                        ) {
+                            CategoriesScreen(
+                                navController = navController
+                            )
                         }
 
                     }

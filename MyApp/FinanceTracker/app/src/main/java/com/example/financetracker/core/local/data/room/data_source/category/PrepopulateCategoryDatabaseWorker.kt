@@ -36,7 +36,7 @@ class PrepopulateCategoryDatabaseWorker @AssistedInject constructor(
                 Log.d("WorkManager","jsonString: $jsonString")
             }
             jsonString?.let { it ->
-                val predefinedCategories = JsonUtils.parseJsonToCategories(it)
+                val predefinedCategories = JsonUtils.parseJsonToCategories(jsonString = it,uid = "predefined")
                 Log.d("WorkManager","predefinedCategories: $predefinedCategories")
                 categoryDao.insertCategories(
                     categories = predefinedCategories.map {

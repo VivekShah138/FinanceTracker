@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,41 +54,28 @@ fun SettingsPagePreview(){
                 .padding(padding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {  },
-                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
-                    shape = MaterialTheme.shapes.medium
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .height(30.dp),  // To align items vertically
-                        verticalAlignment = Alignment.CenterVertically  // Align items vertically in the center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Profile Icon",
-                            modifier = Modifier.padding(end = 16.dp)
-                        )
-                        Text(
-                            text = "Profile",
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.weight(1f)  // This ensures the text takes available space
-                        )
-                        Icon(
-                            imageVector = Icons.Default.ArrowForward,
-                            contentDescription = "Navigate to Profile"
-                        )
-                    }
-                }
+                SettingsItemCard(
+                    leadingImageVector = Icons.Default.Person,
+                    leadingImageVectorState = true,
+                    trailingImageVector = Icons.Default.ArrowForward,
+                    trailingImageVectorState = true,
+                    onClick = {},
+                    text = "Profile"
+                )
 
                 SettingsSwitchItem(
                     text = "Cloud Sync",
                     isCheck = false,
                     onCheckChange = {}
+                )
+
+                SettingsItemCard(
+                    leadingImageVector = Icons.Default.Category,
+                    leadingImageVectorState = true,
+                    trailingImageVector = Icons.Default.ArrowForward,
+                    trailingImageVectorState = true,
+                    onClick = {},
+                    text = "Categories"
                 )
             }
         }

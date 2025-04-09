@@ -10,7 +10,7 @@ class GetPredefinedCategories (
    private val categoryRepository: CategoryRepository
 ) {
 
-    suspend operator fun invoke(type: String): Flow<List<Category>> {
-        return categoryRepository.getCategories(type)
+    suspend operator fun invoke(type: String,uid: String): Flow<List<Category>> {
+        return categoryRepository.getCategories(type,uid)
     }
 }

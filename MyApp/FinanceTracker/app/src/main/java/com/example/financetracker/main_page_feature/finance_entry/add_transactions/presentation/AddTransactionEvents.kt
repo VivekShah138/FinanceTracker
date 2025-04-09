@@ -16,6 +16,7 @@ sealed class AddTransactionEvents {
     data class FilterSavedItemList(val list: List<SavedItems>, val newWord: String): AddTransactionEvents()
     data class ChangeQuantity(val state: Boolean): AddTransactionEvents()
     data class CalculateFinalPrice(val quantity: Int,val price: Double): AddTransactionEvents()
+    data class ChangeSelectedItem(val item: SavedItems): AddTransactionEvents()
 
     // Recurring Item
     data class ChangeRecurringItemState(val state: Boolean): AddTransactionEvents()

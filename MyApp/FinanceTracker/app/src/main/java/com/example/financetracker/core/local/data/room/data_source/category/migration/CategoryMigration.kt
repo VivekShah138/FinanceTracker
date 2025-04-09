@@ -36,3 +36,26 @@ val CATEGORY_MIGRATION_1_2 = object : Migration(1, 2) {
         db.execSQL("ALTER TABLE category_temp RENAME TO CategoryEntity")
     }
 }
+
+
+val CATEGORY_MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+
+        db.execSQL("DROP TABLE CategoryEntity")
+
+
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS CategoryEntity (
+                categoryId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                uid TEXT NOT NULL,
+                name TEXT NOT NULL,
+                type TEXT NOT NULL,
+                icon TEXT NOT NULL,
+                isCustom INTEGER NOT NULL
+            )
+            """.trimIndent()
+        )
+    }
+}
+

@@ -18,11 +18,10 @@ import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(
     private val categoryDao: CategoryDao,
-//    private val context: Context,
     private val workManager: WorkManager
 ): CategoryRepository {
-    override suspend fun getCategories(type: String): Flow<List<Category>> {
-        return categoryDao.getCategories(type).map { entities ->
+    override suspend fun getCategories(type: String,uid: String): Flow<List<Category>> {
+        return categoryDao.getCategories(type = type,uid = uid).map { entities ->
             entities.map {
                 it.toDomain()
             }

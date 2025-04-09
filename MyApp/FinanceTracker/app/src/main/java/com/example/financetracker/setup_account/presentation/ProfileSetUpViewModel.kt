@@ -155,7 +155,6 @@ class ProfileSetUpViewModel @Inject constructor(
             try {
                 val userId = setupAccountUseCasesWrapper.getUserUIDUseCase() ?: userId
 
-
                 val baseCurrencyCode = profileSetUpStates.value.baseCurrencyCode
                 val baseCurrencyName = profileSetUpStates.value.selectedBaseCurrency
                 val baseCurrencySymbol = profileSetUpStates.value.baseCurrencySymbol
@@ -205,6 +204,8 @@ class ProfileSetUpViewModel @Inject constructor(
                 )
 
                 updateCurrencyRates()
+
+                setupAccountUseCasesWrapper.keepUserLoggedIn(keepLoggedIn = true)
 
                 profileSetUpEventChannel.send(ProfileUpdateEvent.Success)
             }catch (e:Exception){

@@ -44,8 +44,7 @@ fun LoginPagePreview() {
             email = "shah@138gmail.com",
             password = "VivekShah",
             emailError = "emailError",
-            passwordError = "passwordError",
-            keepLoggedIn = false
+            passwordError = "passwordError"
         )
         )
     }

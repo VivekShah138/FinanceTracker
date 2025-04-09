@@ -32,6 +32,7 @@ import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDao
 import com.example.financetracker.core.local.data.room.data_source.category.CategoryDatabase
 import com.example.financetracker.core.local.data.room.data_source.category.migration.CATEGORY_MIGRATION_1_2
+import com.example.financetracker.core.local.data.room.data_source.category.migration.CATEGORY_MIGRATION_2_3
 import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDao
 import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDatabase
 import com.example.financetracker.core.local.data.room.data_source.userprofile.migration.USER_PROFILE_MIGRATION_1_2
@@ -161,7 +162,10 @@ object AppModule {
             context = app,
             klass = CategoryDatabase::class.java,
             name = CategoryDatabase.DATABASE_NAME
-        ).addMigrations(CATEGORY_MIGRATION_1_2).build()
+        ).addMigrations(
+            CATEGORY_MIGRATION_1_2,
+            CATEGORY_MIGRATION_2_3
+        ).build()
     }
 
     @Provides
@@ -223,7 +227,6 @@ object AppModule {
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validateConfirmPassword = ValidateConfirmPassword(),
-            keepUserLoggedIn = KeepUserLoggedIn(sharedPreferencesRepository = sharedPreferencesRepository),
             insertUIDLocally = InsertUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository)
         )
     }
@@ -418,7 +421,8 @@ object AppModule {
             getCurrencyRatesUpdated = GetCurrencyRatesUpdated(sharedPreferencesRepository),
             setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository),
             getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository),
-            insertCountryLocally = InsertCountryLocally(countryLocalRepository)
+            insertCountryLocally = InsertCountryLocally(countryLocalRepository),
+            keepUserLoggedIn = KeepUserLoggedIn(sharedPreferencesRepository)
         )
     }
 

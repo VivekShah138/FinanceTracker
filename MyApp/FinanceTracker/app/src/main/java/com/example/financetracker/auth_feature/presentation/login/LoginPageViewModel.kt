@@ -46,9 +46,7 @@ class LoginPageViewModel @Inject constructor(
                         is GoogleSignInResult.Success->{
                             _loginState.value = loginState.value.copy(
                                 loggedInUser = loginPageEvents.result.username,
-                                keepLoggedIn = true
                             )
-                            authFeatureUseCasesWrapper.keepUserLoggedIn(_loginState.value.keepLoggedIn)
                             handleUserProfile()
                             loginEventChannel.send(LoginEvent.Success(loginPageEvents.result.username))
                         }
@@ -83,11 +81,6 @@ class LoginPageViewModel @Inject constructor(
             is LoginPageEvents.LoginSuccess -> {
                 viewModelScope.launch {
 
-                    _loginState.value = loginState.value.copy(
-                        keepLoggedIn = true
-                    )
-
-                    authFeatureUseCasesWrapper.keepUserLoggedIn(_loginState.value.keepLoggedIn)
                     handleUserProfile()
                     loginEventChannel.send(LoginEvent.Success(loginPageEvents.userName))
                 }

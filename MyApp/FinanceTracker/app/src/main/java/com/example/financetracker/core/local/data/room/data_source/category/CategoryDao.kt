@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CategoryDao {
 
-    @Query("SELECT * FROM CategoryEntity WHERE type = :type")
-    fun getCategories(type: String): Flow<List<CategoryEntity>>
+    @Query(" SELECT * FROM CategoryEntity WHERE (type = :type AND uid = :uid) OR (type = :type AND isCustom = 0)")
+    fun getCategories(type: String, uid: String): Flow<List<CategoryEntity>>
 
     @Upsert
     suspend fun insertCategories(categories: List<CategoryEntity>)
@@ -23,7 +23,4 @@ interface CategoryDao {
 
     @Query("DELETE FROM CategoryEntity WHERE name = :categoryName AND uid = :categoryUid")
     suspend fun deleteCustomCategory(categoryName: String, categoryUid: Int)
-
-
-
 }
