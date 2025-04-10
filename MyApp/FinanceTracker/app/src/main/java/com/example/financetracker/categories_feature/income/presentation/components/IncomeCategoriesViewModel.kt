@@ -22,8 +22,8 @@ class IncomeCategoriesViewModel @Inject constructor(
     private val setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper
 ): ViewModel() {
 
-    private val _expenseCategoriesState = MutableStateFlow(ExpenseCategoriesStates())
-    val expenseCategoriesState : StateFlow<ExpenseCategoriesStates> = _expenseCategoriesState.asStateFlow()
+    private val _incomeCategoriesState = MutableStateFlow(ExpenseCategoriesStates())
+    val incomeCategoriesState : StateFlow<ExpenseCategoriesStates> = _incomeCategoriesState.asStateFlow()
 
     private val _categoryState = MutableStateFlow<Category?>(null)
     val categoryState : StateFlow<Category?> = _categoryState.asStateFlow()
@@ -38,12 +38,32 @@ class IncomeCategoriesViewModel @Inject constructor(
     fun onEvent(expenseCategoriesEvents: ExpenseCategoriesEvents){
         when(expenseCategoriesEvents){
             is ExpenseCategoriesEvents.ChangeCategoryName -> {
-                _expenseCategoriesState.value = expenseCategoriesState.value.copy(
+                _incomeCategoriesState.value = incomeCategoriesState.value.copy(
                     categoryName = expenseCategoriesEvents.name
                 )
             }
             is ExpenseCategoriesEvents.SaveCategory -> {
+                _categoryState.value = _categoryState.value!!.copy(
+                    name = _incomeCategoriesState.value.categoryName
+                )
 
+                viewModelScope.launch {
+                    predefinedCategoriesUseCaseWrapper.insertCustomCategories(_categoryState.value!!)
+                }
+            }
+            is ExpenseCategoriesEvents.ChangeCategoryAlertBoxState -> {
+                _incomeCategoriesState.value = incomeCategoriesState.value.copy(
+                    categoryAlertBoxState = expenseCategoriesEvents.state
+                )
+            }
+
+            is ExpenseCategoriesEvents.ChangeSelectedCategory -> {
+                _categoryState.value = expenseCategoriesEvents.category
+            }
+            is ExpenseCategoriesEvents.DeleteCategory -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    predefinedCategoriesUseCaseWrapper.deleteCustomCategories(_categoryState.value?.categoryId!!)
+                }
             }
         }
     }
@@ -52,7 +72,7 @@ class IncomeCategoriesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try{
                 predefinedCategoriesUseCaseWrapper.getPredefinedCategories("Income".lowercase(),uid).collect{ predefinedCategories ->
-                    _expenseCategoriesState.value = expenseCategoriesState.value.copy(
+                    _incomeCategoriesState.value = incomeCategoriesState.value.copy(
                         predefinedCategories = predefinedCategories
                     )
                 }
@@ -67,7 +87,7 @@ class IncomeCategoriesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try{
                 predefinedCategoriesUseCaseWrapper.getCustomCategories("Income".lowercase(),uid).collect{ customCategories ->
-                    _expenseCategoriesState.value = expenseCategoriesState.value.copy(
+                    _incomeCategoriesState.value = incomeCategoriesState.value.copy(
                         customCategories = customCategories
                     )
                 }

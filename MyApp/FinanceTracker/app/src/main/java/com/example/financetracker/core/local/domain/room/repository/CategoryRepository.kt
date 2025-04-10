@@ -10,6 +10,7 @@ interface CategoryRepository {
     suspend fun getPredefinedCategories(type: String): Flow<List<Category>>
     suspend fun insertCategories(categories: List<Category>)
     suspend fun insertCategory(category: Category)
+    suspend fun deleteCategory(categoryId: Int)
     suspend fun getCategoriesCount(): Int
     suspend fun insertPredefinedCategories()
 }

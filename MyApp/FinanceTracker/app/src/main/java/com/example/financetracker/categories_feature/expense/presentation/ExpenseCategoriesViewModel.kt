@@ -36,12 +36,28 @@ class ExpenseCategoriesViewModel @Inject constructor(
     fun onEvent(expenseCategoriesEvents: ExpenseCategoriesEvents){
         when(expenseCategoriesEvents){
             is ExpenseCategoriesEvents.ChangeCategoryName -> {
-                _expenseCategoriesState.value = expenseCategoriesState.value.copy(
-                    categoryName = expenseCategoriesEvents.name
+                _categoryState.value = categoryState.value!!.copy(
+                    name = expenseCategoriesEvents.name
                 )
             }
             is ExpenseCategoriesEvents.SaveCategory -> {
-
+                Log.d("ExpenseCategoriesViewModel","category: ${_categoryState.value}")
+                viewModelScope.launch(Dispatchers.IO) {
+                    predefinedCategoriesUseCaseWrapper.insertCustomCategories(_categoryState.value!!)
+                }
+            }
+            is ExpenseCategoriesEvents.ChangeCategoryAlertBoxState -> {
+                _expenseCategoriesState.value = expenseCategoriesState.value.copy(
+                    categoryAlertBoxState = expenseCategoriesEvents.state
+                )
+            }
+            is ExpenseCategoriesEvents.ChangeSelectedCategory -> {
+                _categoryState.value = expenseCategoriesEvents.category
+            }
+            is ExpenseCategoriesEvents.DeleteCategory -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    predefinedCategoriesUseCaseWrapper.deleteCustomCategories(_categoryState.value?.categoryId!!)
+                }
             }
         }
     }

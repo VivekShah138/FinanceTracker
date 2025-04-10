@@ -8,5 +8,6 @@ data class ExpenseCategoriesStates (
     val categoryName: String = "",
     val userUid: String = "",
     val categoryId: String? = null,
-    val categoryType: String = ""
+    val categoryType: String = "",
+    val categoryAlertBoxState: Boolean = false
 )

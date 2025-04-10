@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.utils.Screens
+import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionEvents
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionStates
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
@@ -341,7 +342,7 @@ fun WithoutSearchableMode(
 
         // If view BottomSheet is true
         if(states.bottomSheetState){
-            CustomBottomSheet(
+            CustomBottomSheet<Category>(
                 categories = states.categoryList,
                 sheetState = rememberModalBottomSheetState(),
                 onDismissRequest = {

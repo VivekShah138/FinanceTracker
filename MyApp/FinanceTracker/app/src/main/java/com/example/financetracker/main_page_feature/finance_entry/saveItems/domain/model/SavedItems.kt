@@ -16,7 +16,7 @@ data class SavedItems(
 
 fun SavedItems.toEntity(): SavedItemsEntity {
     return SavedItemsEntity(
-        itemId = 0,
+        itemId = itemId ?: 0,
         itemName = this.itemName,
         itemPrice = this.itemPrice,
         itemDescription = this.itemDescription,

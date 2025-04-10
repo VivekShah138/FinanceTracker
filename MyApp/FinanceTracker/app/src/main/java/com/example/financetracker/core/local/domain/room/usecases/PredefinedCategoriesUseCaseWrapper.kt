@@ -4,5 +4,7 @@ data class PredefinedCategoriesUseCaseWrapper(
     val getAllCategories: GetAllCategories,
     val insertPredefinedCategories: InsertPredefinedCategories,
     val getCustomCategories: GetCustomCategories,
-    val getPredefinedCategories: GetPredefinedCategories
+    val getPredefinedCategories: GetPredefinedCategories,
+    val insertCustomCategories: InsertCustomCategories,
+    val deleteCustomCategories: DeleteCustomCategories
 )

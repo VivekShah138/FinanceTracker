@@ -41,10 +41,12 @@ import com.example.financetracker.core.local.data.room.repository.UserProfileRep
 import com.example.financetracker.core.local.data.shared_preferences.repository.SharedPreferencesRepositoryImpl
 import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
 import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
+import com.example.financetracker.core.local.domain.room.usecases.DeleteCustomCategories
 import com.example.financetracker.core.local.domain.room.usecases.GetCustomCategories
 import com.example.financetracker.core.local.domain.room.usecases.GetAllCategories
 import com.example.financetracker.core.local.domain.room.usecases.GetPredefinedCategories
 import com.example.financetracker.core.local.domain.room.usecases.GetUserProfileFromLocalDb
+import com.example.financetracker.core.local.domain.room.usecases.InsertCustomCategories
 import com.example.financetracker.core.local.domain.room.usecases.InsertPredefinedCategories
 import com.example.financetracker.core.local.domain.room.usecases.InsertUserProfileToLocalDb
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
@@ -199,7 +201,9 @@ object AppModule {
             getAllCategories = GetAllCategories(categoryRepository),
             insertPredefinedCategories = InsertPredefinedCategories(categoryRepository),
             getCustomCategories = GetCustomCategories(categoryRepository),
-            getPredefinedCategories = GetPredefinedCategories(categoryRepository)
+            getPredefinedCategories = GetPredefinedCategories(categoryRepository),
+            insertCustomCategories = InsertCustomCategories(categoryRepository),
+            deleteCustomCategories = DeleteCustomCategories(categoryRepository)
         )
     }
 

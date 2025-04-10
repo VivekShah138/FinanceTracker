@@ -326,7 +326,7 @@ class AddTransactionViewModel @Inject constructor(
             val category = Category(
                 uid = uid,
                 name = _addTransactionStates.value.category,
-                type = "expense",
+                type = addTransactionStates.value.transactionType.lowercase(),
                 icon = "ic_custom",
                 isCustom = true
             )

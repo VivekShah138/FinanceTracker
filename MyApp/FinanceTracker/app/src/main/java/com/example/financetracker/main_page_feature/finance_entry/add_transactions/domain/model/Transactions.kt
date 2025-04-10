@@ -35,7 +35,7 @@ fun Transactions.toEntity(): TransactionsEntity {
         isRecurring = this.isRecurring,
         cloudSync = this.cloudSync,
         transactionName = this.transactionName,
-        transactionId = 0
+        transactionId = transactionId ?: 0
     )
 }
 

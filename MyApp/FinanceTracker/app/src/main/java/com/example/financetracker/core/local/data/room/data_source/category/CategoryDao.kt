@@ -27,6 +27,6 @@ interface CategoryDao {
     @Query("SELECT COUNT(*) FROM CategoryEntity")
     suspend fun getCategoryCount(): Int
 
-    @Query("DELETE FROM CategoryEntity WHERE name = :categoryName AND uid = :categoryUid")
-    suspend fun deleteCustomCategory(categoryName: String, categoryUid: Int)
+    @Query("DELETE FROM CategoryEntity WHERE categoryId = :categoryId")
+    suspend fun deleteCustomCategory(categoryId: Int)
 }

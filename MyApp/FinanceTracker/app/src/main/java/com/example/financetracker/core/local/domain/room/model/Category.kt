@@ -13,6 +13,7 @@ data class Category(
 
 fun CategoryEntity.toDomain(): Category {
     return Category(
+        categoryId = categoryId,
         uid = uid,
         name = name,
         type = type,
@@ -28,6 +29,6 @@ fun Category.toEntity(): CategoryEntity {
         type = type,
         icon = icon,
         isCustom = isCustom,
-        categoryId = 0
+        categoryId = categoryId ?: 0
     )
 }

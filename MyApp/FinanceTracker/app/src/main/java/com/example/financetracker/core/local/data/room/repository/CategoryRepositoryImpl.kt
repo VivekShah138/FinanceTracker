@@ -59,6 +59,10 @@ class CategoryRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun deleteCategory(categoryId: Int) {
+        categoryDao.deleteCustomCategory(categoryId = categoryId)
+    }
+
     override suspend fun getCategoriesCount(): Int {
         return categoryDao.getCategoryCount()
     }
