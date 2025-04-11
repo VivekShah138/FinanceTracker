@@ -3,6 +3,8 @@ package com.example.financetracker.categories_feature.expense.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.categories_feature.core.presentation.SharedCategoriesEvents
+import com.example.financetracker.categories_feature.core.presentation.CategoriesStates
 import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
@@ -20,8 +22,8 @@ class ExpenseCategoriesViewModel @Inject constructor(
     private val setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper
 ): ViewModel() {
 
-    private val _expenseCategoriesState = MutableStateFlow(ExpenseCategoriesStates())
-    val expenseCategoriesState : StateFlow<ExpenseCategoriesStates> = _expenseCategoriesState.asStateFlow()
+    private val _expenseCategoriesState = MutableStateFlow(CategoriesStates())
+    val expenseCategoriesState : StateFlow<CategoriesStates> = _expenseCategoriesState.asStateFlow()
 
     private val _categoryState = MutableStateFlow<Category?>(null)
     val categoryState : StateFlow<Category?> = _categoryState.asStateFlow()
@@ -33,28 +35,28 @@ class ExpenseCategoriesViewModel @Inject constructor(
         loadCustomCategories()
     }
 
-    fun onEvent(expenseCategoriesEvents: ExpenseCategoriesEvents){
-        when(expenseCategoriesEvents){
-            is ExpenseCategoriesEvents.ChangeCategoryName -> {
+    fun onEvent(sharedCategoriesEvents: SharedCategoriesEvents){
+        when(sharedCategoriesEvents){
+            is SharedCategoriesEvents.ChangeCategoryName -> {
                 _categoryState.value = categoryState.value!!.copy(
-                    name = expenseCategoriesEvents.name
+                    name = sharedCategoriesEvents.name
                 )
             }
-            is ExpenseCategoriesEvents.SaveCategory -> {
+            is SharedCategoriesEvents.SaveCategory -> {
                 Log.d("ExpenseCategoriesViewModel","category: ${_categoryState.value}")
                 viewModelScope.launch(Dispatchers.IO) {
                     predefinedCategoriesUseCaseWrapper.insertCustomCategories(_categoryState.value!!)
                 }
             }
-            is ExpenseCategoriesEvents.ChangeCategoryAlertBoxState -> {
+            is SharedCategoriesEvents.ChangeCategoryAlertBoxState -> {
                 _expenseCategoriesState.value = expenseCategoriesState.value.copy(
-                    categoryAlertBoxState = expenseCategoriesEvents.state
+                    updateCategoryAlertBoxState = sharedCategoriesEvents.state
                 )
             }
-            is ExpenseCategoriesEvents.ChangeSelectedCategory -> {
-                _categoryState.value = expenseCategoriesEvents.category
+            is SharedCategoriesEvents.ChangeSelectedCategory -> {
+                _categoryState.value = sharedCategoriesEvents.category
             }
-            is ExpenseCategoriesEvents.DeleteCategory -> {
+            is SharedCategoriesEvents.DeleteCategory -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     predefinedCategoriesUseCaseWrapper.deleteCustomCategories(_categoryState.value?.categoryId!!)
                 }

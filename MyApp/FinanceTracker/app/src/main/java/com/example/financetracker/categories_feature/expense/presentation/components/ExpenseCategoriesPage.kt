@@ -12,14 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.financetracker.auth_feature.presentation.login.login_components.LogInPage
-import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesEvents
+import com.example.financetracker.categories_feature.core.presentation.SharedCategoriesEvents
 import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesViewModel
-import com.example.financetracker.categories_feature.presentation.components.SingleCategoryDisplay
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionEvents
+import com.example.financetracker.categories_feature.core.presentation.components.SingleCategoryDisplay
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomTextAlertBox
 
 @Composable
@@ -66,20 +63,20 @@ fun ExpenseCategoriesPage(
             SingleCategoryDisplay(
                 onClickDelete = {
                     viewModel.onEvent(
-                        ExpenseCategoriesEvents.ChangeSelectedCategory(category)
+                        SharedCategoriesEvents.ChangeSelectedCategory(category)
                     )
                     viewModel.onEvent(
-                        ExpenseCategoriesEvents.DeleteCategory
+                        SharedCategoriesEvents.DeleteCategory
                     )
                 },
                 onClickItem = {
                     Log.d("ExpenseCategoriesPage","category: $category")
                     viewModel.onEvent(
-                        ExpenseCategoriesEvents.ChangeSelectedCategory(category)
+                        SharedCategoriesEvents.ChangeSelectedCategory(category)
                     )
 
                     viewModel.onEvent(
-                        ExpenseCategoriesEvents.ChangeCategoryAlertBoxState(true)
+                        SharedCategoriesEvents.ChangeCategoryAlertBoxState(true)
                     )
                 },
                 text = category.name,
@@ -89,25 +86,25 @@ fun ExpenseCategoriesPage(
     }
 
     // if view alert box is true
-    if(states.categoryAlertBoxState){
+    if(states.updateCategoryAlertBoxState){
         CustomTextAlertBox(
             selectedCategory = categoryStates?.name ?: "N/A",
             onCategoryChange = {
                 viewModel.onEvent(
-                    ExpenseCategoriesEvents.ChangeCategoryName(it)
+                    SharedCategoriesEvents.ChangeCategoryName(it)
                 )
             },
             onDismissRequest = {
                 viewModel.onEvent(
-                    ExpenseCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
+                    SharedCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
                 )
             },
             onSaveCategory = {
                 viewModel.onEvent(
-                    ExpenseCategoriesEvents.SaveCategory
+                    SharedCategoriesEvents.SaveCategory
                 )
                 viewModel.onEvent(
-                    ExpenseCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
+                    SharedCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
                 )
             },
             title = "Update Custom Category",

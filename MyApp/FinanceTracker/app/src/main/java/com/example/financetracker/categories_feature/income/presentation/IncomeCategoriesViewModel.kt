@@ -1,10 +1,10 @@
-package com.example.financetracker.categories_feature.income.presentation.components
+package com.example.financetracker.categories_feature.income.presentation
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesEvents
-import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesStates
+import com.example.financetracker.categories_feature.core.presentation.SharedCategoriesEvents
+import com.example.financetracker.categories_feature.core.presentation.CategoriesStates
 import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
@@ -22,8 +22,8 @@ class IncomeCategoriesViewModel @Inject constructor(
     private val setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper
 ): ViewModel() {
 
-    private val _incomeCategoriesState = MutableStateFlow(ExpenseCategoriesStates())
-    val incomeCategoriesState : StateFlow<ExpenseCategoriesStates> = _incomeCategoriesState.asStateFlow()
+    private val _incomeCategoriesState = MutableStateFlow(CategoriesStates())
+    val incomeCategoriesState : StateFlow<CategoriesStates> = _incomeCategoriesState.asStateFlow()
 
     private val _categoryState = MutableStateFlow<Category?>(null)
     val categoryState : StateFlow<Category?> = _categoryState.asStateFlow()
@@ -35,14 +35,14 @@ class IncomeCategoriesViewModel @Inject constructor(
         loadCustomCategories()
     }
 
-    fun onEvent(expenseCategoriesEvents: ExpenseCategoriesEvents){
-        when(expenseCategoriesEvents){
-            is ExpenseCategoriesEvents.ChangeCategoryName -> {
+    fun onEvent(sharedCategoriesEvents: SharedCategoriesEvents){
+        when(sharedCategoriesEvents){
+            is SharedCategoriesEvents.ChangeCategoryName -> {
                 _incomeCategoriesState.value = incomeCategoriesState.value.copy(
-                    categoryName = expenseCategoriesEvents.name
+                    categoryName = sharedCategoriesEvents.name
                 )
             }
-            is ExpenseCategoriesEvents.SaveCategory -> {
+            is SharedCategoriesEvents.SaveCategory -> {
                 _categoryState.value = _categoryState.value!!.copy(
                     name = _incomeCategoriesState.value.categoryName
                 )
@@ -51,16 +51,15 @@ class IncomeCategoriesViewModel @Inject constructor(
                     predefinedCategoriesUseCaseWrapper.insertCustomCategories(_categoryState.value!!)
                 }
             }
-            is ExpenseCategoriesEvents.ChangeCategoryAlertBoxState -> {
+            is SharedCategoriesEvents.ChangeCategoryAlertBoxState -> {
                 _incomeCategoriesState.value = incomeCategoriesState.value.copy(
-                    categoryAlertBoxState = expenseCategoriesEvents.state
+                    updateCategoryAlertBoxState = sharedCategoriesEvents.state
                 )
             }
-
-            is ExpenseCategoriesEvents.ChangeSelectedCategory -> {
-                _categoryState.value = expenseCategoriesEvents.category
+            is SharedCategoriesEvents.ChangeSelectedCategory -> {
+                _categoryState.value = sharedCategoriesEvents.category
             }
-            is ExpenseCategoriesEvents.DeleteCategory -> {
+            is SharedCategoriesEvents.DeleteCategory -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     predefinedCategoriesUseCaseWrapper.deleteCustomCategories(_categoryState.value?.categoryId!!)
                 }
