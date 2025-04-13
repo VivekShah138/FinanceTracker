@@ -2,7 +2,6 @@ package com.example.financetracker.main_page_feature.finance_entry.add_transacti
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,13 +14,20 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Preview(
     showSystemUi = true,
@@ -29,115 +35,122 @@ import androidx.compose.ui.unit.sp
 )
 @Composable
 fun SearchableListPreview(){
-//    SearchableList (
-//        onClick = {
-//
-//        },
+
+//    SavedItemsCard(
 //        itemName = "Milk",
-//        itemShopName = "Tesco",
+//        itemId = "1",
 //        itemDescription = "4 pints(2.2L)",
-//        itemCurrencySymbol = "£",
-//        itemPrice = "1.45"
+//        price = "1.45",
+//        shopName = "Tesco",
+//        currencySymbol = "£",
+//        onClick = {}
 //    )
-    ItemCard(
-        itemName = "Milk",
-        itemId = "1",
-        itemDescription = "4 pints(2.2L)",
-        price = "1.45",
-        shopName = "Tesco",
+
+    TransactionItemCard(
+        Transactions(
+            transactionId = 1,
+            amount = 1.45,
+            currency = null,
+            convertedAmount = null,
+            exchangeRate = null,
+            transactionType = "Expense",
+            category = "Groceries",
+            dateTime = 1744486763759,
+            userUid = "He",
+            description = "ItemDescription",
+            isRecurring = false,
+            cloudSync = false,
+            transactionName = "Milk"
+        ),
         onClick = {}
     )
 }
 
 
 @Composable
-fun SearchableList(
-    onClick: () -> Unit,
-    itemName: String,
-    itemShopName: String,
-    itemDescription: String,
-    itemCurrencySymbol: String,
-    itemPrice: String
-){
+fun TransactionItemCard(
+    item: Transactions,
+    onClick: () -> Unit
+) {
+    val formattedDate = remember(item.dateTime) {
+        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(item.dateTime)
+    }
+    val priceColor = if (item.transactionType == "Expense") {
+        Color.Red
+    } else {
+        Color.Green
+    }
 
-    Card (
+    Card(
         modifier = Modifier
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = MaterialTheme.shapes.medium // Rounded corners for a more modern look
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .padding(horizontal = 16.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(5.dp),
+        elevation = CardDefaults.cardElevation(5.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
     ){
 
-        Box(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 5.dp)
-                .clickable
-                {
-                    // Handle item selection
-//                viewModel.onEvent(AddTransactionEvents.ChangeTransactionName(item.itemName))
-//                viewModel.onEvent(AddTransactionEvents.FilterSavedItemList(emptyList(), ""))
-                    onClick()
-                }
-        ){
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Formatted date
+            Text(
+                text = formattedDate,
+                modifier = Modifier.weight(1f),
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center
+            )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-
-                Column(
-                    modifier = Modifier.padding(0.dp)
-                ) {
-
-                    Text(
-                        text = itemName,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = itemShopName,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        text = itemDescription,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Light
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
+            // Name + Description in one column
+            Column(
+                modifier = Modifier.weight(2f),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Text(
-                    text = itemCurrencySymbol,
-                    fontSize = 18.sp,
+                    text = item.transactionName,
                     fontWeight = FontWeight.Bold
                 )
-
-                Spacer(modifier = Modifier.width(2.dp))
-
                 Text(
-                    text = itemPrice,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    text = item.description ?: "N/A",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    maxLines = 1,  // Limit to 1 line
+                    overflow = TextOverflow.Ellipsis // Show ellipsis when overflow occurs
                 )
-
             }
 
+            // Amount
+            Text(
+                text = "${item.currency?.entries?.firstOrNull()?.value?.symbol ?: "$"} ${item.amount}",
+                color = priceColor,
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
         }
-
     }
 }
 
+
+
+
 @Composable
-fun ItemCard(
+fun SavedItemsCard(
     itemId: String,
     itemName: String,
     itemDescription: String,
     shopName: String,
     price: String,
+    currencySymbol: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -146,67 +159,69 @@ fun ItemCard(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .padding(horizontal = 16.dp)
-            .clickable {
-                onClick()
-            },
+            .clickable { onClick() },
         shape = RoundedCornerShape(5.dp),
         elevation = CardDefaults.cardElevation(5.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+            // Left: ID
+            Text(
+                text = itemId,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            // Center: Name, Description, Shop
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 12.dp)
             ) {
-                Row {
-                    Text(
-                        text = itemId,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    Text(
-                        text = itemName,
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                Text(   // Price aligned to end (Top-Right)
-                    text = price,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                Text(
+                    text = itemName,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = itemDescription,
+                    style = MaterialTheme.typography.bodySmall.copy(fontStyle = FontStyle.Italic),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+                Text(
+                    text = shopName,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
 
-            Text(
-                text = itemDescription,
-                style = MaterialTheme.typography.bodySmall.copy(
-                    fontStyle = FontStyle.Italic
-                ),
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-
-            Text(
-                text = shopName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(top = 4.dp)
-            )
+            // Right: Price with Symbol
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = currencySymbol,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.width(2.dp))
+                Text(
+                    text = price,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
+

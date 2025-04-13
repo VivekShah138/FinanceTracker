@@ -175,12 +175,13 @@ fun WithSearchableMode(
                 items(states.transactionSearchFilteredList) { item ->
                     Log.d("AddTransactionPage", "Rendering item: ${item.itemName}")
 
-                    ItemCard(
+                    SavedItemsCard(
                         itemName = item.itemName,
                         itemId = item.itemId.toString(),
                         itemDescription = item.itemDescription ?: "N/A",
                         price = item.itemPrice.toString(),
                         shopName = item.itemShopName ?: "N/A",
+                        currencySymbol = item.itemCurrency.entries.firstOrNull()?.value?.symbol ?: "N/A",
                         onClick = {
 
                             viewModel.onEvent(

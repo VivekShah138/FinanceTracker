@@ -77,7 +77,7 @@ import com.example.financetracker.main_page_feature.home_page.data.repository.Ho
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
-import com.example.financetracker.main_page_feature.view_transactions.ViewTransactionUseCaseWrapper
+import com.example.financetracker.main_page_feature.view_records.ViewRecordsUseCaseWrapper
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryDao
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryDatabase
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesDao
@@ -481,10 +481,14 @@ object AppModule {
     @Provides
     @Singleton
     fun provideViewTransactionsUsesCases(
-        transactionLocalRepository: TransactionLocalRepository
-    ): ViewTransactionUseCaseWrapper{
-        return ViewTransactionUseCaseWrapper(
-            getTransactionsLocally = GetTransactionsLocally(transactionLocalRepository = transactionLocalRepository)
+        transactionLocalRepository: TransactionLocalRepository,
+        savedItemsLocalRepository: SavedItemsLocalRepository,
+        sharedPreferencesRepository: SharedPreferencesRepository
+    ): ViewRecordsUseCaseWrapper{
+        return ViewRecordsUseCaseWrapper(
+            getTransactionsLocally = GetTransactionsLocally(transactionLocalRepository = transactionLocalRepository),
+            getAllSavedItemLocalUseCase = GetAllSavedItemLocalUseCase(savedItemsLocalRepository = savedItemsLocalRepository),
+            getUIDLocally = GetUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository)
         )
     }
 

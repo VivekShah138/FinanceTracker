@@ -7,6 +7,7 @@ import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCas
 import com.example.financetracker.auth_feature.presentation.forgot_password.ResetPasswordWithCredentialResult
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
+import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginPageViewModel @Inject constructor(
     private val authFeatureUseCasesWrapper: AuthFeatureUseCasesWrapper,
-    private val coreUseCasesWrapper: CoreUseCasesWrapper
+    private val coreUseCasesWrapper: CoreUseCasesWrapper,
+    private val setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper
 ): ViewModel(){
 
     private val _loginState = MutableStateFlow(LoginPageStates())
@@ -141,6 +143,7 @@ class LoginPageViewModel @Inject constructor(
                 _loginState.value = loginState.value.copy(
                     userProfile = userProfile
                 )
+                setupAccountUseCasesWrapper.keepUserLoggedIn(keepLoggedIn = true)
             }
         }catch (e:Exception){
             val errorMessage = e.localizedMessage

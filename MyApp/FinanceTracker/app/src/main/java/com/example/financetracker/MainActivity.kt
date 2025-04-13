@@ -31,8 +31,9 @@ import com.example.financetracker.main_page_feature.charts.presentation.componen
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.SavedItemViewModel
 import com.example.financetracker.main_page_feature.settings.presentation.SettingViewModel
 import com.example.financetracker.main_page_feature.settings.presentation.components.SettingsPage
-import com.example.financetracker.main_page_feature.view_transactions.presentation.ViewTransactionsViewModel
-import com.example.financetracker.main_page_feature.view_transactions.presentation.components.TransactionsPage
+import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsViewModel
+import com.example.financetracker.main_page_feature.view_records.presentation.components.RecordsPage
+import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsViewModel
 import com.example.financetracker.setup_account.presentation.ProfileSetUpViewModel
 import com.example.financetracker.setup_account.presentation.components.NewUserProfileOnBoardingScreens
 import com.example.financetracker.setup_account.presentation.components.ProfileSetUp
@@ -122,8 +123,13 @@ class MainActivity : ComponentActivity() {
                         composable(
                             route = Screens.ViewTransactionsScreen.routes
                         ) {
-                            val viewModel: ViewTransactionsViewModel = hiltViewModel()
-                            TransactionsPage(navController = navController,viewModel = viewModel)
+                            val viewTransactionsViewModel: ViewTransactionsViewModel = hiltViewModel()
+                            val viewSavedItemsViewModel: ViewSavedItemsViewModel = hiltViewModel()
+                            RecordsPage(
+                                navController = navController,
+                                viewSavedItemsViewModel = viewSavedItemsViewModel,
+                                viewTransactionsViewModel = viewTransactionsViewModel
+                            )
                         }
 
                         composable(
