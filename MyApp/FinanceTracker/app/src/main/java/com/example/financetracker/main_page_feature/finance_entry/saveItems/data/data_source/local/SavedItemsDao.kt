@@ -13,4 +13,7 @@ interface SavedItemsDao {
 
     @Query("SELECT * FROM SAVEDITEMSENTITY WHERE userUID = :userUID")
     fun getAllSavedItems(userUID: String): Flow<List<SavedItemsEntity>>
+
+    @Query("DELETE FROM SavedItemsEntity WHERE itemId IN (:savedItemsIds)")
+    suspend fun deleteSelectedSavedItemsByIds(savedItemsIds: Set<Int>)
 }

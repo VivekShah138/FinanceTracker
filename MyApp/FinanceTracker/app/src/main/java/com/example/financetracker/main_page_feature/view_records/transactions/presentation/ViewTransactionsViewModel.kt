@@ -3,7 +3,7 @@ package com.example.financetracker.main_page_feature.view_records.transactions.p
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.main_page_feature.view_records.ViewRecordsUseCaseWrapper
+import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,8 +84,69 @@ class ViewTransactionsViewModel @Inject constructor(
                     customDateAlertBoxState = viewTransactionsEvents.state
                 )
             }
+
+            // Delete Selected Transaction
+            is ViewTransactionsEvents.DeleteSelectedTransactions -> {
+                viewModelScope.launch(Dispatchers.IO) {
+
+                    Log.d("ViewTransactionsViewModel","SelectedTransaction Before delete: ${_viewTransactionStates.value.selectedTransactions}")
+
+
+                    viewRecordsUseCaseWrapper.deleteSelectedTransactionsByIdsLocally(_viewTransactionStates.value.selectedTransactions)
+
+
+
+                    _viewTransactionStates.value = viewTransactionStates.value.copy(
+                        isSelectionMode = false,
+                        selectedTransactions = emptySet()
+                    )
+
+                    Log.d("ViewTransactionsViewModel","SelectedTransaction After delete: ${_viewTransactionStates.value.selectedTransactions}")
+                }
+
+            }
+
+            // Selection Mode
+            is ViewTransactionsEvents.EnterSelectionMode -> {
+
+                _viewTransactionStates.value = viewTransactionStates.value.copy(
+                    isSelectionMode = true
+                )
+            }
+            is ViewTransactionsEvents.ExitSelectionMode -> {
+
+                Log.d("ViewTransactionsViewModel","Exit Selection Mode SelectedTransaction Before delete: ${_viewTransactionStates.value.selectedTransactions}")
+
+                _viewTransactionStates.value = viewTransactionStates.value.copy(
+                    isSelectionMode = false,
+                    selectedTransactions = emptySet()
+                )
+
+                Log.d("ViewTransactionsViewModel","Exit Selection Mode SelectedTransaction After delete: ${_viewTransactionStates.value.selectedTransactions}")
+            }
+            is ViewTransactionsEvents.ToggleTransactionSelection -> {
+                val current = _viewTransactionStates.value.selectedTransactions.toMutableSet()
+                if(current.contains(viewTransactionsEvents.transactionId)){
+                    current.remove(viewTransactionsEvents.transactionId)
+                }
+                else{
+                    current.add(viewTransactionsEvents.transactionId)
+                }
+                _viewTransactionStates.value = viewTransactionStates.value.copy(
+                    selectedTransactions = current
+                )
+
+                Log.d("ViewTransactionsViewModel","SelectedTransaction List: $current")
+                Log.d("ViewTransactionsViewModel","SelectedTransaction state List: ${_viewTransactionStates.value.selectedTransactions}")
+            }
         }
     }
+
+
+
+
+
+
 
     private fun getTransactionsAll(){
         viewModelScope.launch(Dispatchers.IO) {
@@ -115,6 +176,8 @@ class ViewTransactionsViewModel @Inject constructor(
                 )
             }
             Log.d("ViewTransactionsViewModel","transaction List ${_viewTransactionStates.value.transactionsList}")
+
+
 
         }
     }

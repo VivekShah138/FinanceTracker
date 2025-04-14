@@ -58,7 +58,7 @@ fun ViewTransactionsPagePreview(){
             transactionName = "Milk"
         ),
         Transactions(
-            transactionId = 1,
+            transactionId = 2,
             amount = 1.45,
             currency = null,
             convertedAmount = null,
@@ -73,7 +73,7 @@ fun ViewTransactionsPagePreview(){
             transactionName = "Milk"
         ),
         Transactions(
-            transactionId = 1,
+            transactionId = 3,
             amount = 1.45,
             currency = null,
             convertedAmount = null,
@@ -88,7 +88,7 @@ fun ViewTransactionsPagePreview(){
             transactionName = "Milk"
         ),
         Transactions(
-            transactionId = 1,
+            transactionId = 4,
             amount = 228.8,
             currency = null,
             convertedAmount = null,
@@ -103,6 +103,8 @@ fun ViewTransactionsPagePreview(){
             transactionName = "Salary"
         )
     )
+
+    val selectedTransactionList: Set<Int> = setOf(2,4)
 
     Column(modifier = Modifier
         .fillMaxSize(),
@@ -122,6 +124,8 @@ fun ViewTransactionsPagePreview(){
         LazyColumn {
             items(transactionList){ transaction ->
 
+                val isSelected = selectedTransactionList.contains(transaction.transactionId)
+
 
                 val priceColor = if (transaction.transactionType == "Expense") {
                     Color.Red
@@ -133,7 +137,12 @@ fun ViewTransactionsPagePreview(){
                     item = transaction,
                     onClick = {
 
-                    }
+                    },
+                    onLongClick = {
+
+                    },
+                    isSelected = isSelected,
+                    isSelectionMode = true
                 )
             }
         }

@@ -11,7 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components.SavedItemsCard
+import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsEvents
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsViewModel
+import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
 
 @Composable
 fun ViewSavedItemsPage(
@@ -28,16 +30,25 @@ fun ViewSavedItemsPage(
         LazyColumn {
             items(states.savedItemsList){ savedItems ->
 
-                SavedItemsCard(
-                    itemId = savedItems.itemId.toString(),
-                    itemName = savedItems.itemName,
-                    itemDescription = savedItems.itemDescription ?: "N/A",
-                    shopName = savedItems.itemShopName ?: "N/A",
-                    price = savedItems.itemPrice.toString(),
-                    currencySymbol = savedItems.itemCurrency.entries.firstOrNull()?.value?.symbol ?: "N/A",
-                    onClick = {
+                val isSelected = states.selectedSavedItems.contains(savedItems.itemId)
 
-                    }
+                SavedItemsCard(
+                    item = savedItems,
+                    onClick = {
+                        if (states.isSelectionMode) {
+                            viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                        } else {
+                            // Normal click action
+                        }
+                    },
+                    onLongClick = {
+                        if (!states.isSelectionMode) {
+                            viewModel.onEvent(ViewSavedItemsEvents.EnterSelectionMode)
+                            viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                        }
+                    },
+                    isSelectionMode = states.isSelectionMode,
+                    isSelected = isSelected
                 )
             }
         }

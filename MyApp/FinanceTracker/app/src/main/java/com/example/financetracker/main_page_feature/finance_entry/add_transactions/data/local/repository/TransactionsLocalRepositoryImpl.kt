@@ -24,4 +24,8 @@ class TransactionsLocalRepositoryImpl(
             }
         }
     }
+
+    override suspend fun deleteSelectedTransactionsByIds(transactionIds: Set<Int>) {
+        return transactionDao.deleteSelectedTransactionsByIds(transactionIds)
+    }
 }

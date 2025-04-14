@@ -22,4 +22,8 @@ class SavedItemsLocalRepositoryImpl(
             }
         }
     }
+
+    override suspend fun deleteSelectedSavedItemsByIds(savedItemsIds: Set<Int>) {
+        return savedItemsDao.deleteSelectedSavedItemsByIds(savedItemsIds)
+    }
 }

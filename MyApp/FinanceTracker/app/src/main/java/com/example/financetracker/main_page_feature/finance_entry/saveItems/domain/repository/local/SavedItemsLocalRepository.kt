@@ -7,5 +7,6 @@ interface SavedItemsLocalRepository {
 
     suspend fun insertSavedItems(savedItems: SavedItems)
     suspend fun getAllSavedItems(userUID: String): Flow<List<SavedItems>>
+    suspend fun deleteSelectedSavedItemsByIds(savedItemsIds: Set<Int>)
 
 }

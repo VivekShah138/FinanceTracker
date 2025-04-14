@@ -48,7 +48,7 @@ fun SettingsItemCard(
             if(leadingImageVectorState){
                 Icon(
                     imageVector = leadingImageVector,
-                    contentDescription = "Profile Icon",
+                    contentDescription = "Leading Icon",
                     modifier = Modifier.padding(end = 16.dp)
                 )
             }
@@ -62,7 +62,7 @@ fun SettingsItemCard(
             if(trailingImageVectorState){
                 Icon(
                     imageVector = trailingImageVector,
-                    contentDescription = "Navigate to Profile"
+                    contentDescription = "Navigate to "
                 )
             }
 

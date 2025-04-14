@@ -137,16 +137,32 @@ fun ViewTransactionsPage(
             items(states.transactionsList){ transaction ->
 
 
-                val priceColor = if (transaction.transactionType == "Expense") {
-                    Color.Red
-                } else {
-                    Color.Green
-                }
+
+//                TransactionItemCard(
+//                    item = transaction,
+//                    onClick = {
+//
+//                    }
+//                )
+
+                val isSelected = states.selectedTransactions.contains(transaction.transactionId)
 
                 TransactionItemCard(
                     item = transaction,
+                    isSelected = isSelected,
+                    isSelectionMode = states.isSelectionMode,
                     onClick = {
-
+                        if (states.isSelectionMode) {
+                            viewModel.onEvent(ViewTransactionsEvents.ToggleTransactionSelection(transaction.transactionId!!))
+                        } else {
+                            // Normal click action
+                        }
+                    },
+                    onLongClick = {
+                        if (!states.isSelectionMode) {
+                            viewModel.onEvent(ViewTransactionsEvents.EnterSelectionMode)
+                            viewModel.onEvent(ViewTransactionsEvents.ToggleTransactionSelection(transaction.transactionId!!))
+                        }
                     }
                 )
             }

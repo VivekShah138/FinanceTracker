@@ -176,12 +176,7 @@ fun WithSearchableMode(
                     Log.d("AddTransactionPage", "Rendering item: ${item.itemName}")
 
                     SavedItemsCard(
-                        itemName = item.itemName,
-                        itemId = item.itemId.toString(),
-                        itemDescription = item.itemDescription ?: "N/A",
-                        price = item.itemPrice.toString(),
-                        shopName = item.itemShopName ?: "N/A",
-                        currencySymbol = item.itemCurrency.entries.firstOrNull()?.value?.symbol ?: "N/A",
+                        item = item,
                         onClick = {
 
                             viewModel.onEvent(
@@ -192,7 +187,10 @@ fun WithSearchableMode(
                                 AddTransactionEvents.ChangeSelectedItem(item)
                             )
 
-                        }
+                        },
+                        onLongClick = {},
+                        isSelected = false,
+                        isSelectionMode = false
                     )
                 }
             }

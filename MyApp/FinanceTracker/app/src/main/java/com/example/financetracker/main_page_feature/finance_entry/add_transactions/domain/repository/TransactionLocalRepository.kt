@@ -7,5 +7,6 @@ interface TransactionLocalRepository {
 
     suspend fun insertTransaction(transactions: Transactions)
     suspend fun getAllTransactions(uid: String): Flow<List<Transactions>>
+    suspend fun deleteSelectedTransactionsByIds(transactionIds: Set<Int>)
 
 }
