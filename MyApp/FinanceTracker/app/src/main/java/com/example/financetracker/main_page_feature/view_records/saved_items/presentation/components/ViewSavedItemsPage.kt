@@ -1,5 +1,6 @@
 package com.example.financetracker.main_page_feature.view_records.saved_items.presentation.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +14,6 @@ import androidx.navigation.NavController
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components.SavedItemsCard
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsEvents
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsViewModel
-import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
 
 @Composable
 fun ViewSavedItemsPage(
@@ -22,6 +22,10 @@ fun ViewSavedItemsPage(
 ) {
 
     val states by viewModel.viewSavedItemsStates.collectAsStateWithLifecycle()
+
+    BackHandler(enabled = states.isSelectionMode) {
+        viewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+    }
 
     Column(modifier = Modifier
         .fillMaxSize(),
@@ -53,5 +57,4 @@ fun ViewSavedItemsPage(
             }
         }
     }
-
 }

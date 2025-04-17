@@ -8,4 +8,6 @@ interface SharedPreferencesRepository {
     fun removeUserIdLocally()
     fun setCurrencyRatesUpdated(isUpdated: Boolean)
     fun getCurrencyRatesUpdated(): Boolean
+    fun setCloudSync(isSynced: Boolean)
+    fun getCloudSync(): Boolean
 }

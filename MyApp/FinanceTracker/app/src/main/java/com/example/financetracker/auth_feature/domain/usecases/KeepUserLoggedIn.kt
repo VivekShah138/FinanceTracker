@@ -1,6 +1,5 @@
 package com.example.financetracker.auth_feature.domain.usecases
 
-import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 
 class KeepUserLoggedIn(

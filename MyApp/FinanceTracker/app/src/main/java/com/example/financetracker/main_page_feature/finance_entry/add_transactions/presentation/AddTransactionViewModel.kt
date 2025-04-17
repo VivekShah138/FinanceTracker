@@ -40,6 +40,8 @@ class AddTransactionViewModel @Inject constructor(
 
 
     private val uid = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
+    private val cloudSyncStatus = addTransactionUseCasesWrapper.getCloudSyncLocally()
+
 
     private val addTransactionValidationEventChannel = Channel<AddTransactionValidationEvent>()
     val addTransactionsValidationEvents = addTransactionValidationEventChannel.receiveAsFlow()
@@ -158,7 +160,8 @@ class AddTransactionViewModel @Inject constructor(
             }
             is AddTransactionEvents.ShowConversion -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
-                    showConversion = addTransactionEvents.showConversion
+                    showConversion = addTransactionEvents.showConversion,
+                    showExchangeRate = addTransactionEvents.showExchangeRate
                 )
             }
             is AddTransactionEvents.SetConvertedTransactionPrice -> {
@@ -248,12 +251,62 @@ class AddTransactionViewModel @Inject constructor(
                     cloudSync = false,
                     transactionName = _addTransactionStates.value.transactionName
                 )
-                try{
-                    addTransactionUseCasesWrapper.insertTransactionsLocally(transaction)
-                }catch (e:Exception){
-                    Log.d("AddExpenseViewModel","Error ${e.localizedMessage}")
-                    addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage))
-                    return@launch
+
+                val isInternetAvailable = addTransactionUseCasesWrapper.internetConnectionAvailability()
+
+                if (cloudSyncStatus) {
+                    if (isInternetAvailable) {
+                        try {
+                            // 1. Insert locally first to generate the ID
+                            val rowId = addTransactionUseCasesWrapper.insertNewTransactionsReturnId(transaction)
+
+                            // 2. Copy the ID into a new transaction object
+                            val transactionWithId = transaction.copy(transactionId = rowId.toInt(), cloudSync = true)
+
+                            // 3. Save to cloud
+                            addTransactionUseCasesWrapper.saveSingleTransactionCloud(userId = uid, transactions = transactionWithId)
+
+                            // 4. Update local record to reflect cloudSync = true
+                            addTransactionUseCasesWrapper.insertTransactionsLocally(transactionWithId)
+
+                        } catch (e: Exception) {
+                            Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
+                            // Fall back to saving locally if cloud sync fails
+                            try {
+                                addTransactionUseCasesWrapper.insertTransactionsLocally(transaction)
+                            } catch (e: Exception) {
+                                Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
+                                addTransactionValidationEventChannel.send(
+                                    AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
+                                )
+                                return@launch
+                            }
+                        }
+                    } else {
+                        // No internet, save locally
+                        try {
+                            addTransactionUseCasesWrapper.insertTransactionsLocally(transaction)
+                            Log.d("AddExpenseViewModel", "Local save No Internet")
+                        } catch (e: Exception) {
+                            Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
+                            addTransactionValidationEventChannel.send(
+                                AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
+                            )
+                            return@launch
+                        }
+                    }
+                } else {
+                    // Cloud sync disabled, save locally
+                    try {
+                        addTransactionUseCasesWrapper.insertTransactionsLocally(transaction)
+                        Log.d("AddExpenseViewModel", "Local save No CloudSync")
+                    } catch (e: Exception) {
+                        Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
+                        addTransactionValidationEventChannel.send(
+                            AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
+                        )
+                        return@launch
+                    }
                 }
                 addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Success)
             }

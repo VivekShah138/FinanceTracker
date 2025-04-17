@@ -121,7 +121,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(
-                            route = Screens.ViewTransactionsScreen.routes
+                            route = Screens.ViewRecordsScreen.routes
                         ) {
                             val viewTransactionsViewModel: ViewTransactionsViewModel = hiltViewModel()
                             val viewSavedItemsViewModel: ViewSavedItemsViewModel = hiltViewModel()

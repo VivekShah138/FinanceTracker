@@ -20,7 +20,7 @@ class CategoryRepositoryImpl @Inject constructor(
     private val categoryDao: CategoryDao,
     private val workManager: WorkManager
 ): CategoryRepository {
-    override suspend fun getCategories(type: String,uid: String): Flow<List<Category>> {
+    override suspend fun getAllCategories(type: String, uid: String): Flow<List<Category>> {
         return categoryDao.getCategories(type = type,uid = uid).map { entities ->
             entities.map {
                 it.toDomain()

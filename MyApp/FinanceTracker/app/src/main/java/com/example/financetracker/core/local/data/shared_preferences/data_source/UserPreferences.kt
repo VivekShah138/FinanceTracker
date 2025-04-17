@@ -12,6 +12,7 @@ class UserPreferences @Inject constructor(
         private const val KEY_IS_LOGGED_IN = "is_logged_in"
         private const val KEY_USER_ID = "user_id"
         private const val CURRENCY_RATES_UPDATED = "currency_rates_updated"
+        private const val CLOUD_SYNC = "cloud_sync"
     }
 
     fun isLoggedIn(): Boolean{
@@ -48,6 +49,16 @@ class UserPreferences @Inject constructor(
 
     fun getCurrencyRatesUpdated(): Boolean{
         return sharedPreferences.getBoolean(CURRENCY_RATES_UPDATED,false)
+    }
+
+    fun setCloudSync(isSynced: Boolean){
+        sharedPreferences.edit(){
+            putBoolean(CLOUD_SYNC,isSynced)
+        }
+    }
+
+    fun getCloudSync(): Boolean{
+        return sharedPreferences.getBoolean(CLOUD_SYNC,false)
     }
 
     fun clearLogInPreference(){

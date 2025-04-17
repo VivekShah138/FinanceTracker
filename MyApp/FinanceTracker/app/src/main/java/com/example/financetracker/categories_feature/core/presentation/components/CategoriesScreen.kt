@@ -18,8 +18,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.financetracker.categories_feature.core.presentation.CoreCategoriesEvents
 import com.example.financetracker.categories_feature.core.presentation.CoreCategoriesViewModel
 import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesViewModel
 import com.example.financetracker.categories_feature.expense.presentation.components.ExpenseCategoriesPage

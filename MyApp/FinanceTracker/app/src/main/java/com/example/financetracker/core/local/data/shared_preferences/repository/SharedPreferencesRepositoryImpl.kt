@@ -35,4 +35,12 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
     override fun getCurrencyRatesUpdated(): Boolean {
         return userPreferences.getCurrencyRatesUpdated()
     }
+
+    override fun setCloudSync(isSynced: Boolean) {
+        return userPreferences.setCloudSync(isSynced)
+    }
+
+    override fun getCloudSync(): Boolean {
+        return userPreferences.getCloudSync()
+    }
 }

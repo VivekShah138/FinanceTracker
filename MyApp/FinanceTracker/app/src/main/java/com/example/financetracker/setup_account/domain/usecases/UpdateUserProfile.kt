@@ -1,12 +1,12 @@
 package com.example.financetracker.setup_account.domain.usecases
 
 import com.example.financetracker.core.local.domain.room.model.UserProfile
-import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
+import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
 import com.example.financetracker.setup_account.domain.model.Currency
 
 
 class UpdateUserProfile (
-    private val firebaseRepository: FirebaseRepository
+    private val remoteRepository: RemoteRepository
 ) {
 
     suspend operator fun invoke(
@@ -30,6 +30,6 @@ class UpdateUserProfile (
             phoneNumber = phoneNumber,
             profileSetUpCompleted = isProfileSetupComplete
         )
-        return firebaseRepository.saveUserProfile(userId,userProfileUpdated)
+        return remoteRepository.saveUserProfile(userId,userProfileUpdated)
     }
 }

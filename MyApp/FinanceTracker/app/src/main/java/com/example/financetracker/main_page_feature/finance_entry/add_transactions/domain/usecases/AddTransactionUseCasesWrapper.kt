@@ -1,5 +1,8 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
 
+import com.example.financetracker.core.cloud.domain.usecase.InternetConnectionAvailability
+import com.example.financetracker.core.cloud.domain.usecase.SaveSingleTransactionCloud
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
 import com.example.financetracker.setup_account.domain.usecases.GetCurrencyRatesLocally
 
 data class AddTransactionUseCasesWrapper (
@@ -8,5 +11,9 @@ data class AddTransactionUseCasesWrapper (
     val validateEmptyField: ValidateEmptyField,
     val validateTransactionCategory: ValidateTransactionCategory,
     val validateTransactionPrice: ValidateTransactionPrice,
-    val insertTransactionsLocally: InsertTransactionsLocally
+    val insertTransactionsLocally: InsertTransactionsLocally,
+    val insertNewTransactionsReturnId: InsertNewTransactionsReturnId,
+    val saveSingleTransactionCloud: SaveSingleTransactionCloud,
+    val getCloudSyncLocally: GetCloudSyncLocally,
+    val internetConnectionAvailability: InternetConnectionAvailability
 )

@@ -19,12 +19,14 @@ import com.example.financetracker.setup_account.domain.repository.remote.Country
 import com.example.financetracker.setup_account.domain.usecases.GetCountryLocally
 import com.example.financetracker.setup_account.domain.usecases.InsertCountryLocallyWorkManager
 import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
-import com.example.financetracker.core.cloud.data.repository.FirebaseRepositoryImpl
-import com.example.financetracker.core.cloud.domain.repository.FirebaseRepository
+import com.example.financetracker.core.cloud.data.repository.RemoteRepositoryImpl
+import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.CheckIsLoggedInUseCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserEmailUserCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserProfileUseCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
+import com.example.financetracker.core.cloud.domain.usecase.InternetConnectionAvailability
+import com.example.financetracker.core.cloud.domain.usecase.SaveSingleTransactionCloud
 import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.core.cloud.domain.usecase.SaveUserProfileUseCase
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
@@ -51,7 +53,9 @@ import com.example.financetracker.core.local.domain.room.usecases.InsertPredefin
 import com.example.financetracker.core.local.domain.room.usecases.InsertUserProfileToLocalDb
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDao
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDatabase
@@ -61,6 +65,7 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertTransactionsLocally
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertCustomCategory
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertNewTransactionsReturnId
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateEmptyField
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionPrice
@@ -77,6 +82,7 @@ import com.example.financetracker.main_page_feature.home_page.data.repository.Ho
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
+import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedSavedItemsByIdsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedTransactionsByIdsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
@@ -142,12 +148,14 @@ object AppModule {
     @Singleton
     fun provideFirebaseRepository(
         firebaseAuth: FirebaseAuth,
-        userPreferences: UserPreferences,
-        firestore: FirebaseFirestore
-    ): FirebaseRepository {
-        return FirebaseRepositoryImpl(
+        firestore: FirebaseFirestore,
+        @ApplicationContext context: Context
+    ): RemoteRepository {
+        return RemoteRepositoryImpl(
             firebaseAuth = firebaseAuth,
-            firestore = firestore)
+            firestore = firestore,
+            context = context
+            )
     }
 
     @Provides
@@ -214,18 +222,18 @@ object AppModule {
     // Core UseCases
     @Provides
     @Singleton
-    fun provideCoreUseCases(firebaseRepository: FirebaseRepository,
+    fun provideCoreUseCases(remoteRepository: RemoteRepository,
                             sharedPreferencesRepository: SharedPreferencesRepository): CoreUseCasesWrapper {
         return CoreUseCasesWrapper(
             logoutUseCase = LogoutUseCase(
-                firebaseRepository = firebaseRepository,
+                remoteRepository = remoteRepository,
                 sharedPreferencesRepository = sharedPreferencesRepository
             ),
             checkIsLoggedInUseCase = CheckIsLoggedInUseCase(sharedPreferencesRepository),
-            getUserUIDUseCase = GetUserUIDUseCase(firebaseRepository),
-            getUserEmailUserCase = GetUserEmailUserCase(firebaseRepository),
-            getUserProfileUseCase = GetUserProfileUseCase(firebaseRepository),
-            saveUserProfileUseCase = SaveUserProfileUseCase(firebaseRepository)
+            getUserUIDUseCase = GetUserUIDUseCase(remoteRepository),
+            getUserEmailUserCase = GetUserEmailUserCase(remoteRepository),
+            getUserProfileUseCase = GetUserProfileUseCase(remoteRepository),
+            saveUserProfileUseCase = SaveUserProfileUseCase(remoteRepository)
         )
     }
 
@@ -405,7 +413,7 @@ object AppModule {
     // SetUpPage UseCases
     @Provides
     @Singleton
-    fun provideSetupAccountUseCases(firebaseRepository: FirebaseRepository,
+    fun provideSetupAccountUseCases(remoteRepository: RemoteRepository,
                                     countryRepository: CountryRemoteRepository,
                                     countryLocalRepository: CountryLocalRepository,
                                     userProfileRepository: UserProfileRepository,
@@ -413,14 +421,14 @@ object AppModule {
                                     currencyRatesLocalRepository: CurrencyRatesLocalRepository
     ): SetupAccountUseCasesWrapper {
         return SetupAccountUseCasesWrapper(
-            getUserEmailUserCase = GetUserEmailUserCase(firebaseRepository),
-            getUserUIDUseCase = GetUserUIDUseCase(firebaseRepository),
+            getUserEmailUserCase = GetUserEmailUserCase(remoteRepository),
+            getUserUIDUseCase = GetUserUIDUseCase(remoteRepository),
             getCountryDetailsUseCase = GetCountryDetailsUseCase(countryRepository),
             validateName = ValidateName(),
             validatePhoneNumber = ValidatePhoneNumber(),
             validateCountry = ValidateCountry(),
-            updateUserProfile = UpdateUserProfile(firebaseRepository),
-            getUserProfileUseCase = GetUserProfileUseCase(firebaseRepository),
+            updateUserProfile = UpdateUserProfile(remoteRepository),
+            getUserProfileUseCase = GetUserProfileUseCase(remoteRepository),
             getCountryLocally = GetCountryLocally(countryLocalRepository),
             insertCountryLocallyWorkManager = InsertCountryLocallyWorkManager(countryLocalRepository),
             insertUserProfileToLocalDb = InsertUserProfileToLocalDb(userProfileRepository),
@@ -447,13 +455,13 @@ object AppModule {
     @Singleton
     fun provideHomePageUseCases(
         sharedPreferencesRepository: SharedPreferencesRepository,
-        firebaseRepository: FirebaseRepository,
+        remoteRepository: RemoteRepository,
         homePageRepository: HomePageRepository
     ): HomePageUseCaseWrapper {
         return HomePageUseCaseWrapper(
             logoutUseCase = LogoutUseCase(
                 sharedPreferencesRepository = sharedPreferencesRepository
-                , firebaseRepository = firebaseRepository
+                , remoteRepository = remoteRepository
             ),
             getUserProfileLocal = GetUserProfileLocal(homePageRepository),
             setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository),
@@ -467,7 +475,9 @@ object AppModule {
     fun provideAddExpenseUseCases(
         currencyRatesLocalRepository: CurrencyRatesLocalRepository,
         categoryRepository: CategoryRepository,
-        transactionLocalRepository: TransactionLocalRepository
+        transactionLocalRepository: TransactionLocalRepository,
+        sharedPreferencesRepository: SharedPreferencesRepository,
+        remoteRepository: RemoteRepository
     ): AddTransactionUseCasesWrapper {
         return AddTransactionUseCasesWrapper(
             getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository),
@@ -475,7 +485,11 @@ object AppModule {
             validateTransactionPrice = ValidateTransactionPrice(),
             validateEmptyField = ValidateEmptyField(),
             validateTransactionCategory = ValidateTransactionCategory(),
-            insertTransactionsLocally = InsertTransactionsLocally(transactionLocalRepository)
+            insertTransactionsLocally = InsertTransactionsLocally(transactionLocalRepository),
+            insertNewTransactionsReturnId = InsertNewTransactionsReturnId(transactionLocalRepository = transactionLocalRepository),
+            getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            saveSingleTransactionCloud = SaveSingleTransactionCloud(remoteRepository = remoteRepository,transactionLocalRepository = transactionLocalRepository),
+            internetConnectionAvailability = InternetConnectionAvailability(remoteRepository = remoteRepository)
         )
     }
 
@@ -496,6 +510,17 @@ object AppModule {
         )
     }
 
+    // Setting UseCases
+    @Provides
+    @Singleton
+    fun provideSettingsUsesCases(
+        sharedPreferencesRepository: SharedPreferencesRepository
+    ): SettingsUseCaseWrapper {
+        return SettingsUseCaseWrapper(
+            getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository),
+            setCloudSyncLocally = SetCloudSyncLocally(sharedPreferencesRepository)
+        )
+    }
 }
 
 

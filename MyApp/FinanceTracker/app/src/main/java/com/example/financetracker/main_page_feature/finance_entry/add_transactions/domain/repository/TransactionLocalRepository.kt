@@ -1,12 +1,15 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository
 
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionsEntity
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
 import kotlinx.coroutines.flow.Flow
 
 interface TransactionLocalRepository {
 
     suspend fun insertTransaction(transactions: Transactions)
+    suspend fun insertTransactionReturningId(transactions: Transactions): Long
     suspend fun getAllTransactions(uid: String): Flow<List<Transactions>>
     suspend fun deleteSelectedTransactionsByIds(transactionIds: Set<Int>)
+    suspend fun updateCloudSyncStatus(id: Int, syncStatus: Boolean)
 
 }

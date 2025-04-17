@@ -23,7 +23,7 @@ import com.example.financetracker.core.core_presentation.utils.Screens
 
 @Composable
 fun BottomNavigationBar(navController: NavController = rememberNavController()) {
-    val items = listOf(Screens.HomePageScreen,Screens.ViewTransactionsScreen,Screens.AddTransactionsScreen,Screens.GraphicalVisualizationScreen,Screens.SettingScreen)
+    val items = listOf(Screens.HomePageScreen,Screens.ViewRecordsScreen,Screens.AddTransactionsScreen,Screens.GraphicalVisualizationScreen,Screens.SettingScreen)
 
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.surface,
@@ -44,7 +44,7 @@ fun BottomNavigationBar(navController: NavController = rememberNavController()) 
                         Icon(
                             imageVector = when (screen) {
                                 is Screens.HomePageScreen -> Icons.Default.Home
-                                is Screens.ViewTransactionsScreen -> Icons.AutoMirrored.Filled.List
+                                is Screens.ViewRecordsScreen -> Icons.AutoMirrored.Filled.List
                                 is Screens.AddTransactionsScreen -> Icons.Default.AddCircle
                                 is Screens.GraphicalVisualizationScreen -> Icons.Default.AutoGraph
                                 is Screens.SettingScreen -> Icons.Default.Settings

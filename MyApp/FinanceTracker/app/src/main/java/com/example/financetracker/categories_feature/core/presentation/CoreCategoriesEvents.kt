@@ -1,6 +1,4 @@
-package com.example.financetracker.categories_feature.core.presentation.components
-
-import com.example.financetracker.categories_feature.core.presentation.SharedCategoriesEvents
+package com.example.financetracker.categories_feature.core.presentation
 
 sealed class CoreCategoriesEvents {
     data class SelectCategoryType(val type: String): CoreCategoriesEvents()
