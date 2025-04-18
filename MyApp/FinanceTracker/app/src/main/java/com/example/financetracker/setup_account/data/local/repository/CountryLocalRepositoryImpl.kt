@@ -37,9 +37,9 @@ class CountryLocalRepositoryImpl @Inject constructor(
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<PrepopulateCountryDatabaseWorker>()
-//            .setConstraints(constraints)
+            .setConstraints(constraints)
             .setBackoffCriteria( // Set retry strategy
-                BackoffPolicy.EXPONENTIAL,
+                BackoffPolicy.LINEAR,
                 30, TimeUnit.SECONDS // Minimum delay before retry
             )
             .addTag("PrepopulateCountries") // Add a tag for tracking logs

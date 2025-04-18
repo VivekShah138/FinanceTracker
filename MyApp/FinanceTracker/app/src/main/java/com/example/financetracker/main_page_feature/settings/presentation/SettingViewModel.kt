@@ -3,11 +3,14 @@ package com.example.financetracker.main_page_feature.settings.presentation
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,6 +37,12 @@ class SettingViewModel @Inject constructor(
                 // Setting CloudSync in shared preferences
                 settingsUseCaseWrapper.setCloudSyncLocally(settingEvents.isChecked)
                 Log.d("SettingsViewModel","CloudSync: ${settingsUseCaseWrapper.getCloudSyncLocally()}")
+
+                if(settingEvents.isChecked){
+                    viewModelScope.launch(Dispatchers.IO){
+                        settingsUseCaseWrapper.saveMultipleTransactionsCloud()
+                    }
+                }
             }
         }
     }

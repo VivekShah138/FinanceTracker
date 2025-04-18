@@ -1,7 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.repository
 
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDao
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionsEntity
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.toDomain
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.toEntity
@@ -26,6 +25,14 @@ class TransactionsLocalRepositoryImpl(
 
     override suspend fun getAllTransactions(uid: String): Flow<List<Transactions>> {
         return transactionDao.getAllTransactions(uid).map { transactions ->
+            transactions.map {
+                it.toDomain()
+            }
+        }
+    }
+
+    override suspend fun getAllLocalTransactions(uid: String): Flow<List<Transactions>> {
+        return transactionDao.getAllLocalTransactions(uid).map {transactions ->
             transactions.map {
                 it.toDomain()
             }

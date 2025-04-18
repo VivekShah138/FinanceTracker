@@ -18,9 +18,7 @@ class HomePageViewModel @Inject constructor(
 
     init {
         getUserProfile()
-//        if(!homePageUseCaseWrapper.getCurrencyRatesUpdated()){
-            updateCurrencyRatesOneTime()
-//        }
+        updateCurrencyRatesOneTime()
         updateCurrencyRatesPeriodically()
 
     }
@@ -42,7 +40,7 @@ class HomePageViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrencyRatesOneTime(){
+    private fun updateCurrencyRatesOneTime(){
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("WorkManagerCurrencies","one time function called inside homepage")
 
@@ -50,7 +48,7 @@ class HomePageViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrencyRatesPeriodically(){
+    private fun updateCurrencyRatesPeriodically(){
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("WorkManagerCurrencies","periodically time function called inside homepage")
             userCasesWrapperSetupAccount.insertCurrencyRatesLocalPeriodically()

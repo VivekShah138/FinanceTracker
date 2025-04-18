@@ -10,7 +10,8 @@ interface RemoteRepository {
     suspend fun saveUserProfile(userId: String,profile: UserProfile)
     suspend fun getUserProfile(userId: String): UserProfile?
     suspend fun cloudSyncSingleTransaction(userId: String,transactions: Transactions,updateCloudSync:suspend (Int,Boolean) -> Unit)
-    suspend fun cloudSyncMultipleTransaction(userId: String,transactionsList: List<Transactions>,updateCloudSync: (Int,Boolean) -> Unit)
+    suspend fun cloudSyncMultipleTransaction()
     fun isInternetConnected(): Boolean
+    suspend fun deletedTransactionRemote(transactionId: Int,userId: String)
 
 }

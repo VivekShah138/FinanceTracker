@@ -271,7 +271,7 @@ class AddTransactionViewModel @Inject constructor(
 
                         } catch (e: Exception) {
                             Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
-                            // Fall back to saving locally if cloud sync fails
+
                             try {
                                 addTransactionUseCasesWrapper.insertTransactionsLocally(transaction)
                             } catch (e: Exception) {
@@ -310,7 +310,6 @@ class AddTransactionViewModel @Inject constructor(
                 }
                 addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Success)
             }
-
         }
     }
 

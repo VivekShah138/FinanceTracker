@@ -15,5 +15,6 @@ data class AddTransactionUseCasesWrapper (
     val insertNewTransactionsReturnId: InsertNewTransactionsReturnId,
     val saveSingleTransactionCloud: SaveSingleTransactionCloud,
     val getCloudSyncLocally: GetCloudSyncLocally,
-    val internetConnectionAvailability: InternetConnectionAvailability
+    val internetConnectionAvailability: InternetConnectionAvailability,
+    val getAllLocalTransactions: GetAllLocalTransactions
 )

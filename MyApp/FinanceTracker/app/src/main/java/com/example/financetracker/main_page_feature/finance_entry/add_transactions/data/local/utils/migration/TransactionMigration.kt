@@ -2,12 +2,12 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 val TRANSACTIONS_MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
+    override fun migrate(db: SupportSQLiteDatabase) {
         // Drop the old table to remove previous entries
-        database.execSQL("DROP TABLE IF EXISTS TransactionsEntity")
+        db.execSQL("DROP TABLE IF EXISTS TransactionsEntity")
 
         // Create the new table with the new column `transactionName`
-        database.execSQL(
+        db.execSQL(
             """CREATE TABLE TransactionsEntity (
                 transactionId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 transactionName TEXT NOT NULL,
@@ -26,3 +26,16 @@ val TRANSACTIONS_MIGRATION_1_2 = object : Migration(1, 2) {
         )
     }
 }
+
+val TRANSACTIONS_MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // Create the new table for deleted transactions
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS `DeletedTransactionsEntity` (
+                `transactionId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                `userUid` TEXT NOT NULL
+            )
+        """.trimIndent())
+    }
+}
+

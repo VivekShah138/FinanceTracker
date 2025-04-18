@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source
+package com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.utils
 
 import androidx.room.TypeConverter
 import java.util.Date

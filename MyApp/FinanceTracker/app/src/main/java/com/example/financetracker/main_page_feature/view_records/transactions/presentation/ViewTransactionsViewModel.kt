@@ -3,6 +3,8 @@ package com.example.financetracker.main_page_feature.view_records.transactions.p
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.DeletedTransactionsEntity
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.DeletedTransactions
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -88,21 +90,37 @@ class ViewTransactionsViewModel @Inject constructor(
             // Delete Selected Transaction
             is ViewTransactionsEvents.DeleteSelectedTransactions -> {
                 viewModelScope.launch(Dispatchers.IO) {
+                    val selectedIds = _viewTransactionStates.value.selectedTransactions
+                    val isCloudSync = viewRecordsUseCaseWrapper.getCloudSyncLocally()
+                    val isInternetAvailable = viewRecordsUseCaseWrapper.internetConnectionAvailability() // You can implement this using `ConnectivityManager`
 
-                    Log.d("ViewTransactionsViewModel","SelectedTransaction Before delete: ${_viewTransactionStates.value.selectedTransactions}")
+                    // 1. Delete locally
+                    viewRecordsUseCaseWrapper.deleteSelectedTransactionsByIdsLocally(selectedIds)
 
+                    // 2. If sync enabled and internet is OFF, store deletion info
+                    if (isCloudSync && !isInternetAvailable) {
+                        selectedIds.forEach { id ->
+                            viewRecordsUseCaseWrapper.insertDeletedTransactionsLocally(
+                                DeletedTransactions(
+                                    transactionId = id,
+                                    userUid = uid
+                                )
+                            )
+                        }
+                    } else if (isCloudSync && isInternetAvailable) {
+                        // Directly delete from cloud too
+                        selectedIds.forEach { id ->
+                            viewRecordsUseCaseWrapper.deleteTransactionCloud(userId = uid, transactionId = id)
+                        }
+                    }
 
-                    viewRecordsUseCaseWrapper.deleteSelectedTransactionsByIdsLocally(_viewTransactionStates.value.selectedTransactions)
-
-
-
-                    _viewTransactionStates.value = viewTransactionStates.value.copy(
+                    // 3. Reset state
+                    _viewTransactionStates.value = _viewTransactionStates.value.copy(
                         isSelectionMode = false,
                         selectedTransactions = emptySet()
                     )
-
-                    Log.d("ViewTransactionsViewModel","SelectedTransaction After delete: ${_viewTransactionStates.value.selectedTransactions}")
                 }
+
 
             }
 
@@ -150,7 +168,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
     private fun getTransactionsAll(){
         viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getTransactionsLocally(uid).collect { transactions ->
+            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
                 _viewTransactionStates.value = viewTransactionStates.value.copy(
                     transactionsList = transactions
                 )
@@ -162,7 +180,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
     private fun getTransactionsToday(){
         viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getTransactionsLocally(uid).collect { transactions ->
+            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
 
                 val startOfDay = getStartOfTodayInMillis()
                 val endOfDay = getEndOfTodayInMillis()
@@ -202,7 +220,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
     private fun getTransactionsThisMonth() {
         viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getTransactionsLocally(uid).collect { transactions ->
+            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
 
                 val startOfMonth = getStartOfMonthInMillis()
                 val endOfMonth = getEndOfTodayInMillis()
@@ -251,7 +269,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
     private fun getTransactionsLastMonth() {
         viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getTransactionsLocally(uid).collect { transactions ->
+            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
 
                 val startOfLastMonth = getStartOfLastMonthInMillis()
                 val endOfLastMonth = getEndOfLastMonthInMillis()
@@ -309,7 +327,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
     private fun getTransactionsLast3Months() {
         viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getTransactionsLocally(uid).collect { transactions ->
+            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
 
                 val startOfLast3Months = getStartOfLast3MonthsInMillis()
                 val endOfLast3Months = System.currentTimeMillis()  // Current time as the end
@@ -333,7 +351,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
     private fun getTransactionsCustomDate(fromDate: Long, toDate: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getTransactionsLocally(uid).collect { transactions ->
+            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
 
                 val customDateTransactions = transactions.filter {
                     it.dateTime in fromDate..toDate

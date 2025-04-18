@@ -2,6 +2,7 @@ package com.example.financetracker.di
 
 
 import TRANSACTIONS_MIGRATION_1_2
+import TRANSACTIONS_MIGRATION_2_3
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
@@ -21,11 +22,13 @@ import com.example.financetracker.setup_account.domain.usecases.InsertCountryLoc
 import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
 import com.example.financetracker.core.cloud.data.repository.RemoteRepositoryImpl
 import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
+import com.example.financetracker.core.cloud.domain.usecase.DeleteTransactionCloud
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.CheckIsLoggedInUseCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserEmailUserCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserProfileUseCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
 import com.example.financetracker.core.cloud.domain.usecase.InternetConnectionAvailability
+import com.example.financetracker.core.cloud.domain.usecase.SaveMultipleTransactionsCloud
 import com.example.financetracker.core.cloud.domain.usecase.SaveSingleTransactionCloud
 import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.core.cloud.domain.usecase.SaveUserProfileUseCase
@@ -57,13 +60,17 @@ import com.example.financetracker.core.local.domain.shared_preferences.usecases.
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.DeletedTransactionDao
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDao
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDatabase
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.repository.TransactionsLocalRepositoryImpl
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.repository.TransactionsRemoteRepositoryImpl
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionLocalRepository
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetTransactionsLocally
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionRemoteRepository
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertTransactionsLocally
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertCustomCategory
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertNewTransactionsReturnId
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
@@ -85,6 +92,7 @@ import com.example.financetracker.main_page_feature.home_page.domain.usecases.Ho
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedSavedItemsByIdsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedTransactionsByIdsLocally
+import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedTransactionsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryDao
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryDatabase
@@ -144,17 +152,27 @@ object AppModule {
         return FirebaseFirestore.getInstance()
     }
 
+
+    //CategoryWorkManager
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
+        return WorkManager.getInstance(context)
+    }
+
     @Provides
     @Singleton
     fun provideFirebaseRepository(
         firebaseAuth: FirebaseAuth,
         firestore: FirebaseFirestore,
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        workManager: WorkManager
     ): RemoteRepository {
         return RemoteRepositoryImpl(
             firebaseAuth = firebaseAuth,
             firestore = firestore,
-            context = context
+            context = context,
+            workManager = workManager
             )
     }
 
@@ -188,12 +206,7 @@ object AppModule {
         return db.categoryDao
     }
 
-    //CategoryWorkManager
-    @Provides
-    @Singleton
-    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
-        return WorkManager.getInstance(context)
-    }
+
 
 
     // Category Repository
@@ -347,7 +360,7 @@ object AppModule {
             app,
             TransactionDatabase::class.java,
             TransactionDatabase.DATABASE_NAME
-        ).addMigrations(TRANSACTIONS_MIGRATION_1_2).build()
+        ).addMigrations(TRANSACTIONS_MIGRATION_1_2,TRANSACTIONS_MIGRATION_2_3).build()
     }
 
     // Transaction Dao
@@ -357,11 +370,25 @@ object AppModule {
         return db.transactionDao
     }
 
-    // Transaction Repository
+    // Deleted Transaction Dao
+    @Provides
+    @Singleton
+    fun provideDeletedTransactionDao(db: TransactionDatabase): DeletedTransactionDao {
+        return db.deletedTransactionDao
+    }
+
+    // Transaction Local Repository
     @Provides
     @Singleton
     fun provideTransactionLocalRepository(transactionDao: TransactionDao): TransactionLocalRepository {
-        return TransactionsLocalRepositoryImpl(transactionDao)
+        return TransactionsLocalRepositoryImpl(transactionDao = transactionDao)
+    }
+
+    // Transaction Remote Repository
+    @Provides
+    @Singleton
+    fun provideTransactionRemoteRepository(deletedTransactionDao: DeletedTransactionDao): TransactionRemoteRepository {
+        return TransactionsRemoteRepositoryImpl(deletedTransactionDao = deletedTransactionDao)
     }
 
     // SavedItem Database
@@ -489,7 +516,8 @@ object AppModule {
             insertNewTransactionsReturnId = InsertNewTransactionsReturnId(transactionLocalRepository = transactionLocalRepository),
             getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository = sharedPreferencesRepository),
             saveSingleTransactionCloud = SaveSingleTransactionCloud(remoteRepository = remoteRepository,transactionLocalRepository = transactionLocalRepository),
-            internetConnectionAvailability = InternetConnectionAvailability(remoteRepository = remoteRepository)
+            internetConnectionAvailability = InternetConnectionAvailability(remoteRepository = remoteRepository),
+            getAllLocalTransactions = GetAllLocalTransactions(transactionLocalRepository = transactionLocalRepository)
         )
     }
 
@@ -498,15 +526,21 @@ object AppModule {
     @Singleton
     fun provideViewTransactionsUsesCases(
         transactionLocalRepository: TransactionLocalRepository,
+        transactionRemoteRepository: TransactionRemoteRepository,
         savedItemsLocalRepository: SavedItemsLocalRepository,
-        sharedPreferencesRepository: SharedPreferencesRepository
+        sharedPreferencesRepository: SharedPreferencesRepository,
+        remoteRepository: RemoteRepository
     ): ViewRecordsUseCaseWrapper {
         return ViewRecordsUseCaseWrapper(
-            getTransactionsLocally = GetTransactionsLocally(transactionLocalRepository = transactionLocalRepository),
+            getAllTransactions = GetAllTransactions(transactionLocalRepository = transactionLocalRepository),
             getAllSavedItemLocalUseCase = GetAllSavedItemLocalUseCase(savedItemsLocalRepository = savedItemsLocalRepository),
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository),
             deleteSelectedTransactionsByIdsLocally = DeleteSelectedTransactionsByIdsLocally(transactionLocalRepository = transactionLocalRepository),
-            deleteSelectedSavedItemsByIdsLocally = DeleteSelectedSavedItemsByIdsLocally(savedItemsLocalRepository = savedItemsLocalRepository)
+            deleteSelectedSavedItemsByIdsLocally = DeleteSelectedSavedItemsByIdsLocally(savedItemsLocalRepository = savedItemsLocalRepository),
+            getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            internetConnectionAvailability = InternetConnectionAvailability(remoteRepository = remoteRepository),
+            insertDeletedTransactionsLocally = InsertDeletedTransactionsLocally(transactionRemoteRepository = transactionRemoteRepository),
+            deleteTransactionCloud = DeleteTransactionCloud(remoteRepository = remoteRepository)
         )
     }
 
@@ -514,11 +548,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideSettingsUsesCases(
-        sharedPreferencesRepository: SharedPreferencesRepository
+        sharedPreferencesRepository: SharedPreferencesRepository,
+        remoteRepository: RemoteRepository
     ): SettingsUseCaseWrapper {
         return SettingsUseCaseWrapper(
             getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository),
-            setCloudSyncLocally = SetCloudSyncLocally(sharedPreferencesRepository)
+            setCloudSyncLocally = SetCloudSyncLocally(sharedPreferencesRepository),
+            saveMultipleTransactionsCloud = SaveMultipleTransactionsCloud(remoteRepository)
         )
     }
 }
