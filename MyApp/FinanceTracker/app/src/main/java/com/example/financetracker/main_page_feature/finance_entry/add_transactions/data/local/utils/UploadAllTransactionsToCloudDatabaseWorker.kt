@@ -20,19 +20,23 @@ class UploadAllTransactionsToCloudDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams)  {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManager", "Worker started Upload All Transactions To Cloud")
+        Log.d("WorkManagerUploadTransactions", "Worker started Upload All Transactions To Cloud")
 
         val userId = userPreferences.getUserIdLocally() ?: return Result.failure()
 
         return try {
             val allLocalTransactions = addTransactionUseCasesWrapper.getAllLocalTransactions(uid = userId).first()
 
+            Log.d("WorkManagerUploadTransactions", "userId $userId ")
+            Log.d("WorkManagerUploadTransactions", "allLocalTransactions $allLocalTransactions")
+
+
 
             val cloudSync = userPreferences.getCloudSync()
 
             if (allLocalTransactions.isEmpty() || !cloudSync) {
-                Log.d("WorkManager", "No transactions to sync.")
-                Log.d("WorkManager", "cloudSync: $cloudSync")
+                Log.d("WorkManagerUploadTransactions", "No transactions to sync.")
+                Log.d("WorkManagerUploadTransactions", "cloudSync: $cloudSync")
                 return Result.failure()
 
             }
@@ -45,13 +49,13 @@ class UploadAllTransactionsToCloudDatabaseWorker @AssistedInject constructor(
                     addTransactionUseCasesWrapper.saveSingleTransactionCloud(userId = userId, transaction)
                     addTransactionUseCasesWrapper.insertTransactionsLocally(transactionWithId)
                 }
-                Log.d("WorkManager", "All local transactions inserted to cloud successfully.")
+                Log.d("WorkManagerUploadTransactions", "All local transactions inserted to cloud successfully.")
                 Result.success()
             }
         } catch (e: Exception) {
-            Log.e("WorkManager", "Error during sync: ${e.message}")
+            Log.e("WorkManagerUploadTransactions", "Error during sync: ${e.message}")
             e.printStackTrace()
-            Result.retry() // This will schedule a retry with backoff
+            Result.retry()
         }
     }
 }

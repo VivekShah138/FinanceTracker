@@ -57,7 +57,7 @@ class TransactionsRemoteRepositoryImpl(
             .build()
 
         WorkManager.getInstance(context).enqueueUniqueWork(
-            "upload_local_transactions_to_cloud",
+            "delete_transactions_from_cloud",
             ExistingWorkPolicy.KEEP,
             workRequest
         )

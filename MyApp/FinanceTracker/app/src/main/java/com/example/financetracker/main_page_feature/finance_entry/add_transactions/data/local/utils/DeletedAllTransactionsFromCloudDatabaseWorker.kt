@@ -21,20 +21,20 @@ class DeletedAllTransactionsFromCloudDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams)  {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManager", "Worker started Deleted All Transactions From Cloud")
+        Log.d("WorkManagerDeletedTransactions", "Worker started Deleted All Transactions From Cloud")
 
         val userId = userPreferences.getUserIdLocally() ?: return Result.failure()
 
         return try {
 
-            Log.d("WorkManager","UserId: $userId")
+            Log.d("WorkManagerDeletedTransactions","UserId: $userId")
             val allDeletedTransactions = viewRecordsUseCaseWrapper.getAllDeletedTransactionByUserId(userId = userId).first()
 
-            Log.d("WorkManager","deletedTransactions $allDeletedTransactions")
+            Log.d("WorkManagerDeletedTransactions","deletedTransactions $allDeletedTransactions")
 
 
             if (allDeletedTransactions.isEmpty() ) {
-                Log.d("WorkManager", "No deleted transactions to sync.")
+                Log.d("WorkManagerDeletedTransactions", "No deleted transactions to sync.")
                 return Result.success()
 
             }
@@ -43,13 +43,13 @@ class DeletedAllTransactionsFromCloudDatabaseWorker @AssistedInject constructor(
                     viewRecordsUseCaseWrapper.deleteTransactionCloud(userId = userId, transactionId = deletedTransaction.transactionId)
                     viewRecordsUseCaseWrapper.deleteDeletedTransactionsByIdsFromLocal(transactionId = deletedTransaction.transactionId)
                 }
-                Log.d("WorkManager", "All Cloud transactions deleted from cloud successfully.")
+                Log.d("WorkManagerDeletedTransactions", "All Cloud transactions deleted from cloud successfully.")
 
 
                 Result.success()
             }
         } catch (e: Exception) {
-            Log.e("WorkManager", "Error during sync: ${e.message}")
+            Log.e("WorkManagerDeletedTransactions", "Error during sync: ${e.message}")
             e.printStackTrace()
             Result.retry() // This will schedule a retry with backoff
         }

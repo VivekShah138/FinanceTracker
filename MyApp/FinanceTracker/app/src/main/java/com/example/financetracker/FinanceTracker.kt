@@ -22,6 +22,7 @@ class FinanceTracker : Application(), Configuration.Provider {
     @Inject lateinit var predefinedCategoriesUseCaseWrapper: PredefinedCategoriesUseCaseWrapper
     @Inject lateinit var setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper
     @Inject lateinit var viewRecordsUseCaseWrapper: ViewRecordsUseCaseWrapper
+    @Inject lateinit var settingsUseCaseWrapper: SettingsUseCaseWrapper
 
 
     private val applicationScope = CoroutineScope(Dispatchers.IO)
@@ -35,6 +36,7 @@ class FinanceTracker : Application(), Configuration.Provider {
             predefinedCategoriesUseCaseWrapper.insertPredefinedCategories()
             setupAccountUseCasesWrapper.insertCountryLocallyWorkManager()
             viewRecordsUseCaseWrapper.deleteMultipleTransactionsFromCloud()
+            settingsUseCaseWrapper.saveMultipleTransactionsCloud()
         }
     }
 

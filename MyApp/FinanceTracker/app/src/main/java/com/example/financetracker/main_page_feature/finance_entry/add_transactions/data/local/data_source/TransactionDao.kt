@@ -18,7 +18,7 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionsEntity WHERE userUid = :uid")
     fun getAllTransactions(uid: String): Flow<List<TransactionsEntity>>
 
-    @Query("SELECT * FROM TransactionsEntity WHERE userUid = :uid AND cloudSync == 0")
+    @Query("SELECT * FROM TransactionsEntity WHERE userUid = :uid AND cloudSync == false")
     fun getAllLocalTransactions(uid: String): Flow<List<TransactionsEntity>>
 
     @Query("SELECT * FROM TransactionsEntity WHERE transactionId = :transactionId")
