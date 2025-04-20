@@ -41,6 +41,7 @@ class SettingViewModel @Inject constructor(
                 if(settingEvents.isChecked){
                     viewModelScope.launch(Dispatchers.IO){
                         settingsUseCaseWrapper.saveMultipleTransactionsCloud()
+                        settingsUseCaseWrapper.saveMultipleSavedItemCloud()
                     }
                 }
             }

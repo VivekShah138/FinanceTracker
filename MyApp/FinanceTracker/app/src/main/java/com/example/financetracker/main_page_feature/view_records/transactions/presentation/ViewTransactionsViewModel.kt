@@ -93,8 +93,6 @@ class ViewTransactionsViewModel @Inject constructor(
             is ViewTransactionsEvents.DeleteSelectedTransactions -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     val selectedIds = _viewTransactionStates.value.selectedTransactions
-                    val isCloudSync = viewRecordsUseCaseWrapper.getCloudSyncLocally()
-                    val isInternetAvailable = viewRecordsUseCaseWrapper.internetConnectionAvailability() // You can implement this using `ConnectivityManager`
 
 
                     selectedIds.forEach { selectedTransactionId ->

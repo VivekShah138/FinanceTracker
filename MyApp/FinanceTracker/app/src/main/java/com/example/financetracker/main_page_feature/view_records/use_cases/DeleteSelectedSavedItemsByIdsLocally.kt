@@ -7,7 +7,7 @@ class DeleteSelectedSavedItemsByIdsLocally(
     private val savedItemsLocalRepository: SavedItemsLocalRepository
 ){
 
-    suspend operator fun invoke(savedItemsIds: Set<Int>){
-        return savedItemsLocalRepository.deleteSelectedSavedItemsByIds(savedItemsIds)
+    suspend operator fun invoke(savedItemsId: Int){
+        return savedItemsLocalRepository.deleteSelectedSavedItemsByIds(savedItemsId)
     }
 }

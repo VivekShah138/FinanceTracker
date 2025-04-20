@@ -79,23 +79,37 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateEmptyField
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionPrice
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.local.SavedItemsDao
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.local.SavedItemsDatabase
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.local.migration.SAVED_ITEM_MIGRATION_1_2
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.DeletedSavedItemsDao
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.SavedItemsDao
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.SavedItemsDatabase
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.utils.migration.SAVED_ITEM_MIGRATION_1_2
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.utils.migration.SAVED_ITEM_MIGRATION_2_3
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.repository.local.SavedItemsLocalRepositoryImpl
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.repository.remote.SavedItemsRemoteRepositoryImpl
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.local.SavedItemsLocalRepository
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.remote.SavedItemsRemoteRepository
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.SaveItemLocalUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsValidationUseCase
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.DeleteDeletedSavedItemsById
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllDeletedSavedItemsByUserId
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllNotSyncedSavedItemUseCase
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetSavedItemById
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.SaveNewItemReturnId
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.DeleteMultipleSavedItemCloud
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveMultipleSavedItemCloud
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveSingleSavedItemCloud
 import com.example.financetracker.main_page_feature.home_page.data.repository.HomePageRepositoryImpl
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteMultipleTransactionsFromCloud
+import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSavedItemCloud
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedSavedItemsByIdsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedTransactionsByIdsLocally
+import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedSavedItemLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedTransactionsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryDao
@@ -410,7 +424,7 @@ object AppModule {
             SavedItemsDatabase::class.java,
             SavedItemsDatabase.DATABASE_NAME
         )
-            .addMigrations(SAVED_ITEM_MIGRATION_1_2)
+            .addMigrations(SAVED_ITEM_MIGRATION_1_2, SAVED_ITEM_MIGRATION_2_3)
             .build()
     }
 
@@ -421,11 +435,40 @@ object AppModule {
         return db.savedItemsDao
     }
 
-    // Saved Item Repository
+    // SavedItemDao
     @Provides
     @Singleton
-    fun provideSavedItemLocalRepository(savedItemsDao: SavedItemsDao): SavedItemsLocalRepository {
-        return SavedItemsLocalRepositoryImpl(savedItemsDao)
+    fun provideDeletedSavedItemDao(db: SavedItemsDatabase): DeletedSavedItemsDao {
+        return db.deletedSavedItemsDao
+    }
+
+    // Saved Item Local Repository
+    @Provides
+    @Singleton
+    fun provideSavedItemLocalRepository(
+        savedItemsDao: SavedItemsDao,
+        deletedSavedItemsDao: DeletedSavedItemsDao
+    ): SavedItemsLocalRepository {
+        return SavedItemsLocalRepositoryImpl(
+            savedItemsDao = savedItemsDao,
+            deletedSavedItemsDao = deletedSavedItemsDao
+        )
+    }
+
+    // Saved Item Remote Repository
+    @Provides
+    @Singleton
+    fun provideSavedItemRemoteRepository(
+        firestore: FirebaseFirestore,
+        deletedSavedItemsDao: DeletedSavedItemsDao,
+        @ApplicationContext context: Context
+    ): SavedItemsRemoteRepository {
+        return SavedItemsRemoteRepositoryImpl(
+            deletedSavedItemsDao = deletedSavedItemsDao,
+            firestore = firestore,
+            context = context
+            
+        )
     }
 
     // Saved Item UseCaseWrapper
@@ -433,16 +476,25 @@ object AppModule {
     @Singleton
     fun provideSavedItemUseCases(
         savedItemsLocalRepository: SavedItemsLocalRepository,
+        savedItemsRemoteRepository: SavedItemsRemoteRepository,
         sharedPreferencesRepository: SharedPreferencesRepository,
-        homePageRepository: HomePageRepository
+        homePageRepository: HomePageRepository,
+        remoteRepository: RemoteRepository
     ): SavedItemsUseCasesWrapper {
         return SavedItemsUseCasesWrapper(
             saveItemLocalUseCase = SaveItemLocalUseCase(savedItemsLocalRepository),
             getAllSavedItemLocalUseCase = GetAllSavedItemLocalUseCase(savedItemsLocalRepository),
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository),
             getUserProfileLocal = GetUserProfileLocal(homePageRepository),
-            savedItemsValidationUseCase = SavedItemsValidationUseCase()
-
+            savedItemsValidationUseCase = SavedItemsValidationUseCase(),
+            internetConnectionAvailability = InternetConnectionAvailability(remoteRepository),
+            saveSingleSavedItemCloud = SaveSingleSavedItemCloud(
+                savedItemsRemoteRepository = savedItemsRemoteRepository,
+                savedItemsLocalRepository = savedItemsLocalRepository
+            ),
+            saveNewItemReturnId = SaveNewItemReturnId(savedItemsLocalRepository = savedItemsLocalRepository),
+            getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            getAllNotSyncedSavedItemUseCase = GetAllNotSyncedSavedItemUseCase(savedItemsLocalRepository = savedItemsLocalRepository)
         )
     }
 
@@ -481,6 +533,7 @@ object AppModule {
         )
     }
 
+    // HomePageRepository
     @Provides
     @Singleton
     fun provideHomePageRepository(userPreferences: UserPreferences,userProfileRepository: UserProfileRepository): HomePageRepository{
@@ -538,6 +591,7 @@ object AppModule {
         transactionLocalRepository: TransactionLocalRepository,
         transactionRemoteRepository: TransactionRemoteRepository,
         savedItemsLocalRepository: SavedItemsLocalRepository,
+        savedItemsRemoteRepository: SavedItemsRemoteRepository,
         sharedPreferencesRepository: SharedPreferencesRepository,
         remoteRepository: RemoteRepository
     ): ViewRecordsUseCaseWrapper {
@@ -554,7 +608,14 @@ object AppModule {
             getAllDeletedTransactionByUserId = GetAllDeletedTransactionByUserId(transactionRemoteRepository = transactionRemoteRepository),
             deleteDeletedTransactionsByIdsFromLocal = DeleteDeletedTransactionsByIdsFromLocal(transactionRemoteRepository = transactionRemoteRepository),
             deleteMultipleTransactionsFromCloud = DeleteMultipleTransactionsFromCloud(transactionRemoteRepository = transactionRemoteRepository),
-            getAllLocalTransactionsById = GetAllLocalTransactionsById(transactionLocalRepository = transactionLocalRepository)
+            getAllLocalTransactionsById = GetAllLocalTransactionsById(transactionLocalRepository = transactionLocalRepository),
+            deleteDeletedSavedItemsById = DeleteDeletedSavedItemsById(savedItemsLocalRepository = savedItemsLocalRepository),
+            deleteSavedItemCloud = DeleteSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository),
+            getAllDeletedSavedItemsByUserId = GetAllDeletedSavedItemsByUserId(savedItemsLocalRepository = savedItemsLocalRepository),
+            deleteMultipleSavedItemCloud = DeleteMultipleSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository),
+            insertDeletedSavedItemLocally = InsertDeletedSavedItemLocally(savedItemsLocalRepository = savedItemsLocalRepository),
+            getSavedItemById = GetSavedItemById(savedItemsLocalRepository = savedItemsLocalRepository)
+
         )
     }
 
@@ -563,12 +624,14 @@ object AppModule {
     @Singleton
     fun provideSettingsUsesCases(
         sharedPreferencesRepository: SharedPreferencesRepository,
-        remoteRepository: RemoteRepository
+        remoteRepository: RemoteRepository,
+        savedItemsRemoteRepository: SavedItemsRemoteRepository
     ): SettingsUseCaseWrapper {
         return SettingsUseCaseWrapper(
             getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository),
             setCloudSyncLocally = SetCloudSyncLocally(sharedPreferencesRepository),
-            saveMultipleTransactionsCloud = SaveMultipleTransactionsCloud(remoteRepository)
+            saveMultipleTransactionsCloud = SaveMultipleTransactionsCloud(remoteRepository),
+            saveMultipleSavedItemCloud = SaveMultipleSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository)
         )
     }
 }

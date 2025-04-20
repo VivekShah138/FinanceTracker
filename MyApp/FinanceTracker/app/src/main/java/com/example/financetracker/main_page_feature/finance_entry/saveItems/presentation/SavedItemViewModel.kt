@@ -39,11 +39,13 @@ class SavedItemViewModel @Inject constructor(
     val savedItemsValidationEvents = savedItemsValidationEventChannel.receiveAsFlow()
 
     private val userUID = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
+    private val cloudSyncStatus = savedItemsUseCasesWrapper.getCloudSyncLocally()
 
     init {
         loadInitialCurrency()
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun onEvent(savedItemsEvent: SavedItemsEvent) {
         when (savedItemsEvent) {
             SavedItemsEvent.LoadCurrencies -> {
@@ -90,8 +92,6 @@ class SavedItemViewModel @Inject constructor(
     }
 
 
-
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     private suspend fun fetchBaseCurrencies() {
         withContext(Dispatchers.IO) {
             try {
@@ -192,16 +192,73 @@ class SavedItemViewModel @Inject constructor(
                     itemDescription = _savedItemsState.value.itemDescription,
                     itemShopName = _savedItemsState.value.itemShopName,
                     itemCurrency = itemCurrency,
-                    userUID = userUID
+                    userUID = userUID,
+                    cloudSync = false
                 )
 
-                try{
-                    savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItem)
-                    savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Success)
-                }catch (e: Exception){
-                    Log.d("SavedItemViewModel","error: ${e.localizedMessage}")
-                    savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Failure("Saving Item Failed"))
+                val isInternetAvailable = savedItemsUseCasesWrapper.internetConnectionAvailability()
+
+
+                if (cloudSyncStatus) {
+                    if (isInternetAvailable) {
+                        try {
+                            // 1. Insert locally first to generate the ID
+                            val rowId = savedItemsUseCasesWrapper.saveNewItemReturnId(savedItems = savedItem)
+
+                            Log.d("SavedItemViewModel", "savedItemId $rowId")
+
+                            // 2. Copy the ID into a new transaction object
+                            val savedItemWithId = savedItem.copy(itemId = rowId.toInt(), cloudSync = true)
+
+                            Log.d("SavedItemViewModel", "savedItemWithId $savedItemWithId")
+
+                            // 3. Save to cloud
+                            savedItemsUseCasesWrapper.saveSingleSavedItemCloud(userId = userUID, savedItems = savedItemWithId)
+
+                            // 4. Update local record to reflect cloudSync = true
+                            savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItemWithId)
+
+
+                        } catch (e: Exception) {
+                            Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
+
+                            try {
+                                savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItem)
+                            } catch (e: Exception) {
+                                Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
+                                savedItemsValidationEventChannel.send(
+                                    AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
+                                )
+                                return@withContext
+                            }
+                        }
+                    } else {
+                        // No internet, save locally
+                        try {
+                            savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItem)
+                            Log.d("AddExpenseViewModel", "Local save No Internet")
+                        } catch (e: Exception) {
+                            Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
+                            savedItemsValidationEventChannel.send(
+                                AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
+                            )
+                            return@withContext
+                        }
+                    }
+                } else {
+                    // Cloud sync disabled, save locally
+                    try {
+                        savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItem)
+                        Log.d("AddExpenseViewModel", "Local save No CloudSync")
+                    } catch (e: Exception) {
+                        Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
+                        savedItemsValidationEventChannel.send(
+                            AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
+                        )
+                        return@withContext
+                    }
                 }
+                savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Success)
 
             }
         }

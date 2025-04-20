@@ -3,6 +3,8 @@ package com.example.financetracker.main_page_feature.view_records.saved_items.pr
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.DeletedTransactions
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.DeletedSavedItems
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +39,29 @@ class ViewSavedItemsViewModel @Inject constructor(
             // Delete Selected Saved Items
             is ViewSavedItemsEvents.DeleteSelectedSavedItems -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    viewRecordsUseCaseWrapper.deleteSelectedSavedItemsByIdsLocally(_viewSavedItemsStates.value.selectedSavedItems)
+
+                    val selectedIds = _viewSavedItemsStates.value.selectedSavedItems
+
+                    selectedIds.forEach { selectedSavedItemId ->
+
+                        val selectedSavedItem = viewRecordsUseCaseWrapper.getSavedItemById(selectedSavedItemId)
+
+                        // If Item is Saved In Cloud Then Add it to deleted from cloud
+                        if(selectedSavedItem.cloudSync){
+                            viewRecordsUseCaseWrapper.insertDeletedSavedItemLocally(
+                                DeletedSavedItems(
+                                    itemId = selectedSavedItemId,
+                                    userUID = uid
+                                )
+                            )
+                        }
+
+                        // Delete Saved Item Locally
+                        viewRecordsUseCaseWrapper.deleteSelectedSavedItemsByIdsLocally(selectedSavedItemId)
+
+
+                    }
+
 
                     _viewSavedItemsStates.value = viewSavedItemsStates.value.copy(
                         isSelectionMode = false,

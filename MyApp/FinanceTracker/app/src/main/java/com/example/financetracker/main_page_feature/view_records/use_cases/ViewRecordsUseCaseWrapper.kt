@@ -8,7 +8,12 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllDeletedTransactionByUserId
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactionsById
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.DeleteDeletedSavedItemsById
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllDeletedSavedItemsByUserId
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetSavedItemById
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.DeleteMultipleSavedItemCloud
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveMultipleSavedItemCloud
 
 data class ViewRecordsUseCaseWrapper (
     val getAllTransactions: GetAllTransactions,
@@ -23,5 +28,11 @@ data class ViewRecordsUseCaseWrapper (
     val getAllDeletedTransactionByUserId: GetAllDeletedTransactionByUserId,
     val deleteDeletedTransactionsByIdsFromLocal: DeleteDeletedTransactionsByIdsFromLocal,
     val deleteMultipleTransactionsFromCloud: DeleteMultipleTransactionsFromCloud,
-    val getAllLocalTransactionsById: GetAllLocalTransactionsById
+    val getAllLocalTransactionsById: GetAllLocalTransactionsById,
+    val deleteSavedItemCloud: DeleteSavedItemCloud,
+    val insertDeletedSavedItemLocally: InsertDeletedSavedItemLocally,
+    val getSavedItemById: GetSavedItemById,
+    val getAllDeletedSavedItemsByUserId: GetAllDeletedSavedItemsByUserId,
+    val deleteDeletedSavedItemsById: DeleteDeletedSavedItemsById,
+    val deleteMultipleSavedItemCloud: DeleteMultipleSavedItemCloud
 )

@@ -36,7 +36,9 @@ class FinanceTracker : Application(), Configuration.Provider {
             predefinedCategoriesUseCaseWrapper.insertPredefinedCategories()
             setupAccountUseCasesWrapper.insertCountryLocallyWorkManager()
             viewRecordsUseCaseWrapper.deleteMultipleTransactionsFromCloud()
+            viewRecordsUseCaseWrapper.deleteMultipleSavedItemCloud()
             settingsUseCaseWrapper.saveMultipleTransactionsCloud()
+            settingsUseCaseWrapper.saveMultipleSavedItemCloud()
         }
     }
 
