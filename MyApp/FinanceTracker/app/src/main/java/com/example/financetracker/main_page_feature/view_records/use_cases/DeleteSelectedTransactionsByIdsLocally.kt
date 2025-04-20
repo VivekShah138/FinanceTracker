@@ -6,7 +6,7 @@ class DeleteSelectedTransactionsByIdsLocally(
     private val transactionLocalRepository: TransactionLocalRepository
 ){
 
-    suspend operator fun invoke(transactionIds: Set<Int>){
-        return transactionLocalRepository.deleteSelectedTransactionsByIds(transactionIds)
+    suspend operator fun invoke(transactionId: Int){
+        return transactionLocalRepository.deleteSelectedTransactionsByIds(transactionId)
     }
 }

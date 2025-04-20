@@ -11,14 +11,12 @@ interface DeletedTransactionDao {
     @Upsert
     suspend fun insertDeletedTransaction(deletedTransactionsEntity: DeletedTransactionsEntity)
 
-    @Query("SELECT * FROM TransactionsEntity WHERE userUid = :uid")
+    @Query("SELECT * FROM DeletedTransactionsEntity WHERE userUid = :uid")
     fun getAllDeletedTransactions(uid: String): Flow<List<DeletedTransactionsEntity>>
 
-    @Query("DELETE FROM TransactionsEntity WHERE transactionId =:transactionIds")
-    suspend fun deleteSelectedDeletedTransactionsByIds(transactionIds: Set<Int>)
+    @Query("DELETE FROM DeletedTransactionsEntity WHERE transactionId =:transactionId")
+    suspend fun deleteSelectedDeletedTransactionsByIds(transactionId: Int)
 
-    @Query("DELETE FROM DeletedTransactionsEntity")
-    suspend fun deleteAllDeletedTransactions()
 
 
 

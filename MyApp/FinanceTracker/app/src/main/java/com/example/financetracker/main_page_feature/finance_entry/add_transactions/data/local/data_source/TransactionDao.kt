@@ -21,8 +21,11 @@ interface TransactionDao {
     @Query("SELECT * FROM TransactionsEntity WHERE userUid = :uid AND cloudSync == 0")
     fun getAllLocalTransactions(uid: String): Flow<List<TransactionsEntity>>
 
-    @Query("DELETE FROM TransactionsEntity WHERE transactionId IN (:transactionIds)")
-    suspend fun deleteSelectedTransactionsByIds(transactionIds: Set<Int>)
+    @Query("SELECT * FROM TransactionsEntity WHERE transactionId = :transactionId")
+    fun getAllTransactionsById(transactionId: Int): TransactionsEntity
+
+    @Query("DELETE FROM TransactionsEntity WHERE transactionId =:transactionId")
+    suspend fun deleteSelectedTransactionsByIds(transactionId: Int)
 
     @Query("UPDATE TransactionsEntity SET cloudSync = :syncStatus WHERE transactionId = :id")
     suspend fun updateCloudSyncStatus(id: Int, syncStatus: Boolean)

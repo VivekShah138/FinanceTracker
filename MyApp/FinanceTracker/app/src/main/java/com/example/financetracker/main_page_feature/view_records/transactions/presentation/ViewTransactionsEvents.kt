@@ -1,5 +1,7 @@
 package com.example.financetracker.main_page_feature.view_records.transactions.presentation
 
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+
 sealed class ViewTransactionsEvents() {
 
     // Load Transaction

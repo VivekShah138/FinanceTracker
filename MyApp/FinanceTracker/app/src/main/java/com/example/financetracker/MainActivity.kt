@@ -10,7 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.financetracker.core.core_presentation.utils.Screens
+
 import com.example.financetracker.main_page_feature.home_page.presentation.components.HomePageScreen
 import com.example.financetracker.main_page_feature.home_page.presentation.HomePageViewModel
 import com.example.financetracker.startup_page_feature.components.StartUpPageScreen
@@ -25,6 +25,7 @@ import com.example.financetracker.categories_feature.core.presentation.CoreCateg
 import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesViewModel
 import com.example.financetracker.categories_feature.income.presentation.IncomeCategoriesViewModel
 import com.example.financetracker.categories_feature.core.presentation.components.CategoriesScreen
+import com.example.financetracker.core.core_presentation.utils.Screens
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.FinanceEntryPage
 import com.example.financetracker.main_page_feature.charts.presentation.components.ChartsPage

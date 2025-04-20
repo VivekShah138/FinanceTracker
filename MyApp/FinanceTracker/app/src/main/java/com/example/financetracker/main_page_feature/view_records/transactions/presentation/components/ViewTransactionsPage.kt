@@ -137,13 +137,6 @@ fun ViewTransactionsPage(
 
 
 
-//                TransactionItemCard(
-//                    item = transaction,
-//                    onClick = {
-//
-//                    }
-//                )
-
                 val isSelected = states.selectedTransactions.contains(transaction.transactionId)
 
                 TransactionItemCard(

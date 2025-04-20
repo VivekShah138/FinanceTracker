@@ -4,6 +4,9 @@ import com.example.financetracker.core.cloud.domain.usecase.DeleteTransactionClo
 import com.example.financetracker.core.cloud.domain.usecase.InternetConnectionAvailability
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.DeleteDeletedTransactionsByIdsFromLocal
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllDeletedTransactionByUserId
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactionsById
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
 
@@ -16,5 +19,9 @@ data class ViewRecordsUseCaseWrapper (
     val getCloudSyncLocally: GetCloudSyncLocally,
     val internetConnectionAvailability: InternetConnectionAvailability,
     val insertDeletedTransactionsLocally: InsertDeletedTransactionsLocally,
-    val deleteTransactionCloud: DeleteTransactionCloud
+    val deleteTransactionCloud: DeleteTransactionCloud,
+    val getAllDeletedTransactionByUserId: GetAllDeletedTransactionByUserId,
+    val deleteDeletedTransactionsByIdsFromLocal: DeleteDeletedTransactionsByIdsFromLocal,
+    val deleteMultipleTransactionsFromCloud: DeleteMultipleTransactionsFromCloud,
+    val getAllLocalTransactionsById: GetAllLocalTransactionsById
 )

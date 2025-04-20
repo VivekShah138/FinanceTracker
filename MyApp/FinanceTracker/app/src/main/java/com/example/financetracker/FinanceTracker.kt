@@ -7,6 +7,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
+import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +21,8 @@ class FinanceTracker : Application(), Configuration.Provider {
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var predefinedCategoriesUseCaseWrapper: PredefinedCategoriesUseCaseWrapper
     @Inject lateinit var setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper
-    @Inject lateinit var settingsUseCaseWrapper: SettingsUseCaseWrapper
+    @Inject lateinit var viewRecordsUseCaseWrapper: ViewRecordsUseCaseWrapper
+
 
     private val applicationScope = CoroutineScope(Dispatchers.IO)
 
@@ -32,7 +34,7 @@ class FinanceTracker : Application(), Configuration.Provider {
         applicationScope.launch {
             predefinedCategoriesUseCaseWrapper.insertPredefinedCategories()
             setupAccountUseCasesWrapper.insertCountryLocallyWorkManager()
-            settingsUseCaseWrapper.saveMultipleTransactionsCloud()
+            viewRecordsUseCaseWrapper.deleteMultipleTransactionsFromCloud()
         }
     }
 

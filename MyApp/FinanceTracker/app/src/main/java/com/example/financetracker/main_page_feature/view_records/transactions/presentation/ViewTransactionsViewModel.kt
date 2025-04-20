@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -94,27 +96,25 @@ class ViewTransactionsViewModel @Inject constructor(
                     val isCloudSync = viewRecordsUseCaseWrapper.getCloudSyncLocally()
                     val isInternetAvailable = viewRecordsUseCaseWrapper.internetConnectionAvailability() // You can implement this using `ConnectivityManager`
 
-                    // 1. Delete locally
-                    viewRecordsUseCaseWrapper.deleteSelectedTransactionsByIdsLocally(selectedIds)
 
-                    // 2. If sync enabled and internet is OFF, store deletion info
-                    if (isCloudSync && !isInternetAvailable) {
-                        selectedIds.forEach { id ->
+                    selectedIds.forEach { selectedTransactionId ->
+
+
+                        val selectedTransaction = viewRecordsUseCaseWrapper.getAllLocalTransactionsById(selectedTransactionId)
+
+                        if(selectedTransaction.cloudSync){
                             viewRecordsUseCaseWrapper.insertDeletedTransactionsLocally(
                                 DeletedTransactions(
-                                    transactionId = id,
+                                    transactionId = selectedTransactionId,
                                     userUid = uid
                                 )
                             )
                         }
-                    } else if (isCloudSync && isInternetAvailable) {
-                        // Directly delete from cloud too
-                        selectedIds.forEach { id ->
-                            viewRecordsUseCaseWrapper.deleteTransactionCloud(userId = uid, transactionId = id)
-                        }
+
+                        // 1. Delete locally
+                        viewRecordsUseCaseWrapper.deleteSelectedTransactionsByIdsLocally(selectedTransactionId)
                     }
 
-                    // 3. Reset state
                     _viewTransactionStates.value = _viewTransactionStates.value.copy(
                         isSelectionMode = false,
                         selectedTransactions = emptySet()

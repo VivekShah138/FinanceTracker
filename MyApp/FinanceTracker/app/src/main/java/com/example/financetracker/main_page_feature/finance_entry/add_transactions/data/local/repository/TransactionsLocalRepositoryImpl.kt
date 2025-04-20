@@ -39,8 +39,12 @@ class TransactionsLocalRepositoryImpl(
         }
     }
 
-    override suspend fun deleteSelectedTransactionsByIds(transactionIds: Set<Int>) {
-        return transactionDao.deleteSelectedTransactionsByIds(transactionIds)
+    override suspend fun getAllLocalTransactionsById(transactionId: Int): Transactions {
+        return transactionDao.getAllTransactionsById(transactionId).toDomain()
+    }
+
+    override suspend fun deleteSelectedTransactionsByIds(transactionId: Int) {
+        return transactionDao.deleteSelectedTransactionsByIds(transactionId)
     }
 
     override suspend fun updateCloudSyncStatus(id: Int, syncStatus: Boolean) {

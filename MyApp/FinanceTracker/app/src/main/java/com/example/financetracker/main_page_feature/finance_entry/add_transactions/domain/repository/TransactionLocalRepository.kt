@@ -9,7 +9,8 @@ interface TransactionLocalRepository {
     suspend fun insertTransactionReturningId(transactions: Transactions): Long
     suspend fun getAllTransactions(uid: String): Flow<List<Transactions>>
     suspend fun getAllLocalTransactions(uid: String): Flow<List<Transactions>>
-    suspend fun deleteSelectedTransactionsByIds(transactionIds: Set<Int>)
+    suspend fun getAllLocalTransactionsById(transactionId: Int): Transactions
+    suspend fun deleteSelectedTransactionsByIds(transactionId: Int)
     suspend fun updateCloudSyncStatus(id: Int, syncStatus: Boolean)
 
 }

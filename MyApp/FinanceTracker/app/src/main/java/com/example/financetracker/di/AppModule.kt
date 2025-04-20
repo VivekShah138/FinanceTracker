@@ -70,7 +70,10 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertTransactionsLocally
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.DeleteDeletedTransactionsByIdsFromLocal
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllDeletedTransactionByUserId
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactions
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactionsById
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertCustomCategory
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertNewTransactionsReturnId
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
@@ -90,6 +93,7 @@ import com.example.financetracker.main_page_feature.home_page.domain.repository.
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
+import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteMultipleTransactionsFromCloud
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedSavedItemsByIdsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedTransactionsByIdsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedTransactionsLocally
@@ -387,8 +391,14 @@ object AppModule {
     // Transaction Remote Repository
     @Provides
     @Singleton
-    fun provideTransactionRemoteRepository(deletedTransactionDao: DeletedTransactionDao): TransactionRemoteRepository {
-        return TransactionsRemoteRepositoryImpl(deletedTransactionDao = deletedTransactionDao)
+    fun provideTransactionRemoteRepository(
+        deletedTransactionDao: DeletedTransactionDao,
+        @ApplicationContext context: Context
+    ): TransactionRemoteRepository {
+        return TransactionsRemoteRepositoryImpl(
+            deletedTransactionDao = deletedTransactionDao,
+            context = context
+        )
     }
 
     // SavedItem Database
@@ -540,7 +550,11 @@ object AppModule {
             getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository = sharedPreferencesRepository),
             internetConnectionAvailability = InternetConnectionAvailability(remoteRepository = remoteRepository),
             insertDeletedTransactionsLocally = InsertDeletedTransactionsLocally(transactionRemoteRepository = transactionRemoteRepository),
-            deleteTransactionCloud = DeleteTransactionCloud(remoteRepository = remoteRepository)
+            deleteTransactionCloud = DeleteTransactionCloud(remoteRepository = remoteRepository),
+            getAllDeletedTransactionByUserId = GetAllDeletedTransactionByUserId(transactionRemoteRepository = transactionRemoteRepository),
+            deleteDeletedTransactionsByIdsFromLocal = DeleteDeletedTransactionsByIdsFromLocal(transactionRemoteRepository = transactionRemoteRepository),
+            deleteMultipleTransactionsFromCloud = DeleteMultipleTransactionsFromCloud(transactionRemoteRepository = transactionRemoteRepository),
+            getAllLocalTransactionsById = GetAllLocalTransactionsById(transactionLocalRepository = transactionLocalRepository)
         )
     }
 
