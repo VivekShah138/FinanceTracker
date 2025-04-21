@@ -6,6 +6,17 @@ data class ViewSavedItemsStates(
     val savedItemsList: List<SavedItems> = emptyList(),
 
     // selected Saved Items
-    val selectedSavedItems: Set<Int> = emptySet(), // Store transaction IDs or whole objects
+    val selectedSavedItems: Set<Int> = emptySet(),
     val isSelectionMode: Boolean = false,
+
+    // Update Saved Item
+    val updatedItemId: Int = 0,
+    val updateBottomSheetState: Boolean = false,
+    val updatedItemName: String = "",
+    val updatedItemPrice: String = "",
+    val updatedItemShopName: String = "",
+    val updatedItemDescription: String = "",
+    val updatedItemCurrencyName: String = "",
+    val updatedItemCurrencySymbol: String = "",
+    val updatedItemCurrencyCode: String = "",
 )

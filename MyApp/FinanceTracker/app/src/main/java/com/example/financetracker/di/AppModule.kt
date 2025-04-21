@@ -614,7 +614,10 @@ object AppModule {
             getAllDeletedSavedItemsByUserId = GetAllDeletedSavedItemsByUserId(savedItemsLocalRepository = savedItemsLocalRepository),
             deleteMultipleSavedItemCloud = DeleteMultipleSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository),
             insertDeletedSavedItemLocally = InsertDeletedSavedItemLocally(savedItemsLocalRepository = savedItemsLocalRepository),
-            getSavedItemById = GetSavedItemById(savedItemsLocalRepository = savedItemsLocalRepository)
+            getSavedItemById = GetSavedItemById(savedItemsLocalRepository = savedItemsLocalRepository),
+            savedItemsValidationUseCase = SavedItemsValidationUseCase(),
+            saveSingleSavedItemCloud = SaveSingleSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository,savedItemsLocalRepository = savedItemsLocalRepository),
+            saveItemLocalUseCase = SaveItemLocalUseCase(savedItemsLocalRepository = savedItemsLocalRepository)
 
         )
     }

@@ -8,12 +8,15 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllDeletedTransactionByUserId
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactionsById
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsValidationUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.DeleteDeletedSavedItemsById
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllDeletedSavedItemsByUserId
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetSavedItemById
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.SaveItemLocalUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.DeleteMultipleSavedItemCloud
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveMultipleSavedItemCloud
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveSingleSavedItemCloud
 
 data class ViewRecordsUseCaseWrapper (
     val getAllTransactions: GetAllTransactions,
@@ -34,5 +37,8 @@ data class ViewRecordsUseCaseWrapper (
     val getSavedItemById: GetSavedItemById,
     val getAllDeletedSavedItemsByUserId: GetAllDeletedSavedItemsByUserId,
     val deleteDeletedSavedItemsById: DeleteDeletedSavedItemsById,
-    val deleteMultipleSavedItemCloud: DeleteMultipleSavedItemCloud
+    val deleteMultipleSavedItemCloud: DeleteMultipleSavedItemCloud,
+    val savedItemsValidationUseCase: SavedItemsValidationUseCase,
+    val saveSingleSavedItemCloud: SaveSingleSavedItemCloud,
+    val saveItemLocalUseCase: SaveItemLocalUseCase
 )

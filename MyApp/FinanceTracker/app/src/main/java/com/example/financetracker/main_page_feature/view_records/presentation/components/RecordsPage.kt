@@ -73,6 +73,7 @@ fun RecordsPage(
                                 text = "Edit",
                                 onClick = {
 
+
                                 }
                             )
                         )
@@ -119,6 +120,7 @@ fun RecordsPage(
                                 text = "Edit",
                                 onClick = {
 
+                                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = true))
                                 }
                             )
                         )
