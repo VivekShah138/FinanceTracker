@@ -546,7 +546,8 @@ object AppModule {
     fun provideHomePageUseCases(
         sharedPreferencesRepository: SharedPreferencesRepository,
         remoteRepository: RemoteRepository,
-        homePageRepository: HomePageRepository
+        homePageRepository: HomePageRepository,
+        transactionLocalRepository: TransactionLocalRepository
     ): HomePageUseCaseWrapper {
         return HomePageUseCaseWrapper(
             logoutUseCase = LogoutUseCase(
@@ -555,7 +556,9 @@ object AppModule {
             ),
             getUserProfileLocal = GetUserProfileLocal(homePageRepository),
             setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository),
-            getCurrencyRatesUpdated = GetCurrencyRatesUpdated(sharedPreferencesRepository)
+            getCurrencyRatesUpdated = GetCurrencyRatesUpdated(sharedPreferencesRepository),
+            getUIDLocally = GetUIDLocally(sharedPreferencesRepository),
+            getAllTransactions = GetAllTransactions(transactionLocalRepository)
         )
     }
 

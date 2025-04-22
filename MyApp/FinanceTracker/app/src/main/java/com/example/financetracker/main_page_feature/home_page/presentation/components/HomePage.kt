@@ -1,6 +1,7 @@
 package com.example.financetracker.main_page_feature.home_page.presentation.components
 
 import BottomNavigationBar
+import ExpenseIncomeCards
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,9 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.MenuItems
 import com.example.financetracker.core.core_presentation.components.AppTopBar
@@ -27,6 +30,7 @@ fun HomePageScreen(
     navController: NavController
 ){
 
+    val states by viewModel.homePageStates.collectAsStateWithLifecycle()
 
 
     MaterialTheme {
@@ -62,7 +66,13 @@ fun HomePageScreen(
                 .padding(InnerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                Spacer(modifier = Modifier.height(50.dp))
+
+                ExpenseIncomeCards(
+                    expenseAmount = states.expenseAmount,
+                    incomeAmount = states.incomeAmount,
+                    incomeSymbol = states.incomeCurrencySymbol,
+                    expenseSymbol = states.expenseCurrencySymbol
+                )
             }
         }
     }

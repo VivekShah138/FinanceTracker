@@ -147,6 +147,19 @@ class ViewSavedItemsViewModel @Inject constructor(
                     saveItems()
                 }
             }
+
+            ViewSavedItemsEvents.SelectAllItems -> {
+
+                val selectedItems = _viewSavedItemsStates.value.selectedSavedItems.toMutableSet()
+
+                _viewSavedItemsStates.value.savedItemsList.forEach { savedItem ->
+                    selectedItems.add(savedItem.itemId ?: 0)
+                }
+
+                _viewSavedItemsStates.value = _viewSavedItemsStates.value.copy(
+                    selectedSavedItems = selectedItems
+                )
+            }
         }
     }
 

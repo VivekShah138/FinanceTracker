@@ -47,7 +47,7 @@ fun RecordsPage(
         topBar = {
             if(viewTransactionsStates.isSelectionMode){
                 AppTopBar(
-                    title = "Selected Transactions",
+                    title = viewTransactionsStates.selectedTransactions.size.toString(),
                     showMenu = true,
                     showBackButton = true,
                     onBackClick = {
@@ -70,10 +70,9 @@ fun RecordsPage(
                                 }
                             ),
                             MenuItems(
-                                text = "Edit",
+                                text = "Select All",
                                 onClick = {
-
-
+                                    viewTransactionsViewModel.onEvent(ViewTransactionsEvents.SelectAllTransactions)
                                 }
                             )
                         )
@@ -87,6 +86,12 @@ fun RecordsPage(
                                         ViewTransactionsEvents.DeleteSelectedTransactions
                                     )
                                 }
+                            ),
+                            MenuItems(
+                                text = "Select All",
+                                onClick = {
+                                    viewTransactionsViewModel.onEvent(ViewTransactionsEvents.SelectAllTransactions)
+                                }
                             )
                         )
                     }
@@ -94,7 +99,7 @@ fun RecordsPage(
             }
             else if(viewSavedItemsStates.isSelectionMode){
                 AppTopBar(
-                    title = "Selected Saved Items",
+                    title = viewSavedItemsStates.selectedSavedItems.size.toString(),
                     showMenu = true,
                     showBackButton = true,
                     onBackClick = {
@@ -122,6 +127,13 @@ fun RecordsPage(
 
                                     viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = true))
                                 }
+                            ),
+                            MenuItems(
+                                text = "Select All",
+                                onClick = {
+                                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.SelectAllItems)
+
+                                }
                             )
                         )
                     }
@@ -133,6 +145,12 @@ fun RecordsPage(
                                     viewSavedItemsViewModel.onEvent(
                                         ViewSavedItemsEvents.DeleteSelectedSavedItems
                                     )
+                                }
+                            ),
+                            MenuItems(
+                                text = "Select All",
+                                onClick = {
+                                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.SelectAllItems)
                                 }
                             )
                         )

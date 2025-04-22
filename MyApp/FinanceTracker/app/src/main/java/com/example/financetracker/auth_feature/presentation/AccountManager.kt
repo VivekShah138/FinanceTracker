@@ -1,6 +1,7 @@
 package com.example.financetracker.auth_feature.presentation
 
 import android.app.Activity
+import android.util.Log
 import androidx.credentials.CreatePasswordRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
@@ -157,12 +158,19 @@ class AccountManager(
             val firebaseCredential = GoogleAuthProvider.getCredential(googleCredential.idToken,null)
 
             val authResult = firebaseAuth.signInWithCredential(firebaseCredential).await()
+            Log.d("AccountManager","sucesss")
             GoogleSignInResult.Success(authResult.user?.email ?: "Unknown")
         }catch (e: GetCredentialCancellationException){
             e.printStackTrace()
+            Log.d("AccountManager","error ${e.localizedMessage}")
             GoogleSignInResult.Cancelled
         }catch (e: GetCredentialException){
             e.printStackTrace()
+            Log.d("AccountManager","error ${e.localizedMessage}")
+            GoogleSignInResult.Failure
+        }catch (e: Exception){
+            e.printStackTrace()
+            Log.d("AccountManager","error ${e.localizedMessage}")
             GoogleSignInResult.Failure
         }
     }

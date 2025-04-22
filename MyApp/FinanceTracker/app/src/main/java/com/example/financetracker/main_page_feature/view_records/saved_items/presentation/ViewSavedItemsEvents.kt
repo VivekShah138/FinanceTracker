@@ -10,6 +10,7 @@ sealed class ViewSavedItemsEvents() {
     data class ToggleSavedItemSelection(val savedItemsId: Int): ViewSavedItemsEvents()
     data object EnterSelectionMode: ViewSavedItemsEvents()
     data object ExitSelectionMode: ViewSavedItemsEvents()
+    data object SelectAllItems: ViewSavedItemsEvents()
 
     // Deleted SavedItem
     data object DeleteSelectedSavedItems: ViewSavedItemsEvents()

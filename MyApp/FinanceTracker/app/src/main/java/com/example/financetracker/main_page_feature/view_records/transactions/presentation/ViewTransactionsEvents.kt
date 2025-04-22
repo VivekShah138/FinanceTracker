@@ -1,6 +1,8 @@
 package com.example.financetracker.main_page_feature.view_records.transactions.presentation
 
+import android.view.View
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsEvents
 
 sealed class ViewTransactionsEvents() {
 
@@ -23,6 +25,7 @@ sealed class ViewTransactionsEvents() {
     data class ToggleTransactionSelection(val transactionId: Int): ViewTransactionsEvents()
     data object EnterSelectionMode: ViewTransactionsEvents()
     data object ExitSelectionMode: ViewTransactionsEvents()
+    data object SelectAllTransactions: ViewTransactionsEvents()
 
 
 

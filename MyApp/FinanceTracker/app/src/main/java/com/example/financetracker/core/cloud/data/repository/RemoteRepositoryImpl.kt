@@ -55,6 +55,8 @@ class RemoteRepositoryImpl @Inject constructor(
                 .await()
 
         } catch (e: Exception) {
+            Log.d("RemoteRepository","save user error ${e.localizedMessage}")
+            Log.d("RemoteRepository","save user print stack ${e.printStackTrace()}")
             throw Exception("No internet connection. Profile update failed.")
         }
     }
@@ -67,6 +69,8 @@ class RemoteRepositoryImpl @Inject constructor(
                 .await()
                 .get("userProfile", UserProfile::class.java)
         } catch (e: Exception) {
+            Log.d("RemoteRepository","get profile error ${e.localizedMessage}")
+            Log.d("RemoteRepository","get profile print stack ${e.printStackTrace()}")
             throw Exception("No internet connection. Cannot fetch user profile.")
         }
     }

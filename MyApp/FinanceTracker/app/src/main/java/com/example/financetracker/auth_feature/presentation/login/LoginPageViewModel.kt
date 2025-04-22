@@ -127,10 +127,13 @@ class LoginPageViewModel @Inject constructor(
     private suspend fun handleUserProfile(){
         try {
             val userId = coreUseCasesWrapper.getUserUIDUseCase() ?: "Unknown"
+            Log.d("LoginViewModel","userId: $userId")
+
             authFeatureUseCasesWrapper.insertUIDLocally(userId)
+            Log.d("LoginViewModel","Inserted UserId")
 
             val userProfile = coreUseCasesWrapper.getUserProfileUseCase(userId)
-            Log.d("LoginViewModel","state: ${userProfile}")
+            Log.d("LoginViewModel","userProfile: ${userProfile}")
             if(userProfile == null){
                 val email = coreUseCasesWrapper.getUserEmailUserCase() ?: "Unknown"
                 val newUserProfile = UserProfile(email = email, profileSetUpCompleted = false)

@@ -59,6 +59,9 @@ fun ViewTransactionsPage(
                 viewModel.onEvent(
                     ViewTransactionsEvents.SelectTransactionsFilter(state = true)
                 )
+                if(states.isSelectionMode){
+                    viewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
+                }
             },
             filterOptions = states.durationRange,
             onRangeDropDownClick = {
@@ -68,6 +71,9 @@ fun ViewTransactionsPage(
                         expanded = true
                     )
                 )
+                if(states.isSelectionMode){
+                    viewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
+                }
             },
             onRangeDropDownDismiss = {
                 viewModel.onEvent(

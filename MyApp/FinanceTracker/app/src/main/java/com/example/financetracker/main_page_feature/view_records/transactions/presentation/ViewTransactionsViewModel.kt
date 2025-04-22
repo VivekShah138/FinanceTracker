@@ -155,6 +155,19 @@ class ViewTransactionsViewModel @Inject constructor(
                 Log.d("ViewTransactionsViewModel","SelectedTransaction List: $current")
                 Log.d("ViewTransactionsViewModel","SelectedTransaction state List: ${_viewTransactionStates.value.selectedTransactions}")
             }
+
+            ViewTransactionsEvents.SelectAllTransactions -> {
+
+                val selectedTransactions = _viewTransactionStates.value.selectedTransactions.toMutableSet()
+
+                _viewTransactionStates.value.transactionsList.forEach { transaction ->
+                    selectedTransactions.add(transaction.transactionId ?: 0)
+                }
+
+                _viewTransactionStates.value = _viewTransactionStates.value.copy(
+                    selectedTransactions = selectedTransactions
+                )
+            }
         }
     }
 
