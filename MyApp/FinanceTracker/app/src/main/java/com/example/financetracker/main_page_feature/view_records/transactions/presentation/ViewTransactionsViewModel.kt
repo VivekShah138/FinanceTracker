@@ -205,9 +205,6 @@ class ViewTransactionsViewModel @Inject constructor(
                 )
             }
             Log.d("ViewTransactionsViewModel","transaction List ${_viewTransactionStates.value.transactionsList}")
-
-
-
         }
     }
 
@@ -376,10 +373,4 @@ class ViewTransactionsViewModel @Inject constructor(
             }
         }
     }
-
-
-
-
-
-
 }

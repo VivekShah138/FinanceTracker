@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components.TransactionItemCard
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsViewModel
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 
 @Composable
 fun ViewTransactionsPage(
@@ -112,30 +113,29 @@ fun ViewTransactionsPage(
 
         LazyColumn {
             when(states.selectedDuration){
-                "Today" -> {
+                is DurationFilter.Today -> {
                     viewModel.onEvent(
                         ViewTransactionsEvents.LoadTransactionsToday
                     )
                 }
-                "This Month" -> {
+                is DurationFilter.ThisMonth -> {
                     viewModel.onEvent(
                         ViewTransactionsEvents.LoadTransactionsThisMonth
                     )
                 }
-                "Last Month" -> {
+                is DurationFilter.LastMonth -> {
                     viewModel.onEvent(
                         ViewTransactionsEvents.LoadTransactionsLastMonth
                     )
                 }
-                "Last 3 Months" -> {
+                is DurationFilter.Last3Months -> {
                     viewModel.onEvent(
                         ViewTransactionsEvents.LoadTransactionsLast3Month
                     )
                 }
-                "Custom Range" -> {
-                    viewModel.onEvent(
-                        ViewTransactionsEvents.ChangeCustomDateAlertBox(state = true)
-                    )
+
+                is DurationFilter.CustomRange -> {
+
                 }
             }
 

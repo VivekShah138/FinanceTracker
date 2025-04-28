@@ -3,6 +3,7 @@ package com.example.financetracker.main_page_feature.view_records.transactions.p
 import android.view.View
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsEvents
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 
 sealed class ViewTransactionsEvents() {
 
@@ -15,7 +16,7 @@ sealed class ViewTransactionsEvents() {
     data class LoadTransactionsCustomDate(val fromDate: Long,val toDate: Long): ViewTransactionsEvents()
 
     // Duration
-    data class SelectTransactionsDuration(val duration: String,val expanded: Boolean): ViewTransactionsEvents()
+    data class SelectTransactionsDuration(val duration: DurationFilter,val expanded: Boolean): ViewTransactionsEvents()
     data class ChangeCustomDateAlertBox(val state: Boolean): ViewTransactionsEvents()
 
     // Filter BottomSheet

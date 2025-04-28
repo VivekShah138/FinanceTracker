@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components.TransactionItemCard
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 
 @Preview(
     showBackground = true,
@@ -112,11 +113,17 @@ fun ViewTransactionsPagePreview(){
     ){
 
         DateFilterWithIcon(
-            selectedDuration = "This Month",
+            selectedDuration = DurationFilter.Today,
             rangeDropDownExpanded = false,
             onDurationSelected = {it},
             onFilterIconClick = {},
-            filterOptions = listOf("This Month","Last Month","Last 3 Months","Custom Range"),
+            filterOptions = listOf(
+                DurationFilter.Today,
+                DurationFilter.ThisMonth,
+                DurationFilter.LastMonth,
+                DurationFilter.Last3Months,
+                DurationFilter.CustomRange(0L,0L)
+            ),
             onRangeDropDownClick = {},
             onRangeDropDownDismiss = {}
         )
@@ -155,9 +162,9 @@ fun DateFilterWithIcon(
     rangeDropDownExpanded: Boolean,
     onRangeDropDownClick: () -> Unit,
     onRangeDropDownDismiss: () -> Unit,
-    filterOptions: List<String>,
-    selectedDuration: String,
-    onDurationSelected: (String) -> Unit,
+    filterOptions: List<DurationFilter>,
+    selectedDuration: DurationFilter,
+    onDurationSelected: (DurationFilter) -> Unit,
     onFilterIconClick: () -> Unit,
 
     ) {
@@ -185,7 +192,7 @@ fun DateFilterWithIcon(
                         onRangeDropDownClick()
                     }
                 ) {
-                    Text(text = selectedDuration)
+                    Text(text = selectedDuration.label)
                     Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "Dropdown")
                 }
 
@@ -196,7 +203,7 @@ fun DateFilterWithIcon(
                     filterOptions.forEach { option ->
                         DropdownMenuItem(
                             text = {
-                                Text(option)
+                                Text(option.label)
                             },
                             onClick = {
                                 onDurationSelected(option)
