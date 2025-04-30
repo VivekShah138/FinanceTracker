@@ -109,6 +109,7 @@ import com.example.financetracker.main_page_feature.view_records.use_cases.Delet
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSavedItemCloud
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedSavedItemsByIdsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.DeleteSelectedTransactionsByIdsLocally
+import com.example.financetracker.main_page_feature.view_records.use_cases.GetAllTransactionsFilters
 import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedSavedItemLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedTransactionsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
@@ -596,7 +597,8 @@ object AppModule {
         savedItemsLocalRepository: SavedItemsLocalRepository,
         savedItemsRemoteRepository: SavedItemsRemoteRepository,
         sharedPreferencesRepository: SharedPreferencesRepository,
-        remoteRepository: RemoteRepository
+        remoteRepository: RemoteRepository,
+        categoryRepository: CategoryRepository
     ): ViewRecordsUseCaseWrapper {
         return ViewRecordsUseCaseWrapper(
             getAllTransactions = GetAllTransactions(transactionLocalRepository = transactionLocalRepository),
@@ -620,7 +622,9 @@ object AppModule {
             getSavedItemById = GetSavedItemById(savedItemsLocalRepository = savedItemsLocalRepository),
             savedItemsValidationUseCase = SavedItemsValidationUseCase(),
             saveSingleSavedItemCloud = SaveSingleSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository,savedItemsLocalRepository = savedItemsLocalRepository),
-            saveItemLocalUseCase = SaveItemLocalUseCase(savedItemsLocalRepository = savedItemsLocalRepository)
+            saveItemLocalUseCase = SaveItemLocalUseCase(savedItemsLocalRepository = savedItemsLocalRepository),
+            getAllCategories = GetAllCategories(categoryRepository = categoryRepository),
+            getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository)
 
         )
     }

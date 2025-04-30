@@ -3,20 +3,18 @@ package com.example.financetracker.main_page_feature.view_records.transactions.p
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.DeletedTransactionsEntity
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.DeletedTransactions
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionTypeFilter
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,31 +28,11 @@ class ViewTransactionsViewModel @Inject constructor(
     private val uid = viewRecordsUseCaseWrapper.getUIDLocally() ?: "Unknown"
 
     init {
-        getTransactionsAll()
+        updateCategoryState()
     }
 
     fun onEvent(viewTransactionsEvents: ViewTransactionsEvents){
         when(viewTransactionsEvents){
-
-            // Load Transactions
-            is ViewTransactionsEvents.LoadTransactionsAll -> {
-                getTransactionsAll()
-            }
-            is ViewTransactionsEvents.LoadTransactionsCustomDate -> {
-//                getTransactionsCustomDate()
-            }
-            is ViewTransactionsEvents.LoadTransactionsLast3Month -> {
-                getTransactionsLast3Months()
-            }
-            is ViewTransactionsEvents.LoadTransactionsLastMonth -> {
-                getTransactionsLastMonth()
-            }
-            is ViewTransactionsEvents.LoadTransactionsThisMonth -> {
-                getTransactionsThisMonth()
-            }
-            is ViewTransactionsEvents.LoadTransactionsToday -> {
-                getTransactionsToday()
-            }
 
             // Transaction Duration Dropdown
             is ViewTransactionsEvents.SelectTransactionsDuration -> {
@@ -64,11 +42,21 @@ class ViewTransactionsViewModel @Inject constructor(
 
                 _viewTransactionStates.value = viewTransactionStates.value.copy(
                     rangeDropDownExpanded = viewTransactionsEvents.expanded,
-                    selectedDuration = viewTransactionsEvents.duration
+                    selectedDuration = viewTransactionsEvents.duration,
+                    filters = viewTransactionStates.value.filters.map {
+                        if (it is TransactionFilter.Duration) {
+                            it.copy(viewTransactionsEvents.duration) // Update the categories filter with fetched categories
+                        } else {
+                            it
+                        }
+                    }
                 )
 
                 Log.d("ViewTransactionsViewModel","RangeDropDown After: ${_viewTransactionStates.value.rangeDropDownExpanded}")
                 Log.d("ViewTransactionsViewModel","SelectedDuration After: ${_viewTransactionStates.value.selectedDuration}")
+                Log.d("ViewTransactionsViewModelF","SelectedDuration Filter After: ${_viewTransactionStates.value.filters}")
+
+                getTransactionsAllFilter()
             }
 
             // Transaction Filter
@@ -89,14 +77,77 @@ class ViewTransactionsViewModel @Inject constructor(
                 )
             }
 
+            is ViewTransactionsEvents.SelectTransactionsFilterCategories -> {
+                _viewTransactionStates.value = _viewTransactionStates.value.copy(
+                    filters = viewTransactionStates.value.filters.map {
+                        if (it is TransactionFilter.Category) {
+                            it.copy(viewTransactionsEvents.categories) // Update the categories filter with fetched categories
+                        } else {
+                            it
+                        }
+                    }
+                )
+            }
+
+            is ViewTransactionsEvents.SelectTransactionsFilterOrder -> {
+                _viewTransactionStates.value = _viewTransactionStates.value.copy(
+                    filters = viewTransactionStates.value.filters.map {
+                        if (it is TransactionFilter.Order) {
+                            it.copy(viewTransactionsEvents.order) // Update the categories filter with fetched categories
+                        } else {
+                            it
+                        }
+                    }
+                )
+            }
+
+            is ViewTransactionsEvents.SelectTransactionsFilterType -> {
+                _viewTransactionStates.value = _viewTransactionStates.value.copy(
+                    filters = viewTransactionStates.value.filters.map {
+                        if (it is TransactionFilter.TransactionType) {
+                            it.copy(viewTransactionsEvents.type) // Update the categories filter with fetched categories
+                        } else {
+                            it
+                        }
+                    }
+                )
+            }
+
+            is ViewTransactionsEvents.UpdateFilter -> {
+                val updatedFilters = viewTransactionStates.value.filters.toMutableList().apply {
+                    removeAll { it::class == viewTransactionsEvents.filter::class }
+                    add(viewTransactionsEvents.filter)
+                }
+                _viewTransactionStates.value = viewTransactionStates.value.copy(filters = updatedFilters)
+                updateCategoryState()
+            }
+
+            is ViewTransactionsEvents.ApplyFilter -> {
+                Log.d("ViewTransactionsViewModelApply","Filter State: ${_viewTransactionStates.value.filters}")
+                getTransactionsAllFilter()
+            }
+
+            is ViewTransactionsEvents.ClearFilter -> {
+
+                Log.d("ViewTransactionsViewModelApply","Filter Old State: ${_viewTransactionStates.value.filters}")
+                val defaultFilters: List<TransactionFilter> = listOf(
+                    TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
+                    TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
+                    TransactionFilter.Category(_viewTransactionStates.value.categories), // Default to all categories (empty list means no category filter)
+                    TransactionFilter.Duration(viewTransactionsEvents.duration) // Default to "This Month" filter
+                )
+
+                _viewTransactionStates.value = viewTransactionStates.value.copy(
+                    filters = defaultFilters
+                )
+                getTransactionsAllFilter()
+            }
+
             // Delete Selected Transaction
             is ViewTransactionsEvents.DeleteSelectedTransactions -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     val selectedIds = _viewTransactionStates.value.selectedTransactions
-
-
                     selectedIds.forEach { selectedTransactionId ->
-
 
                         val selectedTransaction = viewRecordsUseCaseWrapper.getAllLocalTransactionsById(selectedTransactionId)
 
@@ -118,8 +169,6 @@ class ViewTransactionsViewModel @Inject constructor(
                         selectedTransactions = emptySet()
                     )
                 }
-
-
             }
 
             // Selection Mode
@@ -129,6 +178,7 @@ class ViewTransactionsViewModel @Inject constructor(
                     isSelectionMode = true
                 )
             }
+
             is ViewTransactionsEvents.ExitSelectionMode -> {
 
                 Log.d("ViewTransactionsViewModel","Exit Selection Mode SelectedTransaction Before delete: ${_viewTransactionStates.value.selectedTransactions}")
@@ -140,6 +190,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
                 Log.d("ViewTransactionsViewModel","Exit Selection Mode SelectedTransaction After delete: ${_viewTransactionStates.value.selectedTransactions}")
             }
+
             is ViewTransactionsEvents.ToggleTransactionSelection -> {
                 val current = _viewTransactionStates.value.selectedTransactions.toMutableSet()
                 if(current.contains(viewTransactionsEvents.transactionId)){
@@ -171,206 +222,50 @@ class ViewTransactionsViewModel @Inject constructor(
         }
     }
 
-
-
-
-
-
-
-    private fun getTransactionsAll(){
+    private fun updateCategoryState() {
         viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
+            val selectedType = _viewTransactionStates.value.filters
+                .filterIsInstance<TransactionFilter.TransactionType>()
+                .firstOrNull()?.type ?: TransactionTypeFilter.Both
+
+            Log.d("ViewTransactionsViewModelType","SelectedTransaction Type: $selectedType ")
+
+            val allCategories = when (selectedType) {
+                TransactionTypeFilter.Income -> viewRecordsUseCaseWrapper.getAllCategories(type = "income", uid).first()
+                TransactionTypeFilter.Expense -> viewRecordsUseCaseWrapper.getAllCategories("expense", uid).first()
+                TransactionTypeFilter.Both -> {
+                    val expense = viewRecordsUseCaseWrapper.getAllCategories("expense", uid).first()
+                    val income = viewRecordsUseCaseWrapper.getAllCategories("income", uid).first()
+                    expense + income
+                }
+            }
+
+            _viewTransactionStates.value = _viewTransactionStates.value.copy(
+                filters = _viewTransactionStates.value.filters.map {
+                    if (it is TransactionFilter.Category) {
+                        it.copy(selectedCategories = allCategories)
+                    } else it
+                },
+                categories = allCategories
+            )
+
+            Log.d("ViewTransactionsViewModelF", "Updated categories based on type: $selectedType, categories: $allCategories")
+        }
+    }
+
+    private fun getTransactionsAllFilter(){
+        Log.d("ViewTransactionsViewModelF","transaction Before ViewScope Filter")
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("ViewTransactionsViewModelF","transaction Enter ViewScope Filter")
+            viewRecordsUseCaseWrapper.getAllTransactionsFilters(uid = uid, filters = _viewTransactionStates.value.filters).collect { transactions ->
+                Log.d("ViewTransactionsViewModelF","transactions Collected")
+                Log.d("ViewTransactionsViewModelF","collected Transactions are $transactions")
                 _viewTransactionStates.value = viewTransactionStates.value.copy(
                     transactionsList = transactions
                 )
             }
-            Log.d("ViewTransactionsViewModel","transaction List ${_viewTransactionStates.value.transactionsList}")
-
-        }
-    }
-
-    private fun getTransactionsToday(){
-        viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
-
-                val startOfDay = getStartOfTodayInMillis()
-                val endOfDay = getEndOfTodayInMillis()
-
-                val todayTransactions = transactions.filter {
-                    it.dateTime in startOfDay..endOfDay
-                }
-
-                _viewTransactionStates.value = viewTransactionStates.value.copy(
-                    transactionsList = todayTransactions
-                )
-            }
-            Log.d("ViewTransactionsViewModel","transaction List ${_viewTransactionStates.value.transactionsList}")
-        }
-    }
-
-    private fun getStartOfTodayInMillis(): Long {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 0)
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        return calendar.timeInMillis
-    }
-
-    private fun getEndOfTodayInMillis(): Long {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, 23)
-        calendar.set(Calendar.MINUTE, 59)
-        calendar.set(Calendar.SECOND, 59)
-        calendar.set(Calendar.MILLISECOND, 999)
-        return calendar.timeInMillis
-    }
-
-    private fun getTransactionsThisMonth() {
-        viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
-
-                val startOfMonth = getStartOfMonthInMillis()
-                val endOfMonth = getEndOfTodayInMillis()
-
-                Log.d("ViewTransactionsViewModel","start of Month date format $startOfMonth")
-                Log.d("ViewTransactionsViewModel","end of Month date format $endOfMonth")
-
-                val thisMonthTransactions = transactions.filter {
-                    it.dateTime in startOfMonth..endOfMonth
-                }
-
-                _viewTransactionStates.value = viewTransactionStates.value.copy(
-                    transactionsList = thisMonthTransactions
-                )
-
-                Log.d("ViewTransactionsViewModel", "transaction List ${_viewTransactionStates.value.transactionsList}")
-            }
-        }
-    }
-
-
-    private fun getStartOfMonthInMillis(): Long {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_MONTH, 1) // Set to first day of current month
-        Log.d("ViewTransactionsViewModel","This Month First Day ${Calendar.DAY_OF_MONTH}")
-        calendar.set(Calendar.HOUR_OF_DAY, 0)  // Set to 00:00:00
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        val dateThisMonth = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.timeInMillis)
-        Log.d("ViewTransactionsViewModel","This Month long${calendar.timeInMillis}")
-        Log.d("ViewTransactionsViewModel","This Month date format $dateThisMonth")
-        return calendar.timeInMillis
-    }
-
-    private fun getEndOfMonthInMillis(): Long {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)) // Set to last day of current month
-        calendar.set(Calendar.HOUR_OF_DAY, 23)  // Set to 23:59:59
-        calendar.set(Calendar.MINUTE, 59)
-        calendar.set(Calendar.SECOND, 59)
-        calendar.set(Calendar.MILLISECOND, 999)
-        return calendar.timeInMillis
-    }
-
-
-    private fun getTransactionsLastMonth() {
-        viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
-
-                val startOfLastMonth = getStartOfLastMonthInMillis()
-                val endOfLastMonth = getEndOfLastMonthInMillis()
-                val startOfLastMonthDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(startOfLastMonth)
-                val endOfLastMonthDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(endOfLastMonth)
-                Log.d("ViewTransactionsViewModel","Last Month start date format $startOfLastMonthDate")
-                Log.d("ViewTransactionsViewModel","Last Month end date format $endOfLastMonthDate")
-
-                val lastMonthTransactions = transactions.filter {
-                    it.dateTime in startOfLastMonth..endOfLastMonth
-                }
-
-                _viewTransactionStates.value = viewTransactionStates.value.copy(
-                    transactionsList = lastMonthTransactions
-                )
-
-                Log.d("ViewTransactionsViewModel", "transaction List ${_viewTransactionStates.value.transactionsList}")
-            }
-        }
-    }
-
-
-    private fun getStartOfLastMonthInMillis(): Long {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MONTH, -1)  // Move to the previous month
-        calendar.set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of the last month
-        calendar.set(Calendar.HOUR_OF_DAY, 0)  // Set to 00:00:00
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        return calendar.timeInMillis
-    }
-
-    private fun getEndOfLastMonthInMillis(): Long {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MONTH, -1)  // Move to the previous month
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH)) // Set to the last day of the last month
-        calendar.set(Calendar.HOUR_OF_DAY, 23)  // Set to 23:59:59
-        calendar.set(Calendar.MINUTE, 59)
-        calendar.set(Calendar.SECOND, 59)
-        calendar.set(Calendar.MILLISECOND, 999)
-        return calendar.timeInMillis
-    }
-
-    private fun getStartOfLast3MonthsInMillis(): Long {
-        val calendar = Calendar.getInstance()
-        calendar.add(Calendar.MONTH, -3)  // Move back by 3 months
-        calendar.set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of that month
-        calendar.set(Calendar.HOUR_OF_DAY, 0)  // Set to 00:00:00
-        calendar.set(Calendar.MINUTE, 0)
-        calendar.set(Calendar.SECOND, 0)
-        calendar.set(Calendar.MILLISECOND, 0)
-        return calendar.timeInMillis
-    }
-
-    private fun getTransactionsLast3Months() {
-        viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
-
-                val startOfLast3Months = getStartOfLast3MonthsInMillis()
-                val endOfLast3Months = System.currentTimeMillis()  // Current time as the end
-                val startOfLast3MonthDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(startOfLast3Months)
-                val endOfLast3MonthDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(endOfLast3Months)
-                Log.d("ViewTransactionsViewModel","Last Month start date format $startOfLast3MonthDate")
-                Log.d("ViewTransactionsViewModel","Last Month end date format $endOfLast3MonthDate")
-
-                val last3MonthsTransactions = transactions.filter {
-                    it.dateTime in startOfLast3Months..endOfLast3Months
-                }
-
-                _viewTransactionStates.value = viewTransactionStates.value.copy(
-                    transactionsList = last3MonthsTransactions
-                )
-
-                Log.d("ViewTransactionsViewModel", "transaction List ${_viewTransactionStates.value.transactionsList}")
-            }
-        }
-    }
-
-    private fun getTransactionsCustomDate(fromDate: Long, toDate: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            viewRecordsUseCaseWrapper.getAllTransactions(uid).collect { transactions ->
-
-                val customDateTransactions = transactions.filter {
-                    it.dateTime in fromDate..toDate
-                }
-
-                _viewTransactionStates.value = viewTransactionStates.value.copy(
-                    transactionsList = customDateTransactions
-                )
-
-                Log.d("ViewTransactionsViewModel", "transaction List ${_viewTransactionStates.value.transactionsList}")
-            }
+            Log.d("ViewTransactionsViewModelF","transaction List Filter ${_viewTransactionStates.value.transactionsList}")
+            Log.d("ViewTransactionsViewModelF","transaction Filter ${_viewTransactionStates.value.filters}")
         }
     }
 }

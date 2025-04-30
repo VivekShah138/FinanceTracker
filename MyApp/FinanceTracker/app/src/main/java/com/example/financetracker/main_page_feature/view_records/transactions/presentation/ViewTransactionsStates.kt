@@ -1,7 +1,11 @@
 package com.example.financetracker.main_page_feature.view_records.transactions.presentation
 
+import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionTypeFilter
 
 data class ViewTransactionsStates(
 
@@ -24,9 +28,22 @@ data class ViewTransactionsStates(
     val fromDate: Long = 0,
     val toDate: Long = 0,
 
+    val filters: List<TransactionFilter> = listOf(
+        TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
+        TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
+        TransactionFilter.Category(emptyList()), // Default to all categories (empty list means no category filter)
+        TransactionFilter.Duration(DurationFilter.Today) // Default to "This Month" filter
+    ),
+
+    val categories: List<Category> = emptyList(),
+
+
     // Filter
     val filterBottomSheetState: Boolean = false,
-    val sortOrder: String = "Ascending",
+//    val sortOrder: TransactionOrder = TransactionOrder.Ascending,
+//    val transactionType: TransactionTypeFilter = TransactionTypeFilter.Both,
+//    val categoriesList: List<String> = emptyList(),
+
 
     // selected Transaction
     val selectedTransactions: Set<Int> = emptySet(), // Store transaction IDs or whole objects

@@ -25,11 +25,6 @@ fun ViewTransactionsPage(
     navController: NavController,
     viewModel: ViewTransactionsViewModel
 ){
-    var sortOrder by remember { mutableStateOf("Ascending") }
-    var type by remember { mutableStateOf("Income") }
-    var selectedCategories by remember { mutableStateOf(listOf<String>()) }
-
-    val allCategories = listOf("Food", "Transport", "Shopping", "Bills", "Other")
 
 
 
@@ -88,60 +83,41 @@ fun ViewTransactionsPage(
 
 
         Surface {
-            FilterBottomSheetModal(
+            FilterBottomSheetModal2(
                 showSheet = states.filterBottomSheetState,
                 onDismiss = {
                     viewModel.onEvent(
                         ViewTransactionsEvents.SelectTransactionsFilter(state = false)
                     )
                 },
-                sortOrder = sortOrder,
-                onSortOrderChange = { sortOrder = it },
-                type = type,
-                onTypeChange = { type = it },
-                selectedCategories = selectedCategories,
-                onCategoryToggle = { category ->
-                    selectedCategories = if (selectedCategories.contains(category)) {
-                        selectedCategories - category
-                    } else {
-                        selectedCategories + category
-                    }
+                filters = states.filters,
+                onApply = {
+                    viewModel.onEvent(
+                        ViewTransactionsEvents.ApplyFilter
+                    )
+                    viewModel.onEvent(
+                        ViewTransactionsEvents.SelectTransactionsFilter(state = false)
+                    )
                 },
-                allCategories = allCategories
+                onFilterChange = {filter ->
+                    viewModel.onEvent(
+                        ViewTransactionsEvents.UpdateFilter(filter = filter)
+                    )
+                },
+                onClearAll = {
+                    viewModel.onEvent(
+                        ViewTransactionsEvents.ClearFilter(duration = states.selectedDuration)
+                    )
+                    viewModel.onEvent(
+                        ViewTransactionsEvents.SelectTransactionsFilter(state = false)
+                    )
+                },
+                allCategories = states.categories
             )
         }
 
         LazyColumn {
-            when(states.selectedDuration){
-                is DurationFilter.Today -> {
-                    viewModel.onEvent(
-                        ViewTransactionsEvents.LoadTransactionsToday
-                    )
-                }
-                is DurationFilter.ThisMonth -> {
-                    viewModel.onEvent(
-                        ViewTransactionsEvents.LoadTransactionsThisMonth
-                    )
-                }
-                is DurationFilter.LastMonth -> {
-                    viewModel.onEvent(
-                        ViewTransactionsEvents.LoadTransactionsLastMonth
-                    )
-                }
-                is DurationFilter.Last3Months -> {
-                    viewModel.onEvent(
-                        ViewTransactionsEvents.LoadTransactionsLast3Month
-                    )
-                }
-
-                is DurationFilter.CustomRange -> {
-
-                }
-            }
-
             items(states.transactionsList){ transaction ->
-
-
 
                 val isSelected = states.selectedTransactions.contains(transaction.transactionId)
 

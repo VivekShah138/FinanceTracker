@@ -1,7 +1,7 @@
 package com.example.financetracker.main_page_feature.view_records.transactions.utils
 
-sealed class TransactionTypeFilter {
-    data object Income : TransactionTypeFilter()
-    data object Expense : TransactionTypeFilter()
-    data object Both : TransactionTypeFilter()
+sealed class TransactionTypeFilter(val label: String) {
+    data object Income : TransactionTypeFilter(label = "Income")
+    data object Expense : TransactionTypeFilter(label = "Expense")
+    data object Both : TransactionTypeFilter(label = "Both")
 }

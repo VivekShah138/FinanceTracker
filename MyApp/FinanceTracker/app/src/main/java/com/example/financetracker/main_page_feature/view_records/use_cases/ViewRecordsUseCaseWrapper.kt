@@ -2,6 +2,7 @@ package com.example.financetracker.main_page_feature.view_records.use_cases
 
 import com.example.financetracker.core.cloud.domain.usecase.DeleteTransactionCloud
 import com.example.financetracker.core.cloud.domain.usecase.InternetConnectionAvailability
+import com.example.financetracker.core.local.domain.room.usecases.GetAllCategories
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.DeleteDeletedTransactionsByIdsFromLocal
@@ -40,5 +41,7 @@ data class ViewRecordsUseCaseWrapper (
     val deleteMultipleSavedItemCloud: DeleteMultipleSavedItemCloud,
     val savedItemsValidationUseCase: SavedItemsValidationUseCase,
     val saveSingleSavedItemCloud: SaveSingleSavedItemCloud,
-    val saveItemLocalUseCase: SaveItemLocalUseCase
+    val saveItemLocalUseCase: SaveItemLocalUseCase,
+    val getAllCategories: GetAllCategories,
+    val getAllTransactionsFilters: GetAllTransactionsFilters
 )
