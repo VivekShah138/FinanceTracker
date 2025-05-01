@@ -14,6 +14,13 @@ import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCas
 import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
 import com.example.financetracker.auth_feature.domain.usecases.ValidateEmail
 import com.example.financetracker.auth_feature.domain.usecases.ValidatePassword
+import com.example.financetracker.budget_feature.data.data_source.BudgetDao
+import com.example.financetracker.budget_feature.data.data_source.BudgetDatabase
+import com.example.financetracker.budget_feature.data.repository.BudgetLocalRepositoryImpl
+import com.example.financetracker.budget_feature.domain.repository.BudgetLocalRepository
+import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
+import com.example.financetracker.budget_feature.domain.usecases.GetBudgetLocalUseCase
+import com.example.financetracker.budget_feature.domain.usecases.InsertBudgetLocalUseCase
 import com.example.financetracker.setup_account.data.remote.repository.CountryRemoteRepositoryImpl
 import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
 import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
@@ -436,7 +443,7 @@ object AppModule {
         return db.savedItemsDao
     }
 
-    // SavedItemDao
+    // DeletedSavedItemDao
     @Provides
     @Singleton
     fun provideDeletedSavedItemDao(db: SavedItemsDatabase): DeletedSavedItemsDao {
@@ -498,6 +505,53 @@ object AppModule {
             getAllNotSyncedSavedItemUseCase = GetAllNotSyncedSavedItemUseCase(savedItemsLocalRepository = savedItemsLocalRepository)
         )
     }
+
+    // Budget Database
+    @Provides
+    @Singleton
+    fun provideBudgetDatabase(app : Application) : BudgetDatabase {
+        return Room.databaseBuilder(
+            app,
+            BudgetDatabase::class.java,
+            BudgetDatabase.DATABASE_NAME
+        )
+            .build()
+    }
+
+    // BudgetDao
+    @Provides
+    @Singleton
+    fun provideBudgetDao(db: BudgetDatabase): BudgetDao {
+        return db.budgetDao
+    }
+
+    // Budget Local Repository
+    @Provides
+    @Singleton
+    fun provideBudgetLocalRepository(
+        budgetDao: BudgetDao,
+    ): BudgetLocalRepository {
+        return BudgetLocalRepositoryImpl(
+            budgetDao = budgetDao
+        )
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideBudgetUseCases(
+        budgetLocalRepository: BudgetLocalRepository,
+        sharedPreferencesRepository: SharedPreferencesRepository,
+        userProfileRepository: UserProfileRepository
+    ): BudgetUseCaseWrapper{
+        return BudgetUseCaseWrapper(
+            getBudgetLocalUseCase = GetBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
+            insertBudgetLocalUseCase = InsertBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
+            getUIDLocally = GetUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository = userProfileRepository)
+        )
+    }
+
 
 
     // SetUpPage UseCases

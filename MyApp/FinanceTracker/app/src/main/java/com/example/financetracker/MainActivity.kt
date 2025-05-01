@@ -21,6 +21,8 @@ import com.example.financetracker.auth_feature.presentation.register.register_co
 import com.example.financetracker.auth_feature.presentation.login.login_components.LogInPage
 import com.example.financetracker.auth_feature.presentation.forgot_password.ForgotPasswordViewModel
 import com.example.financetracker.auth_feature.presentation.forgot_password.forgot_password_components.ForgotPasswordPage
+import com.example.financetracker.budget_feature.presentation.BudgetViewModel
+import com.example.financetracker.budget_feature.presentation.components.BudgetScreen
 import com.example.financetracker.categories_feature.core.presentation.CoreCategoriesViewModel
 import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesViewModel
 import com.example.financetracker.categories_feature.income.presentation.IncomeCategoriesViewModel
@@ -158,6 +160,18 @@ class MainActivity : ComponentActivity() {
                                 incomeCategoriesViewModel = incomeCategoriesViewModel,
                                 coreCategoriesViewModel = coreCategoriesViewModel
 
+                            )
+                        }
+
+                        composable(
+                            route = Screens.BudgetScreen.routes
+                        ) {
+
+                            val budgetViewModel: BudgetViewModel = hiltViewModel()
+
+                            BudgetScreen(
+                                navController = navController,
+                                budgetViewModel = budgetViewModel
                             )
                         }
 

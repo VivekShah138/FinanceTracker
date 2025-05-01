@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -76,6 +77,15 @@ fun SettingsPagePreview(){
                     trailingImageVectorState = true,
                     onClick = {},
                     text = "Categories"
+                )
+
+                SettingsItemCard(
+                    leadingImageVector = Icons.Default.MonetizationOn,
+                    leadingImageVectorState = true,
+                    trailingImageVector = Icons.Default.ArrowForward,
+                    trailingImageVectorState = true,
+                    onClick = {},
+                    text = "Budget"
                 )
             }
         }

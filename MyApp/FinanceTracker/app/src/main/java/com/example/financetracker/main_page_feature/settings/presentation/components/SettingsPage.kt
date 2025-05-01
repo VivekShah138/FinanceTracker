@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -92,6 +93,17 @@ fun SettingsPage(
                     navController.navigate(route = Screens.CategoriesScreen.routes)
                 },
                 text = "Categories"
+            )
+
+            SettingsItemCard(
+                leadingImageVector = Icons.Default.MonetizationOn,
+                leadingImageVectorState = true,
+                trailingImageVector = Icons.Default.ArrowForward,
+                trailingImageVectorState = true,
+                onClick = {
+                    navController.navigate(route = Screens.BudgetScreen.routes)
+                },
+                text = "Budget"
             )
         }
     }
