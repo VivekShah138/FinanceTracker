@@ -1,5 +1,6 @@
 package com.example.financetracker.main_page_feature.home_page.presentation.components
 
+import AccountBalance
 import BottomNavigationBar
 import ExpenseIncomeCards
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,12 @@ fun HomePagePreviewScreen(){
                 .padding(padding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
+
+                AccountBalance(
+                    currencySymbol = "$",
+                    amount = "2,500.00"
+                )
+
                 ExpenseIncomeCards(
                     expenseAmount = "100.00",
                     incomeAmount = "800.00000"
@@ -48,3 +55,4 @@ fun HomePagePreviewScreen(){
         }
     }
 }
+

@@ -15,5 +15,6 @@ data class BudgetEntity(
     val amount: Double,
     val month: Int, // 1 to 12
     val year: Int,  // e.g., 2025
-    val updatedAt: Long
+    val updatedAt: Long,
+    val cloudSync: Boolean
 )

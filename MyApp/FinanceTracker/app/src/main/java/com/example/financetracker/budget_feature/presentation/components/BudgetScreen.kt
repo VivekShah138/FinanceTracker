@@ -73,6 +73,12 @@ fun BudgetScreen(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
 
+            MonthSelector(
+                state = states,
+                onEvent = budgetViewModel::onEvent,
+                context = context
+            )
+
             OutlinedTextField(
                 value = states.budget,
                 onValueChange = {

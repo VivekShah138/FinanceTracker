@@ -5,6 +5,7 @@ import android.app.Application
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
@@ -23,6 +24,7 @@ class FinanceTracker : Application(), Configuration.Provider {
     @Inject lateinit var setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper
     @Inject lateinit var viewRecordsUseCaseWrapper: ViewRecordsUseCaseWrapper
     @Inject lateinit var settingsUseCaseWrapper: SettingsUseCaseWrapper
+    @Inject lateinit var budgetUseCaseWrapper: BudgetUseCaseWrapper
 
 
     private val applicationScope = CoroutineScope(Dispatchers.IO)
@@ -39,6 +41,7 @@ class FinanceTracker : Application(), Configuration.Provider {
             viewRecordsUseCaseWrapper.deleteMultipleSavedItemCloud()
             settingsUseCaseWrapper.saveMultipleTransactionsCloud()
             settingsUseCaseWrapper.saveMultipleSavedItemCloud()
+            budgetUseCaseWrapper.saveMultipleBudgetsToCloudUseCase()
         }
     }
 

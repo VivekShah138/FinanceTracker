@@ -9,7 +9,8 @@ data class Budget(
     val amount: Double,
     val month: Int, // 1 to 12
     val year: Int,  // e.g., 2025
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
+    val cloudSync: Boolean
 )
 
 fun Budget.toEntity(): BudgetEntity {
@@ -19,7 +20,8 @@ fun Budget.toEntity(): BudgetEntity {
         amount = amount,
         month = month,
         year = year,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        cloudSync = cloudSync
     )
 }
 
@@ -31,6 +33,7 @@ fun BudgetEntity.toDomain(): Budget {
         amount = amount,
         month = month,
         year = year,
-        updatedAt = updatedAt
+        updatedAt = updatedAt,
+        cloudSync = cloudSync
     )
 }

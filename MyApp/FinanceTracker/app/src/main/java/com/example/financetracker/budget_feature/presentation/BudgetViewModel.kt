@@ -1,6 +1,7 @@
 package com.example.financetracker.budget_feature.presentation
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,17 +27,19 @@ class BudgetViewModel @Inject constructor(
     private val budgetUseCaseWrapper: BudgetUseCaseWrapper
 ): ViewModel() {
 
-    private val _budgetStates = MutableStateFlow(BudgetStates())
+    private val _budgetStates = MutableStateFlow(
+        BudgetStates(
+            selectedYear = Calendar.getInstance().get(Calendar.YEAR),
+            selectedMonth = Calendar.getInstance().get(Calendar.MONTH)
+        )
+    )
     val budgetStates : StateFlow<BudgetStates> = _budgetStates.asStateFlow()
 
     private val budgetValidationEventChannel = Channel<AddTransactionValidationEvent>()
     val budgetValidationEvents = budgetValidationEventChannel.receiveAsFlow()
 
     private val uid = budgetUseCaseWrapper.getUIDLocally() ?: "Unknown"
-    private val calendar = Calendar.getInstance()
-    private val month = calendar.get(Calendar.MONTH) + 1 // Months are 0-based
-    private val year = calendar.get(Calendar.YEAR)
-    private val updatedAt: Long = System.currentTimeMillis() // for timestamps
+    private val updatedAt: Long = System.currentTimeMillis()
 
     init {
         getBudget()
@@ -58,6 +61,73 @@ class BudgetViewModel @Inject constructor(
             BudgetEvents.SaveBudget -> {
                 addBudget()
             }
+
+            is BudgetEvents.MonthSelected -> {
+                _budgetStates.value = budgetStates.value.copy(
+                    selectedYear = budgetEvents.year,
+                    selectedMonth = budgetEvents.month
+                )
+
+                val current = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, _budgetStates.value.selectedYear)
+                    set(Calendar.MONTH, _budgetStates.value.selectedMonth)
+                    set(Calendar.DAY_OF_MONTH, 1)
+                }
+
+                // Update visibility logic after NextMonthClicked
+                _budgetStates.value = _budgetStates.value.copy(
+                    nextMonthVisibility = (current.get(Calendar.YEAR) < Calendar.getInstance().get(Calendar.YEAR)) ||
+                            (current.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR) &&
+                                    current.get(Calendar.MONTH) < Calendar.getInstance().get(Calendar.MONTH))
+                )
+
+            }
+            is BudgetEvents.NextMonthClicked -> {
+
+                val current = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, _budgetStates.value.selectedYear)
+                    set(Calendar.MONTH, _budgetStates.value.selectedMonth)
+                    set(Calendar.DAY_OF_MONTH, 1)
+                }
+
+                // Only increment if current < today (in year and month)
+                if (current.before(Calendar.getInstance().apply {
+                        set(Calendar.DAY_OF_MONTH, 1) // Only compare month/year
+                    })) {
+                    current.add(Calendar.MONTH, 1)
+
+                    _budgetStates.value = _budgetStates.value.copy(
+                        selectedYear = current.get(Calendar.YEAR),
+                        selectedMonth = current.get(Calendar.MONTH),
+                    )
+                }
+
+                // Update visibility logic after NextMonthClicked
+                _budgetStates.value = _budgetStates.value.copy(
+                    nextMonthVisibility = (current.get(Calendar.YEAR) < Calendar.getInstance().get(Calendar.YEAR)) ||
+                            (current.get(Calendar.YEAR) == Calendar.getInstance().get(Calendar.YEAR) &&
+                                    current.get(Calendar.MONTH) < Calendar.getInstance().get(Calendar.MONTH))
+                )
+
+                getBudget()
+
+            }
+            is BudgetEvents.PreviousMonthClicked -> {
+
+                val cal = Calendar.getInstance().apply {
+                    set(Calendar.YEAR, _budgetStates.value.selectedYear)
+                    set(Calendar.MONTH, _budgetStates.value.selectedMonth)
+                    add(Calendar.MONTH, -1)
+                }
+                _budgetStates.value = budgetStates.value.copy(
+                    selectedYear = cal.get(Calendar.YEAR),
+                    selectedMonth = cal.get(Calendar.MONTH),
+                    nextMonthVisibility = true
+                )
+
+                getBudget()
+
+            }
         }
     }
 
@@ -68,28 +138,21 @@ class BudgetViewModel @Inject constructor(
                 return@launch
             }
 
-            val existing = budgetUseCaseWrapper.getBudgetLocalUseCase(uid, month, year)
-
-            budgetUseCaseWrapper.insertBudgetLocalUseCase(
-                Budget(
-                    id = existing?.id ?: UUID.randomUUID().toString(),
-                    userId = uid,
-                    amount = _budgetStates.value.budget.toDoubleOrNull() ?: 0.0,
-                    month = month,
-                    year = year,
-                    updatedAt = updatedAt
-                )
+            val existing = budgetUseCaseWrapper.getBudgetLocalUseCase(
+                userId = uid,
+                month = _budgetStates.value.selectedMonth,
+                year = _budgetStates.value.selectedYear
             )
 
-
             budgetUseCaseWrapper.insertBudgetLocalUseCase(
                 Budget(
                     id = existing?.id ?: UUID.randomUUID().toString(),
                     userId = uid,
                     amount = _budgetStates.value.budget.toDoubleOrNull() ?: 0.0,
-                    month = month,
-                    year = year,
-                    updatedAt = updatedAt
+                    month = _budgetStates.value.selectedMonth,
+                    year = _budgetStates.value.selectedYear,
+                    updatedAt = updatedAt,
+                    cloudSync = false
                 )
             )
             budgetValidationEventChannel.send(AddTransactionValidationEvent.Success)
@@ -98,9 +161,19 @@ class BudgetViewModel @Inject constructor(
 
     private fun getBudget(){
         viewModelScope.launch(Dispatchers.IO) {
-            val existing = budgetUseCaseWrapper.getBudgetLocalUseCase(uid, month, year)
+
+            val existing = budgetUseCaseWrapper.getBudgetLocalUseCase(
+                userId = uid,
+                month = _budgetStates.value.selectedMonth,
+                year = _budgetStates.value.selectedYear
+            )
             val userProfile = budgetUseCaseWrapper.getUserProfileFromLocalDb(uid = uid)
             val baseCurrencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
+
+            Log.d("BudgetViewModel","Selected Month ${_budgetStates.value.selectedMonth}")
+            Log.d("BudgetViewModel","selected Year  ${_budgetStates.value.selectedYear}")
+            Log.d("BudgetViewModel","existing budget $existing")
+
 
             _budgetStates.value = budgetStates.value.copy(
                 budget = existing?.amount.toString() ?: "",

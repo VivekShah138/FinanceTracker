@@ -4,7 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
-import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsStates
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionTypeFilter
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
 
@@ -72,42 +74,76 @@ class HomePageViewModel @Inject constructor(
     private fun getIncomeAndExpenseAmount() {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("HomePageViewModel","userId $userId")
-            val allTransactions = homePageUseCaseWrapper.getAllTransactions(userId).first()
+//            val allTransactions = homePageUseCaseWrapper.getAllTransactions(userId).first()
+            val expense = homePageUseCaseWrapper.getAllCategories("expense", userId).first()
+            val income = homePageUseCaseWrapper.getAllCategories("income", userId).first()
+            val allCategories = expense + income
+            val allTransactionsThisMonth = homePageUseCaseWrapper.getAllTransactionsFilters(
+                uid = userId,
+                filters = listOf(
+                    TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
+                    TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
+                    TransactionFilter.Category(allCategories), // Default to all categories (empty list means no category filter)
+                    TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
+                )
+            ).first()
+            Log.d("HomePageViewModel","allTransactionsFilter $allTransactionsThisMonth")
+
+            val allTransactions = homePageUseCaseWrapper.getAllTransactions(uid = userId).first()
             Log.d("HomePageViewModel","allTransactions $allTransactions")
 
             val userProfile = homePageUseCaseWrapper.getUserProfileLocal()
             Log.d("HomePageViewModel","userProfile $userProfile")
 
 
-            var incomeAmount = 0.0
-            var expenseAmount = 0.0
+            var incomeAmountThisMonth = 0.0
+            var incomeAmountOverAll = 0.0
+            var expenseAmountThisMonth = 0.0
+            var expenseAmountOverAll = 0.0
             val baseCurrencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
             Log.d("HomePageViewModel","baseCurrency $baseCurrencySymbol")
 
 
-            allTransactions.forEach { transaction ->
+            allTransactionsThisMonth.forEach { transaction ->
                 when {
                     transaction.transactionType.equals("Income", ignoreCase = true) -> {
-                        incomeAmount += transaction.amount
-                        Log.d("HomePageViewModel","income Amount $incomeAmount")
+                        incomeAmountThisMonth += transaction.amount
+                        Log.d("HomePageViewModel","income Amount This Month $incomeAmountThisMonth")
                     }
                     transaction.transactionType.equals("Expense", ignoreCase = true) -> {
-                        expenseAmount += transaction.amount
-                        Log.d("HomePageViewModel","expense Amount $expenseAmount")
+                        expenseAmountThisMonth += transaction.amount
+                        Log.d("HomePageViewModel","expense Amount This Month $expenseAmountThisMonth")
                     }
                 }
             }
 
-            val formattedIncome = String.format(Locale.US, "%.2f", incomeAmount)
-            val formattedExpense = String.format(Locale.US, "%.2f", expenseAmount)
+            allTransactions.forEach { transaction ->
+                when {
+                    transaction.transactionType.equals("Income", ignoreCase = true) -> {
+                        incomeAmountOverAll += transaction.amount
+                        Log.d("HomePageViewModel","income Amount OverAll $incomeAmountOverAll")
+                    }
+                    transaction.transactionType.equals("Expense", ignoreCase = true) -> {
+                        expenseAmountOverAll += transaction.amount
+                        Log.d("HomePageViewModel","expense Amount OverAll $expenseAmountOverAll")
+                    }
+                }
+            }
+
+
+
+            val formattedIncomeThisMonth = String.format(Locale.US, "%.2f", incomeAmountThisMonth)
+//            val formattedIncomeOverAll = String.format(Locale.US, "%.2f", incomeAmountOverAll)
+            val formattedExpenseThisMonth = String.format(Locale.US, "%.2f", expenseAmountThisMonth)
+//            val formattedExpenseOverAll = String.format(Locale.US, "%.2f", expenseAmountOverAll)
+            val formattedAccountBalance = String.format(Locale.US, "%.2f", (incomeAmountOverAll - expenseAmountOverAll))
 
             _homePageStates.value = homePageStates.value.copy(
-                incomeAmount = formattedIncome,
-                expenseAmount = formattedExpense,
-                incomeCurrencySymbol = baseCurrencySymbol,
-                expenseCurrencySymbol = baseCurrencySymbol
+                incomeAmount = formattedIncomeThisMonth,
+                expenseAmount = formattedExpenseThisMonth,
+                currencySymbol = baseCurrencySymbol,
+                accountBalance =formattedAccountBalance
             )
-
         }
     }
 }

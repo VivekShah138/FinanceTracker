@@ -29,6 +29,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
     init {
         updateCategoryState()
+        getTransactionsAllFilter()
     }
 
     fun onEvent(viewTransactionsEvents: ViewTransactionsEvents){

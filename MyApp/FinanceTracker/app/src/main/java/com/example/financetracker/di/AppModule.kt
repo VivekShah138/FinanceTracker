@@ -14,13 +14,19 @@ import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCas
 import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
 import com.example.financetracker.auth_feature.domain.usecases.ValidateEmail
 import com.example.financetracker.auth_feature.domain.usecases.ValidatePassword
+import com.example.financetracker.budget_feature.data.data_source.BUDGET_MIGRATION_1_2
 import com.example.financetracker.budget_feature.data.data_source.BudgetDao
 import com.example.financetracker.budget_feature.data.data_source.BudgetDatabase
 import com.example.financetracker.budget_feature.data.repository.BudgetLocalRepositoryImpl
+import com.example.financetracker.budget_feature.data.repository.BudgetRemoteRepositoryImpl
 import com.example.financetracker.budget_feature.domain.repository.BudgetLocalRepository
+import com.example.financetracker.budget_feature.domain.repository.BudgetRemoteRepository
 import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
+import com.example.financetracker.budget_feature.domain.usecases.GetAllUnSyncedBudgetLocalUseCase
 import com.example.financetracker.budget_feature.domain.usecases.GetBudgetLocalUseCase
 import com.example.financetracker.budget_feature.domain.usecases.InsertBudgetLocalUseCase
+import com.example.financetracker.budget_feature.domain.usecases.SaveBudgetToCloudUseCase
+import com.example.financetracker.budget_feature.domain.usecases.SaveMultipleBudgetsToCloudUseCase
 import com.example.financetracker.setup_account.data.remote.repository.CountryRemoteRepositoryImpl
 import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
 import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
@@ -515,6 +521,7 @@ object AppModule {
             BudgetDatabase::class.java,
             BudgetDatabase.DATABASE_NAME
         )
+            .addMigrations(BUDGET_MIGRATION_1_2)
             .build()
     }
 
@@ -536,11 +543,25 @@ object AppModule {
         )
     }
 
+    // Budget Local Repository
+    @Provides
+    @Singleton
+    fun provideBudgetRemoteRepository(
+        firestore: FirebaseFirestore,
+        @ApplicationContext context: Context
+    ): BudgetRemoteRepository {
+        return BudgetRemoteRepositoryImpl(
+            firestore = firestore,
+            context = context
+        )
+    }
+
 
     @Provides
     @Singleton
     fun provideBudgetUseCases(
         budgetLocalRepository: BudgetLocalRepository,
+        budgetRemoteRepository: BudgetRemoteRepository,
         sharedPreferencesRepository: SharedPreferencesRepository,
         userProfileRepository: UserProfileRepository
     ): BudgetUseCaseWrapper{
@@ -548,7 +569,10 @@ object AppModule {
             getBudgetLocalUseCase = GetBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
             insertBudgetLocalUseCase = InsertBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository),
-            getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository = userProfileRepository)
+            getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository = userProfileRepository),
+            getAllUnSyncedBudgetLocalUseCase = GetAllUnSyncedBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
+            saveBudgetToCloudUseCase = SaveBudgetToCloudUseCase(budgetRemoteRepository = budgetRemoteRepository),
+            saveMultipleBudgetsToCloudUseCase = SaveMultipleBudgetsToCloudUseCase(budgetRemoteRepository = budgetRemoteRepository)
         )
     }
 
@@ -602,7 +626,8 @@ object AppModule {
         sharedPreferencesRepository: SharedPreferencesRepository,
         remoteRepository: RemoteRepository,
         homePageRepository: HomePageRepository,
-        transactionLocalRepository: TransactionLocalRepository
+        transactionLocalRepository: TransactionLocalRepository,
+        categoryRepository: CategoryRepository
     ): HomePageUseCaseWrapper {
         return HomePageUseCaseWrapper(
             logoutUseCase = LogoutUseCase(
@@ -613,7 +638,9 @@ object AppModule {
             setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository),
             getCurrencyRatesUpdated = GetCurrencyRatesUpdated(sharedPreferencesRepository),
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository),
-            getAllTransactions = GetAllTransactions(transactionLocalRepository)
+            getAllTransactions = GetAllTransactions(transactionLocalRepository),
+            getAllCategories = GetAllCategories(categoryRepository = categoryRepository),
+            getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository)
         )
     }
 

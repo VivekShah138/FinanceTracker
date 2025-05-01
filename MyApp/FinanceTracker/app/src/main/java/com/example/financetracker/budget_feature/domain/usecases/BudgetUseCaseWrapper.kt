@@ -7,5 +7,8 @@ data class BudgetUseCaseWrapper(
     val getBudgetLocalUseCase: GetBudgetLocalUseCase,
     val insertBudgetLocalUseCase: InsertBudgetLocalUseCase,
     val getUIDLocally: GetUIDLocally,
-    val getUserProfileFromLocalDb: GetUserProfileFromLocalDb
+    val getUserProfileFromLocalDb: GetUserProfileFromLocalDb,
+    val getAllUnSyncedBudgetLocalUseCase: GetAllUnSyncedBudgetLocalUseCase,
+    val saveBudgetToCloudUseCase: SaveBudgetToCloudUseCase,
+    val saveMultipleBudgetsToCloudUseCase: SaveMultipleBudgetsToCloudUseCase
 )

@@ -105,11 +105,9 @@ fun ExpenseIncomeCards(
                         overflow = TextOverflow.Clip, // Instead of Ellipsis
                         softWrap = false
                     )
-
                 }
             }
         }
-
     }
 }
 
