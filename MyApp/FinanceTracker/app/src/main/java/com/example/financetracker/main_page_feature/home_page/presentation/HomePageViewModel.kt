@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
 
@@ -30,6 +31,7 @@ class HomePageViewModel @Inject constructor(
         updateCurrencyRatesOneTime()
         updateCurrencyRatesPeriodically()
         getIncomeAndExpenseAmount()
+        getBudget()
 
     }
 
@@ -75,6 +77,10 @@ class HomePageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("HomePageViewModel","userId $userId")
 //            val allTransactions = homePageUseCaseWrapper.getAllTransactions(userId).first()
+            if (userId == null) {
+                Log.e("HomePageViewModel", "UserId is null! Cannot fetch categories.")
+                return@launch
+            }
             val expense = homePageUseCaseWrapper.getAllCategories("expense", userId).first()
             val income = homePageUseCaseWrapper.getAllCategories("income", userId).first()
             val allCategories = expense + income
@@ -130,12 +136,8 @@ class HomePageViewModel @Inject constructor(
                 }
             }
 
-
-
             val formattedIncomeThisMonth = String.format(Locale.US, "%.2f", incomeAmountThisMonth)
-//            val formattedIncomeOverAll = String.format(Locale.US, "%.2f", incomeAmountOverAll)
             val formattedExpenseThisMonth = String.format(Locale.US, "%.2f", expenseAmountThisMonth)
-//            val formattedExpenseOverAll = String.format(Locale.US, "%.2f", expenseAmountOverAll)
             val formattedAccountBalance = String.format(Locale.US, "%.2f", (incomeAmountOverAll - expenseAmountOverAll))
 
             _homePageStates.value = homePageStates.value.copy(
@@ -143,6 +145,23 @@ class HomePageViewModel @Inject constructor(
                 expenseAmount = formattedExpenseThisMonth,
                 currencySymbol = baseCurrencySymbol,
                 accountBalance =formattedAccountBalance
+            )
+        }
+    }
+
+    private fun getBudget(){
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val selectedYear = Calendar.getInstance().get(Calendar.YEAR)
+            val selectedMonth = Calendar.getInstance().get(Calendar.MONTH)
+            val budget = homePageUseCaseWrapper.getBudgetLocalUseCase(
+                userId = userId,
+                month = selectedMonth,
+                year = selectedYear
+            )
+
+            _homePageStates.value = homePageStates.value.copy(
+                monthlyBudget = budget?.amount ?: 0.0
             )
         }
     }

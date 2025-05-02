@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [BudgetEntity::class],
-    version = 2
+    version = 3
 )
 abstract class BudgetDatabase: RoomDatabase() {
     abstract val budgetDao: BudgetDao

@@ -42,8 +42,10 @@ fun HomePageScreen(
                     onBackClick = {},
                     menuItems = listOf<MenuItems>(
                         MenuItems(
-                            text = "Setting",
-                            onClick = {}
+                            text = "Settings",
+                            onClick = {
+                                navController.navigate(route = Screens.SettingScreen.routes )
+                            }
                         ),
                         MenuItems(
                             text = "Logout",
@@ -76,6 +78,13 @@ fun HomePageScreen(
                     incomeSymbol = states.currencySymbol,
                     expenseSymbol = states.currencySymbol
                 )
+
+
+                BudgetProgressBar(
+                    spentAmount = states.expenseAmount.toFloat(),
+                    totalBudget = states.monthlyBudget.toFloat()
+                )
+
             }
         }
     }

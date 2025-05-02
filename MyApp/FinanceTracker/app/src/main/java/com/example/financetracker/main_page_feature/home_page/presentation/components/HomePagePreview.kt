@@ -51,6 +51,11 @@ fun HomePagePreviewScreen(){
                     expenseAmount = "100.00",
                     incomeAmount = "800.00000"
                 )
+
+                BudgetProgressBar(
+                    spentAmount = 100f,
+                    totalBudget = 1000f
+                )
             }
         }
     }

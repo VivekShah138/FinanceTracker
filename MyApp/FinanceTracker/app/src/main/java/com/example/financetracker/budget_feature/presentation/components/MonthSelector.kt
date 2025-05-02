@@ -2,17 +2,22 @@ package com.example.financetracker.budget_feature.presentation.components
 
 import android.app.DatePickerDialog
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.financetracker.budget_feature.presentation.BudgetEvents
 import com.example.financetracker.budget_feature.presentation.BudgetStates
@@ -36,13 +41,16 @@ fun MonthSelector(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
     ) {
         IconButton(
             onClick = { onEvent(BudgetEvents.PreviousMonthClicked) },
             modifier = Modifier.align(Alignment.CenterStart)
         ) {
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Previous Month")
+            Icon(
+                imageVector = Icons.Default.ArrowBackIosNew,
+                contentDescription = "Previous Month",
+//                tint = MaterialTheme.colorScheme.onPrimary
+            )
         }
 
         Text(
@@ -62,7 +70,10 @@ fun MonthSelector(
                     ).apply {
                         datePicker.maxDate = Calendar.getInstance().timeInMillis
                     }.show()
-                }
+                },
+//            color = MaterialTheme.colorScheme.onPrimary
+            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.titleMedium
         )
 
         if(state.nextMonthVisibility){
@@ -70,7 +81,11 @@ fun MonthSelector(
                 onClick = { onEvent(BudgetEvents.NextMonthClicked) },
                 modifier = Modifier.align(Alignment.CenterEnd)
             ) {
-                Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Next Month")
+                Icon(
+                    imageVector = Icons.Default.ArrowForwardIos,
+                    contentDescription = "Next Month",
+//                    tint = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }

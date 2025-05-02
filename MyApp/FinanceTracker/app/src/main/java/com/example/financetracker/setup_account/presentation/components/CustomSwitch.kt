@@ -20,24 +20,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun CustomSwitch(text:String,
                  isCheck: Boolean,
-                 onCheckChange: (Boolean) -> Unit
+                 onCheckChange: (Boolean) -> Unit,
+                 textAlign: TextAlign = TextAlign.Start,
+                 fontSize: TextUnit = 16.sp,
+                 textColor: Color = Color.Black,
+
 ){
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(20.dp),
-//            .padding(16.dp)
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = text, textAlign = TextAlign.Start,fontSize = 16.sp, color = Color.Black,modifier = Modifier.weight(1f))
-//        Spacer(modifier = Modifier.weight(1f))
+        Text(text = text, textAlign = textAlign,fontSize = fontSize, color = textColor,modifier = Modifier.weight(1f))
         Switch(
             checked = isCheck,
             onCheckedChange = {

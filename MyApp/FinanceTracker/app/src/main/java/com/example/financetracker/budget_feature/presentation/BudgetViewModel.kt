@@ -1,8 +1,6 @@
 package com.example.financetracker.budget_feature.presentation
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.budget_feature.domain.model.Budget
@@ -16,9 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.util.Calendar
-import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
@@ -33,7 +29,11 @@ class BudgetViewModel @Inject constructor(
             selectedMonth = Calendar.getInstance().get(Calendar.MONTH)
         )
     )
+
     val budgetStates : StateFlow<BudgetStates> = _budgetStates.asStateFlow()
+
+    private val _singleBudgetState = MutableStateFlow<Budget?>(null)
+    val singleBudgetState : StateFlow<Budget?> = _singleBudgetState.asStateFlow()
 
     private val budgetValidationEventChannel = Channel<AddTransactionValidationEvent>()
     val budgetValidationEvents = budgetValidationEventChannel.receiveAsFlow()
@@ -52,9 +52,9 @@ class BudgetViewModel @Inject constructor(
                     budget = budgetEvents.budget
                 )
             }
-            is BudgetEvents.ChangeBudgetEditState -> {
+            is BudgetEvents.ChangeCreateBudgetState -> {
                 _budgetStates.value = budgetStates.value.copy(
-                    budgetEditState = budgetEvents.state
+                    createBudgetState = budgetEvents.state
                 )
             }
 
@@ -128,6 +128,20 @@ class BudgetViewModel @Inject constructor(
                 getBudget()
 
             }
+
+            is BudgetEvents.ChangeAlertThresholdAmount -> {
+
+                _budgetStates.value = budgetStates.value.copy(
+                    alertThresholdPercent = budgetEvents.amount
+                )
+
+            }
+            is BudgetEvents.ChangeReceiveBudgetAlerts -> {
+
+                _budgetStates.value = budgetStates.value.copy(
+                    receiveAlerts = budgetEvents.state
+                )
+            }
         }
     }
 
@@ -152,7 +166,9 @@ class BudgetViewModel @Inject constructor(
                     month = _budgetStates.value.selectedMonth,
                     year = _budgetStates.value.selectedYear,
                     updatedAt = updatedAt,
-                    cloudSync = false
+                    cloudSync = false,
+                    receiveAlerts = _budgetStates.value.receiveAlerts,
+                    thresholdAmount = _budgetStates.value.alertThresholdPercent
                 )
             )
             budgetValidationEventChannel.send(AddTransactionValidationEvent.Success)
@@ -174,11 +190,27 @@ class BudgetViewModel @Inject constructor(
             Log.d("BudgetViewModel","selected Year  ${_budgetStates.value.selectedYear}")
             Log.d("BudgetViewModel","existing budget $existing")
 
+            _singleBudgetState.value = existing
+            if(existing == null){
+                _budgetStates.value = budgetStates.value.copy(
+                    createBudgetState = true,
+                    budget = "0.0"
+                )
+            }else{
+                _budgetStates.value = budgetStates.value.copy(
+                    budget = existing.amount.toString(),
+                    budgetCurrencySymbol = baseCurrencySymbol,
+                    createBudgetState = false,
+                    receiveAlerts = existing.receiveAlerts,
+                    alertThresholdPercent = existing.thresholdAmount
+                )
+            }
 
-            _budgetStates.value = budgetStates.value.copy(
-                budget = existing?.amount.toString() ?: "",
-                budgetCurrencySymbol = baseCurrencySymbol
-            )
+
+            Log.d("BudgetViewModel","create budget state ${_budgetStates.value.createBudgetState}")
+
+
+
         }
     }
 }

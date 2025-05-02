@@ -1,7 +1,9 @@
 package com.example.financetracker.budget_feature.presentation.components
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -10,17 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.financetracker.budget_feature.presentation.BudgetEvents
@@ -38,6 +37,7 @@ fun BudgetScreen(
 ){
 
     val states by budgetViewModel.budgetStates.collectAsStateWithLifecycle()
+    val singleBudgetState by budgetViewModel.singleBudgetState.collectAsStateWithLifecycle()
     val events =  budgetViewModel.budgetValidationEvents
     val context = LocalContext.current
 
@@ -79,40 +79,74 @@ fun BudgetScreen(
                 context = context
             )
 
-            OutlinedTextField(
-                value = states.budget,
-                onValueChange = {
-                    budgetViewModel.onEvent(BudgetEvents.ChangeBudget(it))
-                }, // No direct editing, only display
-                readOnly = !states.budgetEditState,
-                label = { Text("budget") },
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            budgetViewModel.onEvent(BudgetEvents.ChangeBudgetEditState(state = true))
+            if (states.createBudgetState) {
+
+                NoBudgetMessage(
+                    modifier = Modifier.weight(1f)
+                )
+
+            } else {
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.Start
+                ){
+                    BudgetAmountInput(
+                        amount = states.budget,
+                        currencySymbol = states.budgetCurrencySymbol,
+                        onAmountChange = {
+                            budgetViewModel.onEvent(BudgetEvents.ChangeBudget(it))
                         }
-                    ) {
-                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Change Budget")
+                    )
+
+                    Spacer(Modifier.height(10.dp))
+
+
+                    ReceiveAlertSwitch(
+                        text = "Receive Alert",
+                        isCheck = states.receiveAlerts,
+                        onCheckChange = {
+                            budgetViewModel.onEvent(
+                                BudgetEvents.ChangeReceiveBudgetAlerts(it)
+                            )
+                        },
+                        fontSize = 24.sp
+                    )
+
+                    Spacer(Modifier.height(15.dp))
+
+                    if(states.receiveAlerts){
+                        SliderWithValueInsideCustomThumb(
+                            sliderPosition = states.alertThresholdPercent,
+                            onValueChange = {
+                                budgetViewModel.onEvent(BudgetEvents.ChangeAlertThresholdAmount(it))
+                            }
+                        )
                     }
-                },
-                leadingIcon = {
-                    Text(text = states.budgetCurrencySymbol)
-                },
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
+                }
+            }
 
             Button(
                 onClick = {
-                    budgetViewModel.onEvent(BudgetEvents.SaveBudget)
-                    budgetViewModel.onEvent(BudgetEvents.ChangeBudgetEditState(state = false))
+                    if(states.createBudgetState){
+                        budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
+                    }else{
+                        budgetViewModel.onEvent(BudgetEvents.SaveBudget)
+                        budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
+                    }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(17.dp)
             ) {
-                Text("Save")
+                if(states.createBudgetState){
+                    Text("Create")
+                }else{
+                    Text("Save")
+                }
             }
         }
-
     }
 }

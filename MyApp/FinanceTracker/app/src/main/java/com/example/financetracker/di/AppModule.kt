@@ -15,6 +15,7 @@ import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPa
 import com.example.financetracker.auth_feature.domain.usecases.ValidateEmail
 import com.example.financetracker.auth_feature.domain.usecases.ValidatePassword
 import com.example.financetracker.budget_feature.data.data_source.BUDGET_MIGRATION_1_2
+import com.example.financetracker.budget_feature.data.data_source.BUDGET_MIGRATION_2_3
 import com.example.financetracker.budget_feature.data.data_source.BudgetDao
 import com.example.financetracker.budget_feature.data.data_source.BudgetDatabase
 import com.example.financetracker.budget_feature.data.repository.BudgetLocalRepositoryImpl
@@ -521,7 +522,7 @@ object AppModule {
             BudgetDatabase::class.java,
             BudgetDatabase.DATABASE_NAME
         )
-            .addMigrations(BUDGET_MIGRATION_1_2)
+            .addMigrations(BUDGET_MIGRATION_1_2, BUDGET_MIGRATION_2_3)
             .build()
     }
 
@@ -627,7 +628,8 @@ object AppModule {
         remoteRepository: RemoteRepository,
         homePageRepository: HomePageRepository,
         transactionLocalRepository: TransactionLocalRepository,
-        categoryRepository: CategoryRepository
+        categoryRepository: CategoryRepository,
+        budgetLocalRepository: BudgetLocalRepository
     ): HomePageUseCaseWrapper {
         return HomePageUseCaseWrapper(
             logoutUseCase = LogoutUseCase(
@@ -640,7 +642,8 @@ object AppModule {
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository),
             getAllTransactions = GetAllTransactions(transactionLocalRepository),
             getAllCategories = GetAllCategories(categoryRepository = categoryRepository),
-            getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository)
+            getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository),
+            getBudgetLocalUseCase = GetBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository)
         )
     }
 
