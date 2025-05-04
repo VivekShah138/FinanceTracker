@@ -233,7 +233,6 @@ fun DateFilterWithIcon(
                     contentDescription = "Filter Icon"
                 )
             }
-
         }
     }
 }

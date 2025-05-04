@@ -1,6 +1,7 @@
 package com.example.financetracker.main_page_feature.home_page.domain.usecases
 
 import com.example.financetracker.budget_feature.domain.usecases.GetBudgetLocalUseCase
+import com.example.financetracker.budget_feature.domain.usecases.SendBudgetNotificationUseCase
 import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.core.local.domain.room.usecases.GetAllCategories
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
@@ -20,5 +21,6 @@ data class HomePageUseCaseWrapper (
     val getAllTransactionsFilters: GetAllTransactionsFilters,
     val getUIDLocally: GetUIDLocally,
     val getAllCategories: GetAllCategories,
-    val getBudgetLocalUseCase: GetBudgetLocalUseCase
+    val getBudgetLocalUseCase: GetBudgetLocalUseCase,
+    val sendBudgetNotificationUseCase: SendBudgetNotificationUseCase
 )

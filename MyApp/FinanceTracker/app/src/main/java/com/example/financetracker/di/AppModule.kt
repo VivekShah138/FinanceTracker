@@ -28,6 +28,7 @@ import com.example.financetracker.budget_feature.domain.usecases.GetBudgetLocalU
 import com.example.financetracker.budget_feature.domain.usecases.InsertBudgetLocalUseCase
 import com.example.financetracker.budget_feature.domain.usecases.SaveBudgetToCloudUseCase
 import com.example.financetracker.budget_feature.domain.usecases.SaveMultipleBudgetsToCloudUseCase
+import com.example.financetracker.budget_feature.domain.usecases.SendBudgetNotificationUseCase
 import com.example.financetracker.setup_account.data.remote.repository.CountryRemoteRepositoryImpl
 import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
 import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
@@ -74,6 +75,7 @@ import com.example.financetracker.core.local.domain.shared_preferences.usecases.
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
+import com.example.financetracker.main_page_feature.charts.domain.usecases.ChartsUseCaseWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.DeletedTransactionDao
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDao
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDatabase
@@ -533,14 +535,17 @@ object AppModule {
         return db.budgetDao
     }
 
+
     // Budget Local Repository
     @Provides
     @Singleton
     fun provideBudgetLocalRepository(
         budgetDao: BudgetDao,
+        @ApplicationContext context: Context
     ): BudgetLocalRepository {
         return BudgetLocalRepositoryImpl(
-            budgetDao = budgetDao
+            budgetDao = budgetDao,
+            context = context
         )
     }
 
@@ -643,19 +648,21 @@ object AppModule {
             getAllTransactions = GetAllTransactions(transactionLocalRepository),
             getAllCategories = GetAllCategories(categoryRepository = categoryRepository),
             getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository),
-            getBudgetLocalUseCase = GetBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository)
+            getBudgetLocalUseCase = GetBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
+            sendBudgetNotificationUseCase = SendBudgetNotificationUseCase(budgetLocalRepository = budgetLocalRepository)
         )
     }
 
     // AddExpensePageUseCases
     @Provides
     @Singleton
-    fun provideAddExpenseUseCases(
+    fun provideAddTransactionsUseCases(
         currencyRatesLocalRepository: CurrencyRatesLocalRepository,
         categoryRepository: CategoryRepository,
         transactionLocalRepository: TransactionLocalRepository,
         sharedPreferencesRepository: SharedPreferencesRepository,
-        remoteRepository: RemoteRepository
+        remoteRepository: RemoteRepository,
+        budgetLocalRepository: BudgetLocalRepository
     ): AddTransactionUseCasesWrapper {
         return AddTransactionUseCasesWrapper(
             getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository),
@@ -668,7 +675,8 @@ object AppModule {
             getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository = sharedPreferencesRepository),
             saveSingleTransactionCloud = SaveSingleTransactionCloud(remoteRepository = remoteRepository,transactionLocalRepository = transactionLocalRepository),
             internetConnectionAvailability = InternetConnectionAvailability(remoteRepository = remoteRepository),
-            getAllLocalTransactions = GetAllLocalTransactions(transactionLocalRepository = transactionLocalRepository)
+            getAllLocalTransactions = GetAllLocalTransactions(transactionLocalRepository = transactionLocalRepository),
+            sendBudgetNotificationUseCase = SendBudgetNotificationUseCase(budgetLocalRepository = budgetLocalRepository)
         )
     }
 
@@ -726,6 +734,22 @@ object AppModule {
             setCloudSyncLocally = SetCloudSyncLocally(sharedPreferencesRepository),
             saveMultipleTransactionsCloud = SaveMultipleTransactionsCloud(remoteRepository),
             saveMultipleSavedItemCloud = SaveMultipleSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository)
+        )
+    }
+
+
+    // Charts UseCases
+    @Provides
+    @Singleton
+    fun provideChartsUseCases(
+        transactionLocalRepository: TransactionLocalRepository,
+        sharedPreferencesRepository: SharedPreferencesRepository,
+        categoryRepository: CategoryRepository
+    ): ChartsUseCaseWrapper {
+        return ChartsUseCaseWrapper(
+            getAllCategories = GetAllCategories(categoryRepository = categoryRepository),
+            getUIDLocally = GetUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository)
         )
     }
 }

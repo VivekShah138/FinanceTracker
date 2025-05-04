@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.financetracker.budget_feature.presentation.BudgetEvents
 import com.example.financetracker.budget_feature.presentation.BudgetViewModel
 
@@ -73,7 +72,7 @@ fun BudgetScreen(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
 
-            MonthSelector(
+            MonthSelectorBudget(
                 state = states,
                 onEvent = budgetViewModel::onEvent,
                 context = context

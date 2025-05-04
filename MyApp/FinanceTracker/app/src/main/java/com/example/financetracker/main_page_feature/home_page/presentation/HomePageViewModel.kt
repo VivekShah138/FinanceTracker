@@ -31,8 +31,6 @@ class HomePageViewModel @Inject constructor(
         updateCurrencyRatesOneTime()
         updateCurrencyRatesPeriodically()
         getIncomeAndExpenseAmount()
-        getBudget()
-
     }
 
     private val _homePageStates = MutableStateFlow(HomePageStates())
@@ -146,6 +144,7 @@ class HomePageViewModel @Inject constructor(
                 currencySymbol = baseCurrencySymbol,
                 accountBalance =formattedAccountBalance
             )
+            getBudget()
         }
     }
 
@@ -160,9 +159,28 @@ class HomePageViewModel @Inject constructor(
                 year = selectedYear
             )
 
-            _homePageStates.value = homePageStates.value.copy(
-                monthlyBudget = budget?.amount ?: 0.0
-            )
+            if(budget != null){
+                _homePageStates.value = homePageStates.value.copy(
+                    monthlyBudget = budget.amount,
+                    receiveAlert = budget.thresholdAmount
+                )
+                sendNotification()
+            }
+        }
+    }
+
+    private fun sendNotification(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val alertNotification = (_homePageStates.value.expenseAmount.toDouble()/_homePageStates.value.monthlyBudget) * 100
+
+            Log.d("HomePageViewModelN","Alert Notification $alertNotification")
+            Log.d("HomePageViewModelN","Receive Alert ${_homePageStates.value.receiveAlert}")
+
+            if(alertNotification >= _homePageStates.value.receiveAlert){
+                Log.d("HomePageViewModelN","Inside If")
+                homePageUseCaseWrapper.sendBudgetNotificationUseCase(title = "Alert", message = "You have crossed your ${_homePageStates.value.receiveAlert}% of your budget")
+                Log.d("HomePageViewModelN","Notification Sent")
+            }
         }
     }
 }

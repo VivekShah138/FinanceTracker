@@ -1,5 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
 
+import com.example.financetracker.budget_feature.domain.usecases.SendBudgetNotificationUseCase
 import com.example.financetracker.core.cloud.domain.usecase.InternetConnectionAvailability
 import com.example.financetracker.core.cloud.domain.usecase.SaveSingleTransactionCloud
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
@@ -16,5 +17,6 @@ data class AddTransactionUseCasesWrapper (
     val saveSingleTransactionCloud: SaveSingleTransactionCloud,
     val getCloudSyncLocally: GetCloudSyncLocally,
     val internetConnectionAvailability: InternetConnectionAvailability,
-    val getAllLocalTransactions: GetAllLocalTransactions
+    val getAllLocalTransactions: GetAllLocalTransactions,
+    val sendBudgetNotificationUseCase: SendBudgetNotificationUseCase
 )

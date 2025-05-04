@@ -3,6 +3,8 @@ package com.example.financetracker.main_page_feature.home_page.presentation.comp
 import AccountBalance
 import BottomNavigationBar
 import ExpenseIncomeCards
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.MenuItems
@@ -22,6 +25,7 @@ import com.example.financetracker.main_page_feature.home_page.presentation.HomeP
 
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun HomePageScreen(
     viewModel: HomePageViewModel,
@@ -82,7 +86,8 @@ fun HomePageScreen(
 
                 BudgetProgressBar(
                     spentAmount = states.expenseAmount.toFloat(),
-                    totalBudget = states.monthlyBudget.toFloat()
+                    totalBudget = states.monthlyBudget.toFloat(),
+                    sliderAlert = states.receiveAlert
                 )
 
             }

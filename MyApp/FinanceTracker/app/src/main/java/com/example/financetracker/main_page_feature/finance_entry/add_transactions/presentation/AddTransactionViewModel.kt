@@ -269,6 +269,8 @@ class AddTransactionViewModel @Inject constructor(
                             // 4. Update local record to reflect cloudSync = true
                             addTransactionUseCasesWrapper.insertTransactionsLocally(transactionWithId)
 
+//                            addTransactionUseCasesWrapper.sendBudgetNotificationUseCase(title = "Budget","Your Transaction Added")
+
                         } catch (e: Exception) {
                             Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
 

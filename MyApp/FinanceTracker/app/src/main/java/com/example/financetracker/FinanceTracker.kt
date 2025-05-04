@@ -32,6 +32,8 @@ class FinanceTracker : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
+        createNotificationChannel()
+
         Log.d("WorkManager", "Enqueuing Workers")
 
         applicationScope.launch {
@@ -50,4 +52,23 @@ class FinanceTracker : Application(), Configuration.Provider {
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
+
+
+    private fun createNotificationChannel() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            val channel = android.app.NotificationChannel(
+                "budget_alert_channel", // must match id in notification builder
+                "Budget Alerts",
+                android.app.NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Notifies when budget threshold is exceeded"
+            }
+
+            val notificationManager: android.app.NotificationManager =
+                getSystemService(android.content.Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+
 }

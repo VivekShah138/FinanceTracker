@@ -3,6 +3,8 @@ package com.example.financetracker.main_page_feature.home_page.presentation.comp
 import AccountBalance
 import BottomNavigationBar
 import ExpenseIncomeCards
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,9 +13,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.financetracker.core.core_presentation.components.AppTopBar
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(
     showBackground = true,
     showSystemUi = true)
@@ -53,8 +57,9 @@ fun HomePagePreviewScreen(){
                 )
 
                 BudgetProgressBar(
-                    spentAmount = 100f,
-                    totalBudget = 1000f
+                    spentAmount = 80f,
+                    totalBudget = 130f,
+                    sliderAlert = 80f
                 )
             }
         }

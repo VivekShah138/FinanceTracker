@@ -113,5 +113,12 @@ dependencies {
     //Work Manager
     implementation(libs.androidx.work.runtime.ktx)
 
+    // Charts
+    implementation("com.patrykandpatrick.vico:core:1.13.0")
+    implementation("com.patrykandpatrick.vico:compose:1.13.0")
+    implementation("com.patrykandpatrick.vico:compose-m3:1.13.0") // optional for Material 3 styling
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 
 }

@@ -28,6 +28,7 @@ import com.example.financetracker.categories_feature.expense.presentation.Expens
 import com.example.financetracker.categories_feature.income.presentation.IncomeCategoriesViewModel
 import com.example.financetracker.categories_feature.core.presentation.components.CategoriesScreen
 import com.example.financetracker.core.core_presentation.utils.Screens
+import com.example.financetracker.main_page_feature.charts.presentation.ChartsViewModel
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.FinanceEntryPage
 import com.example.financetracker.main_page_feature.charts.presentation.components.ChartsPage
@@ -120,7 +121,10 @@ class MainActivity : ComponentActivity() {
                         composable(
                             route = Screens.GraphicalVisualizationScreen.routes
                         ) {
-                            ChartsPage(navController)
+
+                            val viewModel: ChartsViewModel = hiltViewModel()
+
+                            ChartsPage(navController = navController,viewModel = viewModel)
                         }
 
                         composable(

@@ -1,13 +1,23 @@
 package com.example.financetracker.main_page_feature.home_page.presentation.components
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,20 +26,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import dagger.hilt.android.qualifiers.ApplicationContext
+
 
 @Composable
 fun BudgetProgressBar(
     spentAmount: Float,
     totalBudget: Float,
+    sliderAlert: Float,
     modifier: Modifier = Modifier
 ) {
     val rawProgress = if (totalBudget > 0) (spentAmount / totalBudget).coerceIn(0f, 1f) else 0f
-    val animatedProgress by animateFloatAsState(targetValue = rawProgress, label = "budgetProgress")
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(16.dp)
-    ) {
+    )  {
         Text(
             text = "${(rawProgress * 100).toInt()}% of budget used",
             fontSize = 18.sp,
@@ -37,18 +55,10 @@ fun BudgetProgressBar(
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-
-//        LinearProgressIndicator(
-//            progress = { animatedProgress }, // ✅ updated to lambda
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(12.dp),
-//            color = MaterialTheme.colorScheme.primary,
-//            trackColor = MaterialTheme.colorScheme.surfaceVariant
-//        )
         CustomLinearProgressIndicator(
             spentAmount = spentAmount,
-            totalBudget = totalBudget
+            totalBudget = totalBudget,
+            sliderAlert = sliderAlert,
         )
     }
 }
@@ -57,19 +67,17 @@ fun BudgetProgressBar(
 @Composable
 fun BudgetProgressBarPreview() {
     MaterialTheme {
-        BudgetProgressBar(spentAmount = 350f, totalBudget = 1000f)
-
+        BudgetProgressBar(spentAmount = 65f, totalBudget = 100f, sliderAlert = 80f)
     }
 }
-
 
 @Composable
 fun CustomLinearProgressIndicator(
     spentAmount: Float,
     totalBudget: Float,
+    sliderAlert: Float,
     modifier: Modifier = Modifier,
-    progressColor: Color = Color(0xFF388E3C),  // Default Green700
-    backgroundColor: Color = Color(0xFFC8E6C9), // Default Green100
+    backgroundColor: Color = Color(0xFFC8E6C9), // Green100
     clipShape: Shape = RoundedCornerShape(16.dp),
     height: Dp = 8.dp,
     animated: Boolean = true
@@ -80,9 +88,42 @@ fun CustomLinearProgressIndicator(
         label = "customProgressAnimation"
     )
 
+
+
+    fun interpolateHSV(startColor: Color, endColor: Color, fraction: Float): Color {
+        val startHsv = FloatArray(3)
+        val endHsv = FloatArray(3)
+
+        android.graphics.Color.colorToHSV(startColor.toArgb(), startHsv)
+        android.graphics.Color.colorToHSV(endColor.toArgb(), endHsv)
+
+        val interpolatedHsv = FloatArray(3) { i ->
+            if (i == 0) { // hue needs circular interpolation
+                val diff = (endHsv[0] - startHsv[0] + 360) % 360
+                val shortestAngle = if (diff > 180) diff - 360 else diff
+                (startHsv[0] + shortestAngle * fraction + 360) % 360
+            } else {
+                startHsv[i] + (endHsv[i] - startHsv[i]) * fraction
+            }
+        }
+
+        return Color(android.graphics.Color.HSVToColor(interpolatedHsv))
+    }
+
+    // Dynamic color logic
+    val progressColor = when {
+        clampedProgress >= 1f -> Color.Red
+        clampedProgress >= 0.75f -> interpolateHSV(Color(0xFFFF9800), Color.Red, (clampedProgress - 0.75f) / 0.25f)
+        clampedProgress >= 0.5f -> interpolateHSV(Color(0xFF388E3C), Color(0xFFFF9800), (clampedProgress - 0.5f) / 0.25f)
+        else -> Color(0xFF388E3C)
+    }
+
+
+
+
     Box(
         modifier = modifier
-            .fillMaxWidth() // ✅ add this!
+            .fillMaxWidth()
             .clip(clipShape)
             .background(color = backgroundColor)
             .height(height)
