@@ -6,5 +6,9 @@ sealed class ChartEvents{
     data object PreviousMonthClicked : ChartEvents()
     data object NextMonthClicked : ChartEvents()
     data class MonthSelected(val year: Int, val month: Int) : ChartEvents()
+    data object PreviousYearClicked : ChartEvents()
+    data object NextYearClicked : ChartEvents()
+    data class YearSelected(val year: Int) : ChartEvents()
+    data class ChangeDateToYear(val state: Boolean): ChartEvents()
 
 }

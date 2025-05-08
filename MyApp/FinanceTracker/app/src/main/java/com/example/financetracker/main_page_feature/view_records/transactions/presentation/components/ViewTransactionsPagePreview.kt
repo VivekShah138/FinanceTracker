@@ -168,8 +168,6 @@ fun DateFilterWithIcon(
     onFilterIconClick: () -> Unit,
 
     ) {
-//    val filterOptions = listOf("This Month", "Last Month", "Last 3 Months", "Custom Date")
-//    var rangeDropDownExpanded by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier

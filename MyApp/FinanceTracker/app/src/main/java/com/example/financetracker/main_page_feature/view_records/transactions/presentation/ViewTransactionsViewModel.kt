@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.DeletedTransactions
+import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionTypeFilter
@@ -114,14 +115,60 @@ class ViewTransactionsViewModel @Inject constructor(
                 )
             }
 
+//            is ViewTransactionsEvents.UpdateFilter -> {
+//                val updatedFilters = viewTransactionStates.value.filters.toMutableList().apply {
+//                    removeAll { it::class == viewTransactionsEvents.filter::class }
+//                    add(viewTransactionsEvents.filter)
+//                }
+//                Log.d("ViewTransactionsViewModelFilter","stateFiltersBefore:  ${_viewTransactionStates.value.filters}")
+//                _viewTransactionStates.value = viewTransactionStates.value.copy(filters = updatedFilters)
+//                Log.d("ViewTransactionsViewModelFilter","stateFiltersAfter:  ${_viewTransactionStates.value.filters}")
+////                updateCategoryState()
+//            }
             is ViewTransactionsEvents.UpdateFilter -> {
-                val updatedFilters = viewTransactionStates.value.filters.toMutableList().apply {
-                    removeAll { it::class == viewTransactionsEvents.filter::class }
-                    add(viewTransactionsEvents.filter)
+                val updatedFilters = viewTransactionStates.value.filters.toMutableList()
+                Log.d("ViewTransactionsViewModelFilter","updateFilters:  $updatedFilters")
+                Log.d("ViewTransactionsViewModelFilter","stateFiltersBefore:  ${_viewTransactionStates.value.filters}")
+
+                when (val filter = viewTransactionsEvents.filter) {
+                    is TransactionFilter.Category -> {
+
+                        if(filter.selectedCategories.isEmpty()){
+                            Log.d("ViewTransactionsViewModelFilter","categories are empty")
+                            _viewTransactionStates.value = viewTransactionStates.value.copy(
+                                filterApplyButton = false
+                            )
+                        }
+                        else{
+                            _viewTransactionStates.value = viewTransactionStates.value.copy(
+                                filterApplyButton = true
+                            )
+                        }
+                        val existingFilter = updatedFilters.filterIsInstance<TransactionFilter.Category>().firstOrNull()
+
+                        Log.d("ViewTransactionsViewModelFilter","existing Filter:  $existingFilter")
+                        Log.d("ViewTransactionsViewModelFilter","filter Selected Categories:  ${filter.selectedCategories}")
+                        val newSelectedCategories = if (existingFilter != null) {
+                            filter.selectedCategories // already merged in UI
+                        } else {
+                            filter.selectedCategories
+                        }
+                        updatedFilters.removeAll { it is TransactionFilter.Category }
+                        updatedFilters.add(TransactionFilter.Category(newSelectedCategories))
+                    }
+                    else -> {
+                        updatedFilters.removeAll { it::class == filter::class }
+                        updatedFilters.add(filter)
+                        updateCategoryState()
+                    }
                 }
+
                 _viewTransactionStates.value = viewTransactionStates.value.copy(filters = updatedFilters)
-                updateCategoryState()
+
+                Log.d("ViewTransactionsViewModelFilter","stateFiltersAfter:  ${_viewTransactionStates.value.filters}")
+
             }
+
 
             is ViewTransactionsEvents.ApplyFilter -> {
                 Log.d("ViewTransactionsViewModelApply","Filter State: ${_viewTransactionStates.value.filters}")

@@ -84,9 +84,10 @@ class GetAllTransactionsFilters(
                             }
 
                             is DurationFilter.CustomRange -> {
-                                val from = filter.durationFilter.from
-                                val to = filter.durationFilter.to
-                                filteredTransactions.filter { it.dateTime in from..to }
+                                val startOfFromDate = getStartOfDayInMillis(filter.durationFilter.from)
+                                val endOfToDate = getEndOfDayInMillis(filter.durationFilter.to)
+
+                                filteredTransactions.filter { it.dateTime in startOfFromDate..endOfToDate }
                             }
                         }
                     }
@@ -169,5 +170,27 @@ class GetAllTransactionsFilters(
         calendar.set(Calendar.MILLISECOND, 0)
         return calendar.timeInMillis
     }
+
+    private fun getStartOfDayInMillis(timeInMillis: Long): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timeInMillis
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
+    }
+
+    private fun getEndOfDayInMillis(timeInMillis: Long): Long {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timeInMillis
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
+        calendar.set(Calendar.MILLISECOND, 999)
+        return calendar.timeInMillis
+    }
+
+
 
 }

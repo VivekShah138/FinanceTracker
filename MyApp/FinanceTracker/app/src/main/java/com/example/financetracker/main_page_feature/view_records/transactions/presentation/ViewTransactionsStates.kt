@@ -13,7 +13,6 @@ data class ViewTransactionsStates(
     val transactionsList: List<Transactions> = emptyList(),
 
     // Duration
-//    val durationRange: List<String> = listOf("Today","This Month","Last Month","Last 3 Months","Custom Range"),
     val durationRange: List<DurationFilter> = listOf(
         DurationFilter.Today,
         DurationFilter.ThisMonth,
@@ -21,6 +20,7 @@ data class ViewTransactionsStates(
         DurationFilter.Last3Months,
         DurationFilter.CustomRange(0L,0L)
     ),
+
 //    val selectedDuration: String = durationRange[0],
     val selectedDuration: DurationFilter = DurationFilter.Today,
     val rangeDropDownExpanded: Boolean = false,
@@ -40,9 +40,7 @@ data class ViewTransactionsStates(
 
     // Filter
     val filterBottomSheetState: Boolean = false,
-//    val sortOrder: TransactionOrder = TransactionOrder.Ascending,
-//    val transactionType: TransactionTypeFilter = TransactionTypeFilter.Both,
-//    val categoriesList: List<String> = emptyList(),
+    val filterApplyButton: Boolean = true,
 
 
     // selected Transaction

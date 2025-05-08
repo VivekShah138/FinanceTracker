@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.financetracker.budget_feature.presentation.BudgetStates
 import com.example.financetracker.budget_feature.presentation.components.MonthSelectorBudget
+import com.example.financetracker.main_page_feature.charts.presentation.ChartStates
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -59,11 +60,19 @@ fun ExpensePieChartWithLegend(expenseData: Map<String, Double>) {
     }
 
 
-    MonthSelectorBudget(
-        state = BudgetStates(),
-        onEvent = {},
-        context = LocalContext.current
-    )
+//    MonthSelectorBudget(
+//        state = BudgetStates(),
+//        onEvent = {},
+//        context = LocalContext.current
+//    )
+
+//    MonthSelectorCharts(
+//        state = ChartStates(),
+//        onEvent = {
+//
+//        },
+//        context = LocalContext.current
+//    )
 
 
     Column(

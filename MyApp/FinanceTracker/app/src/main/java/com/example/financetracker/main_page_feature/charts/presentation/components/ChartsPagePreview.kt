@@ -9,15 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.financetracker.core.core_presentation.components.AppTopBar
-import kotlin.math.exp
 
 @Preview(
     showBackground = true,
@@ -84,10 +80,10 @@ fun ChartsPagePreview(){
                     )
                 }
 
-                ExpenseTabsScreen(
-                    monthlyExpenses = expenses,
-                    yearlyExpenses = expenses
-                )
+//                ChartTabsScreen(
+//                    monthlyExpenses = expenses,
+//                    yearlyExpenses = expenses
+//                )
 
 
 

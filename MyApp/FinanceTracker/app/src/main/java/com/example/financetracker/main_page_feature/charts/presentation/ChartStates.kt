@@ -7,9 +7,10 @@ data class ChartStates(
     val expenseDataWithCategory: Map<String, Double> = emptyMap(),
     val transactionsList: List<Transactions> = emptyList(),
     val selectedYear: Int = 0,
+    val selectedOnlyYear: Int = 0,
     val selectedMonth: Int = 0,
     val nextMonthVisibility: Boolean = false,
     val transactionType: String = "Expense",
-    val typeDropDown: Boolean = false
-
+    val typeDropDown: Boolean = false,
+    val showOnlyYear: Boolean = false
 )
