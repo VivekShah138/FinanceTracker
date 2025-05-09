@@ -3,7 +3,9 @@ package com.example.financetracker.main_page_feature.view_records.transactions.p
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomSheetScaffoldState
@@ -19,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components.TransactionItemCard
@@ -65,21 +68,12 @@ fun ViewTransactionsPage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            DateFilterWithIcon(
-                selectedDuration = states.selectedDuration,
-                rangeDropDownExpanded = states.rangeDropDownExpanded,
-                onDurationSelected = { selectedDuration ->
-                    viewModel.onEvent(
-                        ViewTransactionsEvents.SelectTransactionsDuration(
-                            duration = selectedDuration,
-                            expanded = false
-                        )
-                    )
-                    if (selectedDuration is DurationFilter.CustomRange) {
-                        viewModel.onEvent(ViewTransactionsEvents.ChangeCustomDateAlertBox(state = true))
-                    }
-                    Log.d("ViewTransactionsPage","Selected Duration $selectedDuration")
-                },
+            TransactionsTotal(
+                currencySymbol = states.currencySymbol,
+                amount = states.totalAmount
+            )
+
+            DateFilterWithIcon2(
                 onFilterIconClick = {
                     viewModel.onEvent(
                         ViewTransactionsEvents.SelectTransactionsFilter(state = true)
@@ -87,26 +81,6 @@ fun ViewTransactionsPage(
                     if (states.isSelectionMode) {
                         viewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
                     }
-                },
-                filterOptions = states.durationRange,
-                onRangeDropDownClick = {
-                    viewModel.onEvent(
-                        ViewTransactionsEvents.SelectTransactionsDuration(
-                            duration = states.selectedDuration,
-                            expanded = true
-                        )
-                    )
-                    if (states.isSelectionMode) {
-                        viewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
-                    }
-                },
-                onRangeDropDownDismiss = {
-                    viewModel.onEvent(
-                        ViewTransactionsEvents.SelectTransactionsDuration(
-                            duration = states.selectedDuration,
-                            expanded = false
-                        )
-                    )
                 }
             )
 

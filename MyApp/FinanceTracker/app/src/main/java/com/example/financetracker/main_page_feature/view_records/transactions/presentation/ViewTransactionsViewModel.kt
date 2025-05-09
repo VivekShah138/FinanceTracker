@@ -305,15 +305,62 @@ class ViewTransactionsViewModel @Inject constructor(
         Log.d("ViewTransactionsViewModelF","transaction Before ViewScope Filter")
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("ViewTransactionsViewModelF","transaction Enter ViewScope Filter")
-            viewRecordsUseCaseWrapper.getAllTransactionsFilters(uid = uid, filters = _viewTransactionStates.value.filters).collect { transactions ->
+            val transactions = viewRecordsUseCaseWrapper.getAllTransactionsFilters(uid = uid, filters = _viewTransactionStates.value.filters).first()
                 Log.d("ViewTransactionsViewModelF","transactions Collected")
                 Log.d("ViewTransactionsViewModelF","collected Transactions are $transactions")
-                _viewTransactionStates.value = viewTransactionStates.value.copy(
-                    transactionsList = transactions
-                )
-            }
+
+            _viewTransactionStates.value = viewTransactionStates.value.copy(
+                transactionsList = transactions
+            )
             Log.d("ViewTransactionsViewModelF","transaction List Filter ${_viewTransactionStates.value.transactionsList}")
             Log.d("ViewTransactionsViewModelF","transaction Filter ${_viewTransactionStates.value.filters}")
+
+            getUserProfile()
+            getTotalAmount()
+        }
+
+
+    }
+
+    private fun getTotalAmount(){
+        val transactions = _viewTransactionStates.value.transactionsList
+        Log.d("ViewTransactionsViewModelT","All Transactions $transactions")
+
+        var incomeAmount = 0.0
+        var expenseAmount = 0.0
+
+        transactions.forEach {transaction ->
+
+            when {
+                transaction.transactionType.equals("Income", ignoreCase = true) -> {
+                    incomeAmount += transaction.amount
+                    Log.d("ViewTransactionsViewModelT","income Amount OverAll $incomeAmount")
+                }
+                transaction.transactionType.equals("Expense", ignoreCase = true) -> {
+                    expenseAmount += transaction.amount
+                    Log.d("ViewTransactionsViewModelT","expense Amount OverAll $expenseAmount")
+                }
+            }
+        }
+        val totalAmount = incomeAmount - expenseAmount
+        Log.d("ViewTransactionsViewModelT","Total Amount $totalAmount")
+
+        _viewTransactionStates.value = viewTransactionStates.value.copy(
+            totalAmount = incomeAmount - expenseAmount
+        )
+
+        Log.d("ViewTransactionsViewModelT","Total Amount State ${_viewTransactionStates.value.totalAmount}")
+
+    }
+
+    fun getUserProfile(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val userProfile = viewRecordsUseCaseWrapper.getUserProfileLocal()
+            val currencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
+
+            _viewTransactionStates.value = viewTransactionStates.value.copy(
+                currencySymbol = currencySymbol
+            )
         }
     }
 }

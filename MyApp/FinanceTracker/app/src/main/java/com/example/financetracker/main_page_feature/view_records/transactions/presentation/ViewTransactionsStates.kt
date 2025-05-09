@@ -11,6 +11,8 @@ data class ViewTransactionsStates(
 
     // Transaction List
     val transactionsList: List<Transactions> = emptyList(),
+    val totalAmount: Double = 0.0,
+    val currencySymbol: String = "$",
 
     // Duration
     val durationRange: List<DurationFilter> = listOf(
@@ -30,9 +32,9 @@ data class ViewTransactionsStates(
 
     val filters: List<TransactionFilter> = listOf(
         TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
-        TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
+        TransactionFilter.Order(TransactionOrder.Descending), // Default to Ascending order
         TransactionFilter.Category(emptyList()), // Default to all categories (empty list means no category filter)
-        TransactionFilter.Duration(DurationFilter.Today) // Default to "This Month" filter
+        TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
     ),
 
     val categories: List<Category> = emptyList(),

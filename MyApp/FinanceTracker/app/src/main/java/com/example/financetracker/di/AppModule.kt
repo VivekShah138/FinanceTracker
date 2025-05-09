@@ -690,7 +690,8 @@ object AppModule {
         savedItemsRemoteRepository: SavedItemsRemoteRepository,
         sharedPreferencesRepository: SharedPreferencesRepository,
         remoteRepository: RemoteRepository,
-        categoryRepository: CategoryRepository
+        categoryRepository: CategoryRepository,
+        homePageRepository: HomePageRepository
     ): ViewRecordsUseCaseWrapper {
         return ViewRecordsUseCaseWrapper(
             getAllTransactions = GetAllTransactions(transactionLocalRepository = transactionLocalRepository),
@@ -716,7 +717,8 @@ object AppModule {
             saveSingleSavedItemCloud = SaveSingleSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository,savedItemsLocalRepository = savedItemsLocalRepository),
             saveItemLocalUseCase = SaveItemLocalUseCase(savedItemsLocalRepository = savedItemsLocalRepository),
             getAllCategories = GetAllCategories(categoryRepository = categoryRepository),
-            getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository)
+            getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository),
+            getUserProfileLocal = GetUserProfileLocal(homePageRepository = homePageRepository)
 
         )
     }

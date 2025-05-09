@@ -18,11 +18,13 @@ import com.example.financetracker.main_page_feature.finance_entry.saveItems.doma
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.DeleteMultipleSavedItemCloud
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveMultipleSavedItemCloud
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveSingleSavedItemCloud
+import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
 
 data class ViewRecordsUseCaseWrapper (
     val getAllTransactions: GetAllTransactions,
     val getAllSavedItemLocalUseCase: GetAllSavedItemLocalUseCase,
     val getUIDLocally: GetUIDLocally,
+    val getUserProfileLocal: GetUserProfileLocal,
     val deleteSelectedTransactionsByIdsLocally: DeleteSelectedTransactionsByIdsLocally,
     val deleteSelectedSavedItemsByIdsLocally: DeleteSelectedSavedItemsByIdsLocally,
     val getCloudSyncLocally: GetCloudSyncLocally,

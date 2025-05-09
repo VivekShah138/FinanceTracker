@@ -160,7 +160,7 @@ fun TransactionItemCard(
         SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(item.dateTime)
     }
 
-    val priceColor = if (item.transactionType == "Expense") Color.Red else Color.Green
+    val priceColor = if (item.transactionType == "Expense") Color(0xFFD32F2F) else Color(0xFF2E7D32)
 
     Card(
         modifier = Modifier
