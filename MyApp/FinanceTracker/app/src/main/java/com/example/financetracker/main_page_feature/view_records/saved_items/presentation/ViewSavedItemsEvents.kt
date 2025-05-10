@@ -20,4 +20,6 @@ sealed class ViewSavedItemsEvents() {
     data class ChangeSavedItem(val itemName: String, val itemPrice: String, val itemShopName: String, val itemDescription: String): ViewSavedItemsEvents()
     data class SelectSavedItems(val savedItems: SavedItems): ViewSavedItemsEvents()
     data object SaveItem: ViewSavedItemsEvents()
+    data class GetSingleSavedItem(val id: Int): ViewSavedItemsEvents()
+    data object RefreshUpdatedItem: ViewSavedItemsEvents()
 }

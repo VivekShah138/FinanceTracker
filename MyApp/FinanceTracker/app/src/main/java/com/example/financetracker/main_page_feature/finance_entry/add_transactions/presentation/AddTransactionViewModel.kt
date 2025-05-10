@@ -237,10 +237,16 @@ class AddTransactionViewModel @Inject constructor(
                     transactionCurrencyCode to selectedTransactionCurrency
                 )
 
+                val enteredPrice = _addTransactionStates.value.transactionPrice?.toDoubleOrNull() ?: 0.0
+                val convertedPrice = _addTransactionStates.value.convertedPrice?.toDoubleOrNull()
+
+                Log.d("AddExpenseViewModelA", "Entered Price: $enteredPrice")
+                Log.d("AddExpenseViewModelA", "Converted Price: $convertedPrice")
+
                 val transaction = Transactions(
-                    amount = _addTransactionStates.value.transactionPrice?.toDoubleOrNull() ?: 0.0,
+                    amount = convertedPrice ?: enteredPrice,
                     currency = transactionCurrency,
-                    convertedAmount = _addTransactionStates.value.convertedPrice?.toDoubleOrNull() ?: 0.0,
+                    convertedAmount = if (convertedPrice != null) enteredPrice else 0.0,
                     exchangeRate = _addTransactionStates.value.transactionExchangeRate?.toDoubleOrNull() ?: 0.0,
                     transactionType = _addTransactionStates.value.transactionType,
                     category = _addTransactionStates.value.category,
@@ -252,6 +258,8 @@ class AddTransactionViewModel @Inject constructor(
                     transactionName = _addTransactionStates.value.transactionName
                 )
 
+                Log.d("AddExpenseViewModelA", "Transaction: $transaction")
+
                 val isInternetAvailable = addTransactionUseCasesWrapper.internetConnectionAvailability()
 
                 if (cloudSyncStatus) {
@@ -259,9 +267,12 @@ class AddTransactionViewModel @Inject constructor(
                         try {
                             // 1. Insert locally first to generate the ID
                             val rowId = addTransactionUseCasesWrapper.insertNewTransactionsReturnId(transaction)
+                            Log.d("AddExpenseViewModelA", "RowId: $rowId")
+
 
                             // 2. Copy the ID into a new transaction object
                             val transactionWithId = transaction.copy(transactionId = rowId.toInt(), cloudSync = true)
+                            Log.d("AddExpenseViewModelA", "TransactionWithId: $transactionWithId")
 
                             // 3. Save to cloud
                             addTransactionUseCasesWrapper.saveSingleTransactionCloud(userId = uid, transactions = transactionWithId)

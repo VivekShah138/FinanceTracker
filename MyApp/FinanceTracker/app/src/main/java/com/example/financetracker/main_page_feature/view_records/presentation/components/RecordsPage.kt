@@ -11,6 +11,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -33,13 +34,18 @@ import kotlinx.coroutines.launch
 fun RecordsPage(
     navController: NavController,
     viewTransactionsViewModel: ViewTransactionsViewModel,
-    viewSavedItemsViewModel: ViewSavedItemsViewModel
+    viewSavedItemsViewModel: ViewSavedItemsViewModel,
+    defaultTabIndex: Int = 0
 ) {
 
     val viewTransactionsStates by viewTransactionsViewModel.viewTransactionStates.collectAsStateWithLifecycle()
     val viewSavedItemsStates by viewSavedItemsViewModel.viewSavedItemsStates.collectAsStateWithLifecycle()
 
-    val pagerState = rememberPagerState(pageCount = { 2 })
+    val pagerState = rememberPagerState(
+        initialPage = defaultTabIndex,
+        pageCount = {2} // or however many pages you have
+    )
+
     val coroutineScope = rememberCoroutineScope()
 
 
@@ -59,7 +65,11 @@ fun RecordsPage(
                         listOf<MenuItems>(
                             MenuItems(
                                 text = "Info",
-                                onClick = {}
+                                onClick = {
+//                                    navController.navigate(Screens.SingleTransactionScreen.routes)
+                                    navController.navigate("${Screens.SingleTransactionScreen.routes}/${viewTransactionsStates.selectedTransactions.firstOrNull()}")
+
+                                }
                             ),
                             MenuItems(
                                 text = "Delete",
@@ -111,7 +121,9 @@ fun RecordsPage(
                         listOf<MenuItems>(
                             MenuItems(
                                 text = "Info",
-                                onClick = {}
+                                onClick = {
+                                    navController.navigate("${Screens.SingleSavedItemScreen.routes}/${viewSavedItemsStates.selectedSavedItems.firstOrNull()}")
+                                }
                             ),
                             MenuItems(
                                 text = "Delete",
@@ -181,6 +193,16 @@ fun RecordsPage(
                 .padding(padding)
         ) {
 
+            LaunchedEffect(pagerState.currentPage) {
+                if (pagerState.currentPage == 0 && viewSavedItemsStates.isSelectionMode) {
+                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+                }
+                if (pagerState.currentPage == 1 && viewTransactionsStates.isSelectionMode) {
+                    viewTransactionsViewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
+                }
+            }
+
+
             // TabRow should now be visible
             TabRow(selectedTabIndex = pagerState.currentPage) {
                 Tab(
@@ -188,6 +210,9 @@ fun RecordsPage(
                     onClick = {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(0)
+                            if (viewSavedItemsStates.isSelectionMode) {
+                                viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+                            }
                         }
                     },
                     text = { Text("Transactions") }
@@ -197,6 +222,9 @@ fun RecordsPage(
                     onClick = {
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(1)
+                            if (viewTransactionsStates.isSelectionMode) {
+                                viewTransactionsViewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
+                            }
                         }
                     },
                     text = { Text("Saved Items") }
@@ -210,6 +238,9 @@ fun RecordsPage(
                         1 -> ViewSavedItemsPage(viewModel = viewSavedItemsViewModel,navController = navController)
                     }
                 }
+
+
+
         }
 
     }

@@ -45,5 +45,5 @@ data class ViewRecordsUseCaseWrapper (
     val saveSingleSavedItemCloud: SaveSingleSavedItemCloud,
     val saveItemLocalUseCase: SaveItemLocalUseCase,
     val getAllCategories: GetAllCategories,
-    val getAllTransactionsFilters: GetAllTransactionsFilters
+    val getAllTransactionsFilters: GetAllTransactionsFilters,
 )

@@ -1,9 +1,11 @@
 package com.example.financetracker.core.core_presentation.components
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -22,7 +24,8 @@ fun AppTopBar(
     showMenu: Boolean = false,        // Optional Menu Button
     onBackClick: () -> Unit,     // Non-nullable function
     menuItems: List<MenuItems> = listOf(),      // Non-nullable function
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    customActions: @Composable RowScope.() -> Unit = {}  // 👈 NEW SLOT
 ) {
     TopAppBar(
         modifier = modifier,
@@ -60,6 +63,9 @@ fun AppTopBar(
                     }
                 }
             }
+            else(
+                customActions()
+            )
         }
     )
 }
@@ -67,5 +73,16 @@ fun AppTopBar(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomePagePreviewScreen() {
-    AppTopBar(title = "Title", showBackButton = true, showMenu = true, onBackClick = {}, menuItems = emptyList<MenuItems>())
+    AppTopBar(
+        title = "Title",
+        showBackButton = true,
+        showMenu = false,
+        onBackClick = {},
+        menuItems = emptyList<MenuItems>(),
+        customActions = {
+            IconButton(onClick = { /* handle delete */ }) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
+            }
+        }
+    )
 }

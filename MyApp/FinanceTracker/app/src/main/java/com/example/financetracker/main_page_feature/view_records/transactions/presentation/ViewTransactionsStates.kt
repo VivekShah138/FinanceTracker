@@ -6,6 +6,7 @@ import com.example.financetracker.main_page_feature.view_records.transactions.ut
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionTypeFilter
+import com.example.financetracker.setup_account.domain.model.Currency
 
 data class ViewTransactionsStates(
 
@@ -13,6 +14,7 @@ data class ViewTransactionsStates(
     val transactionsList: List<Transactions> = emptyList(),
     val totalAmount: Double = 0.0,
     val currencySymbol: String = "$",
+    val baseCurrency: Map<String,Currency> = emptyMap(),
 
     // Duration
     val durationRange: List<DurationFilter> = listOf(
@@ -51,4 +53,4 @@ data class ViewTransactionsStates(
 
 
 
-)
+    )

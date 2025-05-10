@@ -2,6 +2,7 @@ package com.example.financetracker.main_page_feature.view_records.transactions.p
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +12,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.financetracker.core.core_presentation.utils.Screens
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components.TransactionItemCard
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsViewModel
@@ -38,6 +42,7 @@ fun ViewTransactionsPage(
 
 
     val states by viewModel.viewTransactionStates.collectAsStateWithLifecycle()
+    val singleItemState by viewModel.selectedItem.collectAsStateWithLifecycle()
 
     BackHandler(enabled = states.isSelectionMode) {
         viewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
@@ -120,37 +125,58 @@ fun ViewTransactionsPage(
                 )
             }
 
-            LazyColumn {
-                items(states.transactionsList) { transaction ->
 
-                    val isSelected = states.selectedTransactions.contains(transaction.transactionId)
+            if (states.transactionsList.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "No transactions available")
+                }
+            } else {
+                LazyColumn {
+                    items(states.transactionsList) { transaction ->
 
-                    TransactionItemCard(
-                        item = transaction,
-                        isSelected = isSelected,
-                        isSelectionMode = states.isSelectionMode,
-                        onClick = {
-                            if (states.isSelectionMode) {
-                                viewModel.onEvent(
-                                    ViewTransactionsEvents.ToggleTransactionSelection(
-                                        transaction.transactionId!!
+                        val isSelected = states.selectedTransactions.contains(transaction.transactionId)
+
+                        TransactionItemCard(
+                            item = transaction,
+                            isSelected = isSelected,
+                            isSelectionMode = states.isSelectionMode,
+                            onClick = {
+                                if (states.isSelectionMode) {
+                                    viewModel.onEvent(
+                                        ViewTransactionsEvents.ToggleTransactionSelection(
+                                            transaction.transactionId!!
+                                        )
                                     )
-                                )
-                            } else {
-                                // Normal click action
-                            }
-                        },
-                        onLongClick = {
-                            if (!states.isSelectionMode) {
-                                viewModel.onEvent(ViewTransactionsEvents.EnterSelectionMode)
-                                viewModel.onEvent(
-                                    ViewTransactionsEvents.ToggleTransactionSelection(
-                                        transaction.transactionId!!
+                                } else {
+                                    viewModel.onEvent(
+                                        ViewTransactionsEvents.SelectItems(
+                                            transactions = transaction
+                                        )
                                     )
-                                )
+
+
+                                    navController.navigate("${Screens.SingleTransactionScreen.routes}/${transaction.transactionId}")
+
+                                }
+                            },
+                            onLongClick = {
+                                if (!states.isSelectionMode) {
+                                    viewModel.onEvent(ViewTransactionsEvents.EnterSelectionMode)
+                                    viewModel.onEvent(
+                                        ViewTransactionsEvents.ToggleTransactionSelection(
+                                            transaction.transactionId!!
+                                        )
+                                    )
+                                    viewModel.onEvent(
+                                        ViewTransactionsEvents.SelectItems(transactions = transaction)
+                                    )
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

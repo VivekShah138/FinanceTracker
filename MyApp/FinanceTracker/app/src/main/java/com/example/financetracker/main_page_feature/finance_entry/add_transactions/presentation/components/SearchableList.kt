@@ -39,16 +39,7 @@ import java.util.Locale
 )
 @Composable
 fun SearchableListPreview(){
-
-//    SavedItemsCard(
-//        itemName = "Milk",
-//        itemId = "1",
-//        itemDescription = "4 pints(2.2L)",
-//        price = "1.45",
-//        shopName = "Tesco",
-//        currencySymbol = "£",
-//        onClick = {}
-//    )
+    
 
     TransactionItemCard(
         Transactions(
@@ -73,79 +64,6 @@ fun SearchableListPreview(){
     )
 }
 
-
-//@Composable
-//fun TransactionItemCard(
-//    item: Transactions,
-//    onClick: () -> Unit
-//) {
-//    val formattedDate = remember(item.dateTime) {
-//        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(item.dateTime)
-//    }
-//    val priceColor = if (item.transactionType == "Expense") {
-//        Color.Red
-//    } else {
-//        Color.Green
-//    }
-//
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(vertical = 8.dp)
-//            .padding(horizontal = 16.dp)
-//            .clickable { onClick() },
-//        shape = RoundedCornerShape(5.dp),
-//        elevation = CardDefaults.cardElevation(5.dp),
-//        colors = CardDefaults.cardColors(
-//            containerColor = MaterialTheme.colorScheme.surface
-//        )
-//    ){
-//
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(vertical = 8.dp),
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            // Formatted date
-//            Text(
-//                text = formattedDate,
-//                modifier = Modifier.weight(1f),
-//                fontSize = 12.sp,
-//                textAlign = TextAlign.Center
-//            )
-//
-//            // Name + Description in one column
-//            Column(
-//                modifier = Modifier.weight(2f),
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text(
-//                    text = item.transactionName,
-//                    fontWeight = FontWeight.Bold
-//                )
-//                Text(
-//                    text = item.description ?: "N/A",
-//                    textAlign = TextAlign.Center,
-//                    modifier = Modifier.fillMaxWidth(),
-//                    fontSize = 12.sp,
-//                    color = Color.Gray,
-//                    maxLines = 1,  // Limit to 1 line
-//                    overflow = TextOverflow.Ellipsis // Show ellipsis when overflow occurs
-//                )
-//            }
-//
-//            // Amount
-//            Text(
-//                text = "${item.currency?.entries?.firstOrNull()?.value?.symbol ?: "$"} ${item.amount}",
-//                color = priceColor,
-//                modifier = Modifier.weight(1f),
-//                textAlign = TextAlign.Center,
-//                fontWeight = FontWeight.Bold
-//            )
-//        }
-//    }
-//}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

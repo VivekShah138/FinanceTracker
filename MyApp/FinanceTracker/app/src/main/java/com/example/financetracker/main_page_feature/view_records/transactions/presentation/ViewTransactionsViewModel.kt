@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.DeletedTransactions
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
@@ -25,6 +27,9 @@ class ViewTransactionsViewModel @Inject constructor(
 
     private val _viewTransactionStates = MutableStateFlow(ViewTransactionsStates())
     val viewTransactionStates : StateFlow<ViewTransactionsStates> = _viewTransactionStates.asStateFlow()
+
+    private val _selectedItem = MutableStateFlow<Transactions?>(null)
+    val selectedItem: StateFlow<Transactions?> = _selectedItem.asStateFlow()
 
     private val uid = viewRecordsUseCaseWrapper.getUIDLocally() ?: "Unknown"
 
@@ -59,6 +64,27 @@ class ViewTransactionsViewModel @Inject constructor(
                 Log.d("ViewTransactionsViewModelF","SelectedDuration Filter After: ${_viewTransactionStates.value.filters}")
 
                 getTransactionsAllFilter()
+            }
+
+            is ViewTransactionsEvents.GetSingleTransaction -> {
+
+                viewModelScope.launch(Dispatchers.IO) {
+
+                    val transaction = viewRecordsUseCaseWrapper.getAllLocalTransactionsById(viewTransactionsEvents.transactionId)
+                    Log.d("ViewTransactionsViewModelS","SavedItems Before ${_selectedItem.value}")
+                    _selectedItem.value = transaction
+                    Log.d("ViewTransactionsViewModelS","SavedItems After ${_selectedItem.value}")
+
+                }
+
+            }
+
+            is ViewTransactionsEvents.SelectItems -> {
+
+                Log.d("ViewTransactionsViewModelS","SavedItems Before ${_selectedItem.value}")
+                _selectedItem.value = viewTransactionsEvents.transactions
+                Log.d("ViewTransactionsViewModelS","SavedItems After ${_selectedItem.value}")
+
             }
 
             // Transaction Filter
@@ -114,17 +140,6 @@ class ViewTransactionsViewModel @Inject constructor(
                     }
                 )
             }
-
-//            is ViewTransactionsEvents.UpdateFilter -> {
-//                val updatedFilters = viewTransactionStates.value.filters.toMutableList().apply {
-//                    removeAll { it::class == viewTransactionsEvents.filter::class }
-//                    add(viewTransactionsEvents.filter)
-//                }
-//                Log.d("ViewTransactionsViewModelFilter","stateFiltersBefore:  ${_viewTransactionStates.value.filters}")
-//                _viewTransactionStates.value = viewTransactionStates.value.copy(filters = updatedFilters)
-//                Log.d("ViewTransactionsViewModelFilter","stateFiltersAfter:  ${_viewTransactionStates.value.filters}")
-////                updateCategoryState()
-//            }
             is ViewTransactionsEvents.UpdateFilter -> {
                 val updatedFilters = viewTransactionStates.value.filters.toMutableList()
                 Log.d("ViewTransactionsViewModelFilter","updateFilters:  $updatedFilters")
@@ -168,15 +183,11 @@ class ViewTransactionsViewModel @Inject constructor(
                 Log.d("ViewTransactionsViewModelFilter","stateFiltersAfter:  ${_viewTransactionStates.value.filters}")
 
             }
-
-
             is ViewTransactionsEvents.ApplyFilter -> {
                 Log.d("ViewTransactionsViewModelApply","Filter State: ${_viewTransactionStates.value.filters}")
                 getTransactionsAllFilter()
             }
-
             is ViewTransactionsEvents.ClearFilter -> {
-
                 Log.d("ViewTransactionsViewModelApply","Filter Old State: ${_viewTransactionStates.value.filters}")
                 val defaultFilters: List<TransactionFilter> = listOf(
                     TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
@@ -194,12 +205,19 @@ class ViewTransactionsViewModel @Inject constructor(
             // Delete Selected Transaction
             is ViewTransactionsEvents.DeleteSelectedTransactions -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val selectedIds = _viewTransactionStates.value.selectedTransactions
-                    selectedIds.forEach { selectedTransactionId ->
 
-                        val selectedTransaction = viewRecordsUseCaseWrapper.getAllLocalTransactionsById(selectedTransactionId)
+//
+                    val selectedSingleTransaction = _selectedItem.value?.transactionId?.let { mutableSetOf(it) }
 
-                        if(selectedTransaction.cloudSync){
+                    val selectedIds = if(_viewTransactionStates.value.selectedTransactions.isEmpty()) selectedSingleTransaction else _viewTransactionStates.value.selectedTransactions
+                    selectedIds!!.forEach { selectedTransactionId ->
+
+                        val selectedTransaction =
+                            viewRecordsUseCaseWrapper.getAllLocalTransactionsById(
+                                selectedTransactionId
+                            )
+
+                        if (selectedTransaction.cloudSync) {
                             viewRecordsUseCaseWrapper.insertDeletedTransactionsLocally(
                                 DeletedTransactions(
                                     transactionId = selectedTransactionId,
@@ -209,13 +227,16 @@ class ViewTransactionsViewModel @Inject constructor(
                         }
 
                         // 1. Delete locally
-                        viewRecordsUseCaseWrapper.deleteSelectedTransactionsByIdsLocally(selectedTransactionId)
+                        viewRecordsUseCaseWrapper.deleteSelectedTransactionsByIdsLocally(
+                            selectedTransactionId
+                        )
                     }
 
                     _viewTransactionStates.value = _viewTransactionStates.value.copy(
                         isSelectionMode = false,
                         selectedTransactions = emptySet()
                     )
+                    getTransactionsAllFilter()
                 }
             }
 
@@ -306,8 +327,7 @@ class ViewTransactionsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("ViewTransactionsViewModelF","transaction Enter ViewScope Filter")
             val transactions = viewRecordsUseCaseWrapper.getAllTransactionsFilters(uid = uid, filters = _viewTransactionStates.value.filters).first()
-                Log.d("ViewTransactionsViewModelF","transactions Collected")
-                Log.d("ViewTransactionsViewModelF","collected Transactions are $transactions")
+            Log.d("ViewTransactionsViewModelF","collected Transactions are $transactions")
 
             _viewTransactionStates.value = viewTransactionStates.value.copy(
                 transactionsList = transactions
@@ -356,10 +376,12 @@ class ViewTransactionsViewModel @Inject constructor(
     fun getUserProfile(){
         viewModelScope.launch(Dispatchers.IO) {
             val userProfile = viewRecordsUseCaseWrapper.getUserProfileLocal()
+            val baseCurrency = userProfile?.baseCurrency ?: emptyMap()
             val currencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
 
             _viewTransactionStates.value = viewTransactionStates.value.copy(
-                currencySymbol = currencySymbol
+                currencySymbol = currencySymbol,
+                baseCurrency = baseCurrency
             )
         }
     }

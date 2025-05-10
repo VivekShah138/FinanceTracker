@@ -7,9 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 import com.example.financetracker.main_page_feature.home_page.presentation.components.HomePageScreen
 import com.example.financetracker.main_page_feature.home_page.presentation.HomePageViewModel
@@ -38,6 +40,8 @@ import com.example.financetracker.main_page_feature.settings.presentation.compon
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsViewModel
 import com.example.financetracker.main_page_feature.view_records.presentation.components.RecordsPage
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsViewModel
+import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.components.SingleSavedItemScreen
+import com.example.financetracker.main_page_feature.view_records.transactions.presentation.components.SingleTransactionScreen
 import com.example.financetracker.setup_account.presentation.ProfileSetUpViewModel
 import com.example.financetracker.setup_account.presentation.components.NewUserProfileOnBoardingScreens
 import com.example.financetracker.setup_account.presentation.components.ProfileSetUp
@@ -50,7 +54,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            FinanceTrackerTheme {
+            FinanceTrackerTheme(dynamicColor = false) {
                 Surface(
                     color = MaterialTheme.colorScheme.background
                 ) {
@@ -139,6 +143,21 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+//                        composable(
+//                            route = "${Screens.ViewRecordsScreen.routes}/{tabIndex}",
+//                            arguments = listOf(navArgument("tabIndex") { defaultValue = 0 })
+//                        ) { backStackEntry ->
+//                            val tabIndex = backStackEntry.arguments?.getString("tabIndex")?.toInt() ?: 0
+//                            val viewTransactionsViewModel: ViewTransactionsViewModel = hiltViewModel()
+//                            val viewSavedItemsViewModel: ViewSavedItemsViewModel = hiltViewModel()
+//                            RecordsPage(
+//                                navController = navController,
+//                                viewSavedItemsViewModel = viewSavedItemsViewModel,
+//                                viewTransactionsViewModel = viewTransactionsViewModel,
+//                                defaultTabIndex = tabIndex
+//                            )
+//                        }
+
                         composable(
                             route = Screens.AddTransactionsScreen.routes
                         ) {
@@ -176,6 +195,30 @@ class MainActivity : ComponentActivity() {
                             BudgetScreen(
                                 navController = navController,
                                 budgetViewModel = budgetViewModel
+                            )
+                        }
+
+                        composable(
+                            route = Screens.SingleTransactionScreen.routes + "/{transactionId}",
+                            arguments = listOf(navArgument("transactionId") { type = NavType.IntType })
+                        ) { backStackEntry ->
+                            val transactionId = backStackEntry.arguments?.getInt("transactionId")
+                            SingleTransactionScreen(
+                                navController = navController,
+                                viewTransactionsViewModel = hiltViewModel(),
+                                transactionId = transactionId ?: -1  // fallback if null
+                            )
+                        }
+
+                        composable(
+                            route = Screens.SingleSavedItemScreen.routes + "/{savedItemId}",
+                            arguments = listOf(navArgument("savedItemId") { type = NavType.IntType })
+                        ) { backStackEntry ->
+                            val savedItemId = backStackEntry.arguments?.getInt("savedItemId")
+                            SingleSavedItemScreen(
+                                navController = navController,
+                                viewSavedItemsViewModel = hiltViewModel(),
+                                savedItemId = savedItemId ?: -1  // fallback if null
                             )
                         }
 

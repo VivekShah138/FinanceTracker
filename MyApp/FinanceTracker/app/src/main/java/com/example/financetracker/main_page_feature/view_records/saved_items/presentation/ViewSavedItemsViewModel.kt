@@ -8,6 +8,7 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel.AddTransactionValidationEvent
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.DeletedSavedItems
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
+import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
 import com.example.financetracker.setup_account.domain.model.Currency
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,9 +55,11 @@ class ViewSavedItemsViewModel @Inject constructor(
             is ViewSavedItemsEvents.DeleteSelectedSavedItems -> {
                 viewModelScope.launch(Dispatchers.IO) {
 
-                    val selectedIds = _viewSavedItemsStates.value.selectedSavedItems
+                    val selectedSingleSavedItem = _savedItemState.value?.itemId?.let { mutableSetOf(it) }
 
-                    selectedIds.forEach { selectedSavedItemId ->
+                    val selectedIds = if(_viewSavedItemsStates.value.selectedSavedItems.isEmpty()) selectedSingleSavedItem else _viewSavedItemsStates.value.selectedSavedItems
+
+                    selectedIds!!.forEach { selectedSavedItemId ->
 
                         val selectedSavedItem = viewRecordsUseCaseWrapper.getSavedItemById(selectedSavedItemId)
 
@@ -72,8 +75,6 @@ class ViewSavedItemsViewModel @Inject constructor(
 
                         // Delete Saved Item Locally
                         viewRecordsUseCaseWrapper.deleteSelectedSavedItemsByIdsLocally(selectedSavedItemId)
-
-
                     }
 
                     _viewSavedItemsStates.value = viewSavedItemsStates.value.copy(
@@ -81,7 +82,6 @@ class ViewSavedItemsViewModel @Inject constructor(
                         selectedSavedItems = emptySet()
                     )
                 }
-
             }
 
             // Transaction Selection
@@ -135,11 +135,9 @@ class ViewSavedItemsViewModel @Inject constructor(
             }
             is ViewSavedItemsEvents.SelectSavedItems -> {
 
-
                 Log.d("ViewSavedItemsViewModel","SavedItems Before ${_savedItemState.value}")
                 _savedItemState.value = viewSavedItemsEvents.savedItems
                 Log.d("ViewSavedItemsViewModel","SavedItems Before ${_savedItemState.value}")
-
 
             }
             is ViewSavedItemsEvents.SaveItem -> {
@@ -160,6 +158,25 @@ class ViewSavedItemsViewModel @Inject constructor(
                     selectedSavedItems = selectedItems
                 )
             }
+
+            is ViewSavedItemsEvents.GetSingleSavedItem -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val savedItem = viewRecordsUseCaseWrapper.getSavedItemById(viewSavedItemsEvents.id)
+
+                    _savedItemState.value = savedItem
+                }
+            }
+
+            is ViewSavedItemsEvents.RefreshUpdatedItem -> {
+
+                viewModelScope.launch(Dispatchers.IO) {
+
+                    val itemId = _savedItemState.value!!.itemId ?: 0
+                    val savedItem = viewRecordsUseCaseWrapper.getSavedItemById(itemId)
+                    _savedItemState.value = savedItem
+                }
+
+            }
         }
     }
 
@@ -177,9 +194,13 @@ class ViewSavedItemsViewModel @Inject constructor(
 
     private fun updateItemStates(){
         viewModelScope.launch(Dispatchers.IO) {
-            val itemId = _viewSavedItemsStates.value.selectedSavedItems
 
-            itemId.forEach { savedItemId ->
+            val selectedSingleSavedItem = _savedItemState.value?.itemId?.let { mutableSetOf(it) }
+
+            val itemId = if(_viewSavedItemsStates.value.selectedSavedItems.isEmpty()) selectedSingleSavedItem else _viewSavedItemsStates.value.selectedSavedItems
+//            val itemId = _viewSavedItemsStates.value.selectedSavedItems
+
+            itemId!!.forEach { savedItemId ->
 
                 val savedItems = viewRecordsUseCaseWrapper.getSavedItemById(savedItemId)
                 val itemName = savedItems.itemName
@@ -261,6 +282,7 @@ class ViewSavedItemsViewModel @Inject constructor(
                     userUID = uid,
                     cloudSync = false
                 )
+                Log.d("SavedItemViewModel", "Saved Item $savedItem")
 
                 val isInternetAvailable = viewRecordsUseCaseWrapper.internetConnectionAvailability()
 

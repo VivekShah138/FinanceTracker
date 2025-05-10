@@ -3,6 +3,7 @@ package com.example.financetracker.main_page_feature.view_records.transactions.p
 import android.view.View
 import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsEvents
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
@@ -29,10 +30,14 @@ sealed class ViewTransactionsEvents() {
     data object EnterSelectionMode: ViewTransactionsEvents()
     data object ExitSelectionMode: ViewTransactionsEvents()
     data object SelectAllTransactions: ViewTransactionsEvents()
+    data class SelectItems(val transactions: Transactions): ViewTransactionsEvents()
 
 
     // After Selection Actions
     data object DeleteSelectedTransactions: ViewTransactionsEvents()
+
+    // Get Selected Transaction
+    data class GetSingleTransaction(val transactionId: Int): ViewTransactionsEvents()
 
 
 }

@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.work.impl.utils.forAll
 import com.example.financetracker.setup_account.presentation.components.CustomSwitch
 import com.example.financetracker.setup_account.presentation.components.SimpleDropdownMenu
 
@@ -45,7 +46,7 @@ import com.example.financetracker.setup_account.presentation.components.SimpleDr
 @Composable
 fun AddTransactionPagePreview(){
 
-    val isFocused = remember { mutableStateOf(true) }
+    val isFocused = remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier.fillMaxSize()

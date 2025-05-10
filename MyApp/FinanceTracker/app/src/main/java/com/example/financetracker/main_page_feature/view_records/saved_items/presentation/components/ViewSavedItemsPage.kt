@@ -70,7 +70,7 @@ fun ViewSavedItemsPage(
                         if (states.isSelectionMode) {
                             viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                         } else {
-                            // Normal click action
+                            navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
                         }
                     },
                     onLongClick = {
