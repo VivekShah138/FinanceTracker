@@ -1,12 +1,17 @@
 package com.example.financetracker
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,6 +40,7 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.FinanceEntryPage
 import com.example.financetracker.main_page_feature.charts.presentation.components.ChartsPage
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.SavedItemViewModel
+import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
 import com.example.financetracker.main_page_feature.settings.presentation.SettingViewModel
 import com.example.financetracker.main_page_feature.settings.presentation.components.SettingsPage
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsViewModel
@@ -45,16 +51,33 @@ import com.example.financetracker.main_page_feature.view_records.transactions.pr
 import com.example.financetracker.setup_account.presentation.ProfileSetUpViewModel
 import com.example.financetracker.setup_account.presentation.components.NewUserProfileOnBoardingScreens
 import com.example.financetracker.setup_account.presentation.components.ProfileSetUp
+import com.example.financetracker.ui.theme.AppTheme
 import com.example.financetracker.ui.theme.FinanceTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+
+    @Inject
+    lateinit var settingsUseCaseWrapper: SettingsUseCaseWrapper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            FinanceTrackerTheme(dynamicColor = false) {
+
+            val settingsViewModel: SettingViewModel = hiltViewModel()
+
+            // Collect the dark mode state reactively
+            val settingsState by settingsViewModel.settingStates.collectAsStateWithLifecycle()
+
+            val darkMode = settingsState.darkMode || settingsUseCaseWrapper.getDarkModeLocally() || isSystemInDarkTheme()
+            Log.d("MainActivitySetting","Dark Mode $darkMode")
+            Log.d("MainActivitySettings","Dark Mode State ${settingsState.darkMode}")
+
+            AppTheme (dynamicColor = false, darkTheme = darkMode) {
                 Surface(
                     color = MaterialTheme.colorScheme.background
                 ) {
@@ -117,9 +140,9 @@ class MainActivity : ComponentActivity() {
                             route = Screens.SettingScreen.routes
                         ) {
 
-                            val viewModel: SettingViewModel = hiltViewModel()
+//                            val viewModel: SettingViewModel = hiltViewModel()
 
-                            SettingsPage(navController = navController,viewModel = viewModel)
+                            SettingsPage(navController = navController,viewModel = settingsViewModel)
                         }
 
                         composable(
@@ -131,32 +154,34 @@ class MainActivity : ComponentActivity() {
                             ChartsPage(navController = navController,viewModel = viewModel)
                         }
 
-                        composable(
-                            route = Screens.ViewRecordsScreen.routes
-                        ) {
-                            val viewTransactionsViewModel: ViewTransactionsViewModel = hiltViewModel()
-                            val viewSavedItemsViewModel: ViewSavedItemsViewModel = hiltViewModel()
-                            RecordsPage(
-                                navController = navController,
-                                viewSavedItemsViewModel = viewSavedItemsViewModel,
-                                viewTransactionsViewModel = viewTransactionsViewModel
-                            )
-                        }
-
 //                        composable(
-//                            route = "${Screens.ViewRecordsScreen.routes}/{tabIndex}",
-//                            arguments = listOf(navArgument("tabIndex") { defaultValue = 0 })
-//                        ) { backStackEntry ->
-//                            val tabIndex = backStackEntry.arguments?.getString("tabIndex")?.toInt() ?: 0
+//                            route = Screens.ViewRecordsScreen.routes
+//                        ) {
 //                            val viewTransactionsViewModel: ViewTransactionsViewModel = hiltViewModel()
 //                            val viewSavedItemsViewModel: ViewSavedItemsViewModel = hiltViewModel()
 //                            RecordsPage(
 //                                navController = navController,
 //                                viewSavedItemsViewModel = viewSavedItemsViewModel,
-//                                viewTransactionsViewModel = viewTransactionsViewModel,
-//                                defaultTabIndex = tabIndex
+//                                viewTransactionsViewModel = viewTransactionsViewModel
 //                            )
 //                        }
+
+                        composable(
+                            route = "${Screens.ViewRecordsScreen.routes}/{tabIndex}",
+                            arguments = listOf(navArgument("tabIndex") { type = NavType.IntType; defaultValue = 0 })
+                        ) { backStackEntry ->
+                            val tabIndex = backStackEntry.arguments?.getInt("tabIndex") ?: 0
+                            val viewTransactionsViewModel: ViewTransactionsViewModel = hiltViewModel()
+                            val viewSavedItemsViewModel: ViewSavedItemsViewModel = hiltViewModel()
+
+                            Log.d("RecordsPage", "pagerTabIndex $tabIndex")
+                            RecordsPage(
+                                navController = navController,
+                                viewSavedItemsViewModel = viewSavedItemsViewModel,
+                                viewTransactionsViewModel = viewTransactionsViewModel,
+                                defaultTabIndex = tabIndex
+                            )
+                        }
 
                         composable(
                             route = Screens.AddTransactionsScreen.routes

@@ -19,11 +19,11 @@ fun EmailDisplay(label: String, email: String, onChangeEmailClick: () -> Unit) {
         onValueChange = {}, // No direct editing, only display
         label = { Text(label) },
         readOnly = true, // Prevents direct typing
-        trailingIcon = {
-            IconButton(onClick = onChangeEmailClick) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = "Change Email")
-            }
-        },
+//        trailingIcon = {
+//            IconButton(onClick = onChangeEmailClick) {
+//                Icon(imageVector = Icons.Default.Edit, contentDescription = "Change Email")
+//            }
+//        },
         modifier = Modifier
             .fillMaxWidth()
 //            .padding(16.dp)

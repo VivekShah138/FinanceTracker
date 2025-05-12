@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -35,7 +36,10 @@ import com.github.mikephil.charting.data.PieEntry
 import kotlin.random.Random
 
 @Composable
-fun ExpensePieChartWithLegend(expenseData: Map<String, Double>) {
+fun ExpensePieChartWithLegend(expenseData: Map<String, Double>,currencySymbol: String = "$") {
+    val centerTextColor = MaterialTheme.colorScheme.onBackground.toArgb()
+    val holeColor = MaterialTheme.colorScheme.background.toArgb()
+
     val entries = expenseData.map { (category, amount) ->
         PieEntry(amount.toFloat(), category)
     }
@@ -105,7 +109,9 @@ fun ExpensePieChartWithLegend(expenseData: Map<String, Double>) {
                 val data = PieData(dataSet)
 
                 pieChart.data = data
-                pieChart.centerText = "Total\n${"%.2f".format(expenseData.values.sum())}"
+                pieChart.centerText = "Total\n${"$currencySymbol%.2f".format(expenseData.values.sum())}"
+                pieChart.setCenterTextColor(centerTextColor)
+                pieChart.setHoleColor(holeColor)
                 pieChart.invalidate()  // Force redraw
             }
         )
@@ -172,7 +178,7 @@ fun LegendItem(label: String, color: Int) {
         Text(
             text = label,
             fontSize = 12.sp,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

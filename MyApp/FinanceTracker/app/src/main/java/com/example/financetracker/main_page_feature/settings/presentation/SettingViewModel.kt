@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,10 +23,20 @@ class SettingViewModel @Inject constructor(
     private val _settingStates = MutableStateFlow(SettingStates())
     val settingStates : StateFlow<SettingStates> = _settingStates.asStateFlow()
 
+    private val userId = settingsUseCaseWrapper.getUIDLocally() ?: "Unknown"
+
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
     init {
         // Load cloud sync state when the ViewModel is initialized
         val cloudSyncState = settingsUseCaseWrapper.getCloudSyncLocally()
         _settingStates.value = _settingStates.value.copy(cloudSync = cloudSyncState)
+
+        val darkMode = settingsUseCaseWrapper.getDarkModeLocally()
+        _settingStates.value = _settingStates.value.copy(darkMode = darkMode)
+
+        getUserDetails()
     }
 
     fun onEvent(settingEvents: SettingEvents){
@@ -45,6 +57,41 @@ class SettingViewModel @Inject constructor(
                     }
                 }
             }
+
+            is SettingEvents.ChangeDarkMode -> {
+                _settingStates.value = settingStates.value.copy(
+                    darkMode = settingEvents.isDarkMode
+                )
+
+                settingsUseCaseWrapper.setDarkModeLocally(settingEvents.isDarkMode)
+                Log.d("SettingsViewModel","Dark Mode: ${settingsUseCaseWrapper.getDarkModeLocally}")
+            }
+            is SettingEvents.LogOut -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    settingsUseCaseWrapper.logoutUseCase()
+                }
+            }
         }
     }
+
+
+    private fun getUserDetails(){
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val userProfile = settingsUseCaseWrapper.getUserProfileFromLocalDb(userId)
+            Log.d("SettingViewModel","User Profile $userProfile")
+
+            val name = (userProfile?.firstName + " " + userProfile?.lastName)
+            Log.d("SettingViewModel","User Name $name")
+
+            _settingStates.value = settingStates.value.copy(
+                name = name
+            )
+        }
+    }
+
+    sealed class UiEvent {
+        data class ChangeTheme(val isDarkMode: Boolean) : UiEvent()
+    }
+
 }

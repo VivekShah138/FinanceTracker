@@ -73,8 +73,10 @@ import com.example.financetracker.core.local.domain.room.usecases.PredefinedCate
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetDarkModeLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetDarkModeLocally
 import com.example.financetracker.main_page_feature.charts.domain.usecases.ChartsUseCaseWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.DeletedTransactionDao
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDao
@@ -729,13 +731,19 @@ object AppModule {
     fun provideSettingsUsesCases(
         sharedPreferencesRepository: SharedPreferencesRepository,
         remoteRepository: RemoteRepository,
-        savedItemsRemoteRepository: SavedItemsRemoteRepository
+        savedItemsRemoteRepository: SavedItemsRemoteRepository,
+        userProfileRepository: UserProfileRepository
     ): SettingsUseCaseWrapper {
         return SettingsUseCaseWrapper(
             getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository),
             setCloudSyncLocally = SetCloudSyncLocally(sharedPreferencesRepository),
             saveMultipleTransactionsCloud = SaveMultipleTransactionsCloud(remoteRepository),
-            saveMultipleSavedItemCloud = SaveMultipleSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository)
+            saveMultipleSavedItemCloud = SaveMultipleSavedItemCloud(savedItemsRemoteRepository = savedItemsRemoteRepository),
+            setDarkModeLocally = SetDarkModeLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            getUIDLocally = GetUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository),
+            getDarkModeLocally = GetDarkModeLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            logoutUseCase = LogoutUseCase(remoteRepository = remoteRepository,sharedPreferencesRepository = sharedPreferencesRepository)
         )
     }
 
@@ -746,12 +754,14 @@ object AppModule {
     fun provideChartsUseCases(
         transactionLocalRepository: TransactionLocalRepository,
         sharedPreferencesRepository: SharedPreferencesRepository,
-        categoryRepository: CategoryRepository
+        categoryRepository: CategoryRepository,
+        userProfileRepository: UserProfileRepository
     ): ChartsUseCaseWrapper {
         return ChartsUseCaseWrapper(
             getAllCategories = GetAllCategories(categoryRepository = categoryRepository),
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository),
-            getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository)
+            getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository),
+            getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository = userProfileRepository)
         )
     }
 }

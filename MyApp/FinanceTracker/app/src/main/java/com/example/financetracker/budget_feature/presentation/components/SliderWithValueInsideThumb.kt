@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
+import com.example.financetracker.ui.theme.AppTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +50,27 @@ fun SliderWithValueInsideCustomThumb(
 //        interactionSource = interactionSource,
         thumb = {
             CustomThumb(sliderPosition)
-        }
+        },
+//        colors = SliderColors(
+//            activeTrackColor = MaterialTheme.colorScheme.primary,
+//            inactiveTrackColor = MaterialTheme.colorScheme.primaryContainer,
+//            thumbColor = MaterialTheme.colorScheme.primary
+//        )
+        colors = SliderColors(
+            thumbColor =  MaterialTheme.colorScheme.primary,
+            activeTrackColor = MaterialTheme.colorScheme.primary,
+            inactiveTrackColor = MaterialTheme.colorScheme.surface,
+//            activeTickColor = MaterialTheme.colorScheme.onPrimary,
+            activeTickColor = Color.Transparent,
+//            inactiveTickColor = MaterialTheme.colorScheme.onSurface,
+            inactiveTickColor = Color.Transparent,
+            disabledThumbColor = MaterialTheme.colorScheme.onSurface,
+            disabledActiveTrackColor= MaterialTheme.colorScheme.onSurface,
+            disabledInactiveTrackColor = MaterialTheme.colorScheme.onSurface,
+            disabledActiveTickColor = MaterialTheme.colorScheme.onSurface,
+            disabledInactiveTickColor = MaterialTheme.colorScheme.onSurface
+    )
+
     )
 }
 
@@ -69,7 +90,7 @@ fun CustomThumb(sliderPosition: Float) {
         Text(
             text = "${sliderPosition.toInt()}%",
             style = TextStyle(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontWeight = FontWeight.Bold,
                 fontSize = MaterialTheme.typography.bodyMedium.fontSize
             ),
@@ -81,12 +102,18 @@ fun CustomThumb(sliderPosition: Float) {
 @Preview(showBackground = true)
 @Composable
 fun SliderWithValueInsideCustomThumbPreview(){
-    SliderWithValueInsideCustomThumb(
-        sliderPosition = 50f,
-        onValueChange = {
 
-        }
-    )
+    AppTheme(dynamicColor = false) {
+
+        SliderWithValueInsideCustomThumb(
+            sliderPosition = 50f,
+            onValueChange = {
+
+            }
+        )
+
+    }
+
 }
 
 

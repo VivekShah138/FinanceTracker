@@ -10,4 +10,6 @@ interface SharedPreferencesRepository {
     fun getCurrencyRatesUpdated(): Boolean
     fun setCloudSync(isSynced: Boolean)
     fun getCloudSync(): Boolean
+    fun setDarkMode(isDarkMode: Boolean)
+    fun getDarkMode(): Boolean
 }

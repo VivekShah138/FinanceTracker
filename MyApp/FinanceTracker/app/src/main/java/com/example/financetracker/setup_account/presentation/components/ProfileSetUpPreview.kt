@@ -36,7 +36,7 @@ fun ProfileSetUpPreview(){
                 .padding(16.dp)
         ) {
             EmailDisplay(label = "Email", email = "Shahvivek138@gmail.com", onChangeEmailClick = {})
-            ChangePasswordSection(onChangePasswordClick = {})
+//            ChangePasswordSection(onChangePasswordClick = {})
 
             Names(firstName = "Vivek", lastName = "Shah", onFirstNameChange = {}, onLastNameChange = {})
 
@@ -89,7 +89,7 @@ fun Names(
         OutlinedTextField(
             value = lastName,
             onValueChange = onLastNameChange,
-            label = { Text("Second Name") },
+            label = { Text("Last Name") },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Text
             ),

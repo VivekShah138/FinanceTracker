@@ -13,6 +13,7 @@ class UserPreferences @Inject constructor(
         private const val KEY_USER_ID = "user_id"
         private const val CURRENCY_RATES_UPDATED = "currency_rates_updated"
         private const val CLOUD_SYNC = "cloud_sync"
+        private const val DARK_MODE = "dark_mode"
     }
 
     fun isLoggedIn(): Boolean{
@@ -59,6 +60,16 @@ class UserPreferences @Inject constructor(
 
     fun getCloudSync(): Boolean{
         return sharedPreferences.getBoolean(CLOUD_SYNC,false)
+    }
+
+    fun setDarkMode(isDarkMode: Boolean){
+        sharedPreferences.edit(){
+            putBoolean(DARK_MODE,isDarkMode)
+        }
+    }
+
+    fun getDarkMode(): Boolean{
+        return sharedPreferences.getBoolean(DARK_MODE,false)
     }
 
     fun clearLogInPreference(){

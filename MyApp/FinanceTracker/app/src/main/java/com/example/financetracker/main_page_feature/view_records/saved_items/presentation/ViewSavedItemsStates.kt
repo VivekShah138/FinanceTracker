@@ -4,10 +4,14 @@ import com.example.financetracker.main_page_feature.finance_entry.saveItems.doma
 
 data class ViewSavedItemsStates(
     val savedItemsList: List<SavedItems> = emptyList(),
+    val savedItemsFilteredList: List<SavedItems> = emptyList(),
+
+    val savedItem: String = "",
 
     // selected Saved Items
     val selectedSavedItems: Set<Int> = emptySet(),
     val isSelectionMode: Boolean = false,
+    val customDeleteAlertBoxState: Boolean = false,
 
     // Update Saved Item
     val updatedItemId: Int = 0,

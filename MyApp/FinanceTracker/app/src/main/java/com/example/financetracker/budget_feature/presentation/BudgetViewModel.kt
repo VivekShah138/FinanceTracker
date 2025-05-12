@@ -81,6 +81,8 @@ class BudgetViewModel @Inject constructor(
                                     current.get(Calendar.MONTH) < Calendar.getInstance().get(Calendar.MONTH))
                 )
 
+                getBudget()
+
             }
             is BudgetEvents.NextMonthClicked -> {
 
@@ -208,8 +210,6 @@ class BudgetViewModel @Inject constructor(
 
 
             Log.d("BudgetViewModel","create budget state ${_budgetStates.value.createBudgetState}")
-
-
 
         }
     }

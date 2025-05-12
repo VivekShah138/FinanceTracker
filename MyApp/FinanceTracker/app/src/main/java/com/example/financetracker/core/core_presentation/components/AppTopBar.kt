@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +26,11 @@ fun AppTopBar(
     onBackClick: () -> Unit,     // Non-nullable function
     menuItems: List<MenuItems> = listOf(),      // Non-nullable function
     modifier: Modifier = Modifier,
-    customActions: @Composable RowScope.() -> Unit = {}  // 👈 NEW SLOT
+    customActions: @Composable RowScope.() -> Unit = {},
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
+    titleContentColor: Color = MaterialTheme.colorScheme.onBackground,
+    actionIconContentColor: Color = MaterialTheme.colorScheme.onBackground,
+    navigationIconContentColor: Color = MaterialTheme.colorScheme.onBackground,
 ) {
     TopAppBar(
         modifier = modifier,
@@ -66,7 +71,13 @@ fun AppTopBar(
             else(
                 customActions()
             )
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = backgroundColor,
+            titleContentColor = titleContentColor,
+            navigationIconContentColor = navigationIconContentColor,
+            actionIconContentColor = actionIconContentColor
+        )
     )
 }
 

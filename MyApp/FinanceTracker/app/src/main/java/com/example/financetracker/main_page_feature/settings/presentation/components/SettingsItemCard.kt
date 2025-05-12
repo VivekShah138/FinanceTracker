@@ -29,20 +29,23 @@ fun SettingsItemCard(
     onClick: () -> Unit
 ){
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            },
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
-        shape = MaterialTheme.shapes.medium
-    ) {
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .clickable {
+//                onClick()
+//            },
+//        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
+//        shape = MaterialTheme.shapes.medium
+//    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .height(30.dp),  // To align items vertically
+                .height(50.dp)
+                .clickable {
+                    onClick()
+                },  // To align items vertically
             verticalAlignment = Alignment.CenterVertically  // Align items vertically in the center
         ) {
             if(leadingImageVectorState){
@@ -67,6 +70,6 @@ fun SettingsItemCard(
             }
 
         }
-    }
+//    }
 
 }

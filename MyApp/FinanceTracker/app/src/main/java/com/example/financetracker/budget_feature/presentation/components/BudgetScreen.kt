@@ -2,8 +2,10 @@ package com.example.financetracker.budget_feature.presentation.components
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -14,6 +16,8 @@ import androidx.navigation.NavController
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -22,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.financetracker.budget_feature.presentation.BudgetEvents
+import com.example.financetracker.budget_feature.presentation.BudgetStates
 import com.example.financetracker.budget_feature.presentation.BudgetViewModel
 
 import com.example.financetracker.core.core_presentation.components.AppTopBar
@@ -68,84 +73,205 @@ fun BudgetScreen(
 
     ){paddingValues ->
 
+//        Column(
+//            modifier = Modifier.fillMaxSize().padding(paddingValues)
+//        ) {
+//
+//            MonthSelectorBudget(
+//                state = states,
+//                onEvent = budgetViewModel::onEvent,
+//                context = context
+//            )
+//
+//            if (states.createBudgetState) {
+//
+//                NoBudgetMessage(
+//                    modifier = Modifier.weight(1f)
+//                )
+//
+//            } else {
+//
+//                Column(
+//                    modifier = Modifier
+//                        .weight(1f),
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.Start
+//                ){
+//                    BudgetAmountInput(
+//                        amount = states.budget,
+//                        currencySymbol = states.budgetCurrencySymbol,
+//                        onAmountChange = {
+//                            budgetViewModel.onEvent(BudgetEvents.ChangeBudget(it))
+//                        }
+//                    )
+//
+//                    Spacer(Modifier.height(10.dp))
+//
+//
+//                    ReceiveAlertSwitch(
+//                        text = "Receive Alert",
+//                        isCheck = states.receiveAlerts,
+//                        onCheckChange = {
+//                            budgetViewModel.onEvent(
+//                                BudgetEvents.ChangeReceiveBudgetAlerts(it)
+//                            )
+//                        },
+//                        fontSize = 24.sp
+//                    )
+//
+//                    Spacer(Modifier.height(15.dp))
+//
+//                    if(states.receiveAlerts){
+//                        SliderWithValueInsideCustomThumb(
+//                            sliderPosition = states.alertThresholdPercent,
+//                            onValueChange = {
+//                                budgetViewModel.onEvent(BudgetEvents.ChangeAlertThresholdAmount(it))
+//                            }
+//                        )
+//                    }
+//                }
+//            }
+//
+//            Button(
+//                onClick = {
+//                    if(states.createBudgetState){
+//                        budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
+//                    }else{
+//                        budgetViewModel.onEvent(BudgetEvents.SaveBudget)
+//                        budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
+//                    }
+//                },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(17.dp)
+//            ) {
+//                if(states.createBudgetState){
+//                    Text("Create")
+//                }else{
+//                    Text("Save")
+//                }
+//            }
+//        }
+
+
+
+
+
+
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
 
-            MonthSelectorBudget(
-                state = states,
-                onEvent = budgetViewModel::onEvent,
-                context = context
-            )
-
-            if (states.createBudgetState) {
-
-                NoBudgetMessage(
-                    modifier = Modifier.weight(1f)
-                )
-
-            } else {
-
-                Column(
-                    modifier = Modifier
-                        .weight(1f),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.Start
-                ){
-                    BudgetAmountInput(
-                        amount = states.budget,
-                        currencySymbol = states.budgetCurrencySymbol,
-                        onAmountChange = {
-                            budgetViewModel.onEvent(BudgetEvents.ChangeBudget(it))
-                        }
-                    )
-
-                    Spacer(Modifier.height(10.dp))
-
-
-                    ReceiveAlertSwitch(
-                        text = "Receive Alert",
-                        isCheck = states.receiveAlerts,
-                        onCheckChange = {
-                            budgetViewModel.onEvent(
-                                BudgetEvents.ChangeReceiveBudgetAlerts(it)
-                            )
-                        },
-                        fontSize = 24.sp
-                    )
-
-                    Spacer(Modifier.height(15.dp))
-
-                    if(states.receiveAlerts){
-                        SliderWithValueInsideCustomThumb(
-                            sliderPosition = states.alertThresholdPercent,
-                            onValueChange = {
-                                budgetViewModel.onEvent(BudgetEvents.ChangeAlertThresholdAmount(it))
-                            }
-                        )
-                    }
-                }
-            }
-
-            Button(
-                onClick = {
-                    if(states.createBudgetState){
-                        budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
-                    }else{
-                        budgetViewModel.onEvent(BudgetEvents.SaveBudget)
-                        budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(17.dp)
+            Surface(
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(0.90f).padding(vertical = 8.dp)
+                    .padding(horizontal = 16.dp),
+                tonalElevation = 2.dp,
+                shape = MaterialTheme.shapes.medium,
+                shadowElevation = 4.dp,
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
-                if(states.createBudgetState){
-                    Text("Create")
-                }else{
-                    Text("Save")
+
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    MonthSelectorBudget(
+                        state = states,
+                        onEvent = budgetViewModel::onEvent,
+                        context = context
+                    )
+                }
+
+
+                if (states.createBudgetState) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        NoBudgetMessage()
+                    }
+
+                } else {
+
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            modifier = Modifier,
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            BudgetAmountInput(
+                                amount = states.budget,
+                                currencySymbol = states.budgetCurrencySymbol,
+                                onAmountChange = {
+                                    budgetViewModel.onEvent(BudgetEvents.ChangeBudget(it))
+                                }
+                            )
+
+                            Spacer(Modifier.height(10.dp))
+
+
+                            ReceiveAlertSwitch(
+                                text = "Receive Alert",
+                                isCheck = states.receiveAlerts,
+                                onCheckChange = {
+                                    budgetViewModel.onEvent(
+                                        BudgetEvents.ChangeReceiveBudgetAlerts(it)
+                                    )
+                                },
+                                fontSize = 24.sp
+                            )
+
+                            Spacer(Modifier.height(15.dp))
+
+                            if(states.receiveAlerts){
+                                SliderWithValueInsideCustomThumb(
+                                    sliderPosition = states.alertThresholdPercent,
+                                    onValueChange = {
+                                        budgetViewModel.onEvent(BudgetEvents.ChangeAlertThresholdAmount(it))
+                                    }
+                                )
+                            }
+
+                        }
+                    }
+
+                }
+
+
+            }
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Button(
+                    onClick = {
+
+                        if(states.createBudgetState){
+                            budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
+                        }else{
+                            budgetViewModel.onEvent(BudgetEvents.SaveBudget)
+                            budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
+                        }
+
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                ) {
+                    if(states.createBudgetState){
+                        Text("Create")
+                    }else{
+                        Text("Save")
+                    }
                 }
             }
+
         }
+
+
+
     }
 }

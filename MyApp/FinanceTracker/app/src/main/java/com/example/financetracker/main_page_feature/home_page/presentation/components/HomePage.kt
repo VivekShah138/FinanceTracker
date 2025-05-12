@@ -55,7 +55,7 @@ fun HomePageScreen(
                             text = "Logout",
                             onClick = {
                                 viewModel.onEvent(HomePageEvents.Logout)
-                                navController.navigate(route = Screens.LogInScreen.routes )
+                                navController.navigate(route = Screens.StartUpPageScreen.routes )
                             }
                         )
                     )

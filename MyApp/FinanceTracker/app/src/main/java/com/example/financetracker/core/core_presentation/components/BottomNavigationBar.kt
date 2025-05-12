@@ -36,9 +36,20 @@ fun BottomNavigationBar(navController: NavController = rememberNavController()) 
             ) {
                 items.forEach { screen ->
 
+//                    IconButton(onClick = {
+//                        if(navController.currentDestination?.route != screen.routes){
+//                            navController.navigate(screen.routes) // Navigate using NavController
+//                        }
+//                    })
                     IconButton(onClick = {
-                        if(navController.currentDestination?.route != screen.routes){
-                            navController.navigate(screen.routes) // Navigate using NavController
+                        val route = if (screen.routes == Screens.ViewRecordsScreen.routes) {
+                            "${screen.routes}/0" // Add tabIndex = 0 as default
+                        } else {
+                            screen.routes
+                        }
+
+                        if (navController.currentDestination?.route != screen.routes) {
+                            navController.navigate(route)
                         }
                     }) {
                         Icon(

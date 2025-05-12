@@ -73,10 +73,10 @@ fun ProfileSetUp(
                 onChangeEmailClick = {}
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+//            Spacer(modifier = Modifier.height(10.dp))
 
             // Change Password
-            ChangePasswordSection(onChangePasswordClick = {})
+//            ChangePasswordSection(onChangePasswordClick = {})
 
             Spacer(modifier = Modifier.height(10.dp))
 

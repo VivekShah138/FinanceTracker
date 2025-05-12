@@ -12,5 +12,6 @@ data class ChartStates(
     val nextMonthVisibility: Boolean = false,
     val transactionType: String = "Expense",
     val typeDropDown: Boolean = false,
-    val showOnlyYear: Boolean = false
+    val showOnlyYear: Boolean = false,
+    val baseCurrencySymbol: String = ""
 )

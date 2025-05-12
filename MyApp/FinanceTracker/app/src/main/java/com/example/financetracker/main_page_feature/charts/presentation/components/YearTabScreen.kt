@@ -46,7 +46,7 @@ fun YearTabScreen(
             Text("No Transactions")
         }
         else{
-            ExpensePieChartWithLegend(yearlyExpenses)
+            ExpensePieChartWithLegend(expenseData = yearlyExpenses, currencySymbol = states.baseCurrencySymbol)
         }
 
 //        Box(

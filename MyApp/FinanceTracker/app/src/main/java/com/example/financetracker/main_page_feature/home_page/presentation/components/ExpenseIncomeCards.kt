@@ -1,3 +1,4 @@
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.financetracker.ui.theme.AppTheme
 
 @Composable
 fun ExpenseIncomeCards(
@@ -62,7 +64,8 @@ fun ExpenseIncomeCards(
                         style = MaterialTheme.typography.headlineSmall.copy(fontSize = 22.sp),
                         maxLines = 1,
                         overflow = TextOverflow.Clip, // Instead of Ellipsis
-                        softWrap = false
+                        softWrap = false,
+                        color = Color.Black
                     )
                 }
             }
@@ -103,7 +106,8 @@ fun ExpenseIncomeCards(
                         style = MaterialTheme.typography.headlineSmall.copy(fontSize = 22.sp),
                         maxLines = 1,
                         overflow = TextOverflow.Clip, // Instead of Ellipsis
-                        softWrap = false
+                        softWrap = false,
+                        color = Color.Black
                     )
                 }
             }
@@ -117,8 +121,17 @@ fun ExpenseIncomeCards(
 )
 @Composable
 fun ExpenseIncomeCardsPreview(){
-    ExpenseIncomeCards(
-        expenseAmount = "5000",
-        incomeAmount = "10000"
-    )
+
+    AppTheme(
+        darkTheme = true,
+        dynamicColor = true
+    ) {
+
+        ExpenseIncomeCards(
+            expenseAmount = "5000",
+            incomeAmount = "10000"
+        )
+
+    }
+
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.DeletedTransactions
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionEvents
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel.AddTransactionValidationEvent
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.DeletedSavedItems
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
@@ -51,7 +52,40 @@ class ViewSavedItemsViewModel @Inject constructor(
                 getAllSavedItems()
             }
 
+            is ViewSavedItemsEvents.ChangeSearchSavedItem -> {
+
+                _viewSavedItemsStates.value = viewSavedItemsStates.value.copy(
+                    savedItem = viewSavedItemsEvents.name
+                )
+                _viewSavedItemsStates.value = viewSavedItemsStates.value.copy(
+                    savedItemsFilteredList = emptyList()
+                )
+
+            }
+            is ViewSavedItemsEvents.FilterSavedItemList -> {
+
+                if(viewSavedItemsEvents.newWord.isEmpty()){
+                    getAllSavedItems()
+                }else{
+                    val filterList = viewSavedItemsEvents.list.filter {
+                        it.itemName.contains(
+                            viewSavedItemsEvents.newWord,
+                            ignoreCase = true
+                        )
+                    }
+                    _viewSavedItemsStates.value = viewSavedItemsStates.value.copy(
+                        savedItemsFilteredList = filterList
+                    )
+                }
+            }
+
             // Delete Selected Saved Items
+            is ViewSavedItemsEvents.ChangeCustomDateAlertBox -> {
+                _viewSavedItemsStates.value = viewSavedItemsStates.value.copy(
+                    customDeleteAlertBoxState = viewSavedItemsEvents.state
+                )
+            }
+
             is ViewSavedItemsEvents.DeleteSelectedSavedItems -> {
                 viewModelScope.launch(Dispatchers.IO) {
 

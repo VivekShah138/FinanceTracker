@@ -89,6 +89,9 @@ fun AddTransactionPage(
         }
     }
 
+    Log.d("AddTransactionPage","searchBarFocus ${states.searchBarFocusedState}")
+    Log.d("AddTransactionPage","saveItemState ${states.saveItemState}")
+    Log.d("AddTransactionPage","searchableList ${states.transactionSearchList}")
 
 
 
@@ -152,6 +155,9 @@ fun WithSearchableMode(
                         viewModel.onEvent(
                             AddTransactionEvents.ChangeSavedItemSearchState(false)
                         )
+                        viewModel.onEvent(
+                            AddTransactionEvents.ChangeTransactionName("")
+                        )
                     }
                 )
             },
@@ -165,6 +171,13 @@ fun WithSearchableMode(
         LaunchedEffect(Unit){
             focusRequester.requestFocus()
         }
+//        LaunchedEffect(states.searchBarFocusedState) {
+//            if (states.searchBarFocusedState) {
+//                focusRequester.requestFocus()
+//            }
+//        }
+
+        Log.d("AddTransactionPage","searchBarFocus2 ${states.searchBarFocusedState}")
 
         // Display filtered items in a list
         if (states.transactionSearchFilteredList.isNotEmpty()) {
@@ -277,18 +290,18 @@ fun WithoutSearchableMode(
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        // Recurring Transaction
-        CustomSwitch(
-            text = "Recurring Transaction?",
-            isCheck = states.isRecurring,
-            onCheckChange = {
-                viewModel.onEvent(
-                    AddTransactionEvents.ChangeRecurringItemState(it)
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
+//        // Recurring Transaction
+//        CustomSwitch(
+//            text = "Recurring Transaction?",
+//            isCheck = states.isRecurring,
+//            onCheckChange = {
+//                viewModel.onEvent(
+//                    AddTransactionEvents.ChangeRecurringItemState(it)
+//                )
+//            }
+//        )
+//
+//        Spacer(modifier = Modifier.height(10.dp))
 
         // Saved Item Transaction
         CustomSwitch(
@@ -341,7 +354,7 @@ fun WithoutSearchableMode(
 
         // If view BottomSheet is true
         if(states.bottomSheetState){
-            CustomBottomSheet<Category>(
+            CustomBottomSheet(
                 categories = states.categoryList,
                 sheetState = rememberModalBottomSheetState(),
                 onDismissRequest = {
@@ -448,9 +461,16 @@ fun WithoutSearchableMode(
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search Icon") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .onFocusChanged {
-                    viewModel.onEvent(AddTransactionEvents.ChangeSavedItemSearchState(it.hasFocus))
-                }
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused && !states.searchBarFocusedState) {
+                            Log.d("AddTransactionPage","focus State $focusState")
+
+                            viewModel.onEvent(AddTransactionEvents.ChangeSavedItemSearchState(true))
+                        }
+                    }
+//                    .onFocusChanged {
+//                    viewModel.onEvent(AddTransactionEvents.ChangeSavedItemSearchState(it.hasFocus))
+//                }
             )
         } else {
             OutlinedTextField(

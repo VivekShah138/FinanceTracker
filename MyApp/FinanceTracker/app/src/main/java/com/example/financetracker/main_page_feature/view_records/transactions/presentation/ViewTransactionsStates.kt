@@ -25,10 +25,10 @@ data class ViewTransactionsStates(
         DurationFilter.CustomRange(0L,0L)
     ),
 
-//    val selectedDuration: String = durationRange[0],
     val selectedDuration: DurationFilter = DurationFilter.Today,
     val rangeDropDownExpanded: Boolean = false,
-    val customDateAlertBoxState: Boolean = false,
+//    val customDateAlertBoxState: Boolean = false,
+    val customDeleteAlertBoxState: Boolean = false,
     val fromDate: Long = 0,
     val toDate: Long = 0,
 

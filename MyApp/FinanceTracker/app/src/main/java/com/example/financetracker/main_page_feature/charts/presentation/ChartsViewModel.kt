@@ -332,6 +332,16 @@ class ChartsViewModel @Inject constructor(
 
             Log.d("ChartsViewModel","incomeDataWithCategory: ${_chartStates.value.incomeDataWithCategory}")
             Log.d("ChartsViewModel","expenseDataWithCategory: ${_chartStates.value.expenseDataWithCategory}")
+
+            val userProfile = chartsUseCaseWrapper.getUserProfileFromLocalDb(userId)
+            Log.d("ChartsViewModel","userProfile: ${userProfile}")
+            val baseCurrencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
+            Log.d("ChartsViewModel","baseCurrencySymbol: $baseCurrencySymbol")
+
+            _chartStates.value = _chartStates.value.copy(
+                baseCurrencySymbol = baseCurrencySymbol
+            )
+
         }
     }
 

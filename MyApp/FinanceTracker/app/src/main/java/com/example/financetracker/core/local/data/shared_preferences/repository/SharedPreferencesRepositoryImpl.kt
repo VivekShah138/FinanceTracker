@@ -43,4 +43,14 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
     override fun getCloudSync(): Boolean {
         return userPreferences.getCloudSync()
     }
+
+    override fun setDarkMode(isDarkMode: Boolean) {
+        return userPreferences.setDarkMode(isDarkMode)
+    }
+
+    override fun getDarkMode(): Boolean {
+        return userPreferences.getDarkMode()
+    }
+
+
 }

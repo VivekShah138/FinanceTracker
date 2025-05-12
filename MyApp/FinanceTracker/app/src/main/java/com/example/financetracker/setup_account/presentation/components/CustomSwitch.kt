@@ -30,7 +30,7 @@ fun CustomSwitch(text:String,
                  onCheckChange: (Boolean) -> Unit,
                  textAlign: TextAlign = TextAlign.Start,
                  fontSize: TextUnit = 16.sp,
-                 textColor: Color = Color.Black,
+                 textColor: Color = MaterialTheme.colorScheme.onBackground,
 
 ){
 
@@ -58,18 +58,18 @@ fun SettingsSwitchItem(
     isCheck: Boolean,
     onCheckChange: (Boolean) -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-//            .padding(8.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
-        shape = MaterialTheme.shapes.small
-    ) {
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth(),
+////            .padding(8.dp),
+//        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+//        shape = MaterialTheme.shapes.small
+//    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)  // Padding inside the row
-                .height(30.dp),  // Align items vertically
+                .height(50.dp),  // Align items vertically
             verticalAlignment = Alignment.CenterVertically  // Align items vertically in the center
         ) {
             Icon(
@@ -88,5 +88,5 @@ fun SettingsSwitchItem(
                 modifier = Modifier.scale(0.8f)  // Adjust switch size
             )
         }
-    }
+//    }
 }

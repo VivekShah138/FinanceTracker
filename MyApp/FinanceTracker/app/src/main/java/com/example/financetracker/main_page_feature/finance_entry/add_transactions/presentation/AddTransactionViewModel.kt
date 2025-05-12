@@ -108,9 +108,14 @@ class AddTransactionViewModel @Inject constructor(
                 )
             }
             is AddTransactionEvents.ChangeSavedItemSearchState -> {
+
+                Log.d("AddTransactionPage","searchBarFocus viewModel Before ${_addTransactionStates.value.searchBarFocusedState}")
+
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     searchBarFocusedState = addTransactionEvents.state
                 )
+
+                Log.d("AddTransactionPage","searchBarFocus viewModel After ${_addTransactionStates.value.searchBarFocusedState}")
             }
             is AddTransactionEvents.ChangeQuantity -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(

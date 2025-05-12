@@ -14,7 +14,24 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.BusinessCenter
+import androidx.compose.material.icons.filled.CarRepair
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.DirectionsCar
+import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocalCarWash
+import androidx.compose.material.icons.filled.LocalGroceryStore
+import androidx.compose.material.icons.filled.MedicalServices
+import androidx.compose.material.icons.filled.Restaurant
+import androidx.compose.material.icons.filled.Savings
+import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.ShoppingBasket
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.ShoppingCartCheckout
+import androidx.compose.material.icons.filled.WorkOutline
+//import androidx.compose.material.icons.filled.Category
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,25 +44,39 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import com.example.financetracker.core.local.domain.room.model.Category
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> CustomBottomSheet(
-    categories: List<T>,
+//fun <T> CustomBottomSheet(
+//    categories: List<T>,
+//    sheetState: SheetState,
+//    onDismissRequest: () -> Unit,
+//    onItemSelect: (T) -> Unit,
+//    displayText: (T) -> String,
+//    onCustomAddClick: () -> Unit,
+//    selectedCategory: String, // Track selected category
+//    onClearSelection: () -> Unit // Callback to clear the selected category
+//)
+fun CustomBottomSheet(
+    categories: List<Category>,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
-    onItemSelect: (T) -> Unit,
-    displayText: (T) -> String,
+    onItemSelect: (Category) -> Unit,
+    displayText: (Category) -> String,
     onCustomAddClick: () -> Unit,
     selectedCategory: String, // Track selected category
     onClearSelection: () -> Unit // Callback to clear the selected category
-) {
+)
+{
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState
@@ -87,6 +118,7 @@ fun <T> CustomBottomSheet(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(categories) { category ->
+
                     Card(
                         modifier = Modifier
                             .padding(8.dp)
@@ -101,11 +133,21 @@ fun <T> CustomBottomSheet(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
+//                            Icon(
+//                                imageVector = Icons.Default.Category,
+//                                contentDescription = null,
+//                                modifier = Modifier.size(40.dp)
+//                            )
                             Icon(
-                                imageVector = Icons.Default.Category,
+                                imageVector = if(category.isCustom) {
+                                    Icons.Default.Category // single icon for custom categories
+                                } else {
+                                    getCategoryIcon(category.name)
+                                },
                                 contentDescription = null,
                                 modifier = Modifier.size(40.dp)
                             )
+
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = displayText(category),
@@ -132,5 +174,25 @@ fun <T> CustomBottomSheet(
         }
     }
 }
+
+fun getCategoryIcon(categoryName: String): ImageVector {
+    return when (categoryName.lowercase()) {
+        "food" -> Icons.Default.Fastfood
+        "travel" -> Icons.Default.DirectionsCar
+        "shopping" -> Icons.Default.ShoppingBasket
+        "restaurant" -> Icons.Default.Restaurant
+        "groceries" -> Icons.Default.LocalGroceryStore
+        "rent" -> Icons.Default.Home
+        "vehicle maintenance" -> Icons.Default.LocalCarWash // or Icons.Default.CarRepair (if using extended icons)
+        "medicine" -> Icons.Default.MedicalServices
+        "salary" -> Icons.Default.AttachMoney
+        "freelance" -> Icons.Default.WorkOutline
+        "business" -> Icons.Default.BusinessCenter
+        "studies" -> Icons.Default.School
+        "interest" -> Icons.Default.Savings
+        else -> Icons.Default.Category
+    }
+}
+
 
 

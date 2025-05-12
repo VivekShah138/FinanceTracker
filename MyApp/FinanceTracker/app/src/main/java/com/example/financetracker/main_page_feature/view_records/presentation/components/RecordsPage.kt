@@ -1,6 +1,7 @@
 package com.example.financetracker.main_page_feature.view_records.presentation.components
 
 import BottomNavigationBar
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -46,6 +47,8 @@ fun RecordsPage(
         pageCount = {2} // or however many pages you have
     )
 
+    Log.d("RecordsPage", "pagerStateInitial ${pagerState.currentPage}")
+
     val coroutineScope = rememberCoroutineScope()
 
 
@@ -74,8 +77,11 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Delete",
                                 onClick = {
+//                                    viewTransactionsViewModel.onEvent(
+//                                        ViewTransactionsEvents.DeleteSelectedTransactions
+//                                    )
                                     viewTransactionsViewModel.onEvent(
-                                        ViewTransactionsEvents.DeleteSelectedTransactions
+                                        ViewTransactionsEvents.ChangeCustomDateAlertBox(true)
                                     )
                                 }
                             ),
@@ -92,8 +98,11 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Delete All",
                                 onClick = {
+//                                    viewTransactionsViewModel.onEvent(
+//                                        ViewTransactionsEvents.DeleteSelectedTransactions
+//                                    )
                                     viewTransactionsViewModel.onEvent(
-                                        ViewTransactionsEvents.DeleteSelectedTransactions
+                                        ViewTransactionsEvents.ChangeCustomDateAlertBox(true)
                                     )
                                 }
                             ),
@@ -128,8 +137,11 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Delete",
                                 onClick = {
+//                                    viewSavedItemsViewModel.onEvent(
+//                                        ViewSavedItemsEvents.DeleteSelectedSavedItems
+//                                    )
                                     viewSavedItemsViewModel.onEvent(
-                                        ViewSavedItemsEvents.DeleteSelectedSavedItems
+                                        ViewSavedItemsEvents.ChangeCustomDateAlertBox(true)
                                     )
                                 }
                             ),
@@ -154,8 +166,11 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Delete All",
                                 onClick = {
+//                                    viewSavedItemsViewModel.onEvent(
+//                                        ViewSavedItemsEvents.DeleteSelectedSavedItems
+//                                    )
                                     viewSavedItemsViewModel.onEvent(
-                                        ViewSavedItemsEvents.DeleteSelectedSavedItems
+                                        ViewSavedItemsEvents.ChangeCustomDateAlertBox(true)
                                     )
                                 }
                             ),

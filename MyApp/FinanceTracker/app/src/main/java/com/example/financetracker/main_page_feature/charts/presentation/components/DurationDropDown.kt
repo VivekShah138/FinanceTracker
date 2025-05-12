@@ -53,7 +53,7 @@ fun DurationDropDown(
                 filterOptions.forEach { option ->
                     DropdownMenuItem(
                         text = {
-                            Text(option)
+                            Text(text = option)
                         },
                         onClick = {
                             onDurationSelected(option)

@@ -35,7 +35,8 @@ fun BudgetAmountInput(
         Text(
             text = "How much do you want to spend?",
             fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(Modifier.height(8.dp))
@@ -47,7 +48,8 @@ fun BudgetAmountInput(
             Text(
                 text = currencySymbol,
                 fontSize = 40.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             BasicTextField(
@@ -56,9 +58,10 @@ fun BudgetAmountInput(
                 singleLine = true,
                 textStyle = TextStyle(
                     fontSize = 40.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
                 ),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }

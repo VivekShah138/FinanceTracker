@@ -25,12 +25,14 @@ fun NoBudgetMessage(modifier: Modifier = Modifier) {
         Text(
             text = "You don’t have a budget.",
             fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = "Let’s make one so you’re in control.",
             fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

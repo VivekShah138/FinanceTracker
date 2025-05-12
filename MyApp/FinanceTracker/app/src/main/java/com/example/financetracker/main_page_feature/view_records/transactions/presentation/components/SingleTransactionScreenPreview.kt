@@ -23,15 +23,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import com.example.financetracker.core.core_presentation.components.AppTopBar
 import java.text.SimpleDateFormat
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
-
-
-
-
+import com.example.financetracker.ui.theme.AppTheme
 
 
 @Preview(showBackground = true, showSystemUi = true, name = "With Exchange Rate")
@@ -51,7 +51,14 @@ fun SingleTransactionWithExchangeRatePreview() {
         userUid = "",
         isRecurring = false
     )
-    SingleTransactionScreen2(transaction = transaction, baseCurrency = emptyMap())
+
+    AppTheme(
+        dynamicColor = false
+    ) {
+        SingleTransactionScreen2(transaction = transaction, baseCurrency = emptyMap())
+    }
+
+
 }
 
 @Preview(showBackground = true, showSystemUi = true,name = "Without Exchange Rate")
@@ -71,7 +78,14 @@ fun SingleTransactionWithoutExchangeRatePreview() {
         userUid = "",
         isRecurring = false
     )
-    SingleTransactionScreen2(transaction = transaction, baseCurrency = emptyMap())
+
+    AppTheme(
+        dynamicColor = false
+    ) {
+        SingleTransactionScreen2(transaction = transaction, baseCurrency = emptyMap())
+    }
+
+
 }
 
 
@@ -104,55 +118,78 @@ fun SingleTransactionScreen2(transaction: Transactions,baseCurrency: Map<String,
                 showMenu = false,
                 onBackClick = {
 
-                }
+                },
+                backgroundColor = MaterialTheme.colorScheme.secondary,
+                titleContentColor = MaterialTheme.colorScheme.onTertiary,
+                navigationIconContentColor = MaterialTheme.colorScheme.onTertiary,
+                actionIconContentColor = MaterialTheme.colorScheme.onTertiary,
             )
-        }
+        },
+        containerColor = Color.Transparent,
+
 
     ) {paddingValues ->
-
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
         ) {
+
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 20.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = String.format(Locale.US, "$baseCurrencySymbol%.2f", amount),
-                    style = MaterialTheme.typography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 40.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold
-                )
+                val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(screenHeight * 1f / 3f)
+                        .clip(RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp))
+                        .background(
+                            color = MaterialTheme.colorScheme.secondary
+                        )
 
-                Text(
-                    text = transactionName,
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = formattedDateTime,
-                    style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp
-                    ),
-                    color = Color.Gray
-                )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = String.format(Locale.US, "$baseCurrencySymbol%.2f", amount),
+                            style = MaterialTheme.typography.headlineLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 40.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onTertiary,
+                            fontWeight = FontWeight.Bold
+                        )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = transactionName,
+                            style = MaterialTheme.typography.headlineMedium.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 18.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onTertiary
+                        )
+                        Text(
+                            text = formattedDateTime,
+                            style = MaterialTheme.typography.headlineSmall.copy(
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 18.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onTertiary
+                        )
+                    }
+
+                }
 
                 TransactionDetailsCard(
                     transactionType = transactionType,
@@ -163,19 +200,19 @@ fun SingleTransactionScreen2(transaction: Transactions,baseCurrency: Map<String,
                     transactionDescription = transactionDescription,
                     cloudSync = cloudSync,
                     exchangeRate = exchangeRate,
-                    transactionCurrencyCode = transactionCurrencyCode
+                    transactionCurrencyCode = transactionCurrencyCode,
+                    screenHeight = screenHeight
                 )
+
+
             }
 
-            // Button at the bottom
             Button(
-                onClick = {
-                    // TODO: Handle click
-                },
+                onClick = { /* your action */ },
                 modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .padding(16.dp)
-                    .align(Alignment.BottomCenter) // This makes the button appear at the bottom
             ) {
                 Text("Delete")
             }
@@ -194,14 +231,17 @@ fun TransactionDetailsCard(
     transactionDescription: String?,
     cloudSync: Boolean,
     exchangeRate: Double?,
-    transactionCurrencyCode: String
+    transactionCurrencyCode: String,
+    screenHeight: Dp
 ) {
-    Card(
+    Surface(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            .fillMaxWidth()
+            .height((screenHeight * 2f / 3f) + 50.dp)
+            .offset(y = (-50).dp) // negative offset to lift it over the top box
+            .padding(horizontal = 10.dp),
+        shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        color = MaterialTheme.colorScheme.secondaryContainer
     ) {
         Column(
             modifier = Modifier
@@ -219,28 +259,28 @@ fun TransactionDetailsCard(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Type",
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                        color = Color.Gray
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                        color = MaterialTheme.colorScheme.outline
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = transactionType,
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Category",
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                        color = Color.Gray
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                        color = MaterialTheme.colorScheme.outline
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = transactionCategory,
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
 
@@ -249,26 +289,26 @@ fun TransactionDetailsCard(
                     if (convertedAmount != null && convertedAmount != 0.0) {
                         Text(
                             text = "Amount",
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                            color = Color.Gray
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                            color = MaterialTheme.colorScheme.outline
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = String.format("$transactionCurrencySymbol%.2f", convertedAmount),
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     } else {
                         Text(
                             text = "Currency",
                             style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.outline
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = baseCurrencyCode,
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                            color = MaterialTheme.colorScheme.onBackground
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal, fontSize = 18.sp),
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 }
@@ -282,14 +322,14 @@ fun TransactionDetailsCard(
             ) {
                 Text(
                     text = "Description",
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                    color = Color.Gray
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                    color = MaterialTheme.colorScheme.outline
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = if (transactionDescription.isNullOrEmpty()) "No Description" else transactionDescription,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
 
@@ -305,10 +345,10 @@ fun TransactionDetailsCard(
                 Text(
                     text = "Cloud Sync",
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     ),
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.outline
                 )
 
                 Spacer(Modifier.height(4.dp))
@@ -329,10 +369,10 @@ fun TransactionDetailsCard(
                         Text(
                             text = "Uploaded",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                fontWeight = FontWeight.Normal,
+                                fontWeight = FontWeight.Medium,
                                 fontSize = 14.sp
                             ),
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     } else {
                         Icon(
@@ -346,10 +386,10 @@ fun TransactionDetailsCard(
                         Text(
                             text = "Not Uploaded",
                             style = MaterialTheme.typography.bodySmall.copy(
-                                fontWeight = FontWeight.Normal,
+                                fontWeight = FontWeight.Medium,
                                 fontSize = 14.sp
                             ),
-                            color = MaterialTheme.colorScheme.onBackground
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
                 }
@@ -361,20 +401,17 @@ fun TransactionDetailsCard(
                 Text(
                     text = "Exchange Rate",
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.outline
                 )
-                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = "1 $baseCurrencyCode = $exchangeRate $transactionCurrencyCode",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp
+                        fontSize = 14.sp
                     ),
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
-
-
         }
     }
 }

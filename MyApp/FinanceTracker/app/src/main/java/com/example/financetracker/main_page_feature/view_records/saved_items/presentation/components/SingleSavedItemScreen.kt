@@ -36,6 +36,8 @@ import com.example.financetracker.core.core_presentation.utils.Screens
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsEvents
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsViewModel
+import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
+import com.example.financetracker.main_page_feature.view_records.transactions.presentation.components.DeleteConfirmationDialog
 import java.util.Locale
 
 
@@ -101,9 +103,12 @@ fun SingleSavedItemScreen(
                     customActions = {
                         IconButton(
                             onClick = {
-                                viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
-                                navController.navigate(Screens.ViewRecordsScreen.routes)
+//                                viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
+////                                navController.navigate(Screens.ViewRecordsScreen.routes)
 //                                navController.navigate("${Screens.ViewRecordsScreen.routes}/1")
+                                viewSavedItemsViewModel.onEvent(
+                                    ViewSavedItemsEvents.ChangeCustomDateAlertBox(true)
+                                )
                             }
                         ) {
                             Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
@@ -121,6 +126,25 @@ fun SingleSavedItemScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+
+                if(states.customDeleteAlertBoxState){
+
+                    DeleteConfirmationDialog(
+                        onDismiss = {
+                            viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
+                        },
+                        onConfirm = {
+                            viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
+//                                navController.navigate(Screens.ViewRecordsScreen.routes)
+                            viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
+                            navController.navigate("${Screens.ViewRecordsScreen.routes}/1")
+
+                        },
+                        showDialog = states.customDeleteAlertBoxState
+                    )
+
+                }
+
 
 
                 OutlinedTextField(

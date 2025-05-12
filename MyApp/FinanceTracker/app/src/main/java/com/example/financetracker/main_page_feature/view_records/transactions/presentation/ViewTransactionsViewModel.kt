@@ -101,7 +101,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
             is ViewTransactionsEvents.ChangeCustomDateAlertBox -> {
                 _viewTransactionStates.value = viewTransactionStates.value.copy(
-                    customDateAlertBoxState = viewTransactionsEvents.state
+                    customDeleteAlertBoxState = viewTransactionsEvents.state
                 )
             }
 
@@ -191,9 +191,9 @@ class ViewTransactionsViewModel @Inject constructor(
                 Log.d("ViewTransactionsViewModelApply","Filter Old State: ${_viewTransactionStates.value.filters}")
                 val defaultFilters: List<TransactionFilter> = listOf(
                     TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
-                    TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
+                    TransactionFilter.Order(TransactionOrder.Descending), // Default to Ascending order
                     TransactionFilter.Category(_viewTransactionStates.value.categories), // Default to all categories (empty list means no category filter)
-                    TransactionFilter.Duration(viewTransactionsEvents.duration) // Default to "This Month" filter
+                    TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
                 )
 
                 _viewTransactionStates.value = viewTransactionStates.value.copy(

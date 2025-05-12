@@ -47,7 +47,7 @@ fun MonthSelectorBudget(
             Icon(
                 imageVector = Icons.Default.ArrowBackIosNew,
                 contentDescription = "Previous Month",
-//                tint = MaterialTheme.colorScheme.onPrimary
+                tint = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -69,7 +69,7 @@ fun MonthSelectorBudget(
                         datePicker.maxDate = Calendar.getInstance().timeInMillis
                     }.show()
                 },
-//            color = MaterialTheme.colorScheme.onPrimary
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Medium,
             style = MaterialTheme.typography.titleMedium
         )
@@ -82,7 +82,7 @@ fun MonthSelectorBudget(
                 Icon(
                     imageVector = Icons.Default.ArrowForwardIos,
                     contentDescription = "Next Month",
-//                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

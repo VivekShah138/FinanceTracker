@@ -1,20 +1,28 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -29,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.getCategoryIcon
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -79,76 +88,107 @@ fun TransactionItemCard(
     }
 
     val priceColor = if (item.transactionType == "Expense") Color(0xFFD32F2F) else Color(0xFF2E7D32)
-
-    Card(
+//
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 8.dp)
+//            .padding(horizontal = 16.dp)
+//            .combinedClickable(
+//                onClick = onClick,
+//                onLongClick = onLongClick
+//            ),
+//        shape = RoundedCornerShape(5.dp),
+//        elevation = CardDefaults.cardElevation(5.dp),
+//        colors = CardDefaults.cardColors(
+//            containerColor = if (isSelected) Color(0xFFE0F7FA) else MaterialTheme.colorScheme.surface
+//        )
+//    ) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .padding(horizontal = 16.dp)
+//            .padding(start = 16.dp)
+            .background(color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
             ),
-        shape = RoundedCornerShape(5.dp),
-        elevation = CardDefaults.cardElevation(5.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Color(0xFFE0F7FA) else MaterialTheme.colorScheme.surface
-        )
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Checkbox for selection mode
-            if (isSelectionMode) {
-                Checkbox(
-                    checked = isSelected,
-                    onCheckedChange = { onClick() },
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-            }
-
-            // Formatted date
-            Text(
-                text = formattedDate,
-                modifier = Modifier.weight(1f),
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center
+        // Checkbox for selection mode
+        if (isSelectionMode) {
+            Checkbox(
+                checked = isSelected,
+                onCheckedChange = { onClick() },
             )
+            Spacer(modifier = Modifier.width(4.dp))
+        }
 
-            // Name + Description
-            Column(
-                modifier = Modifier.weight(2f),
-                horizontalAlignment = Alignment.CenterHorizontally
+//            // Formatted date
+//            Text(
+//                text = formattedDate,
+//                modifier = Modifier.weight(1f),
+//                fontSize = 12.sp,
+//                textAlign = TextAlign.Center
+//            )
+
+        Row(modifier = Modifier.padding(start = 16.dp)){
+
+            Card(
+                modifier = Modifier.size(40.dp),
+//                .padding(start = 16.dp),
+                shape = CircleShape,
+                border = BorderStroke(width = 0.5.dp,color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface),
+//                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                colors = CardDefaults.cardColors(containerColor = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.primaryContainer)
             ) {
-                Text(
-                    text = item.transactionName,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = item.description ?: "N/A",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                    fontSize = 12.sp,
-                    color = Color.Gray,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = getCategoryIcon(item.category),
+                        contentDescription = null,
+                        modifier = Modifier.size(22.dp),
+                        tint = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
 
-            // Amount
+        }
+
+
+        // Name + Description
+        Column(
+            modifier = Modifier.weight(2f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
-                text = "${item.currency?.entries?.firstOrNull()?.value?.symbol ?: "$"} ${item.amount}",
-                color = priceColor,
-                modifier = Modifier.weight(1f),
+                text = item.transactionName,
+                fontWeight = FontWeight.Bold,
+                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = if(item.description.isNullOrEmpty()) "No Description" else item.description,
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 12.sp,
+                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
+
+        // Amount
+        Text(
+            text = "${item.currency?.entries?.firstOrNull()?.value?.symbol ?: "$"} ${item.amount}",
+            color = priceColor,
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        )
     }
+//    }
 }
 
 
@@ -165,7 +205,8 @@ fun SavedItemsCard(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
+
+    Surface(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
@@ -174,11 +215,10 @@ fun SavedItemsCard(
                 onClick = onClick,
                 onLongClick = onLongClick
             ),
-        shape = RoundedCornerShape(5.dp),
-        elevation = CardDefaults.cardElevation(5.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Color(0xFFE0F7FA) else MaterialTheme.colorScheme.surface
-        )
+        tonalElevation = 2.dp,
+        shape = MaterialTheme.shapes.medium,
+        shadowElevation = 4.dp,
+        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
     ) {
         Row(
             modifier = Modifier
@@ -192,7 +232,7 @@ fun SavedItemsCard(
                 Checkbox(
                     checked = isSelected,
                     onCheckedChange = { onClick() },
-                    modifier = Modifier.padding(start = 8.dp)
+//                    modifier = Modifier.padding(start = 8.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
             }
@@ -201,7 +241,7 @@ fun SavedItemsCard(
             Text(
                 text = item.itemId.toString(),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface,
+                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
             )
 
             // Center: Name, Description, Shop
@@ -213,18 +253,18 @@ fun SavedItemsCard(
                 Text(
                     text = item.itemName,
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                 )
                 Text(
-                    text = item.itemDescription ?: "N/A",
+                    text = if(item.itemDescription.isNullOrEmpty()) "No Description" else item.itemDescription,
                     style = MaterialTheme.typography.bodySmall.copy(fontStyle = FontStyle.Italic),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(top = 4.dp)
                 )
                 Text(
-                    text = item.itemShopName ?: "N/A",
+                    text = if(item.itemShopName.isNullOrEmpty()) "No Shop Name" else item.itemShopName,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
@@ -236,13 +276,13 @@ fun SavedItemsCard(
                 Text(
                     text = item.itemCurrency.entries.firstOrNull()?.value?.symbol ?: "$",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.primary
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
                     text = item.itemPrice.toString(),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.primary
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                 )
             }
         }

@@ -73,7 +73,7 @@ fun MonthTabScreen(
         if (monthlyExpenses.isEmpty()) {
             Text("No Transactions")
         } else {
-            ExpensePieChartWithLegend(monthlyExpenses)
+            ExpensePieChartWithLegend(expenseData = monthlyExpenses, currencySymbol = states.baseCurrencySymbol)
         }
 
 //        Box(
