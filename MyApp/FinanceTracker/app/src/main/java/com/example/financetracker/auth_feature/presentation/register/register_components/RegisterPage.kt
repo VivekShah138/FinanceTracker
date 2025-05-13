@@ -5,15 +5,19 @@ import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +39,7 @@ import androidx.navigation.NavController
 import com.example.financetracker.auth_feature.presentation.AccountManager
 import com.example.financetracker.auth_feature.presentation.components.CustomText
 import com.example.financetracker.auth_feature.presentation.components.CustomTextFields
+import com.example.financetracker.auth_feature.presentation.components.CustomTextFields2
 import com.example.financetracker.auth_feature.presentation.register.RegisterPageEvents
 import com.example.financetracker.auth_feature.presentation.register.RegisterPageViewModel
 import com.example.financetracker.auth_feature.presentation.register.RegisterResult
@@ -83,26 +88,36 @@ fun RegisterPage(
     }
 
 
-
-
-    Column (
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
+        contentAlignment = Alignment.Center
     ) {
 
-        CustomText(
-            text = "Register",
-            size = 30.sp
-        )
 
-        Column(
+        Column (
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+
+            CustomText(
+                text = "Register",
+                size = 30.sp
+            )
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
 //            CustomTextFields(
 //                modifier = Modifier
@@ -130,118 +145,116 @@ fun RegisterPage(
 //                )
 //            }
 
-            Text(text = "Email", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-                text = state.email,
-                onValueChange = {
-                    viewModel.onEvent(RegisterPageEvents.ChangeEmail(it))
-                },
-                textStyle = MaterialTheme.typography.bodySmall,
-                singleLine = true,
-                inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
-                isError = state.emailError != null
-            )
-            if(state.emailError!= null){
-                Text(
-                    text = state.emailError ?: "Unknown Error",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
+//            Text(text = "Email", modifier = Modifier.fillMaxWidth())
+                CustomTextFields2(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+//                    .border(
+//                        width = 2.dp,
+//                        color = Color.Black,
+//                        shape = RoundedCornerShape(10.dp)
+//                    ),
+                    text = state.email,
+                    onValueChange = {
+                        viewModel.onEvent(RegisterPageEvents.ChangeEmail(it))
+                    },
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    singleLine = true,
+                    inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    isError = state.emailError != null,
+                    errorMessage = state.emailError ?: "",
+                    label = "Email"
                 )
+            if(state.emailError == null){
+                Spacer(modifier = Modifier.height(10.dp))
             }
 
 
-            Text(text = "Password", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-                text = state.password,
-                onValueChange = {
-                    viewModel.onEvent(RegisterPageEvents.ChangePassword(it))
-                },
-                textStyle = MaterialTheme.typography.bodySmall,
-                singleLine = true,
-                inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
-                isError = state.passwordError != null
-            )
-            if(state.passwordError != null){
-                Text(
-                    text = state.passwordError ?: "Unknown Error",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
+//            Text(text = "Password", modifier = Modifier.fillMaxWidth())
+                CustomTextFields2(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+//                    .border(
+//                        width = 2.dp,
+//                        color = Color.Black,
+//                        shape = RoundedCornerShape(10.dp)
+//                    ),
+                    text = state.password,
+                    onValueChange = {
+                        viewModel.onEvent(RegisterPageEvents.ChangePassword(it))
+                    },
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    singleLine = true,
+                    inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = state.passwordError != null,
+                    errorMessage = state.passwordError ?: "",
+                    label = "Password"
                 )
+            if(state.passwordError == null){
+                Spacer(modifier = Modifier.height(10.dp))
             }
 
-            Text(text = "ConfirmPassword", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-                text = state.confirmPassword,
-                onValueChange = {
-                    viewModel.onEvent(RegisterPageEvents.ChangeConfirmPassword(it))
-                },
-                textStyle = MaterialTheme.typography.bodySmall,
-                singleLine = true,
-                inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
-                isError = state.confirmPasswordError != null
-            )
-            if(state.confirmPasswordError != null){
-                Text(
-                    text = state.confirmPasswordError ?: "Unknown Error",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
+//            Text(text = "ConfirmPassword", modifier = Modifier.fillMaxWidth())
+                CustomTextFields2(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+//                    .border(
+//                        width = 2.dp,
+//                        color = Color.Black,
+//                        shape = RoundedCornerShape(10.dp)
+//                    ),
+                    text = state.confirmPassword,
+                    onValueChange = {
+                        viewModel.onEvent(RegisterPageEvents.ChangeConfirmPassword(it))
+                    },
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    singleLine = true,
+                    inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = state.confirmPasswordError != null,
+                    errorMessage = state.confirmPasswordError ?: "",
+                    label = "Confirm Password"
                 )
+//            if(state.confirmPasswordError != null){
+//                Text(
+//                    text = state.confirmPasswordError ?: "Unknown Error",
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.align(Alignment.End)
+//                )
+//            }
             }
-        }
 
-        Button(
-            onClick = {
-                viewModel.onEvent(RegisterPageEvents.SubmitRegister)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text("Register")
-        }
+            Spacer(modifier = Modifier.height(20.dp))
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text("Already have an account?")
-            TextButton(
+            Button(
                 onClick = {
-                    navController.navigate(route = Screens.LogInScreen.routes)
-                }
+                    viewModel.onEvent(RegisterPageEvents.SubmitRegister)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                Text("Login")
+                Text("Register")
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text("Already have an account?",color = MaterialTheme.colorScheme.onBackground)
+                TextButton(
+                    onClick = {
+                        navController.navigate(route = Screens.LogInScreen.routes)
+                    }
+                ) {
+                    Text("Login")
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
         }
-        Spacer(modifier = Modifier.height(10.dp))
+
     }
-
-
 }
 
 fun handleRegistrationResult(

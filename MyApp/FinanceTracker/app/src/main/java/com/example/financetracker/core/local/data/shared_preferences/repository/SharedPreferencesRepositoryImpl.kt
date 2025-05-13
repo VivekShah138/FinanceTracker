@@ -1,5 +1,6 @@
 package com.example.financetracker.core.local.data.shared_preferences.repository
 
+import androidx.compose.animation.core.rememberTransition
 import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 import javax.inject.Inject
@@ -50,6 +51,18 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
 
     override fun getDarkMode(): Boolean {
         return userPreferences.getDarkMode()
+    }
+
+    override fun getUserName(): String? {
+        return userPreferences.getUserName()
+    }
+
+    override fun setUserName(userName: String) {
+        return userPreferences.setUserName(userName)
+    }
+
+    override fun removeUserNameLocally() {
+        return userPreferences.removeUserNameLocally()
     }
 
 

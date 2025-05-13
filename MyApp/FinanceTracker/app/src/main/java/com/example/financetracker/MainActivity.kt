@@ -119,7 +119,7 @@ class MainActivity : ComponentActivity() {
                             route = Screens.HomePageScreen.routes
                         ) {
                             val viewModel: HomePageViewModel = hiltViewModel()
-                            HomePageScreen(viewModel, navController)
+                            HomePageScreen(viewModel, navController,settingViewModel = settingsViewModel)
                         }
 
                         composable(

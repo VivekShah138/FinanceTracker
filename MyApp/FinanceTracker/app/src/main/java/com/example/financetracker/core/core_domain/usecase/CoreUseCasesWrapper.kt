@@ -5,6 +5,7 @@ import com.example.financetracker.core.cloud.domain.usecase.GetUserProfileUseCas
 import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
 import com.example.financetracker.core.cloud.domain.usecase.SaveUserProfileUseCase
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.CheckIsLoggedInUseCase
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetUserNameLocally
 
 data class CoreUseCasesWrapper(
     val logoutUseCase: LogoutUseCase,
@@ -12,5 +13,6 @@ data class CoreUseCasesWrapper(
     val getUserEmailUserCase: GetUserEmailUserCase,
     val getUserUIDUseCase: GetUserUIDUseCase,
     val getUserProfileUseCase: GetUserProfileUseCase,
-    val saveUserProfileUseCase: SaveUserProfileUseCase
+    val saveUserProfileUseCase: SaveUserProfileUseCase,
+    val setUserNameLocally: SetUserNameLocally
 )

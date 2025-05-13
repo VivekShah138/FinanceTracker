@@ -12,4 +12,7 @@ interface SharedPreferencesRepository {
     fun getCloudSync(): Boolean
     fun setDarkMode(isDarkMode: Boolean)
     fun getDarkMode(): Boolean
+    fun getUserName(): String?
+    fun setUserName(userName: String)
+    fun removeUserNameLocally()
 }

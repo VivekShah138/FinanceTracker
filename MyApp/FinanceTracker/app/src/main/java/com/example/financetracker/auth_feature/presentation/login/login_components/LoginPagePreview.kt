@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.financetracker.auth_feature.presentation.components.CustomText
 import com.example.financetracker.auth_feature.presentation.components.CustomTextFields
+import com.example.financetracker.auth_feature.presentation.components.CustomTextFields2
 import com.example.financetracker.auth_feature.presentation.login.LoginPageStates
 
 
@@ -73,16 +74,16 @@ fun Content2(state: LoginPageStates) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(text = "Email", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
+//            Text(text = "Email", modifier = Modifier.fillMaxWidth())
+            CustomTextFields2(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
 //                    .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp)
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
+//                    .border(
+//                        width = 2.dp,
+//                        color = Color.Black,
+//                        shape = RoundedCornerShape(10.dp)
+//                    ),
                 text = state.email,
                 onValueChange = {
                     // Add Function Change
@@ -91,25 +92,27 @@ fun Content2(state: LoginPageStates) {
                 singleLine = true,
                 inputType = KeyboardOptions(keyboardType = KeyboardType.Text),
                 isError = state.emailError != null,
+                errorMessage = state.emailError ?: "",
+                label = "Email"
             )
-            if(state.emailError != null){
-                Text(
-                    text = state.emailError,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
-                )
-            }
+//            if(state.emailError != null){
+//                Text(
+//                    text = state.emailError,
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.align(Alignment.End)
+//                )
+//            }
 
             Text(text = "Password", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
+            CustomTextFields2(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
 //                    .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp)
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
+//                    .border(
+//                        width = 2.dp,
+//                        color = Color.Black,
+//                        shape = RoundedCornerShape(10.dp)
+//                    ),
                 text = state.password,
                 onValueChange = {
                     // Add Function Change
@@ -118,15 +121,17 @@ fun Content2(state: LoginPageStates) {
                 textStyle = MaterialTheme.typography.bodySmall,
                 singleLine = true,
                 inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
-                isError = state.passwordError != null
+                isError = state.passwordError != null,
+                errorMessage = state.passwordError ?: "",
+                label = "Password"
             )
-            if(state.passwordError != null){
-                Text(
-                    text = state.passwordError,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
-                )
-            }
+//            if(state.passwordError != null){
+//                Text(
+//                    text = state.passwordError,
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.align(Alignment.End)
+//                )
+//            }
         }
 
         Row (

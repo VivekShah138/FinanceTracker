@@ -9,6 +9,7 @@ import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -131,9 +132,20 @@ class LoginPageViewModel @Inject constructor(
 
             authFeatureUseCasesWrapper.insertUIDLocally(userId)
             Log.d("LoginViewModel","Inserted UserId")
+            viewModelScope.launch(Dispatchers.IO) {
+                val userId2 = authFeatureUseCasesWrapper.getUIDLocally()
+                Log.d("LoginViewModel","UserId Local $userId2")
+            }
 
             val userProfile = coreUseCasesWrapper.getUserProfileUseCase(userId)
+            val userName = userProfile?.firstName + " " + userProfile?.lastName
             Log.d("LoginViewModel","userProfile: ${userProfile}")
+            Log.d("LoginViewModel","userName: ${userName}")
+
+            coreUseCasesWrapper.setUserNameLocally(userName)
+            Log.d("LoginViewModel","userName: ${userName}")
+
+
             if(userProfile == null){
                 val email = coreUseCasesWrapper.getUserEmailUserCase() ?: "Unknown"
                 val newUserProfile = UserProfile(email = email, profileSetUpCompleted = false)

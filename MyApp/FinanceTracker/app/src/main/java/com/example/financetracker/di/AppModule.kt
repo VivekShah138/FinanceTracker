@@ -74,9 +74,11 @@ import com.example.financetracker.core.local.domain.shared_preferences.repositor
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetDarkModeLocally
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUserNameLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetDarkModeLocally
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetUserNameLocally
 import com.example.financetracker.main_page_feature.charts.domain.usecases.ChartsUseCaseWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.DeletedTransactionDao
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDao
@@ -283,7 +285,8 @@ object AppModule {
             getUserUIDUseCase = GetUserUIDUseCase(remoteRepository),
             getUserEmailUserCase = GetUserEmailUserCase(remoteRepository),
             getUserProfileUseCase = GetUserProfileUseCase(remoteRepository),
-            saveUserProfileUseCase = SaveUserProfileUseCase(remoteRepository)
+            saveUserProfileUseCase = SaveUserProfileUseCase(remoteRepository),
+            setUserNameLocally = SetUserNameLocally(sharedPreferencesRepository)
         )
     }
 
@@ -295,7 +298,8 @@ object AppModule {
             validateEmail = ValidateEmail(),
             validatePassword = ValidatePassword(),
             validateConfirmPassword = ValidateConfirmPassword(),
-            insertUIDLocally = InsertUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository)
+            insertUIDLocally = InsertUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            getUIDLocally = GetUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository)
         )
     }
 
@@ -743,7 +747,9 @@ object AppModule {
             getUIDLocally = GetUIDLocally(sharedPreferencesRepository = sharedPreferencesRepository),
             getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository),
             getDarkModeLocally = GetDarkModeLocally(sharedPreferencesRepository = sharedPreferencesRepository),
-            logoutUseCase = LogoutUseCase(remoteRepository = remoteRepository,sharedPreferencesRepository = sharedPreferencesRepository)
+            logoutUseCase = LogoutUseCase(remoteRepository = remoteRepository,sharedPreferencesRepository = sharedPreferencesRepository),
+            getUserNameLocally = GetUserNameLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            setUserNameLocally = SetUserNameLocally(sharedPreferencesRepository = sharedPreferencesRepository)
         )
     }
 

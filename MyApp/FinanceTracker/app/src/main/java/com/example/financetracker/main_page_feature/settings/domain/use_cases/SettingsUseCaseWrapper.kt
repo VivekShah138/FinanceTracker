@@ -7,8 +7,10 @@ import com.example.financetracker.core.local.domain.room.usecases.GetUserProfile
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetDarkModeLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUserNameLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetDarkModeLocally
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetUserNameLocally
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveMultipleSavedItemCloud
 
 data class SettingsUseCaseWrapper (
@@ -20,5 +22,7 @@ data class SettingsUseCaseWrapper (
     val getUIDLocally: GetUIDLocally,
     val getUserProfileFromLocalDb: GetUserProfileFromLocalDb,
     val setDarkModeLocally: SetDarkModeLocally,
-    val getDarkModeLocally: GetDarkModeLocally
+    val getDarkModeLocally: GetDarkModeLocally,
+    val setUserNameLocally: SetUserNameLocally,
+    val getUserNameLocally: GetUserNameLocally
 )

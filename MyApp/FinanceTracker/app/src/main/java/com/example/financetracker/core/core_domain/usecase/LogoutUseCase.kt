@@ -13,5 +13,6 @@ class LogoutUseCase @Inject constructor(
         remoteRepository.logoutUser()
         sharedPreferencesRepository.setLoggedInState(false)
         sharedPreferencesRepository.removeUserIdLocally()
+        sharedPreferencesRepository.removeUserNameLocally()
     }
 }

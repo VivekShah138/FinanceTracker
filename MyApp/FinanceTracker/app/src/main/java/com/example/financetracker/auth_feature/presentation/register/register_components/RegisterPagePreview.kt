@@ -3,6 +3,7 @@ package com.example.financetracker.auth_feature.presentation.register.register_c
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,13 +29,15 @@ import androidx.compose.ui.unit.sp
 import com.example.financetracker.auth_feature.presentation.register.RegisterPageStates
 import com.example.financetracker.auth_feature.presentation.components.CustomText
 import com.example.financetracker.auth_feature.presentation.components.CustomTextFields
+import com.example.financetracker.auth_feature.presentation.components.CustomTextFields2
+import com.example.financetracker.ui.theme.AppTheme
 
 @Preview(
     showBackground = true,
     showSystemUi = true)
 @Composable
 fun RegistrationPagePreview() {
-    MaterialTheme { // Wrap with MaterialTheme to apply colors properly
+    AppTheme(dynamicColor = false, darkTheme = true) { // Wrap with MaterialTheme to apply colors properly
 
         Content(
             RegisterPageStates(
@@ -42,10 +45,10 @@ fun RegistrationPagePreview() {
             email = "shah@138gmail.com",
             password = "VivekShah",
             confirmPassword = "VivekShah",
-            emailError = "emailError",
+            emailError = "null",
 //            userNameError = "nameError",
-            passwordError = "passwordError",
-            confirmPasswordError = "confirmPasswordError"
+            passwordError = "null",
+            confirmPasswordError = "null"
             )
         )
     }
@@ -55,24 +58,34 @@ fun RegistrationPagePreview() {
 @Composable
 fun Content(state: RegisterPageStates){
 
-    Column (
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ){
 
-        CustomText(
-            text = "Register",
-            size = 30.sp
-        )
-
-        Column(
+        Column (
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+
+
+            CustomText(
+                text = "Register",
+                size = 30.sp
+            )
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
 //            CustomTextFields(
 //                modifier = Modifier
@@ -100,116 +113,129 @@ fun Content(state: RegisterPageStates){
 //                )
 //            }
 
-            Text(text = "Email", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-                text = state.email,
-                onValueChange = {
+//            Text(text = "Email", modifier = Modifier.fillMaxWidth())
+                CustomTextFields2(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+//                    .border(
+//                        width = 2.dp,
+//                        color = Color.Black,
+//                        shape = RoundedCornerShape(10.dp)
+//                    ),
+                    text = state.email,
+                    onValueChange = {
 
-                },
-                textStyle = MaterialTheme.typography.bodySmall,
-                singleLine = true,
-                inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
-                isError = state.emailError != null
-            )
-            if(state.emailError!= null){
-                Text(
-                    text = state.emailError,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
+                    },
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    singleLine = true,
+                    inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    isError = state.emailError != null,
+                    errorMessage = state.emailError ?: "",
+                    label = "Email"
                 )
-            }
+//            if(state.emailError!= null){
+//                Text(
+//                    text = state.emailError,
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.align(Alignment.End)
+//                )
+//            }
 
-            Text(text = "Password", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
-                modifier = Modifier
-                    .fillMaxWidth()
-//                    .padding(top = 10.dp,end = 20.dp,start = 20.dp,bottom = 10.dp)
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-                text = state.password,
-                onValueChange = {
+//            Text(text = "Password", modifier = Modifier.fillMaxWidth())
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                CustomTextFields2(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    text = state.password,
+                    onValueChange = {
 //                Add Function Change
-                },
-                textStyle = MaterialTheme.typography.bodySmall,
-                singleLine = true,
-                inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
-                isError = state.passwordError != null
-            )
-            if(state.passwordError != null){
-                Text(
-                    text = state.passwordError,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
+                    },
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    singleLine = true,
+                    inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = state.passwordError != null,
+                    errorMessage = state.passwordError ?: "",
+                    label = "Password"
                 )
-            }
+//            if(state.passwordError != null){
+//                Text(
+//                    text = state.passwordError,
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.align(Alignment.End)
+//                )
+//            }
 
-            Text(text = "Confirm Password", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
-                modifier = Modifier
-                    .fillMaxWidth()
+//            Text(text = "Confirm Password", modifier = Modifier.fillMaxWidth())
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                CustomTextFields2(
+                    modifier = Modifier
+                        .fillMaxWidth(),
 //                    .padding(top = 10.dp,end = 20.dp,start = 20.dp,bottom = 10.dp)
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-                text = state.confirmPassword,
-                onValueChange = {
+//                    .border(
+//                        width = 2.dp,
+//                        color = Color.Black,
+//                        shape = RoundedCornerShape(10.dp)
+//                    ),
+                    text = state.confirmPassword,
+                    onValueChange = {
 //                Add Function Change
-                },
-                textStyle = MaterialTheme.typography.bodySmall,
-                singleLine = true,
-                inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
-                isError = state.confirmPasswordError != null
-            )
-            if(state.confirmPasswordError != null){
-                Text(
-                    text = state.confirmPasswordError,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
+                    },
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    singleLine = true,
+                    inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = state.confirmPasswordError != null,
+                    errorMessage = state.confirmPasswordError ?: "",
+                    label = "Confirm Password"
                 )
+//            if(state.confirmPasswordError != null){
+//                Text(
+//                    text = state.confirmPasswordError,
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.align(Alignment.End)
+//                )
+//            }
             }
-        }
 
-        Button(
-            onClick = {
+            Spacer(modifier = Modifier.height(20.dp))
 
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text("Register")
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text("Already have an account?")
-            TextButton(
+            Button(
                 onClick = {
 
-                }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                Text("Login")
+                Text("Register")
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+//            Spacer(modifier = Modifier.height(10.dp))
+
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text(
+                    text = "Already have an account?",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                TextButton(
+                    onClick = {
+
+                    }
+                ) {
+                    Text("Login")
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
         }
-        Spacer(modifier = Modifier.height(10.dp))
+
     }
 }
 

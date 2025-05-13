@@ -21,12 +21,9 @@ class SettingViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _settingStates = MutableStateFlow(SettingStates())
-    val settingStates : StateFlow<SettingStates> = _settingStates.asStateFlow()
+    val settingStates: StateFlow<SettingStates> = _settingStates.asStateFlow()
 
-    private val userId = settingsUseCaseWrapper.getUIDLocally() ?: "Unknown"
 
-    private val _uiEvent = Channel<UiEvent>()
-    val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
         // Load cloud sync state when the ViewModel is initialized
@@ -36,11 +33,12 @@ class SettingViewModel @Inject constructor(
         val darkMode = settingsUseCaseWrapper.getDarkModeLocally()
         _settingStates.value = _settingStates.value.copy(darkMode = darkMode)
 
-        getUserDetails()
+//        val userName = settingsUseCaseWrapper.getUserNameLocally()
+//        _settingStates.value = settingStates.value.copy(name = userName ?: "")
     }
 
-    fun onEvent(settingEvents: SettingEvents){
-        when(settingEvents){
+    fun onEvent(settingEvents: SettingEvents) {
+        when (settingEvents) {
             is SettingEvents.ChangeCloudSync -> {
                 _settingStates.value = settingStates.value.copy(
                     cloudSync = settingEvents.isChecked
@@ -48,10 +46,13 @@ class SettingViewModel @Inject constructor(
 
                 // Setting CloudSync in shared preferences
                 settingsUseCaseWrapper.setCloudSyncLocally(settingEvents.isChecked)
-                Log.d("SettingsViewModel","CloudSync: ${settingsUseCaseWrapper.getCloudSyncLocally()}")
+                Log.d(
+                    "SettingsViewModel",
+                    "CloudSync: ${settingsUseCaseWrapper.getCloudSyncLocally()}"
+                )
 
-                if(settingEvents.isChecked){
-                    viewModelScope.launch(Dispatchers.IO){
+                if (settingEvents.isChecked) {
+                    viewModelScope.launch(Dispatchers.IO) {
                         settingsUseCaseWrapper.saveMultipleTransactionsCloud()
                         settingsUseCaseWrapper.saveMultipleSavedItemCloud()
                     }
@@ -64,8 +65,12 @@ class SettingViewModel @Inject constructor(
                 )
 
                 settingsUseCaseWrapper.setDarkModeLocally(settingEvents.isDarkMode)
-                Log.d("SettingsViewModel","Dark Mode: ${settingsUseCaseWrapper.getDarkModeLocally}")
+                Log.d(
+                    "SettingsViewModel",
+                    "Dark Mode: ${settingsUseCaseWrapper.getDarkModeLocally}"
+                )
             }
+
             is SettingEvents.LogOut -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     settingsUseCaseWrapper.logoutUseCase()
@@ -75,14 +80,17 @@ class SettingViewModel @Inject constructor(
     }
 
 
-    private fun getUserDetails(){
+    private fun getUserDetails(uid: String) {
         viewModelScope.launch(Dispatchers.IO) {
+//            val userId = settingsUseCaseWrapper.getUIDLocally() ?: "Unknown"
 
-            val userProfile = settingsUseCaseWrapper.getUserProfileFromLocalDb(userId)
-            Log.d("SettingViewModel","User Profile $userProfile")
+            Log.d("SettingViewModel", "UserId inside Func $uid")
+
+            val userProfile = settingsUseCaseWrapper.getUserProfileFromLocalDb(uid)
+            Log.d("SettingViewModel", "User Profile $userProfile")
 
             val name = (userProfile?.firstName + " " + userProfile?.lastName)
-            Log.d("SettingViewModel","User Name $name")
+            Log.d("SettingViewModel", "User Name $name")
 
             _settingStates.value = settingStates.value.copy(
                 name = name
@@ -90,8 +98,13 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    sealed class UiEvent {
-        data class ChangeTheme(val isDarkMode: Boolean) : UiEvent()
+    fun loadUserProfileIfReady() {
+        val uid = settingsUseCaseWrapper.getUIDLocally()
+        if (!uid.isNullOrEmpty()) {
+            getUserDetails(uid)
+        } else {
+            Log.d("SettingsViewModel", "UID still null, cannot load profile.")
+        }
     }
 
 }

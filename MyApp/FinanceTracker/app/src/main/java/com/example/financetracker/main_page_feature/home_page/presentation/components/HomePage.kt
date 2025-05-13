@@ -4,6 +4,7 @@ import AccountBalance
 import BottomNavigationBar
 import ExpenseIncomeCards
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,17 +24,23 @@ import com.example.financetracker.core.core_presentation.components.AppTopBar
 import com.example.financetracker.core.core_presentation.utils.Screens
 import com.example.financetracker.main_page_feature.home_page.presentation.HomePageEvents
 import com.example.financetracker.main_page_feature.home_page.presentation.HomePageViewModel
-
+import com.example.financetracker.main_page_feature.settings.presentation.SettingViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun HomePageScreen(
     viewModel: HomePageViewModel,
-    navController: NavController
+    navController: NavController,
+    settingViewModel: SettingViewModel
 ){
 
     val states by viewModel.homePageStates.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        settingViewModel.loadUserProfileIfReady()
+        Log.d("HomePage","function called")
+    }
 
 
     MaterialTheme {

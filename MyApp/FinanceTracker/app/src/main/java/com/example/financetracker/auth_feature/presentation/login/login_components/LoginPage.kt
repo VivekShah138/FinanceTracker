@@ -4,16 +4,21 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.financetracker.auth_feature.presentation.AccountManager
 import com.example.financetracker.auth_feature.presentation.components.CustomText
 import com.example.financetracker.auth_feature.presentation.components.CustomTextFields
+import com.example.financetracker.auth_feature.presentation.components.CustomTextFields2
 import com.example.financetracker.auth_feature.presentation.forgot_password.ResetPasswordWithCredentialResult
 import com.example.financetracker.auth_feature.presentation.login.LogInResult
 import com.example.financetracker.auth_feature.presentation.login.LoginPageEvents
@@ -94,81 +100,94 @@ fun LogInPage(
         }
     }
 
-    Column (
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
+        contentAlignment = Alignment.Center
     ) {
-        // TEXT
-        CustomText(
-            text = "LogIn",
-            size = 30.sp
-        )
 
-        Column(
+
+        Column (
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
-            Text(text = "Email", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
-                modifier = Modifier
-                    .fillMaxWidth()
-//                    .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp)
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-                text = state.email,
-                onValueChange = {
-                    viewModel.onEvent(LoginPageEvents.ChangeEmail(it))
-                },
-                textStyle = MaterialTheme.typography.bodySmall,
-                singleLine = true,
-                inputType = KeyboardOptions(keyboardType = KeyboardType.Text),
-                isError = state.emailError != null
+            // TEXT
+            CustomText(
+                text = "LogIn",
+                size = 30.sp
             )
-            if(state.emailError != null){
-                Text(
-                    text = state.emailError ?: "Unknown Error",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+//            Text(text = "Email", modifier = Modifier.fillMaxWidth())
+                CustomTextFields2(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+//                    .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp)
+//                    .border(
+//                        width = 2.dp,
+//                        color = Color.Black,
+//                        shape = RoundedCornerShape(10.dp)
+//                    ),
+                    text = state.email,
+                    onValueChange = {
+                        viewModel.onEvent(LoginPageEvents.ChangeEmail(it))
+                    },
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    singleLine = true,
+                    inputType = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    isError = state.emailError != null,
+                    errorMessage = state.emailError ?: "",
+                    label = "Email"
                 )
+            if(state.emailError == null){
+                Spacer(modifier = Modifier.height(10.dp))
             }
 
-            Text(text = "Password", modifier = Modifier.fillMaxWidth())
-            CustomTextFields(
-                modifier = Modifier
-                    .fillMaxWidth()
+//            Text(text = "Password", modifier = Modifier.fillMaxWidth())
+                CustomTextFields2(
+                    modifier = Modifier
+                        .fillMaxWidth(),
 //                    .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp)
-                    .border(
-                        width = 2.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(10.dp)
-                    ),
-                text = state.password,
-                onValueChange = {
-                    // Add Function Change
-                    viewModel.onEvent(LoginPageEvents.ChangePassword(it))
+//                    .border(
+//                        width = 2.dp,
+//                        color = Color.Black,
+//                        shape = RoundedCornerShape(10.dp)
+//                    ),
+                    text = state.password,
+                    onValueChange = {
+                        // Add Function Change
+                        viewModel.onEvent(LoginPageEvents.ChangePassword(it))
 
-                },
-                textStyle = MaterialTheme.typography.bodySmall,
-                singleLine = true,
-                inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
-                isError = state.passwordError != null
-            )
-            if(state.passwordError != null){
-                Text(
-                    text = state.passwordError ?: "Unknown Error",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.End)
+                    },
+                    textStyle = MaterialTheme.typography.bodySmall,
+                    singleLine = true,
+                    inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    isError = state.passwordError != null,
+                    errorMessage = state.passwordError ?: "",
+                    label = "Password"
                 )
+//            if(state.passwordError != null){
+//                Text(
+//                    text = state.passwordError ?: "Unknown Error",
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.align(Alignment.End)
+//                )
+//            }
             }
-        }
 
 //        Row (
 //            modifier = Modifier.fillMaxWidth(),
@@ -191,65 +210,79 @@ fun LogInPage(
 //            )
 //        }
 
-        Button(
-            onClick = {
-                //  Add Login Functionality
-                viewModel.onEvent(LoginPageEvents.SubmitLogIn)
+            Spacer(modifier = Modifier.height(20.dp))
 
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Login")
-        }
-
-        Button(
-            onClick = {
-                // Add Google Functionality
-                coroutineScope.launch {
-                    val result = accountManager.signInWithGoogle()
-                    viewModel.onEvent(LoginPageEvents.ClickLoginWithGoogle(result))
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ){
-            Text("Google")
-        }
-
-        TextButton(
-            onClick = {
-                // Navigate to Forget Password Page
-                coroutineScope.launch {
-                    val result = accountManager.resetPasswordWithCredential()
-                    if(result is ResetPasswordWithCredentialResult.CredentialLoginSuccess){
-                        viewModel.onEvent(LoginPageEvents.ClickForgotPassword(result))
-                    }
-                    else{
-                        navController.navigate(route = Screens.ForgotPasswordScreen.routes)
-                    }
-
-                }
-            }
-        ) {
-            Text("Forgot Password?")
-        }
-
-
-        Row (
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text("Don't have an account?")
-            TextButton(
+            Button(
                 onClick = {
-                    navController.navigate(route = Screens.RegistrationScreen.routes)
-                }
+                    //  Add Login Functionality
+                    viewModel.onEvent(LoginPageEvents.SubmitLogIn)
+
+                },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Register")
+                Text("Login")
             }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Button(
+                onClick = {
+                    // Add Google Functionality
+                    coroutineScope.launch {
+                        val result = accountManager.signInWithGoogle()
+                        viewModel.onEvent(LoginPageEvents.ClickLoginWithGoogle(result))
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ){
+                Text("Google")
+            }
+
+            Box(
+                modifier = Modifier
+                .fillMaxWidth(),
+                contentAlignment = Alignment.TopEnd
+            ){
+                TextButton(
+                    onClick = {
+                        // Navigate to Forget Password Page
+                        coroutineScope.launch {
+                            val result = accountManager.resetPasswordWithCredential()
+                            if(result is ResetPasswordWithCredentialResult.CredentialLoginSuccess){
+                                viewModel.onEvent(LoginPageEvents.ClickForgotPassword(result))
+                            }
+                            else{
+                                navController.navigate(route = Screens.ForgotPasswordScreen.routes)
+                            }
+
+                        }
+                    }
+                ) {
+                    Text("Forgot Password?")
+                }
+            }
+
+
+
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Text("Don't have an account?", color = MaterialTheme.colorScheme.onBackground)
+                TextButton(
+                    onClick = {
+                        navController.navigate(route = Screens.RegistrationScreen.routes)
+                    }
+                ) {
+                    Text("Register")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+
     }
 }
 

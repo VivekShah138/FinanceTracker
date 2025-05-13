@@ -18,41 +18,47 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.financetracker.core.core_presentation.components.AppTopBar
+import com.example.financetracker.ui.theme.AppTheme
 
 @Preview(
     showBackground = true,
     showSystemUi = true)
 @Composable
 fun ProfileSetUpPreview(){
-    Scaffold(
-        topBar = {
-            AppTopBar(title = "Profile",showBackButton = true, showMenu = false, onBackClick = {} )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            EmailDisplay(label = "Email", email = "Shahvivek138@gmail.com", onChangeEmailClick = {})
+
+    AppTheme(darkTheme = true) {
+
+
+        Scaffold(
+            topBar = {
+                AppTopBar(title = "Profile",showBackButton = true, showMenu = false, onBackClick = {} )
+            }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            ) {
+                EmailDisplay(label = "Email", email = "Shahvivek138@gmail.com", onChangeEmailClick = {})
 //            ChangePasswordSection(onChangePasswordClick = {})
 
-            Names(firstName = "Vivek", lastName = "Shah", onFirstNameChange = {}, onLastNameChange = {})
+                Names(firstName = "Vivek", lastName = "Shah", onFirstNameChange = {}, onLastNameChange = {})
 
 
-            SimpleDropdownMenu(label = "Country",selectedText = "India", expanded = false,
-                list = emptyList<String>(), onExpandedChange = {}, onDismissRequest = {}, displayText = { it }, onItemSelect = {})
-            PhoneNumberInput(countryCode = "+91", phoneNumber = "9987063119", onPhoneNumberChange = {})
-            SimpleDropdownMenu(label = "Base Currency",selectedText = "Rupee", expanded = false,
-                list = emptyList<String>(), onExpandedChange = {}, onDismissRequest = {}, displayText = { it }, onItemSelect = {})
-            SaveButton(text = "Save", onClick = {})
+                SimpleDropdownMenu(label = "Country",selectedText = "India", expanded = false,
+                    list = emptyList<String>(), onExpandedChange = {}, onDismissRequest = {}, displayText = { it }, onItemSelect = {})
+                PhoneNumberInput(countryCode = "+91", phoneNumber = "9987063119", onPhoneNumberChange = {})
+                SimpleDropdownMenu(label = "Base Currency",selectedText = "Rupee", expanded = false,
+                    list = emptyList<String>(), onExpandedChange = {}, onDismissRequest = {}, displayText = { it }, onItemSelect = {})
+                SaveButton(text = "Save", onClick = {})
 
 
 
+            }
         }
+
     }
-    
 }
 
 

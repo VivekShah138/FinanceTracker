@@ -2,6 +2,7 @@ package com.example.financetracker.auth_feature.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,7 +22,7 @@ fun CustomText(
     size : TextUnit,
     fontStyle : FontStyle = FontStyle.Normal,
     fontWeight: FontWeight = FontWeight.Bold,
-    color : Color = Color.Black ,
+    color : Color = MaterialTheme.colorScheme.onBackground,
     heightValue : Dp = 80.dp,
     textAlign: TextAlign = TextAlign.Center
 ){
