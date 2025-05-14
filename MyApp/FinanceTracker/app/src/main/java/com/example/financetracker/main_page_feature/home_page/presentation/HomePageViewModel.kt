@@ -107,16 +107,30 @@ class HomePageViewModel @Inject constructor(
             val baseCurrencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
             Log.d("HomePageViewModel","baseCurrency $baseCurrencySymbol")
 
+            val incomeDataWithCategory = _homePageStates.value.incomeDataWithCategory.toMutableMap().apply { clear() }
+            val expenseDataWithCategory = _homePageStates.value.expenseDataWithCategory.toMutableMap().apply { clear() }
+
 
             allTransactionsThisMonth.forEach { transaction ->
                 when {
                     transaction.transactionType.equals("Income", ignoreCase = true) -> {
                         incomeAmountThisMonth += transaction.amount
                         Log.d("HomePageViewModel","income Amount This Month $incomeAmountThisMonth")
+
+                        val currentIncomeAmount = incomeDataWithCategory[transaction.category] ?: 0.0
+                        incomeDataWithCategory[transaction.category] = currentIncomeAmount + transaction.amount
+
+                        Log.d("HomePageViewModel", "income Amount for ${transaction.category}: ${incomeDataWithCategory[transaction.category]}")
+
                     }
                     transaction.transactionType.equals("Expense", ignoreCase = true) -> {
                         expenseAmountThisMonth += transaction.amount
                         Log.d("HomePageViewModel","expense Amount This Month $expenseAmountThisMonth")
+
+                        val currentExpenseAmount = expenseDataWithCategory[transaction.category] ?: 0.0
+                        expenseDataWithCategory[transaction.category] = currentExpenseAmount + transaction.amount
+
+                        Log.d("HomePageViewModel", "expense Amount for ${transaction.category}: ${expenseDataWithCategory[transaction.category]}")
                     }
                 }
             }
@@ -142,7 +156,9 @@ class HomePageViewModel @Inject constructor(
                 incomeAmount = formattedIncomeThisMonth,
                 expenseAmount = formattedExpenseThisMonth,
                 currencySymbol = baseCurrencySymbol,
-                accountBalance =formattedAccountBalance
+                accountBalance =formattedAccountBalance,
+                incomeDataWithCategory = incomeDataWithCategory,
+                expenseDataWithCategory = expenseDataWithCategory
             )
             getBudget()
         }

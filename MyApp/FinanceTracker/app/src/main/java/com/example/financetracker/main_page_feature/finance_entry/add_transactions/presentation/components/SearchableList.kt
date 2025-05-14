@@ -64,7 +64,7 @@ fun SearchableListPreview(){
             description = "ItemDescription",
             isRecurring = false,
             cloudSync = false,
-            transactionName = "Milk"
+            transactionName = "Bhavnagri Gathiya"
         ),
         onClick = {},
         isSelectionMode = true,
@@ -88,26 +88,10 @@ fun TransactionItemCard(
     }
 
     val priceColor = if (item.transactionType == "Expense") Color(0xFFD32F2F) else Color(0xFF2E7D32)
-//
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(vertical = 8.dp)
-//            .padding(horizontal = 16.dp)
-//            .combinedClickable(
-//                onClick = onClick,
-//                onLongClick = onLongClick
-//            ),
-//        shape = RoundedCornerShape(5.dp),
-//        elevation = CardDefaults.cardElevation(5.dp),
-//        colors = CardDefaults.cardColors(
-//            containerColor = if (isSelected) Color(0xFFE0F7FA) else MaterialTheme.colorScheme.surface
-//        )
-//    ) {
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-//            .padding(start = 16.dp)
             .background(color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
             .combinedClickable(
                 onClick = onClick,
@@ -123,23 +107,12 @@ fun TransactionItemCard(
             )
             Spacer(modifier = Modifier.width(4.dp))
         }
-
-//            // Formatted date
-//            Text(
-//                text = formattedDate,
-//                modifier = Modifier.weight(1f),
-//                fontSize = 12.sp,
-//                textAlign = TextAlign.Center
-//            )
-
         Row(modifier = Modifier.padding(start = 16.dp)){
 
             Card(
                 modifier = Modifier.size(40.dp),
-//                .padding(start = 16.dp),
                 shape = CircleShape,
                 border = BorderStroke(width = 0.5.dp,color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface),
-//                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 colors = CardDefaults.cardColors(containerColor = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Box(
@@ -166,6 +139,9 @@ fun TransactionItemCard(
             Text(
                 text = item.transactionName,
                 fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
             )
             Text(

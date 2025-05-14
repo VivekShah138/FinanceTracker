@@ -25,7 +25,7 @@ fun AccountBalance(
         Text(
             text = "Account Balance",
             style = MaterialTheme.typography.titleMedium,
-            fontSize = 12.sp
+//            fontSize = 12.sp
         )
 //        Spacer(modifier = Modifier.height(4.dp))
         Text(
