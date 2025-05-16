@@ -36,11 +36,11 @@ class ProfileSetUpViewModel @Inject constructor(
 
     init {
         getProfileInfo()
-        Log.d("UserId","UserId $userId")
+//        Log.d("UserId","UserId $userId")
 
         setOldBaseCurrency()
 
-        Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
+//        Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
 
 //        Log.d("WorkManagerCurrencyRates","function called")
 
@@ -50,10 +50,10 @@ class ProfileSetUpViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(userId)
             val baseCurrency = userProfile?.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
-            Log.d("WorkManagerCurrencyRates","baseCurrency $baseCurrency")
+//            Log.d("WorkManagerCurrencyRates","baseCurrency $baseCurrency")
 
             oldBaseCurrency = baseCurrency
-            Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
+//            Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
         }
     }
 
@@ -144,10 +144,10 @@ class ProfileSetUpViewModel @Inject constructor(
         )
 
         if(!firstName.isSuccessful || !lastName.isSuccessful || !phoneNumber.isSuccessful || !country.isSuccessful){
-            Log.d("ProfileFN", "FN: ${_profileSetUpStates.value.firstName} ${firstName.isSuccessful}  ${firstName.errorMessage}")
-            Log.d("ProfileLN", "LN: ${_profileSetUpStates.value.lastName} ${lastName.isSuccessful}  ${lastName.errorMessage}")
-            Log.d("ProfilePN", "PN: ${_profileSetUpStates.value.phoneNumber} ${phoneNumber.isSuccessful}  ${phoneNumber.errorMessage}")
-            Log.d("ProfileC", "C: ${_profileSetUpStates.value.selectedCountry} ${country.isSuccessful}  ${country.errorMessage}")
+//            Log.d("ProfileFN", "FN: ${_profileSetUpStates.value.firstName} ${firstName.isSuccessful}  ${firstName.errorMessage}")
+//            Log.d("ProfileLN", "LN: ${_profileSetUpStates.value.lastName} ${lastName.isSuccessful}  ${lastName.errorMessage}")
+//            Log.d("ProfilePN", "PN: ${_profileSetUpStates.value.phoneNumber} ${phoneNumber.isSuccessful}  ${phoneNumber.errorMessage}")
+//            Log.d("ProfileC", "C: ${_profileSetUpStates.value.selectedCountry} ${country.isSuccessful}  ${country.errorMessage}")
             profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(firstName.errorMessage ?: lastName.errorMessage ?: phoneNumber.errorMessage ?: country.errorMessage))
             return
         }
@@ -159,21 +159,21 @@ class ProfileSetUpViewModel @Inject constructor(
                 val baseCurrencyName = profileSetUpStates.value.selectedBaseCurrency
                 val baseCurrencySymbol = profileSetUpStates.value.baseCurrencySymbol
 
-                Log.d("ProfileSetUpViewModel","BaseCurrencyCode firebaseUpdate $baseCurrencyCode")
-                Log.d("ProfileSetUpViewModel","BaseCurrencyName firebaseUpdate $baseCurrencyName")
-                Log.d("ProfileSetUpViewModel","BaseCurrencySymbol firebaseUpdate $baseCurrencySymbol")
+//                Log.d("ProfileSetUpViewModel","BaseCurrencyCode firebaseUpdate $baseCurrencyCode")
+//                Log.d("ProfileSetUpViewModel","BaseCurrencyName firebaseUpdate $baseCurrencyName")
+//                Log.d("ProfileSetUpViewModel","BaseCurrencySymbol firebaseUpdate $baseCurrencySymbol")
 
                 // Create the Currency object
                 val selectedCurrency = Currency(name = baseCurrencyName, symbol = baseCurrencySymbol)
 
-                Log.d("ProfileSetUpViewModel","selectedCurrency firebaseUpdate $selectedCurrency")
+//                Log.d("ProfileSetUpViewModel","selectedCurrency firebaseUpdate $selectedCurrency")
 
                 // Create the baseCurrency map with the code as key and the map as value
                 val baseCurrency: Map<String, Currency> = mapOf(
                     baseCurrencyCode to selectedCurrency  // Map the code to the map of currency details
                 )
 
-                Log.d("ProfileSetUpViewModel","baseCurrency firebaseUpdate $baseCurrency")
+//                Log.d("ProfileSetUpViewModel","baseCurrency firebaseUpdate $baseCurrency")
 
 
                 // Save To LocalDb
@@ -224,8 +224,8 @@ class ProfileSetUpViewModel @Inject constructor(
             _profileSetUpStates.value.lastName
         )
         if(!firstName.isSuccessful || !lastName.isSuccessful){
-            Log.d("ProfileFN", "FN: ${_profileSetUpStates.value.firstName} ${firstName.isSuccessful}  ${firstName.errorMessage}")
-            Log.d("ProfileLN", "LN: ${_profileSetUpStates.value.lastName} ${lastName.isSuccessful}  ${lastName.errorMessage}")
+//            Log.d("ProfileFN", "FN: ${_profileSetUpStates.value.firstName} ${firstName.isSuccessful}  ${firstName.errorMessage}")
+//            Log.d("ProfileLN", "LN: ${_profileSetUpStates.value.lastName} ${lastName.isSuccessful}  ${lastName.errorMessage}")
 
             profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(firstName.errorMessage ?: lastName.errorMessage))
             return
@@ -238,7 +238,7 @@ class ProfileSetUpViewModel @Inject constructor(
             _profileSetUpStates.value.phoneNumber
         )
         if(!phoneNumber.isSuccessful){
-            Log.d("ProfilePN", "PN: ${_profileSetUpStates.value.phoneNumber} ${phoneNumber.isSuccessful}  ${phoneNumber.errorMessage}")
+//            Log.d("ProfilePN", "PN: ${_profileSetUpStates.value.phoneNumber} ${phoneNumber.isSuccessful}  ${phoneNumber.errorMessage}")
             profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(phoneNumber.errorMessage))
             return
         }
@@ -250,7 +250,7 @@ class ProfileSetUpViewModel @Inject constructor(
             _profileSetUpStates.value.selectedCountry
         )
         if(!country.isSuccessful){
-            Log.d("ProfileC", "C: ${_profileSetUpStates.value.selectedCountry} ${country.isSuccessful}  ${country.errorMessage}")
+//            Log.d("ProfileC", "C: ${_profileSetUpStates.value.selectedCountry} ${country.isSuccessful}  ${country.errorMessage}")
             profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(country.errorMessage))
             return
         }
@@ -374,9 +374,9 @@ class ProfileSetUpViewModel @Inject constructor(
                     val baseCurrencyName = userProfile.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
                     val baseCurrencySymbol = userProfile.baseCurrency?.values?.firstOrNull()?.symbol ?: "N/A"
 
-                    Log.d("ProfileSetUpViewModel","baseCurrencyCode Firebase Receive $baseCurrencyCode")
-                    Log.d("ProfileSetUpViewModel","baseCurrencyName Firebase Receive $baseCurrencyName")
-                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol Firebase Receive $baseCurrencySymbol")
+//                    Log.d("ProfileSetUpViewModel","baseCurrencyCode Firebase Receive $baseCurrencyCode")
+//                    Log.d("ProfileSetUpViewModel","baseCurrencyName Firebase Receive $baseCurrencyName")
+//                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol Firebase Receive $baseCurrencySymbol")
 
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
                         firstName = userProfile.firstName,
@@ -390,9 +390,9 @@ class ProfileSetUpViewModel @Inject constructor(
                         phoneNumber = userProfile.phoneNumber
                     )
 
-                    Log.d("ProfileSetUpViewModel","baseCurrencyCode state ${_profileSetUpStates.value.baseCurrencyCode}")
-                    Log.d("ProfileSetUpViewModel","baseCurrencyName state ${_profileSetUpStates.value.selectedBaseCurrency}")
-                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol state ${_profileSetUpStates.value.baseCurrencySymbol}")
+//                    Log.d("ProfileSetUpViewModel","baseCurrencyCode state ${_profileSetUpStates.value.baseCurrencyCode}")
+//                    Log.d("ProfileSetUpViewModel","baseCurrencyName state ${_profileSetUpStates.value.selectedBaseCurrency}")
+//                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol state ${_profileSetUpStates.value.baseCurrencySymbol}")
 
                 }
             }catch (e:Exception){
@@ -427,14 +427,9 @@ class ProfileSetUpViewModel @Inject constructor(
 
     fun updateCurrencyRates(){
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("WorkManagerCurrencies","one time function called inside setUp")
-            Log.d("WorkManagerCurrencyRates","currentBaseCurrency ${_profileSetUpStates.value.selectedBaseCurrency}")
-            Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
-
             val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(userId)
 
             if(((!oldBaseCurrency.isNullOrEmpty() && oldBaseCurrency != _profileSetUpStates.value.selectedBaseCurrency) || userProfile == null)){
-                Log.d("WorkManagerCurrencyRates","insideIf ProfileSetUpViewModel")
                 setupAccountUseCasesWrapper.setCurrencyRatesUpdated(isUpdated = false)
                 setupAccountUseCasesWrapper.insertCurrencyRatesLocalOneTime()
             }

@@ -188,9 +188,6 @@ class BudgetViewModel @Inject constructor(
             val userProfile = budgetUseCaseWrapper.getUserProfileFromLocalDb(uid = uid)
             val baseCurrencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
 
-            Log.d("BudgetViewModel","Selected Month ${_budgetStates.value.selectedMonth}")
-            Log.d("BudgetViewModel","selected Year  ${_budgetStates.value.selectedYear}")
-            Log.d("BudgetViewModel","existing budget $existing")
 
             _singleBudgetState.value = existing
             if(existing == null){
@@ -209,7 +206,7 @@ class BudgetViewModel @Inject constructor(
             }
 
 
-            Log.d("BudgetViewModel","create budget state ${_budgetStates.value.createBudgetState}")
+//            Log.d("BudgetViewModel","create budget state ${_budgetStates.value.createBudgetState}")
 
         }
     }

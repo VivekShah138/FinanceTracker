@@ -12,7 +12,7 @@ class ValidateEmail {
                 errorMessage = "Please Enter The Email"
             )
         }
-        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+        if(!isValidEmail(email)){
             return ValidationResult(
                 isSuccessful = false,
                 errorMessage = "Please Enter The Valid Email"
@@ -21,6 +21,11 @@ class ValidateEmail {
         return ValidationResult(
             isSuccessful = true,
         )
+    }
+
+    fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$".toRegex()
+        return emailRegex.matches(email)
     }
 
 }

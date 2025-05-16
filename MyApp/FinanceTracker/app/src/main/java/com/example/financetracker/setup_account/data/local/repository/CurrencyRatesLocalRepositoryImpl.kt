@@ -71,7 +71,6 @@ class CurrencyRatesLocalRepositoryImpl(
         } else {
             Log.d("WorkManagerCurrencyRates", "Currency rates already updated. Skipping one-time worker.")
         }
-
     }
 
     override suspend fun insertCurrencyRatesLocalPeriodically() {
@@ -115,6 +114,4 @@ class CurrencyRatesLocalRepositoryImpl(
 
         return targetTime.timeInMillis - now.timeInMillis
     }
-
-
 }

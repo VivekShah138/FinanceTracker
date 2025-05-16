@@ -169,7 +169,12 @@ class SavedItemViewModel @Inject constructor(
             )
 
             if(!itemPriceResult.isSuccessful || !itemNameResult.isSuccessful){
-                savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Failure(itemPriceResult.errorMessage ?: itemNameResult.errorMessage))
+//                val errorToSend = itemPriceResult.errorMessage ?: itemNameResult.errorMessage ?: "Unknown error"
+
+                val errorToSend = listOf(itemPriceResult.errorMessage, itemNameResult.errorMessage)
+                    .filterNot { it.isNullOrBlank() }
+                    .firstOrNull() ?: "Unknown error"
+                savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Failure(errorToSend))
             }
             else{
 
@@ -205,12 +210,12 @@ class SavedItemViewModel @Inject constructor(
                             // 1. Insert locally first to generate the ID
                             val rowId = savedItemsUseCasesWrapper.saveNewItemReturnId(savedItems = savedItem)
 
-                            Log.d("SavedItemViewModel", "savedItemId $rowId")
+//                            Log.d("SavedItemViewModel", "savedItemId $rowId")
 
                             // 2. Copy the ID into a new transaction object
                             val savedItemWithId = savedItem.copy(itemId = rowId.toInt(), cloudSync = true)
 
-                            Log.d("SavedItemViewModel", "savedItemWithId $savedItemWithId")
+//                            Log.d("SavedItemViewModel", "savedItemWithId $savedItemWithId")
 
                             // 3. Save to cloud
                             savedItemsUseCasesWrapper.saveSingleSavedItemCloud(userId = userUID, savedItems = savedItemWithId)
@@ -220,12 +225,12 @@ class SavedItemViewModel @Inject constructor(
 
 
                         } catch (e: Exception) {
-                            Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
+//                            Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
 
                             try {
                                 savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItem)
                             } catch (e: Exception) {
-                                Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
+//                                Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                                 savedItemsValidationEventChannel.send(
                                     AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                                 )
@@ -236,9 +241,9 @@ class SavedItemViewModel @Inject constructor(
                         // No internet, save locally
                         try {
                             savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItem)
-                            Log.d("AddExpenseViewModel", "Local save No Internet")
+//                            Log.d("AddExpenseViewModel", "Local save No Internet")
                         } catch (e: Exception) {
-                            Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
+//                            Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                             savedItemsValidationEventChannel.send(
                                 AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                             )
@@ -249,9 +254,9 @@ class SavedItemViewModel @Inject constructor(
                     // Cloud sync disabled, save locally
                     try {
                         savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItem)
-                        Log.d("AddExpenseViewModel", "Local save No CloudSync")
+//                        Log.d("AddExpenseViewModel", "Local save No CloudSync")
                     } catch (e: Exception) {
-                        Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
+//                        Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                         savedItemsValidationEventChannel.send(
                             AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                         )

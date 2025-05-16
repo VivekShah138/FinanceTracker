@@ -63,9 +63,9 @@ fun HomePageScreen(
                     onBackClick = {},
                     menuItems = listOf<MenuItems>(
                         MenuItems(
-                            text = "Settings",
+                            text = "View Budget",
                             onClick = {
-                                navController.navigate(route = Screens.SettingScreen.routes )
+                                navController.navigate(route = Screens.BudgetScreen.routes )
                             }
                         ),
                         MenuItems(

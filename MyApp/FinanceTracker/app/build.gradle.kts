@@ -122,4 +122,13 @@ dependencies {
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 
+    testImplementation ("org.mockito:mockito-core:4.8.0")
+    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation ("app.cash.turbine:turbine:1.0.0") // For testing flows
+    testImplementation ("org.jetbrains.kotlin:kotlin-test:1.9.0")
+
+
+
+
 }
