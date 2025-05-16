@@ -1,46 +1,117 @@
-[comment]: # (You may find the following markdown cheat sheet useful: https://www.markdownguide.org/cheat-sheet/. You may also consider using an online Markdown editor such as StackEdit or makeareadme.) 
+# 📊 Finance Tracker App
 
-## Project title: *Finance Tracker*
+The **Finance Tracker App** helps users manage their income, expenses, and budgets with features like multi-currency support, cloud sync, and data visualization. It uses **Kotlin**, **Jetpack Compose**, and **Clean Architecture** along with **Room**, **Firebase**, **Retrofit**, and **Dagger Hilt**.
 
-### Student name: *Vivek Prakash Shah*
+---
 
-### Student email: *vps5@student.le.ac.uk*
+## ✅ Features
 
-### Project description: 
-*This project aims to develop an Android-based <b>Finance Tracker App</b> that enables users to efficiently manage their personal finances. The app will feature user authentication, allowing sign-in via email/password and Google. Users can set budgets, track expenses, and log income to monitor their financial health. The app will provide data visualization through interactive charts, helping users analyze spending and income trends. Additionally, it will support multi-currency, integrating a currency conversion API for accurate financial tracking. Users can also export their data in CSV format for external use.
-The application will leverage Kotlin, Room Database for offline storage, Firebase for authentication and cloud backup. By implementing key financial management features in a mobile-friendly way, this project aims to improve user awareness and control over personal finances. The app’s usability and effectiveness will be evaluated through user testing and feedback.*
+- Email/Password and Google Sign-In (Firebase Auth)
+- Add/Edit/Delete Income & Expenses
+- Monthly Budget Tracking
+- Categories (with custom support)
+- Local storage using Room
+- Cloud sync via Firebase Firestore
+- Multi-currency with conversion
+- Data visualization (charts, graphs)
+- Recurring transactions
+- Saved items for quick entry
+- Secure storage and session management
+- Account Setup for first-time users
+- Dark mode (optional)
+- APK provided for direct install
 
-### List of requirements (objectives): 
+---
 
-[comment]: # (You can add as many additional bullet points as necessary by adding an additional hyphon symbol '-' at the end of each list) 
+## 🛠️ Requirements
 
-Essential:
-- Users must be able to register and log in using email/password authentication.
-- Support Google Sign-In for easier authentication.
-- Users should be able to add, edit, and delete expenses and income with relevant details (amount, category, date).
-- Implement budget management, allowing users to set and track monthly budgets.
-- Store financial data locally using Room Database for offline access.
-- Provide data visualization with charts and graphs to analyze income and expenses.
-- Ensure secure data storage with proper encryption and authentication.
+Ensure you have the following:
 
-Desirable:
-- Implement Firebase integration to sync financial data across multiple devices.
-- Send notifications/reminders for budget limits or expense tracking.
-- Enable users to filter and search transactions by category, date, or amount.
-- Provide a currency conversion feature to support multi-currency transactions.
-- Design an intuitive and user-friendly UI for a smooth user experience.
+- ✅ Android Studio Giraffe | Hedgehog or later
+- ✅ Kotlin Plugin 1.9 or later
+- ✅ JDK 17+
+- ✅ Gradle 8+ (bundled with Android Studio)
+- ✅ Internet connection for Firebase and currency conversion APIs
 
-Optional:
-- Allow data export in CSV and PDF formats for external use or backup.
-- Implement receipt scanning using OCR (Optical Character Recognition) to auto-fill expense details.
-- Enable fingerprint authentication for secure and quick login.
-- Allow users to switch between multiple accounts, such as personal and business finances.
-- Introduce a dark mode theme for improved accessibility.
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://campus.cs.le.ac.uk/gitlab/pgt_project/24_25_spring/vps5
+cd MyApp/FinanceTracker
+```
+
+### 2. Open in Android Studio
+
+- Open **Android Studio**
+- Click **File > Open** and select the cloned project folder
+- Let **Gradle sync** complete
 
 
-## Information about this repository
-This is the repository that you are going to use **individually** for developing your project. Please use the resources provided in the module to learn about **plagiarism** and how plagiarism awareness can foster your learning.
+##  Running on a Physical Android Device
 
-Regarding the use of this repository, once a feature (or part of it) is developed and **working** or parts of your system are integrated and **working**, define a commit and push it to the remote repository. You may find yourself making a commit after a productive hour of work (or even after 20 minutes!), for example. Choose commit message wisely and be concise.
+### A. Enable Developer Mode
 
-Please choose the structure of the contents of this repository that suits the needs of your project but do indicate in this file where the main software artefacts are located.
+- Go to **Settings > About Phone**
+- Tap **Build number** 7 times
+
+### B. Enable USB Debugging
+
+- Go to **Settings > Developer Options**
+- Enable **USB Debugging**
+
+### C. Run from Android Studio
+
+- Connect device via USB (or ADB over Wi-Fi)
+- Select device from dropdown
+- Click **Run ▶️**
+
+---
+
+## 📦 APK Installation
+
+An **APK** is available for direct install in the `release` folder or provided separately.
+
+### Steps:
+
+1. Copy APK to your phone
+2. Enable "Install from Unknown Sources"
+3. Tap the APK and install it
+4. Open and use the app
+
+> ⚠️ Note: Some features like Google Sign-In require Google Play Services.
+
+---
+
+## 📁 Project Structure Overview
+
+```
+finance-tracker-app/
+├── app/
+│   ├── src/main/
+│   │   ├── java/com/yourapp/...
+│   │   └── res/
+│   └── google-services.json (add manually)
+├── build.gradle
+├── settings.gradle
+└── README.md
+```
+
+---
+
+## 🧠 Architecture
+
+- Clean Architecture with Feature Modules
+- MVVM Pattern
+- Jetpack Compose for UI
+- Room for local DB
+- Firebase for authentication & cloud sync
+- Dagger Hilt for dependency injection
+- Retrofit for network (currency conversion)
+- SharedPreferences for session & preferences
+
+
+---
