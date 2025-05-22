@@ -15,13 +15,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -39,8 +42,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.financetracker.auth_feature.presentation.AccountManager
+import com.example.financetracker.auth_feature.presentation.components.CustomPasswordField
 import com.example.financetracker.auth_feature.presentation.components.CustomText
 import com.example.financetracker.auth_feature.presentation.components.CustomTextFields
 import com.example.financetracker.auth_feature.presentation.components.CustomTextFields2
@@ -104,7 +109,7 @@ fun LogInPage(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(if (state.isLoading || state.isDataSyncing) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f) else MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .imePadding(),
         contentAlignment = Alignment.Center
@@ -114,7 +119,6 @@ fun LogInPage(
         Column (
             modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -132,41 +136,32 @@ fun LogInPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-//            Text(text = "Email", modifier = Modifier.fillMaxWidth())
                 CustomTextFields2(
                     modifier = Modifier
                         .fillMaxWidth(),
-//                    .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp)
-//                    .border(
-//                        width = 2.dp,
-//                        color = Color.Black,
-//                        shape = RoundedCornerShape(10.dp)
-//                    ),
                     text = state.email,
                     onValueChange = {
                         viewModel.onEvent(LoginPageEvents.ChangeEmail(it))
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
                     singleLine = true,
-                    inputType = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    inputType = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
                     isError = state.emailError != null,
                     errorMessage = state.emailError ?: "",
                     label = "Email"
                 )
+
             if(state.emailError == null){
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
-//            Text(text = "Password", modifier = Modifier.fillMaxWidth())
-                CustomTextFields2(
+
+                CustomPasswordField(
                     modifier = Modifier
                         .fillMaxWidth(),
-//                    .padding(top = 10.dp, end = 20.dp, start = 20.dp, bottom = 10.dp)
-//                    .border(
-//                        width = 2.dp,
-//                        color = Color.Black,
-//                        shape = RoundedCornerShape(10.dp)
-//                    ),
                     text = state.password,
                     onValueChange = {
                         // Add Function Change
@@ -175,40 +170,16 @@ fun LogInPage(
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
                     singleLine = true,
-                    inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    inputType = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Done
+                    ),
                     isError = state.passwordError != null,
                     errorMessage = state.passwordError ?: "",
                     label = "Password"
                 )
-//            if(state.passwordError != null){
-//                Text(
-//                    text = state.passwordError ?: "Unknown Error",
-//                    color = MaterialTheme.colorScheme.error,
-//                    modifier = Modifier.align(Alignment.End)
-//                )
-//            }
             }
 
-//        Row (
-//            modifier = Modifier.fillMaxWidth(),
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.Start
-//        ){
-//            Checkbox(
-//                checked = state.keepLoggedIn,
-//                onCheckedChange = {
-//                    // Add Function
-//                    viewModel.onEvent(LoginPageEvents.ChangeKeepLoggedIn(it))
-//                }
-//            )
-//
-//            CustomText(
-//                text = "Keep LoggedIn",
-//                size = 20.sp,
-//                fontWeight = FontWeight.Bold,
-//                textAlign = TextAlign.Start
-//            )
-//        }
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -229,6 +200,7 @@ fun LogInPage(
                 onClick = {
                     // Add Google Functionality
                     coroutineScope.launch {
+                        viewModel.onEvent(LoginPageEvents.SetLoadingTrue(true))
                         val result = accountManager.signInWithGoogle()
                         viewModel.onEvent(LoginPageEvents.ClickLoginWithGoogle(result))
                     }
@@ -281,8 +253,66 @@ fun LogInPage(
 
             Spacer(modifier = Modifier.height(10.dp))
         }
-
-
+        if(state.isLoading){
+            Box(
+                modifier = Modifier
+                    .background(Color.Transparent),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    tonalElevation = 8.dp,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .background(Color.Transparent)
+                            .wrapContentSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.background)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Loading...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.background,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
+        if(state.isDataSyncing){
+            Box(
+                modifier = Modifier
+                    .background(Color.Transparent),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    tonalElevation = 8.dp,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .background(Color.Transparent)
+                            .wrapContentSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.background)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Syncing Data...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.background,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

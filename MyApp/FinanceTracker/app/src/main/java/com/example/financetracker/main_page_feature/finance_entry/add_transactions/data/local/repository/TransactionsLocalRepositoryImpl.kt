@@ -50,4 +50,8 @@ class TransactionsLocalRepositoryImpl(
     override suspend fun updateCloudSyncStatus(id: Int, syncStatus: Boolean) {
         return transactionDao.updateCloudSyncStatus(id = id,syncStatus = syncStatus)
     }
+
+    override suspend fun doesTransactionExist(userId: String, transactionId: Int): Boolean {
+        return transactionDao.doesTransactionExist(userId = userId,transactionId = transactionId)
+    }
 }

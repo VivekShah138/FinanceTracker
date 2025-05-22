@@ -15,4 +15,8 @@ interface SharedPreferencesRepository {
     fun getUserName(): String?
     fun setUserName(userName: String)
     fun removeUserNameLocally()
+    fun isFirstTimeInstalled(): Boolean
+    fun setFirstTimeInstalled()
+    fun isFirstTimeLoggedIn(uid: String): Boolean
+    fun setFirstTimeLoggedIn(uid: String)
 }

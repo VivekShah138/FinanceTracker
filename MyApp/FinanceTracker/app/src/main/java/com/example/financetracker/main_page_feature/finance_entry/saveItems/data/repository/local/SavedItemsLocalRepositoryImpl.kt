@@ -68,4 +68,7 @@ class SavedItemsLocalRepositoryImpl(
         return deletedSavedItemsDao.deleteDeletedSavedItemsByIds(itemId)
     }
 
+    override suspend fun doesTransactionExist(userId: String, itemId: Int): Boolean {
+        return savedItemsDao.doesTransactionExist(userId = userId,itemId = itemId)
+    }
 }

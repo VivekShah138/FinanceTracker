@@ -270,8 +270,5 @@ fun BudgetScreen(
             }
 
         }
-
-
-
     }
 }

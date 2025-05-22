@@ -5,7 +5,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.financetracker.R
 import com.example.financetracker.budget_feature.data.data_source.BudgetDao
-import com.example.financetracker.budget_feature.data.data_source.BudgetEntity
 import com.example.financetracker.budget_feature.domain.model.Budget
 import com.example.financetracker.budget_feature.domain.model.toDomain
 import com.example.financetracker.budget_feature.domain.model.toEntity
@@ -42,5 +41,9 @@ class BudgetLocalRepositoryImpl(
 
         val notificationManager = NotificationManagerCompat.from(context)
         notificationManager.notify(1001, builder.build())
+    }
+
+    override suspend fun doesBudgetExist(userId: String, id: String): Boolean {
+        return budgetDao.doesBudgetExist(userId = userId, id = id)
     }
 }

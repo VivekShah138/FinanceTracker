@@ -13,5 +13,6 @@ interface RemoteRepository {
     suspend fun cloudSyncMultipleTransaction()
     fun isInternetConnected(): Boolean
     suspend fun deletedTransactionRemote(transactionId: Int,userId: String)
-
+    suspend fun getRemoteTransactions(userId:String): List<Transactions>
+    suspend fun insertRemoteTransactionToLocal()
 }

@@ -27,7 +27,8 @@ class RegisterPageViewModel @Inject constructor(
         when(registerPageEvents){
             is RegisterPageEvents.ChangeEmail -> {
                 _registerState.value = registerState.value.copy(
-                    email = registerPageEvents.email
+                    email = registerPageEvents.email,
+                    emailError = null
                 )
             }
 //            is RegisterPageEvents.ChangeUserName -> {
@@ -37,12 +38,14 @@ class RegisterPageViewModel @Inject constructor(
 //            }
             is RegisterPageEvents.ChangePassword -> {
                 _registerState.value = registerState.value.copy(
-                    password = registerPageEvents.password
+                    password = registerPageEvents.password,
+                    passwordError = null
                 )
             }
             is RegisterPageEvents.ChangeConfirmPassword -> {
                 _registerState.value = registerState.value.copy(
-                    confirmPassword = registerPageEvents.confirmPassword
+                    confirmPassword = registerPageEvents.confirmPassword,
+                    confirmPasswordError = null
                 )
             }
             RegisterPageEvents.SubmitRegister -> {

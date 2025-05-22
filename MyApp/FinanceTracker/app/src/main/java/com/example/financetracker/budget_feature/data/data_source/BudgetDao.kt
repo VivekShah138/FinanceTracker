@@ -16,4 +16,7 @@ interface BudgetDao {
 
     @Upsert
     suspend fun insertBudget(budget: BudgetEntity)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM MONTHLY_BUDGETS WHERE id = :id AND userId = :userId LIMIT 1)")
+    suspend fun doesBudgetExist(userId: String, id: String): Boolean
 }

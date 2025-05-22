@@ -10,4 +10,8 @@ class InsertUserProfileToLocalDb(
     suspend operator fun invoke(userProfile: UserProfile,uid: String) {
         return userProfileRepository.insertUserProfile(userProfile,uid)
     }
+
+    suspend operator fun invoke() {
+        return userProfileRepository.insertUserProfile()
+    }
 }

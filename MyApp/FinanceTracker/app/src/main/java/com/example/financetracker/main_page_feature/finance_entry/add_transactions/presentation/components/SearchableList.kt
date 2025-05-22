@@ -55,8 +55,8 @@ fun SearchableListPreview(){
             transactionId = 1,
             amount = 1.45,
             currency = null,
-            convertedAmount = null,
-            exchangeRate = null,
+            convertedAmount = 0.0,
+            exchangeRate = 0.0,
             transactionType = "Expense",
             category = "Groceries",
             dateTime = 1744486763759,
@@ -157,7 +157,7 @@ fun TransactionItemCard(
 
         // Amount
         Text(
-            text = "${item.currency?.entries?.firstOrNull()?.value?.symbol ?: "$"} ${item.amount}",
+            text = "${item.currency?.entries?.firstOrNull()?.value?.symbol ?: "$"} ${if(item.convertedAmount != 0.0) item.convertedAmount else item.amount}",
             color = priceColor,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,

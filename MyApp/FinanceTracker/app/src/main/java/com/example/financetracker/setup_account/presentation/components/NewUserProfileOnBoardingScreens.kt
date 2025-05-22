@@ -115,11 +115,25 @@ fun NewUserProfileOnBoardingScreens(
                     )
                 }
                 "Country" -> {
-                    SimpleDropdownMenu(
-                        label = "Country",
-                        selectedText = states.selectedCountry,
+                    AutoComplete(
+                        categories = states.countries,
+                        loadCountry = {
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.LoadCountries
+                            )
+                        },
+                        onSearchValueChange = {
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.ChangeSearchCountry(it)
+                            )
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.FilterCountryNameList(
+                                    list = states.countries,
+                                    newWord = it
+                                )
+                            )
+                        },
                         expanded = states.countryExpanded,
-                        list = states.countries,
                         onExpandedChange = {
                             viewModel.onEvent(
                                 ProfileSetUpEvents.SelectCountry(
@@ -131,18 +145,6 @@ fun NewUserProfileOnBoardingScreens(
                             if (it) {
                                 viewModel.onEvent(ProfileSetUpEvents.LoadCountries)
                             }
-                        },
-                        onDismissRequest = {
-                            viewModel.onEvent(
-                                ProfileSetUpEvents.SelectCountry(
-                                    country = states.selectedCountry,
-                                    callingCode = states.callingCode,
-                                    expanded = !states.countryExpanded
-                                )
-                            )
-                        },
-                        displayText = {
-                            it.name.common
                         },
                         onItemSelect = {
                             val country = it.name.common
@@ -156,6 +158,11 @@ fun NewUserProfileOnBoardingScreens(
                             val currencyName = firstCurrency?.value?.name ?: "N/A"
                             val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                             val currencyCode = firstCurrency?.key ?: "N/A"
+
+                            Log.d("ProfileSetUp","firstCurrency Country $firstCurrency")
+                            Log.d("ProfileSetUp","currencyName Country $currencyName")
+                            Log.d("ProfileSetUp","currencyCode Country $currencySymbol")
+                            Log.d("ProfileSetUp","currencySymbol Country $currencyCode")
 
                             viewModel.onEvent(
                                 ProfileSetUpEvents.SelectBaseCurrency(
@@ -172,6 +179,14 @@ fun NewUserProfileOnBoardingScreens(
                                     expanded = !states.countryExpanded
                                 )
                             )
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.ChangeSearchCountry(country)
+                            )
+                        },
+                        category = if(states.countryExpanded) states.searchCountry else states.selectedCountry,
+                        label = "Country",
+                        displayText = {
+                            it.name.common
                         }
                     )
                 }
@@ -188,11 +203,25 @@ fun NewUserProfileOnBoardingScreens(
 
 
                 "Currency" -> {
-                    SimpleDropdownMenu(
-                        label = "Base Currency",
-                        selectedText = "${states.selectedBaseCurrency} (${states.baseCurrencyCode})",
+                    AutoComplete(
+                        categories = states.currencies,
+                        loadCountry = {
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.LoadCurrencies
+                            )
+                        },
+                        onSearchValueChange = {
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.ChangeSearchCurrency(it)
+                            )
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.FilterCountryNameList(
+                                    list = states.countries,
+                                    newWord = it
+                                )
+                            )
+                        },
                         expanded = states.baseCurrencyExpanded,
-                        list = states.currencies,
                         onExpandedChange = {
                             viewModel.onEvent(
                                 ProfileSetUpEvents.SelectBaseCurrency(
@@ -206,22 +235,19 @@ fun NewUserProfileOnBoardingScreens(
                                 viewModel.onEvent(ProfileSetUpEvents.LoadCurrencies)
                             }
                         },
-                        onDismissRequest = {
-                            ProfileSetUpEvents.SelectBaseCurrency(
-                                currency = states.selectedBaseCurrency,
-                                currencyCode = states.baseCurrencyCode,
-                                currencySymbol = states.baseCurrencySymbol,
-                                expanded = !states.baseCurrencyExpanded
-                            )
-                        },
-                        displayText = {
-                            it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
-                        },
                         onItemSelect = {
                             val firstCurrency = it.currencies?.entries?.firstOrNull()
+
+
+
                             val currencyName = firstCurrency?.value?.name ?: "N/A"
                             val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                             val currencyCode = firstCurrency?.key ?: "N/A"
+
+                            Log.d("ProfileSetUp","firstCurrency BaseCurrency $firstCurrency")
+                            Log.d("ProfileSetUp","currencyName BaseCurrency $currencyName")
+                            Log.d("ProfileSetUp","currencyCode BaseCurrency $currencySymbol")
+                            Log.d("ProfileSetUp","currencySymbol BaseCurrency $currencyCode")
 
                             viewModel.onEvent(
                                 ProfileSetUpEvents.SelectBaseCurrency(
@@ -231,8 +257,17 @@ fun NewUserProfileOnBoardingScreens(
                                     expanded = false
                                 )
                             )
+                            viewModel.onEvent(
+                                ProfileSetUpEvents.ChangeSearchCurrency(currencyName)
+                            )
+                        },
+                        category = if(states.baseCurrencyExpanded) states.searchCurrency else "${states.selectedBaseCurrency} (${states.baseCurrencyCode})",
+                        label = "Base Currency",
+                        displayText = {
+                            it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
                         }
                     )
+
                 }
             }
 

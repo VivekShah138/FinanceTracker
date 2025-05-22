@@ -4,6 +4,7 @@ package com.example.financetracker.main_page_feature.settings.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ class SettingViewModel @Inject constructor(
 
     private val _settingStates = MutableStateFlow(SettingStates())
     val settingStates: StateFlow<SettingStates> = _settingStates.asStateFlow()
+
 
 
 
@@ -106,5 +108,7 @@ class SettingViewModel @Inject constructor(
             Log.d("SettingsViewModel", "UID still null, cannot load profile.")
         }
     }
+
+
 
 }

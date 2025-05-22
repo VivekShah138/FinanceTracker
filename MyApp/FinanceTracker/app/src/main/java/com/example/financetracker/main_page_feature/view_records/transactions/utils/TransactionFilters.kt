@@ -1,6 +1,5 @@
 package com.example.financetracker.main_page_feature.view_records.transactions.utils
 
-import com.example.financetracker.core.local.domain.room.model.Category
 
 sealed class TransactionFilter {
 

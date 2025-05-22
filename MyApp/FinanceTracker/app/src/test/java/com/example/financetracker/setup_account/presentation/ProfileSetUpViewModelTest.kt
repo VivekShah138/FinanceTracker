@@ -39,7 +39,7 @@ class ProfileSetUpViewModelTest {
   coEvery { setupAccountUseCasesWrapper.validateCountry(any()) } returns ValidationResult(true)
 
   // Set profile state with dummy data
-  viewModel.onEvent(ProfileSetUpEvents.ChangeFirstName("")) // Invalid empty name
+  viewModel.onEvent(ProfileSetUpEvents.ChangeFirstName(""))
   viewModel.onEvent(ProfileSetUpEvents.ChangeLastName("Smith"))
   viewModel.onEvent(ProfileSetUpEvents.ChangePhoneNumber("1234567890"))
   viewModel.onEvent(ProfileSetUpEvents.SelectCountry(country = "USA", callingCode = "+1", expanded = false))
@@ -152,13 +152,15 @@ class ProfileSetUpViewModelTest {
   viewModel.onEvent(ProfileSetUpEvents.ChangeFirstName("John"))
   viewModel.onEvent(ProfileSetUpEvents.ChangeLastName("Doe"))
   viewModel.onEvent(ProfileSetUpEvents.ChangePhoneNumber("1234567890"))
-  viewModel.onEvent(ProfileSetUpEvents.SelectCountry("Country", "+1", expanded = false))
+  viewModel.onEvent(ProfileSetUpEvents.SelectCountry("USA", "+1", expanded = false))
   viewModel.onEvent(ProfileSetUpEvents.SelectBaseCurrency(
    currency = "US Dollar",
    expanded = false,
    currencyCode = "USD",
    currencySymbol = "$"
   ))
+  viewModel.onEvent(ProfileSetUpEvents.ChangeSearchCurrency("US Dollar"))
+  viewModel.onEvent(ProfileSetUpEvents.ChangeSearchCountry("USA"))
 
   // Act & Assert: collect events and trigger validation
   viewModel.profileSetUpValidationEvents.test {

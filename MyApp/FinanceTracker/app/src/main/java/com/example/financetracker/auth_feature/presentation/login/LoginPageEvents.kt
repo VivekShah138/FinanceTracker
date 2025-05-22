@@ -10,4 +10,5 @@ sealed class LoginPageEvents{
     data class LoginSuccess(val userName: String): LoginPageEvents()
     data class LoginFailure(val error: String): LoginPageEvents()
     data class ClickForgotPassword(val result: ResetPasswordWithCredentialResult): LoginPageEvents()
+    data class SetLoadingTrue(val state: Boolean): LoginPageEvents()
 }

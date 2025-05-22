@@ -36,9 +36,6 @@ class HomePageViewModel @Inject constructor(
     private val _homePageStates = MutableStateFlow(HomePageStates())
     val homePageStates : StateFlow<HomePageStates> = _homePageStates.asStateFlow()
 
-    private val userId = homePageUseCaseWrapper.getUIDLocally() ?: "Unknown"
-
-
     fun onEvent(homePageEvents: HomePageEvents){
         when(homePageEvents){
             is HomePageEvents.Logout -> {
@@ -73,28 +70,30 @@ class HomePageViewModel @Inject constructor(
 
     private fun getIncomeAndExpenseAmount() {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("HomePageViewModel","userId $userId")
-//            val allTransactions = homePageUseCaseWrapper.getAllTransactions(userId).first()
-            if (userId == null) {
-                Log.e("HomePageViewModel", "UserId is null! Cannot fetch categories.")
-                return@launch
-            }
-            val expense = homePageUseCaseWrapper.getAllCategories("expense", userId).first()
-            val income = homePageUseCaseWrapper.getAllCategories("income", userId).first()
+            val userId2 = homePageUseCaseWrapper.getUIDLocally() ?: "Unknown"
+            Log.d("HomePageViewModel","userId $userId2")
+
+            val allTransactions = homePageUseCaseWrapper.getAllTransactions(uid = userId2).first()
+            Log.d("HomePageViewModel","allTransactions $allTransactions")
+
+
+            val expense = homePageUseCaseWrapper.getAllCategories("expense", userId2).first()
+            val income = homePageUseCaseWrapper.getAllCategories("income", userId2).first()
             val allCategories = expense + income
             val allTransactionsThisMonth = homePageUseCaseWrapper.getAllTransactionsFilters(
-                uid = userId,
+                uid = userId2,
                 filters = listOf(
-                    TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
-                    TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
-                    TransactionFilter.Category(allCategories), // Default to all categories (empty list means no category filter)
-                    TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
+                    TransactionFilter.TransactionType(TransactionTypeFilter.Both),
+                    TransactionFilter.Order(TransactionOrder.Ascending),
+//                    TransactionFilter.Category(allCategories),
+                    TransactionFilter.Duration(DurationFilter.ThisMonth)
                 )
             ).first()
-            Log.d("HomePageViewModel","allTransactionsFilter $allTransactionsThisMonth")
 
-            val allTransactions = homePageUseCaseWrapper.getAllTransactions(uid = userId).first()
-            Log.d("HomePageViewModel","allTransactions $allTransactions")
+
+
+
+
 
             val userProfile = homePageUseCaseWrapper.getUserProfileLocal()
             Log.d("HomePageViewModel","userProfile $userProfile")
@@ -167,10 +166,11 @@ class HomePageViewModel @Inject constructor(
     private fun getBudget(){
 
         viewModelScope.launch(Dispatchers.IO) {
+            val userId2 = homePageUseCaseWrapper.getUIDLocally() ?: "Unknown"
             val selectedYear = Calendar.getInstance().get(Calendar.YEAR)
             val selectedMonth = Calendar.getInstance().get(Calendar.MONTH)
             val budget = homePageUseCaseWrapper.getBudgetLocalUseCase(
-                userId = userId,
+                userId = userId2,
                 month = selectedMonth,
                 year = selectedYear
             )

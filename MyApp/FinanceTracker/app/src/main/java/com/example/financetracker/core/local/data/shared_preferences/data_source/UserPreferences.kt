@@ -15,6 +15,8 @@ class UserPreferences @Inject constructor(
         private const val CLOUD_SYNC = "cloud_sync"
         private const val DARK_MODE = "dark_mode"
         private const val USER_NAME = "user_name"
+        private const val FIRST_INSTALL = "first_install"
+        private const val FIRST_LOGIN = "first_login"
     }
 
     fun isLoggedIn(): Boolean{
@@ -26,6 +28,27 @@ class UserPreferences @Inject constructor(
             putBoolean(KEY_IS_LOGGED_IN, isLoggedIn)
         }
     }
+
+    fun isFirstTimeInstalled(): Boolean{
+        return sharedPreferences.getBoolean(FIRST_INSTALL,true)
+    }
+
+    fun setFirstTimeInstalled(){
+        sharedPreferences.edit() {
+            putBoolean(FIRST_INSTALL, false)
+        }
+    }
+
+    fun isFirstTimeLoggedIn(uid: String): Boolean {
+        return sharedPreferences.getBoolean("${FIRST_LOGIN}_$uid", true)
+    }
+
+    fun setFirstTimeLoggedIn(uid: String) {
+        sharedPreferences.edit() {
+            putBoolean("${FIRST_LOGIN}_$uid", false)
+        }
+    }
+
 
     fun getUserIdLocally(): String? {
         return sharedPreferences.getString(KEY_USER_ID, null)

@@ -17,6 +17,12 @@ data class ProfileSetUpStates(
     val countryExpanded: Boolean = false,
     val selectedCountry: String = "Select a Country",
     val currencyErrorMessage: String = "",
-    val onBoardingSteps: Int = 0
-//    val keepLoggedIn: Boolean = false
+    val onBoardingSteps: Int = 0,
+    val isLoading: Boolean = false,
+    val isLoadingDropdownCountry: Boolean = false,
+    val isLoadingDropdownCurrency: Boolean = false,
+    val searchCountry:String = "",
+    val searchCurrency: String = "",
+    val currencyFilteredSearchList : List<Country> = emptyList(),
+    val countryFilteredSearchList : List<Country> = emptyList(),
 )

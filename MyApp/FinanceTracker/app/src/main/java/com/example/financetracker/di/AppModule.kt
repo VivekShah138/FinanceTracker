@@ -23,9 +23,12 @@ import com.example.financetracker.budget_feature.data.repository.BudgetRemoteRep
 import com.example.financetracker.budget_feature.domain.repository.BudgetLocalRepository
 import com.example.financetracker.budget_feature.domain.repository.BudgetRemoteRepository
 import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
+import com.example.financetracker.budget_feature.domain.usecases.DoesBudgetExits
 import com.example.financetracker.budget_feature.domain.usecases.GetAllUnSyncedBudgetLocalUseCase
 import com.example.financetracker.budget_feature.domain.usecases.GetBudgetLocalUseCase
+import com.example.financetracker.budget_feature.domain.usecases.GetRemoteBudgetsList
 import com.example.financetracker.budget_feature.domain.usecases.InsertBudgetLocalUseCase
+import com.example.financetracker.budget_feature.domain.usecases.InsertRemoteBudgetsToLocal
 import com.example.financetracker.budget_feature.domain.usecases.SaveBudgetToCloudUseCase
 import com.example.financetracker.budget_feature.domain.usecases.SaveMultipleBudgetsToCloudUseCase
 import com.example.financetracker.budget_feature.domain.usecases.SendBudgetNotificationUseCase
@@ -38,6 +41,7 @@ import com.example.financetracker.core.local.data.shared_preferences.data_source
 import com.example.financetracker.core.cloud.data.repository.RemoteRepositoryImpl
 import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
 import com.example.financetracker.core.cloud.domain.usecase.DeleteTransactionCloud
+import com.example.financetracker.core.cloud.domain.usecase.GetRemoteTransactionsList
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.CheckIsLoggedInUseCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserEmailUserCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserProfileUseCase
@@ -74,10 +78,14 @@ import com.example.financetracker.core.local.domain.shared_preferences.repositor
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetDarkModeLocally
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetFirstTimeInstalled
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetFirstTimeLogin
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUserNameLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetDarkModeLocally
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetFirstTimeInstalled
+import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetFirstTimeLogin
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetUserNameLocally
 import com.example.financetracker.main_page_feature.charts.domain.usecases.ChartsUseCaseWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.DeletedTransactionDao
@@ -91,11 +99,13 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertTransactionsLocally
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.DeleteDeletedTransactionsByIdsFromLocal
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.DoesTransactionExits
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllDeletedTransactionByUserId
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactionsById
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertCustomCategory
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertNewTransactionsReturnId
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertRemoteTransactionsToLocal
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateEmptyField
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionPrice
@@ -113,11 +123,14 @@ import com.example.financetracker.main_page_feature.finance_entry.saveItems.doma
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsValidationUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.DeleteDeletedSavedItemsById
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.DoesItemExistsUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllDeletedSavedItemsByUserId
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllNotSyncedSavedItemUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetSavedItemById
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.SaveNewItemReturnId
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.DeleteMultipleSavedItemCloud
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.GetRemoteSavedItemList
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.InsertRemoteSavedItemToLocal
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveMultipleSavedItemCloud
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveSingleSavedItemCloud
 import com.example.financetracker.main_page_feature.home_page.data.repository.HomePageRepositoryImpl
@@ -247,7 +260,6 @@ object AppModule {
 
 
 
-
     // Category Repository
     @Provides
     @Singleton
@@ -265,7 +277,8 @@ object AppModule {
             getCustomCategories = GetCustomCategories(categoryRepository),
             getPredefinedCategories = GetPredefinedCategories(categoryRepository),
             insertCustomCategories = InsertCustomCategories(categoryRepository),
-            deleteCustomCategories = DeleteCustomCategories(categoryRepository)
+            deleteCustomCategories = DeleteCustomCategories(categoryRepository),
+
         )
     }
 
@@ -274,8 +287,11 @@ object AppModule {
     // Core UseCases
     @Provides
     @Singleton
-    fun provideCoreUseCases(remoteRepository: RemoteRepository,
-                            sharedPreferencesRepository: SharedPreferencesRepository): CoreUseCasesWrapper {
+    fun provideCoreUseCases(
+        remoteRepository: RemoteRepository,
+        sharedPreferencesRepository: SharedPreferencesRepository,
+        userProfileRepository: UserProfileRepository
+    ): CoreUseCasesWrapper {
         return CoreUseCasesWrapper(
             logoutUseCase = LogoutUseCase(
                 remoteRepository = remoteRepository,
@@ -286,7 +302,8 @@ object AppModule {
             getUserEmailUserCase = GetUserEmailUserCase(remoteRepository),
             getUserProfileUseCase = GetUserProfileUseCase(remoteRepository),
             saveUserProfileUseCase = SaveUserProfileUseCase(remoteRepository),
-            setUserNameLocally = SetUserNameLocally(sharedPreferencesRepository)
+            setUserNameLocally = SetUserNameLocally(sharedPreferencesRepository),
+            insertUserProfileToLocalDb = InsertUserProfileToLocalDb(userProfileRepository)
         )
     }
 
@@ -323,8 +340,8 @@ object AppModule {
     // UserProfile Local Repository
     @Provides
     @Singleton
-    fun provideUserProfileRepository(db: UserProfileDatabase): UserProfileRepository {
-        return UserProfileRepositoryImpl(userProfileDao = db.userProfileDao)
+    fun provideUserProfileRepository(db: UserProfileDatabase,workManager: WorkManager): UserProfileRepository {
+        return UserProfileRepositoryImpl(userProfileDao = db.userProfileDao,workManager = workManager)
     }
 
     // Country Database
@@ -517,7 +534,11 @@ object AppModule {
             ),
             saveNewItemReturnId = SaveNewItemReturnId(savedItemsLocalRepository = savedItemsLocalRepository),
             getCloudSyncLocally = GetCloudSyncLocally(sharedPreferencesRepository = sharedPreferencesRepository),
-            getAllNotSyncedSavedItemUseCase = GetAllNotSyncedSavedItemUseCase(savedItemsLocalRepository = savedItemsLocalRepository)
+            getAllNotSyncedSavedItemUseCase = GetAllNotSyncedSavedItemUseCase(savedItemsLocalRepository = savedItemsLocalRepository),
+            getRemoteSavedItemList = GetRemoteSavedItemList(savedItemsRemoteRepository = savedItemsRemoteRepository),
+            doesItemExistsUseCase = DoesItemExistsUseCase(savedItemsLocalRepository = savedItemsLocalRepository),
+            getUserUIDUseCase = GetUserUIDUseCase(remoteRepository = remoteRepository),
+            insertRemoteSavedItemToLocal = InsertRemoteSavedItemToLocal(savedItemsRemoteRepository = savedItemsRemoteRepository)
         )
     }
 
@@ -575,7 +596,8 @@ object AppModule {
         budgetLocalRepository: BudgetLocalRepository,
         budgetRemoteRepository: BudgetRemoteRepository,
         sharedPreferencesRepository: SharedPreferencesRepository,
-        userProfileRepository: UserProfileRepository
+        userProfileRepository: UserProfileRepository,
+        remoteRepository: RemoteRepository
     ): BudgetUseCaseWrapper{
         return BudgetUseCaseWrapper(
             getBudgetLocalUseCase = GetBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
@@ -584,7 +606,11 @@ object AppModule {
             getUserProfileFromLocalDb = GetUserProfileFromLocalDb(userProfileRepository = userProfileRepository),
             getAllUnSyncedBudgetLocalUseCase = GetAllUnSyncedBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
             saveBudgetToCloudUseCase = SaveBudgetToCloudUseCase(budgetRemoteRepository = budgetRemoteRepository),
-            saveMultipleBudgetsToCloudUseCase = SaveMultipleBudgetsToCloudUseCase(budgetRemoteRepository = budgetRemoteRepository)
+            saveMultipleBudgetsToCloudUseCase = SaveMultipleBudgetsToCloudUseCase(budgetRemoteRepository = budgetRemoteRepository),
+            doesBudgetExits = DoesBudgetExits(budgetLocalRepository = budgetLocalRepository),
+            insertRemoteBudgetsToLocal = InsertRemoteBudgetsToLocal(budgetRemoteRepository = budgetRemoteRepository),
+            getUserUIDUseCase = GetUserUIDUseCase(remoteRepository = remoteRepository),
+            getRemoteBudgetsList = GetRemoteBudgetsList(budgetRemoteRepository = budgetRemoteRepository)
         )
     }
 
@@ -598,7 +624,10 @@ object AppModule {
                                     countryLocalRepository: CountryLocalRepository,
                                     userProfileRepository: UserProfileRepository,
                                     sharedPreferencesRepository: SharedPreferencesRepository,
-                                    currencyRatesLocalRepository: CurrencyRatesLocalRepository
+                                    currencyRatesLocalRepository: CurrencyRatesLocalRepository,
+                                    savedItemsRemoteRepository: SavedItemsRemoteRepository,
+                                    savedItemsLocalRepository: SavedItemsLocalRepository,
+                                    transactionLocalRepository: TransactionLocalRepository
     ): SetupAccountUseCasesWrapper {
         return SetupAccountUseCasesWrapper(
             getUserEmailUserCase = GetUserEmailUserCase(remoteRepository),
@@ -620,7 +649,15 @@ object AppModule {
             setCurrencyRatesUpdated = SetCurrencyRatesUpdated(sharedPreferencesRepository),
             getCurrencyRatesLocally = GetCurrencyRatesLocally(currencyRatesLocalRepository),
             insertCountryLocally = InsertCountryLocally(countryLocalRepository),
-            keepUserLoggedIn = KeepUserLoggedIn(sharedPreferencesRepository)
+            keepUserLoggedIn = KeepUserLoggedIn(sharedPreferencesRepository),
+            getRemoteTransactionsList = GetRemoteTransactionsList(remoteRepository = remoteRepository),
+            getRemoteSavedItemList = GetRemoteSavedItemList(savedItemsRemoteRepository = savedItemsRemoteRepository),
+            doesItemExistsUseCase = DoesItemExistsUseCase(savedItemsLocalRepository = savedItemsLocalRepository),
+            doesTransactionExits = DoesTransactionExits(transactionLocalRepository = transactionLocalRepository),
+            getFirstTimeInstalled = GetFirstTimeInstalled(sharedPreferencesRepository),
+            setFirstTimeInstalled = SetFirstTimeInstalled(sharedPreferencesRepository),
+            getFirstTimeLoggedIn = GetFirstTimeLogin(sharedPreferencesRepository),
+            setFirstTimeLogin = SetFirstTimeLogin(sharedPreferencesRepository)
         )
     }
 
@@ -640,7 +677,8 @@ object AppModule {
         homePageRepository: HomePageRepository,
         transactionLocalRepository: TransactionLocalRepository,
         categoryRepository: CategoryRepository,
-        budgetLocalRepository: BudgetLocalRepository
+        budgetLocalRepository: BudgetLocalRepository,
+        savedItemsRemoteRepository: SavedItemsRemoteRepository
     ): HomePageUseCaseWrapper {
         return HomePageUseCaseWrapper(
             logoutUseCase = LogoutUseCase(
@@ -655,7 +693,8 @@ object AppModule {
             getAllCategories = GetAllCategories(categoryRepository = categoryRepository),
             getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository),
             getBudgetLocalUseCase = GetBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
-            sendBudgetNotificationUseCase = SendBudgetNotificationUseCase(budgetLocalRepository = budgetLocalRepository)
+            sendBudgetNotificationUseCase = SendBudgetNotificationUseCase(budgetLocalRepository = budgetLocalRepository),
+            insertRemoteSavedItemToLocal = InsertRemoteSavedItemToLocal(savedItemsRemoteRepository = savedItemsRemoteRepository)
         )
     }
 
@@ -682,7 +721,11 @@ object AppModule {
             saveSingleTransactionCloud = SaveSingleTransactionCloud(remoteRepository = remoteRepository,transactionLocalRepository = transactionLocalRepository),
             internetConnectionAvailability = InternetConnectionAvailability(remoteRepository = remoteRepository),
             getAllLocalTransactions = GetAllLocalTransactions(transactionLocalRepository = transactionLocalRepository),
-            sendBudgetNotificationUseCase = SendBudgetNotificationUseCase(budgetLocalRepository = budgetLocalRepository)
+            sendBudgetNotificationUseCase = SendBudgetNotificationUseCase(budgetLocalRepository = budgetLocalRepository),
+            getUserUIDUseCase = GetUserUIDUseCase(remoteRepository = remoteRepository),
+            getRemoteTransactionsList = com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetRemoteTransactionsList(remoteRepository = remoteRepository),
+            insertRemoteTransactionsToLocal = InsertRemoteTransactionsToLocal(remoteRepository = remoteRepository),
+            doesTransactionExits = DoesTransactionExits(transactionLocalRepository = transactionLocalRepository)
         )
     }
 
@@ -749,7 +792,8 @@ object AppModule {
             getDarkModeLocally = GetDarkModeLocally(sharedPreferencesRepository = sharedPreferencesRepository),
             logoutUseCase = LogoutUseCase(remoteRepository = remoteRepository,sharedPreferencesRepository = sharedPreferencesRepository),
             getUserNameLocally = GetUserNameLocally(sharedPreferencesRepository = sharedPreferencesRepository),
-            setUserNameLocally = SetUserNameLocally(sharedPreferencesRepository = sharedPreferencesRepository)
+            setUserNameLocally = SetUserNameLocally(sharedPreferencesRepository = sharedPreferencesRepository),
+            getRemoteTransactionsList = GetRemoteTransactionsList(remoteRepository = remoteRepository)
         )
     }
 

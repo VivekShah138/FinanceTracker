@@ -195,7 +195,7 @@ class BudgetViewModel @Inject constructor(
                     createBudgetState = true,
                     budget = "0.0"
                 )
-            }else{
+            }else {
                 _budgetStates.value = budgetStates.value.copy(
                     budget = existing.amount.toString(),
                     budgetCurrencySymbol = baseCurrencySymbol,
@@ -204,10 +204,6 @@ class BudgetViewModel @Inject constructor(
                     alertThresholdPercent = existing.thresholdAmount
                 )
             }
-
-
-//            Log.d("BudgetViewModel","create budget state ${_budgetStates.value.createBudgetState}")
-
         }
     }
 }

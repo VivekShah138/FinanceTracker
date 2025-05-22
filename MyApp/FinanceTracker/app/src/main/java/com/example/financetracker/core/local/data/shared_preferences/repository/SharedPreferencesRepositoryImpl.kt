@@ -65,5 +65,21 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
         return userPreferences.removeUserNameLocally()
     }
 
+    override fun isFirstTimeInstalled(): Boolean {
+        return userPreferences.isFirstTimeInstalled()
+    }
+
+    override fun setFirstTimeInstalled() {
+        return userPreferences.setFirstTimeInstalled()
+    }
+
+    override fun isFirstTimeLoggedIn(uid: String): Boolean {
+        return userPreferences.isFirstTimeLoggedIn(uid)
+    }
+
+    override fun setFirstTimeLoggedIn(uid: String) {
+        return userPreferences.setFirstTimeLoggedIn(uid)
+    }
+
 
 }

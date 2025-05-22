@@ -55,6 +55,8 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomBottomSheet
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomTextAlertBox
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
+import com.example.financetracker.setup_account.presentation.ProfileSetUpEvents
+import com.example.financetracker.setup_account.presentation.components.AutoComplete
 import com.example.financetracker.setup_account.presentation.components.CustomSwitch
 import com.example.financetracker.setup_account.presentation.components.SimpleDropdownMenu
 
@@ -526,12 +528,20 @@ fun WithoutSearchableMode(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Transaction Currency
-        SimpleDropdownMenu(
-            label = "Transaction Currency",
-            selectedText = "${states.transactionCurrencyName} (${states.transactionCurrencyCode})",
+
+        AutoComplete(
+            categories = states.currencies,
+            loadCountry = {
+                viewModel.onEvent(
+                    AddTransactionEvents.LoadCurrenciesList
+                )
+            },
+            onSearchValueChange = {
+                viewModel.onEvent(
+                    AddTransactionEvents.ChangeSearchCurrency(it)
+                )
+            },
             expanded = states.transactionCurrencyExpanded,
-            list = states.currencies,
             onExpandedChange = {
                 viewModel.onEvent(
                     AddTransactionEvents.ChangeTransactionCurrency(
@@ -544,20 +554,6 @@ fun WithoutSearchableMode(
                 if (it) {
                     viewModel.onEvent(AddTransactionEvents.LoadCurrenciesList)
                 }
-            },
-            onDismissRequest = {
-                viewModel.onEvent(
-                    AddTransactionEvents.ChangeTransactionCurrency(
-                        currencyName = states.transactionCurrencyName,
-                        currencyCode = states.transactionCurrencyCode,
-                        currencySymbol = states.transactionCurrencySymbol,
-                        currencyExpanded = !states.transactionCurrencyExpanded
-                    )
-                )
-
-            },
-            displayText = {
-                it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
             },
             onItemSelect = {
                 val firstCurrency = it.currencies?.entries?.firstOrNull()
@@ -588,8 +584,15 @@ fun WithoutSearchableMode(
                         showExchangeRate = false
                     )
                 )
+            },
+            category = if(states.transactionCurrencyExpanded) states.searchCurrency else "${states.transactionCurrencyName} (${states.transactionCurrencyCode})",
+            label = "Base Currency",
+            displayText = {
+                it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
             }
         )
+
+
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -601,12 +604,14 @@ fun WithoutSearchableMode(
                     viewModel.onEvent(
                         AddTransactionEvents.SetConvertedTransactionPrice(price = states.transactionPrice,rate = states.transactionExchangeRate)
                     )
-                    viewModel.onEvent(
-                        AddTransactionEvents.ShowConversion(
-                            showConversion = true,
-                            showExchangeRate = true
+                    if(states.transactionPrice.isNotEmpty() || states.transactionPrice.isNotBlank()){
+                        viewModel.onEvent(
+                            AddTransactionEvents.ShowConversion(
+                                showConversion = true,
+                                showExchangeRate = true
+                            )
                         )
-                    )
+                    }
                 },
                 baseCurrencySymbol = states.baseCurrencySymbol,
                 transactionCurrencySymbol = states.transactionCurrencySymbol,

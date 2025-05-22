@@ -19,4 +19,6 @@ interface SavedItemsLocalRepository {
     suspend fun getAllDeletedSavedItems(userUID: String): Flow<List<DeletedSavedItems>>
     suspend fun deleteDeletedSavedItemsById(itemId: Int)
 
+    suspend fun doesTransactionExist(userId: String, itemId: Int): Boolean
+
 }

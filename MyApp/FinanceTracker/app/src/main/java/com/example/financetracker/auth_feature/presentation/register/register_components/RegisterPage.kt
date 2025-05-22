@@ -31,12 +31,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.auth_feature.presentation.AccountManager
+import com.example.financetracker.auth_feature.presentation.components.CustomPasswordField
 import com.example.financetracker.auth_feature.presentation.components.CustomText
 import com.example.financetracker.auth_feature.presentation.components.CustomTextFields
 import com.example.financetracker.auth_feature.presentation.components.CustomTextFields2
@@ -119,48 +121,20 @@ fun RegisterPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-//            CustomTextFields(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .border(
-//                        width = 2.dp,
-//                        color = Color.Black,
-//                        shape = RoundedCornerShape(10.dp)
-//                    ),
-//                text = state.userName,
-//                onValueChange = {
-//                    viewModel.onEvent(RegisterPageEvents.ChangeUserName(it))
-//                },
-//                textStyle = MaterialTheme.typography.bodySmall,
-//                singleLine = true,
-//                inputType = KeyboardOptions(keyboardType = KeyboardType.Text),
-//                isError = state.userNameError != null
-//            )
-//
-//            if(state.userNameError != null){
-//                Text(
-//                    text = state.userNameError ?: "Unknown Error",
-//                    color = MaterialTheme.colorScheme.error,
-//                    modifier = Modifier.align(Alignment.End)
-//                )
-//            }
 
-//            Text(text = "Email", modifier = Modifier.fillMaxWidth())
                 CustomTextFields2(
                     modifier = Modifier
                         .fillMaxWidth(),
-//                    .border(
-//                        width = 2.dp,
-//                        color = Color.Black,
-//                        shape = RoundedCornerShape(10.dp)
-//                    ),
                     text = state.email,
                     onValueChange = {
                         viewModel.onEvent(RegisterPageEvents.ChangeEmail(it))
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
                     singleLine = true,
-                    inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    inputType = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
                     isError = state.emailError != null,
                     errorMessage = state.emailError ?: "",
                     label = "Email"
@@ -170,22 +144,19 @@ fun RegisterPage(
             }
 
 
-//            Text(text = "Password", modifier = Modifier.fillMaxWidth())
-                CustomTextFields2(
+                CustomPasswordField(
                     modifier = Modifier
                         .fillMaxWidth(),
-//                    .border(
-//                        width = 2.dp,
-//                        color = Color.Black,
-//                        shape = RoundedCornerShape(10.dp)
-//                    ),
                     text = state.password,
                     onValueChange = {
                         viewModel.onEvent(RegisterPageEvents.ChangePassword(it))
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
                     singleLine = true,
-                    inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    inputType = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
+                    ),
                     isError = state.passwordError != null,
                     errorMessage = state.passwordError ?: "",
                     label = "Password"
@@ -194,33 +165,24 @@ fun RegisterPage(
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
-//            Text(text = "ConfirmPassword", modifier = Modifier.fillMaxWidth())
-                CustomTextFields2(
+
+                CustomPasswordField(
                     modifier = Modifier
                         .fillMaxWidth(),
-//                    .border(
-//                        width = 2.dp,
-//                        color = Color.Black,
-//                        shape = RoundedCornerShape(10.dp)
-//                    ),
                     text = state.confirmPassword,
                     onValueChange = {
                         viewModel.onEvent(RegisterPageEvents.ChangeConfirmPassword(it))
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
                     singleLine = true,
-                    inputType = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    inputType = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
                     isError = state.confirmPasswordError != null,
                     errorMessage = state.confirmPasswordError ?: "",
                     label = "Confirm Password"
                 )
-//            if(state.confirmPasswordError != null){
-//                Text(
-//                    text = state.confirmPasswordError ?: "Unknown Error",
-//                    color = MaterialTheme.colorScheme.error,
-//                    modifier = Modifier.align(Alignment.End)
-//                )
-//            }
             }
 
             Spacer(modifier = Modifier.height(20.dp))

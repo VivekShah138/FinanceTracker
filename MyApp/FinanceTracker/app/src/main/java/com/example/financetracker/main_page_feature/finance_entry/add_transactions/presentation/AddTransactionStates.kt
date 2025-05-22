@@ -34,6 +34,7 @@ data class AddTransactionStates(
     val transactionCurrencyCode: String = "",
     val transactionCurrencySymbol: String = "",
     val transactionCurrencyExpanded: Boolean = false,
+    val searchCurrency: String = "",
 
     // Transaction Description
     val transactionDescription: String = "",

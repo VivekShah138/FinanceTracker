@@ -10,6 +10,7 @@ import com.example.financetracker.core.local.domain.shared_preferences.usecases.
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.InsertRemoteSavedItemToLocal
 import com.example.financetracker.main_page_feature.view_records.use_cases.GetAllTransactionsFilters
 
 data class HomePageUseCaseWrapper (
@@ -22,5 +23,6 @@ data class HomePageUseCaseWrapper (
     val getUIDLocally: GetUIDLocally,
     val getAllCategories: GetAllCategories,
     val getBudgetLocalUseCase: GetBudgetLocalUseCase,
-    val sendBudgetNotificationUseCase: SendBudgetNotificationUseCase
+    val sendBudgetNotificationUseCase: SendBudgetNotificationUseCase,
+    val insertRemoteSavedItemToLocal: InsertRemoteSavedItemToLocal
 )

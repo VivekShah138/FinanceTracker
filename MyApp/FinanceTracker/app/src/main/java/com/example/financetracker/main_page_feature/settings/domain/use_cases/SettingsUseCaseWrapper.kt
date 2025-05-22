@@ -1,5 +1,6 @@
 package com.example.financetracker.main_page_feature.settings.domain.use_cases
 
+import com.example.financetracker.core.cloud.domain.usecase.GetRemoteTransactionsList
 import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
 import com.example.financetracker.core.cloud.domain.usecase.SaveMultipleTransactionsCloud
 import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
@@ -24,5 +25,6 @@ data class SettingsUseCaseWrapper (
     val setDarkModeLocally: SetDarkModeLocally,
     val getDarkModeLocally: GetDarkModeLocally,
     val setUserNameLocally: SetUserNameLocally,
-    val getUserNameLocally: GetUserNameLocally
+    val getUserNameLocally: GetUserNameLocally,
+    val getRemoteTransactionsList: GetRemoteTransactionsList
 )

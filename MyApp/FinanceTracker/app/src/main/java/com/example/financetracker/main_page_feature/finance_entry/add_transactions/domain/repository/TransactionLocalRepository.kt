@@ -12,5 +12,6 @@ interface TransactionLocalRepository {
     suspend fun getAllLocalTransactionsById(transactionId: Int): Transactions
     suspend fun deleteSelectedTransactionsByIds(transactionId: Int)
     suspend fun updateCloudSyncStatus(id: Int, syncStatus: Boolean)
+    suspend fun doesTransactionExist(userId: String, transactionId: Int): Boolean
 
 }

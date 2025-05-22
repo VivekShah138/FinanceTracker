@@ -30,5 +30,7 @@ interface TransactionDao {
     @Query("UPDATE TransactionsEntity SET cloudSync = :syncStatus WHERE transactionId = :id")
     suspend fun updateCloudSyncStatus(id: Int, syncStatus: Boolean)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM TransactionsEntity WHERE transactionId = :transactionId AND userUid = :userId LIMIT 1)")
+    suspend fun doesTransactionExist(userId: String, transactionId: Int): Boolean
 
 }

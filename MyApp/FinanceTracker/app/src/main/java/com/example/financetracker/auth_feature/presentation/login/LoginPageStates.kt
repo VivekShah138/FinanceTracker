@@ -9,5 +9,7 @@ data class LoginPageStates(
     val passwordError: String? = null,
     val password: String = "",
     val errorMessage: String? = null,
-    val userProfile: UserProfile = UserProfile()
+    val userProfile: UserProfile = UserProfile(),
+    val isLoading: Boolean = false,
+    val isDataSyncing: Boolean = false
 )

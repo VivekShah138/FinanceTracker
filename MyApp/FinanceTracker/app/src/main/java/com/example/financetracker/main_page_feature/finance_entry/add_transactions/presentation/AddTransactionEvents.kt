@@ -29,6 +29,7 @@ sealed class AddTransactionEvents {
     data object LoadCurrenciesList: AddTransactionEvents()
     data class ShowConversion(val showConversion: Boolean, val showExchangeRate: Boolean): AddTransactionEvents()
     data class SetConvertedTransactionPrice(val price: String, val rate:String): AddTransactionEvents()
+    data class ChangeSearchCurrency(val currencyName: String): AddTransactionEvents()
 
     // Transaction Type
     data class SelectTransactionType(val type: String): AddTransactionEvents()

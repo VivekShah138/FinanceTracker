@@ -159,6 +159,16 @@ class AddTransactionViewModel @Inject constructor(
                     transactionCurrencySymbol = addTransactionEvents.currencySymbol,
                     transactionCurrencyExpanded = addTransactionEvents.currencyExpanded
                 )
+                Log.d("AddTransactionViewModel","Base Currency ${_addTransactionStates.value.baseCurrencyName}")
+                Log.d("AddTransactionViewModel","Transaction Currency ${addTransactionStates.value.transactionCurrencyName}")
+                if(addTransactionStates.value.transactionCurrencyName == _addTransactionStates.value.baseCurrencyName){
+                    _addTransactionStates.value = addTransactionStates.value.copy(
+                        showConversion = false,
+                        showExchangeRate = false
+                    )
+                    Log.d("AddTransactionViewModel","Show Conversion Inside if ${_addTransactionStates.value.showConversion}")
+                    Log.d("AddTransactionViewModel","Show Exchange Rate Inside if  ${addTransactionStates.value.showExchangeRate}")
+                }
             }
             is AddTransactionEvents.LoadCurrenciesList -> {
                 fetchCurrencies()
@@ -170,16 +180,29 @@ class AddTransactionViewModel @Inject constructor(
                 )
             }
             is AddTransactionEvents.SetConvertedTransactionPrice -> {
-                if(_addTransactionStates.value.transactionPrice.isEmpty()){
-                    AddTransactionValidationEvent.Failure(
-                        errorMessage = "Please Enter the Price"
-                    )
+                if(_addTransactionStates.value.transactionPrice.isEmpty() || _addTransactionStates.value.transactionPrice.isBlank() ){
+
+                    Log.d("AddTransactionViewModel","transaction price: ${_addTransactionStates.value.transactionPrice}")
+
+                    viewModelScope.launch {
+                        addTransactionValidationEventChannel.send(
+                            AddTransactionValidationEvent.Failure(
+                                errorMessage = "Please Enter the Price"
+                            )
+                        )
+                    }
                 }
                 else{
-                    fetchCurrenciesExchangeRates()
+                    viewModelScope.launch(Dispatchers.IO) {
+                        fetchCurrenciesExchangeRates()
+                    }
                 }
             }
-
+            is AddTransactionEvents.ChangeSearchCurrency -> {
+                _addTransactionStates.value = addTransactionStates.value.copy(
+                    searchCurrency = addTransactionEvents.currencyName
+                )
+            }
             // Transaction Type
             is AddTransactionEvents.SelectTransactionType -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
@@ -199,6 +222,12 @@ class AddTransactionViewModel @Inject constructor(
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     transactionPrice = addTransactionEvents.price
                 )
+                if(_addTransactionStates.value.showExchangeRate){
+                    _addTransactionStates.value = addTransactionStates.value.copy(
+                        showConversion = true,
+                        showExchangeRate = false
+                    )
+                }
             }
 
             // Add Transaction
@@ -232,6 +261,9 @@ class AddTransactionViewModel @Inject constructor(
                 )
             }
             else {
+                if(_addTransactionStates.value.showExchangeRate || _addTransactionStates.value.showConversion){
+                    fetchCurrenciesExchangeRates()
+                }
 
                 val transactionCurrencyName = _addTransactionStates.value.transactionCurrencyName
                 val transactionCurrencySymbol = _addTransactionStates.value.transactionCurrencySymbol
@@ -331,8 +363,7 @@ class AddTransactionViewModel @Inject constructor(
         }
     }
 
-    private fun fetchCurrenciesExchangeRates(){
-        viewModelScope.launch(Dispatchers.IO) {
+    private suspend fun fetchCurrenciesExchangeRates(){
 
             val saveCurrencyMap = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(uid)?.baseCurrency
 //            Log.d("AddExpenseViewModel", "saveCurrencyMap: $saveCurrencyMap")
@@ -387,7 +418,6 @@ class AddTransactionViewModel @Inject constructor(
                 )
             }
 
-        }
     }
 
     private fun insertCustomCategory() {

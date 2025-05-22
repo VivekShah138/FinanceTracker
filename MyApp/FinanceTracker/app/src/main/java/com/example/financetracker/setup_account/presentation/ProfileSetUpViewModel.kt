@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.core.local.domain.room.model.UserProfile
+import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsEvents
 import com.example.financetracker.setup_account.domain.model.Currency
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -77,7 +78,7 @@ class ProfileSetUpViewModel @Inject constructor(
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     selectedCountry = profileSetUpEvents.country,
                     callingCode = profileSetUpEvents.callingCode,
-                    countryExpanded = profileSetUpEvents.expanded
+                    countryExpanded = profileSetUpEvents.expanded,
                 )
             }
             is ProfileSetUpEvents.ChangeFirstName -> {
@@ -126,6 +127,67 @@ class ProfileSetUpViewModel @Inject constructor(
                     validatePhoneNumber()
                 }
             }
+            is ProfileSetUpEvents.ChangeSearchCountry -> {
+                _profileSetUpStates.value  = _profileSetUpStates.value.copy(
+                    searchCountry = profileSetUpEvents.name
+                )
+                _profileSetUpStates.value = profileSetUpStates.value.copy(
+                    countryFilteredSearchList = emptyList()
+                )
+            }
+            is ProfileSetUpEvents.ChangeSearchCurrency -> {
+                _profileSetUpStates.value  = _profileSetUpStates.value.copy(
+                    searchCurrency = profileSetUpEvents.name
+                )
+                _profileSetUpStates.value = profileSetUpStates.value.copy(
+                    currencyFilteredSearchList = emptyList()
+                )
+            }
+            is ProfileSetUpEvents.FilterCountryNameList -> {
+
+                Log.d("ProfileCountry", "new Word:  ${profileSetUpEvents.newWord}")
+
+                if (profileSetUpEvents.newWord.isEmpty()) {
+                    viewModelScope.launch {
+                        fetchCountries()
+                    }
+                } else {
+                    val filterList = profileSetUpEvents.list.filter {
+                        it.name.common.contains(
+                            profileSetUpEvents.newWord,
+                            ignoreCase = true
+                        )
+                    }
+                    Log.d("ProfileCountry", "filter :  ${filterList}")
+                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+                        countryFilteredSearchList = filterList
+                    )
+                }
+            }
+            is  ProfileSetUpEvents.FilterCurrencyNameList -> {
+
+                if (profileSetUpEvents.newWord.isEmpty()) {
+                    viewModelScope.launch {
+                        fetchBaseCurrencies()
+                    }
+                } else {
+                    val filterList = profileSetUpEvents.list.filter {
+                        val currencyName = it.currencies.entries.first().value.name
+                            currencyName.contains(
+                                profileSetUpEvents.newWord,
+                                ignoreCase = true
+                        )
+                    }
+                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+                        currencyFilteredSearchList = filterList
+                    )
+                }
+            }
+            is ProfileSetUpEvents.ChangeCountryExpanded -> {
+                _profileSetUpStates.value = profileSetUpStates.value.copy(
+                    baseCurrencyExpanded = profileSetUpEvents.expanded
+                )
+            }
         }
     }
 
@@ -143,6 +205,7 @@ class ProfileSetUpViewModel @Inject constructor(
             _profileSetUpStates.value.selectedCountry
         )
 
+
         if(!firstName.isSuccessful || !lastName.isSuccessful || !phoneNumber.isSuccessful || !country.isSuccessful){
 //            Log.d("ProfileFN", "FN: ${_profileSetUpStates.value.firstName} ${firstName.isSuccessful}  ${firstName.errorMessage}")
 //            Log.d("ProfileLN", "LN: ${_profileSetUpStates.value.lastName} ${lastName.isSuccessful}  ${lastName.errorMessage}")
@@ -152,6 +215,7 @@ class ProfileSetUpViewModel @Inject constructor(
             return
         }
         else{
+            _profileSetUpStates.value = profileSetUpStates.value.copy(isLoading = true)
             try {
                 val userId = setupAccountUseCasesWrapper.getUserUIDUseCase() ?: userId
 
@@ -159,9 +223,9 @@ class ProfileSetUpViewModel @Inject constructor(
                 val baseCurrencyName = profileSetUpStates.value.selectedBaseCurrency
                 val baseCurrencySymbol = profileSetUpStates.value.baseCurrencySymbol
 
-//                Log.d("ProfileSetUpViewModel","BaseCurrencyCode firebaseUpdate $baseCurrencyCode")
-//                Log.d("ProfileSetUpViewModel","BaseCurrencyName firebaseUpdate $baseCurrencyName")
-//                Log.d("ProfileSetUpViewModel","BaseCurrencySymbol firebaseUpdate $baseCurrencySymbol")
+                Log.d("ProfileSetUpViewModel","BaseCurrencyCode firebaseUpdate $baseCurrencyCode")
+                Log.d("ProfileSetUpViewModel","BaseCurrencyName firebaseUpdate $baseCurrencyName")
+                Log.d("ProfileSetUpViewModel","BaseCurrencySymbol firebaseUpdate $baseCurrencySymbol")
 
                 // Create the Currency object
                 val selectedCurrency = Currency(name = baseCurrencyName, symbol = baseCurrencySymbol)
@@ -173,8 +237,18 @@ class ProfileSetUpViewModel @Inject constructor(
                     baseCurrencyCode to selectedCurrency  // Map the code to the map of currency details
                 )
 
-//                Log.d("ProfileSetUpViewModel","baseCurrency firebaseUpdate $baseCurrency")
+                Log.d("ProfileSetUpViewModel","baseCurrency firebaseUpdate $baseCurrency")
 
+                setupAccountUseCasesWrapper.updateUserProfile(
+                    userId = userId ?: "Unknown",
+                    firstName = profileSetUpStates.value.firstName,
+                    lastName = profileSetUpStates.value.lastName,
+                    email = profileSetUpStates.value.email ?: "Unknown",
+                    baseCurrency = baseCurrency,
+                    country = profileSetUpStates.value.selectedCountry,
+                    callingCode = profileSetUpStates.value.callingCode,
+                    phoneNumber = profileSetUpStates.value.phoneNumber,
+                )
 
                 // Save To LocalDb
                 setupAccountUseCasesWrapper.insertUserProfileToLocalDb(
@@ -191,18 +265,6 @@ class ProfileSetUpViewModel @Inject constructor(
                     uid = userId
                 )
 
-
-                setupAccountUseCasesWrapper.updateUserProfile(
-                    userId = userId ?: "Unknown",
-                    firstName = profileSetUpStates.value.firstName,
-                    lastName = profileSetUpStates.value.lastName,
-                    email = profileSetUpStates.value.email ?: "Unknown",
-                    baseCurrency = baseCurrency,
-                    country = profileSetUpStates.value.selectedCountry,
-                    callingCode = profileSetUpStates.value.callingCode,
-                    phoneNumber = profileSetUpStates.value.phoneNumber,
-                )
-
                 updateCurrencyRates()
 
                 setupAccountUseCasesWrapper.keepUserLoggedIn(keepLoggedIn = true)
@@ -211,6 +273,8 @@ class ProfileSetUpViewModel @Inject constructor(
             }catch (e:Exception){
                 val errorMessage = e.localizedMessage
                 profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(errorMessage))
+            }finally {
+                _profileSetUpStates.value = profileSetUpStates.value.copy(isLoading = false)
             }
 
         }
@@ -249,9 +313,15 @@ class ProfileSetUpViewModel @Inject constructor(
         val country = setupAccountUseCasesWrapper.validateCountry(
             _profileSetUpStates.value.selectedCountry
         )
-        if(!country.isSuccessful){
+        val countryExpanded = _profileSetUpStates.value.countryExpanded
+
+        if(!country.isSuccessful ){
 //            Log.d("ProfileC", "C: ${_profileSetUpStates.value.selectedCountry} ${country.isSuccessful}  ${country.errorMessage}")
             profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(country.errorMessage))
+            return
+        }
+        if(countryExpanded){
+            profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Please Select The Country"))
             return
         }
         profileSetUpEventChannel.send(ProfileUpdateEvent.Success)
@@ -261,6 +331,7 @@ class ProfileSetUpViewModel @Inject constructor(
 
     private suspend fun fetchCountries() {
         withContext(Dispatchers.IO) {
+            _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCountry = true)
             try {
                 val sortedCountries = setupAccountUseCasesWrapper.getCountryDetailsUseCase()
                     .filter {
@@ -276,7 +347,8 @@ class ProfileSetUpViewModel @Inject constructor(
                 setupAccountUseCasesWrapper.insertCountryLocally(sortedCountries)
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    countries = sortedCountries
+                    countries = sortedCountries,
+//                    countryFilteredSearchList = sortedCountries
                 )
             } catch (e: Exception) {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
@@ -305,12 +377,15 @@ class ProfileSetUpViewModel @Inject constructor(
 
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Country From internet.Using Locally Saved Details"))
                 }
+            }finally {
+                _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCountry = false)
             }
         }
     }
 
     private suspend fun fetchBaseCurrencies() {
         withContext(Dispatchers.IO) {
+            _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCurrency = true)
             try {
                 val sortedCurrencies = setupAccountUseCasesWrapper.getCountryDetailsUseCase()
                     .filter {
@@ -326,7 +401,8 @@ class ProfileSetUpViewModel @Inject constructor(
                 setupAccountUseCasesWrapper.insertCountryLocally(sortedCurrencies)
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    currencies = sortedCurrencies
+                    currencies = sortedCurrencies,
+                    currencyFilteredSearchList = sortedCurrencies
                 )
 
             } catch (e: Exception) {
@@ -357,15 +433,18 @@ class ProfileSetUpViewModel @Inject constructor(
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
                 }
 
+            }finally {
+                _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCurrency = false)
             }
         }
     }
 
     private fun getProfileInfo(){
         viewModelScope.launch(Dispatchers.IO) {
+            _profileSetUpStates.value = profileSetUpStates.value.copy(isLoading = true)
             try {
-
-                val userProfile = setupAccountUseCasesWrapper.getUserProfileUseCase(userId)
+                val userId2 = setupAccountUseCasesWrapper.getUserUIDUseCase() ?: "Unknown"
+                val userProfile = setupAccountUseCasesWrapper.getUserProfileUseCase(userId2)
                 if(userProfile == null){
                     profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details"))
                 }
@@ -374,25 +453,27 @@ class ProfileSetUpViewModel @Inject constructor(
                     val baseCurrencyName = userProfile.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
                     val baseCurrencySymbol = userProfile.baseCurrency?.values?.firstOrNull()?.symbol ?: "N/A"
 
-//                    Log.d("ProfileSetUpViewModel","baseCurrencyCode Firebase Receive $baseCurrencyCode")
-//                    Log.d("ProfileSetUpViewModel","baseCurrencyName Firebase Receive $baseCurrencyName")
-//                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol Firebase Receive $baseCurrencySymbol")
+                    Log.d("ProfileSetUpViewModel","baseCurrencyCode Firebase Receive $baseCurrencyCode")
+                    Log.d("ProfileSetUpViewModel","baseCurrencyName Firebase Receive $baseCurrencyName")
+                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol Firebase Receive $baseCurrencySymbol")
 
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
                         firstName = userProfile.firstName,
                         lastName = userProfile.lastName,
                         email = userProfile.email,
                         selectedBaseCurrency = baseCurrencyName,
+                        searchCurrency = baseCurrencyName,
                         baseCurrencyCode = baseCurrencyCode,
                         baseCurrencySymbol = baseCurrencySymbol,
                         selectedCountry =  userProfile.country,
+                        searchCountry = userProfile.country,
                         callingCode = userProfile.callingCode,
                         phoneNumber = userProfile.phoneNumber
                     )
 
-//                    Log.d("ProfileSetUpViewModel","baseCurrencyCode state ${_profileSetUpStates.value.baseCurrencyCode}")
-//                    Log.d("ProfileSetUpViewModel","baseCurrencyName state ${_profileSetUpStates.value.selectedBaseCurrency}")
-//                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol state ${_profileSetUpStates.value.baseCurrencySymbol}")
+                    Log.d("ProfileSetUpViewModel","baseCurrencyCode state ${_profileSetUpStates.value.baseCurrencyCode}")
+                    Log.d("ProfileSetUpViewModel","baseCurrencyName state ${_profileSetUpStates.value.selectedBaseCurrency}")
+                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol state ${_profileSetUpStates.value.baseCurrencySymbol}")
 
                 }
             }catch (e:Exception){
@@ -417,9 +498,13 @@ class ProfileSetUpViewModel @Inject constructor(
                         baseCurrencySymbol = baseCurrencySymbol,
                         selectedCountry =  userProfile.country,
                         callingCode = userProfile.callingCode,
-                        phoneNumber = userProfile.phoneNumber
+                        phoneNumber = userProfile.phoneNumber,
+                        searchCountry = userProfile.country,
+                        searchCurrency = baseCurrencyName,
                     )
                 }
+            }finally {
+                _profileSetUpStates.value = profileSetUpStates.value.copy(isLoading = false)
             }
         }
     }

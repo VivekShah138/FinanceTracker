@@ -12,8 +12,10 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
+import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.utils.InsertAllTransactionsToLocalDatabaseWorker
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.utils.UploadAllTransactionsToCloudDatabaseWorker
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.utils.InsertAllSavedItemsToLocalDatabaseWorker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -42,21 +44,24 @@ class RemoteRepositoryImpl @Inject constructor(
         return firebaseAuth.currentUser?.email
     }
 
+
     override suspend fun saveUserProfile(userId: String, profile: UserProfile) {
         try {
-            // Force a Firestore network call
+            // Optional: Check if document exists (forces a server call)
             firestore.collection("Users").document(userId)
-                .get(Source.SERVER) // Ensures Firebase tries fetching from the server
+                .get(Source.SERVER)
                 .await()
 
-            // Now perform the write operation
+            // Overwrite the "userProfile" field completely (no merge)
             firestore.collection("Users").document(userId)
-                .set(mapOf("userProfile" to profile), SetOptions.merge())
+                .set(mapOf("userProfile" to profile)) // No SetOptions.merge()
                 .await()
+
+            Log.d("RemoteRepository", "User profile saved successfully")
 
         } catch (e: Exception) {
-            Log.d("RemoteRepository","save user error ${e.localizedMessage}")
-            Log.d("RemoteRepository","save user print stack ${e.printStackTrace()}")
+            Log.e("RemoteRepository", "Error saving user profile: ${e.localizedMessage}")
+            e.printStackTrace()
             throw Exception("No internet connection. Profile update failed.")
         }
     }
@@ -152,5 +157,44 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getRemoteTransactions(userId: String): List<Transactions> {
+        return try {
+            val snapshot = firestore.collection("Users")
+                .document(userId)
+                .collection("Transactions")
+                .get(Source.SERVER)
+                .await()
 
+            snapshot.documents.mapNotNull { doc ->
+                val transaction = doc.toObject(Transactions::class.java)
+                val id = doc.id.toIntOrNull()
+                if (transaction != null && id != null) {
+                    transaction.copy(transactionId = id)
+                } else null
+            }
+        } catch (e: Exception) {
+            Log.e("FirestoreGetRemoteTransaction", "Failed to get transaction from cloud: ${e.localizedMessage}")
+            emptyList()
+        }
+    }
+
+    override suspend fun insertRemoteTransactionToLocal() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val workRequest = OneTimeWorkRequestBuilder<InsertAllTransactionsToLocalDatabaseWorker>()
+            .setBackoffCriteria(
+                BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 30, TimeUnit.SECONDS
+            )
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "insert_remote_transaction_to_local",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
+    }
 }
