@@ -115,3 +115,15 @@ finance-tracker-app/
 
 
 ---
+
+# Demo
+
+## Screen
+
+Below is one demo screenshot for reference:
+
+![Demo Screenshot](Media/startPage.jpg)
+
+Other screenshots are available in the **media** folder.
+
+The **demo video** will be uploaded soon.
