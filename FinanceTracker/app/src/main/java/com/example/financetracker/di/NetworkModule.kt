@@ -1,8 +1,8 @@
 package com.example.financetracker.di
 
-import com.example.financetracker.setup_account.data.remote.ApiClient
-import com.example.financetracker.setup_account.data.remote.CountryApi
-import com.example.financetracker.setup_account.data.remote.CurrencyRatesApi
+import com.example.financetracker.utils.ApiClient
+import com.example.financetracker.data.remote.data_source.CountryApi
+import com.example.financetracker.data.remote.data_source.CurrencyRatesApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

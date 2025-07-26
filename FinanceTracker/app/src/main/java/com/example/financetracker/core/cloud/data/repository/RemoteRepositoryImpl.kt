@@ -12,10 +12,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.utils.InsertAllTransactionsToLocalDatabaseWorker
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.utils.UploadAllTransactionsToCloudDatabaseWorker
+import com.example.financetracker.worker.InsertAllTransactionsToLocalDatabaseWorker
+import com.example.financetracker.worker.UploadAllTransactionsToCloudDatabaseWorker
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.utils.InsertAllSavedItemsToLocalDatabaseWorker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source

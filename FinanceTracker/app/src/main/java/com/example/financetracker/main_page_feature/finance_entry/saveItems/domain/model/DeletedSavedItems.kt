@@ -1,6 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model
 
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.DeletedSavedItemsEntity
+import com.example.financetracker.data.local.data_source.room.modules.saved_items.DeletedSavedItemsEntity
 
 data class DeletedSavedItems(
     val itemId: Int? = null,

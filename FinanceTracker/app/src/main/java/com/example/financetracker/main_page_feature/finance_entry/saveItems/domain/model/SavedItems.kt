@@ -1,7 +1,7 @@
 package com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model
 
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.SavedItemsEntity
-import com.example.financetracker.setup_account.data.local.data_source.country.CountryMapper
+import com.example.financetracker.data.local.data_source.room.modules.saved_items.SavedItemsEntity
+import com.example.financetracker.mapper.CountryMapper
 import com.example.financetracker.setup_account.domain.model.Currency
 
 data class SavedItems(

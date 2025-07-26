@@ -1,7 +1,7 @@
 package com.example.financetracker.setup_account.domain.model
 
-import com.example.financetracker.setup_account.data.local.data_source.country.CountryEntity
-import com.example.financetracker.setup_account.data.local.data_source.country.CountryMapper
+import com.example.financetracker.data.local.data_source.room.modules.country.CountryEntity
+import com.example.financetracker.mapper.CountryMapper
 
 data class Country(
     val name: Name,
@@ -18,7 +18,7 @@ data class Idd(val root: String, val suffixes: List<String>)
 
 data class Currency(val name: String = "", val symbol: String = "")
 
-fun Country.toEntity(): CountryEntity{
+fun Country.toEntity(): CountryEntity {
     return CountryMapper.fromCountryResponseToEntity(this)
 }
 
