@@ -1,4 +1,4 @@
-package com.example.financetracker.data.repository
+package com.example.financetracker.data.local.repository
 
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder

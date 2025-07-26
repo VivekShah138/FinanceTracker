@@ -7,10 +7,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import androidx.work.WorkManager
-import com.example.financetracker.budget_feature.data.data_source.BUDGET_MIGRATION_1_2
-import com.example.financetracker.budget_feature.data.data_source.BUDGET_MIGRATION_2_3
-import com.example.financetracker.budget_feature.data.data_source.BudgetDao
-import com.example.financetracker.budget_feature.data.data_source.BudgetDatabase
+import com.example.financetracker.data.local.data_source.room.migration.BUDGET_MIGRATION_1_2
+import com.example.financetracker.data.local.data_source.room.migration.BUDGET_MIGRATION_2_3
+import com.example.financetracker.data.local.data_source.room.modules.budget.BudgetDao
+import com.example.financetracker.data.local.data_source.room.modules.budget.BudgetDatabase
 import com.example.financetracker.data.local.data_source.room.modules.category.CategoryDao
 import com.example.financetracker.data.local.data_source.room.modules.category.CategoryDatabase
 import com.example.financetracker.data.local.data_source.room.migration.CATEGORY_MIGRATION_1_2

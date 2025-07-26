@@ -1,9 +1,8 @@
-package com.example.financetracker.budget_feature.data.data_source
+package com.example.financetracker.data.local.data_source.room.modules.budget
 
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.util.UUID
 
 @Entity(
     tableName = "monthly_budgets",

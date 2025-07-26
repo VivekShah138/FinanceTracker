@@ -1,4 +1,4 @@
-package com.example.financetracker.budget_feature.data.data_source
+package com.example.financetracker.data.local.data_source.room.migration
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase

@@ -1,4 +1,4 @@
-package com.example.financetracker.budget_feature.data.data_source
+package com.example.financetracker.data.local.data_source.room.modules.budget
 
 import androidx.room.Dao
 import androidx.room.Query

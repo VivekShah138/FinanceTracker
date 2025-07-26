@@ -2,19 +2,19 @@ package com.example.financetracker.di
 
 import android.content.Context
 import androidx.work.WorkManager
-import com.example.financetracker.budget_feature.data.data_source.BudgetDao
-import com.example.financetracker.budget_feature.data.repository.BudgetLocalRepositoryImpl
-import com.example.financetracker.budget_feature.data.repository.BudgetRemoteRepositoryImpl
+import com.example.financetracker.data.local.data_source.room.modules.budget.BudgetDao
+import com.example.financetracker.data.local.repository.BudgetLocalRepositoryImpl
+import com.example.financetracker.data.remote.repository.BudgetRemoteRepositoryImpl
 import com.example.financetracker.budget_feature.domain.repository.BudgetLocalRepository
 import com.example.financetracker.budget_feature.domain.repository.BudgetRemoteRepository
 import com.example.financetracker.core.cloud.data.repository.RemoteRepositoryImpl
 import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
 import com.example.financetracker.data.local.data_source.room.modules.category.CategoryDatabase
 import com.example.financetracker.data.local.data_source.room.modules.userprofile.UserProfileDatabase
-import com.example.financetracker.data.repository.CategoryRepositoryImpl
-import com.example.financetracker.data.repository.UserProfileRepositoryImpl
+import com.example.financetracker.data.local.repository.CategoryRepositoryImpl
+import com.example.financetracker.data.local.repository.UserProfileRepositoryImpl
 import com.example.financetracker.data.local.data_source.shared_pref.UserPreferences
-import com.example.financetracker.data.repository.SharedPreferencesRepositoryImpl
+import com.example.financetracker.data.local.repository.SharedPreferencesRepositoryImpl
 import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
 import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository

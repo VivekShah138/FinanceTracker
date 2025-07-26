@@ -1,4 +1,4 @@
-package com.example.financetracker.data.repository
+package com.example.financetracker.data.local.repository
 
 import com.example.financetracker.data.local.data_source.shared_pref.UserPreferences
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
