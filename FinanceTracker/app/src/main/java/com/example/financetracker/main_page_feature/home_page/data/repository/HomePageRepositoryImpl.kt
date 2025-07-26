@@ -1,7 +1,6 @@
 package com.example.financetracker.main_page_feature.home_page.data.repository
 
-import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDao
-import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
+import com.example.financetracker.data.local.data_source.shared_pref.UserPreferences
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository

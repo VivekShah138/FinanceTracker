@@ -1,4 +1,4 @@
-package com.example.financetracker.core.local.data.room.data_source.userprofile
+package com.example.financetracker.data.local.data_source.room.modules.userprofile
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

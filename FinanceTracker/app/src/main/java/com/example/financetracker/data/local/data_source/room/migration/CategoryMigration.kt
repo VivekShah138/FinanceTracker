@@ -1,4 +1,4 @@
-package com.example.financetracker.core.local.data.room.data_source.category.migration
+package com.example.financetracker.data.local.data_source.room.migration
 
 
 import androidx.room.migration.Migration

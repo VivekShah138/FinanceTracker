@@ -9,7 +9,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
+import com.example.financetracker.data.local.data_source.shared_pref.UserPreferences
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesDao
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesMapper
 import com.example.financetracker.setup_account.data.local.data_source.currency_rates.PrepopulateCurrencyRatesDatabaseWorker

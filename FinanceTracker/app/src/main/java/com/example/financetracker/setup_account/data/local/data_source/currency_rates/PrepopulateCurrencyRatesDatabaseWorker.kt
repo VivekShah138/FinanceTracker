@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDao
-import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
+import com.example.financetracker.data.local.data_source.room.modules.userprofile.UserProfileDao
+import com.example.financetracker.data.local.data_source.shared_pref.UserPreferences
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryMapper
 import com.example.financetracker.setup_account.data.remote.CurrencyRatesApi
 

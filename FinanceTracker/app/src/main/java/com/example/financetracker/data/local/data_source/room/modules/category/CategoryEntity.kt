@@ -1,4 +1,4 @@
-package com.example.financetracker.core.local.data.room.data_source.category
+package com.example.financetracker.data.local.data_source.room.modules.category
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

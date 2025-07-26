@@ -1,20 +1,18 @@
-package com.example.financetracker.core.local.data.room.repository
+package com.example.financetracker.data.repository
 
 import android.util.Log
-import androidx.room.RoomDatabase
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.financetracker.core.local.data.room.data_source.userprofile.PrepopulateUserProfileDatabaseWorker
-import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDao
+import com.example.financetracker.worker.PrepopulateUserProfileDatabaseWorker
+import com.example.financetracker.data.local.data_source.room.modules.userprofile.UserProfileDao
 import com.example.financetracker.core.local.domain.room.model.UserProfile
 import com.example.financetracker.core.local.domain.room.model.toDomain
 import com.example.financetracker.core.local.domain.room.model.toEntity
 import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
-import com.example.financetracker.setup_account.data.local.data_source.country.PrepopulateCountryDatabaseWorker
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

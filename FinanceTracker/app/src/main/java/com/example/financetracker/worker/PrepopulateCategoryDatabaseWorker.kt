@@ -1,4 +1,4 @@
-package com.example.financetracker.core.local.data.room.data_source.category
+package com.example.financetracker.worker
 
 import android.content.Context
 import android.util.Log
@@ -7,6 +7,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.financetracker.core.local.domain.room.model.toEntity
 import com.example.financetracker.core.local.domain.room.utils.JsonUtils
+import com.example.financetracker.data.local.data_source.room.modules.category.CategoryDao
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 

@@ -1,6 +1,6 @@
 package com.example.financetracker.core.local.domain.room.model
 
-import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileEntity
+import com.example.financetracker.data.local.data_source.room.modules.userprofile.UserProfileEntity
 import com.example.financetracker.setup_account.data.local.data_source.country.CountryMapper
 import com.example.financetracker.setup_account.domain.model.Currency
 import com.google.gson.Gson

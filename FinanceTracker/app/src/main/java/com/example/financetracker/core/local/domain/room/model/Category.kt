@@ -1,6 +1,6 @@
 package com.example.financetracker.core.local.domain.room.model
 
-import com.example.financetracker.core.local.data.room.data_source.category.CategoryEntity
+import com.example.financetracker.data.local.data_source.room.modules.category.CategoryEntity
 
 data class Category(
     val categoryId: Int? = null,

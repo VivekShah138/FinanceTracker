@@ -9,12 +9,12 @@ import com.example.financetracker.budget_feature.domain.repository.BudgetLocalRe
 import com.example.financetracker.budget_feature.domain.repository.BudgetRemoteRepository
 import com.example.financetracker.core.cloud.data.repository.RemoteRepositoryImpl
 import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
-import com.example.financetracker.core.local.data.room.data_source.category.CategoryDatabase
-import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDatabase
-import com.example.financetracker.core.local.data.room.repository.CategoryRepositoryImpl
-import com.example.financetracker.core.local.data.room.repository.UserProfileRepositoryImpl
-import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
-import com.example.financetracker.core.local.data.shared_preferences.repository.SharedPreferencesRepositoryImpl
+import com.example.financetracker.data.local.data_source.room.modules.category.CategoryDatabase
+import com.example.financetracker.data.local.data_source.room.modules.userprofile.UserProfileDatabase
+import com.example.financetracker.data.repository.CategoryRepositoryImpl
+import com.example.financetracker.data.repository.UserProfileRepositoryImpl
+import com.example.financetracker.data.local.data_source.shared_pref.UserPreferences
+import com.example.financetracker.data.repository.SharedPreferencesRepositoryImpl
 import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
 import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
@@ -204,7 +204,7 @@ object RepositoryModule {
     // HomePageRepository
     @Provides
     @Singleton
-    fun provideHomePageRepository(userPreferences: UserPreferences,userProfileRepository: UserProfileRepository): HomePageRepository {
+    fun provideHomePageRepository(userPreferences: UserPreferences, userProfileRepository: UserProfileRepository): HomePageRepository {
         return HomePageRepositoryImpl(userPreferences = userPreferences,userProfileRepository = userProfileRepository)
     }
 

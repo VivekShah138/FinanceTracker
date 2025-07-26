@@ -1,7 +1,6 @@
-package com.example.financetracker.core.local.data.shared_preferences.repository
+package com.example.financetracker.data.repository
 
-import androidx.compose.animation.core.rememberTransition
-import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
+import com.example.financetracker.data.local.data_source.shared_pref.UserPreferences
 import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
 import javax.inject.Inject
 

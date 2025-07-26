@@ -1,4 +1,4 @@
-package com.example.financetracker.core.local.data.shared_preferences.data_source
+package com.example.financetracker.data.local.data_source.shared_pref
 
 import android.content.SharedPreferences
 import javax.inject.Inject

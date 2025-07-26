@@ -1,9 +1,9 @@
-package com.example.financetracker.core.local.data.room.data_source.userprofile
+package com.example.financetracker.data.local.data_source.room.modules.userprofile
 
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.financetracker.core.local.data.room.data_source.category.CategoryEntity
+import com.example.financetracker.data.local.data_source.room.modules.category.CategoryEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

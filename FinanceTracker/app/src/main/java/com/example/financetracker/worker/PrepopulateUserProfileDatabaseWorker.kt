@@ -1,4 +1,4 @@
-package com.example.financetracker.core.local.data.room.data_source.userprofile
+package com.example.financetracker.worker
 
 import android.content.Context
 import android.util.Log
@@ -6,7 +6,6 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
-import com.example.financetracker.core.local.domain.room.model.toEntity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
