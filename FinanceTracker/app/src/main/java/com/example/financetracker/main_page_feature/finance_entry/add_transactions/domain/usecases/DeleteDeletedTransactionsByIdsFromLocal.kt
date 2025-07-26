@@ -1,6 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
 
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionRemoteRepository
+import com.example.financetracker.domain.repository.remote.TransactionRemoteRepository
 
 class DeleteDeletedTransactionsByIdsFromLocal(
     private val transactionRemoteRepository: TransactionRemoteRepository

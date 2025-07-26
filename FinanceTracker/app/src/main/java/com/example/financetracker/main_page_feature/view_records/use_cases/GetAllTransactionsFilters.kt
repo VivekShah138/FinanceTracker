@@ -1,8 +1,8 @@
 package com.example.financetracker.main_page_feature.view_records.use_cases
 
 import android.util.Log
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionLocalRepository
+import com.example.financetracker.domain.model.Transactions
+import com.example.financetracker.domain.repository.local.TransactionLocalRepository
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder

@@ -1,9 +1,8 @@
 package com.example.financetracker.budget_feature.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.budget_feature.domain.model.Budget
+import com.example.financetracker.domain.model.Budget
 import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel.AddTransactionValidationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel

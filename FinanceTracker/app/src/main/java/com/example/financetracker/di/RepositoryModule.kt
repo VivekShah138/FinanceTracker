@@ -2,48 +2,46 @@ package com.example.financetracker.di
 
 import android.content.Context
 import androidx.work.WorkManager
-import com.example.financetracker.data.local.data_source.room.modules.budget.BudgetDao
-import com.example.financetracker.data.local.repository.BudgetLocalRepositoryImpl
-import com.example.financetracker.data.remote.repository.BudgetRemoteRepositoryImpl
-import com.example.financetracker.budget_feature.domain.repository.BudgetLocalRepository
-import com.example.financetracker.budget_feature.domain.repository.BudgetRemoteRepository
-import com.example.financetracker.core.cloud.data.repository.RemoteRepositoryImpl
-import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
-import com.example.financetracker.data.local.data_source.room.modules.category.CategoryDatabase
-import com.example.financetracker.data.local.data_source.room.modules.userprofile.UserProfileDatabase
-import com.example.financetracker.data.local.repository.CategoryRepositoryImpl
-import com.example.financetracker.data.local.repository.UserProfileRepositoryImpl
-import com.example.financetracker.data.local.data_source.shared_pref.UserPreferences
-import com.example.financetracker.data.local.repository.SharedPreferencesRepositoryImpl
-import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
-import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
-import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
-import com.example.financetracker.data.local.data_source.room.modules.transactions.DeletedTransactionDao
-import com.example.financetracker.data.local.data_source.room.modules.transactions.TransactionDao
-import com.example.financetracker.data.local.repository.TransactionsLocalRepositoryImpl
-import com.example.financetracker.data.remote.repository.TransactionsRemoteRepositoryImpl
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionLocalRepository
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionRemoteRepository
-import com.example.financetracker.data.local.data_source.room.modules.saved_items.DeletedSavedItemsDao
-import com.example.financetracker.data.local.data_source.room.modules.saved_items.SavedItemsDao
-import com.example.financetracker.data.local.repository.SavedItemsLocalRepositoryImpl
-import com.example.financetracker.data.remote.repository.SavedItemsRemoteRepositoryImpl
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.local.SavedItemsLocalRepository
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.remote.SavedItemsRemoteRepository
-import com.example.financetracker.data.local.repository.HomePageRepositoryImpl
-import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
-import com.example.financetracker.data.local.data_source.room.modules.country.CountryDatabase
-import com.example.financetracker.data.local.data_source.room.modules.currency_rates.CurrencyRatesDao
-import com.example.financetracker.data.local.repository.CountryLocalRepositoryImpl
-import com.example.financetracker.data.local.repository.CurrencyRatesLocalRepositoryImpl
-import com.example.financetracker.data.remote.data_source.CountryApi
-import com.example.financetracker.data.remote.data_source.CurrencyRatesApi
-import com.example.financetracker.data.remote.repository.CountryRemoteRepositoryImpl
-import com.example.financetracker.data.remote.repository.CurrencyRatesRemoteRepositoryImpl
-import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
-import com.example.financetracker.setup_account.domain.repository.local.CurrencyRatesLocalRepository
-import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
-import com.example.financetracker.setup_account.domain.repository.remote.CurrencyRatesRemoteRepository
+import com.example.financetracker.data.data_source.local.room.modules.budget.BudgetDao
+import com.example.financetracker.data.data_source.local.room.modules.category.CategoryDatabase
+import com.example.financetracker.data.data_source.local.room.modules.country.CountryDatabase
+import com.example.financetracker.data.data_source.local.room.modules.currency_rates.CurrencyRatesDao
+import com.example.financetracker.data.data_source.local.room.modules.saved_items.DeletedSavedItemsDao
+import com.example.financetracker.data.data_source.local.room.modules.saved_items.SavedItemsDao
+import com.example.financetracker.data.data_source.local.room.modules.transactions.DeletedTransactionDao
+import com.example.financetracker.data.data_source.local.room.modules.transactions.TransactionDao
+import com.example.financetracker.data.data_source.local.room.modules.userprofile.UserProfileDatabase
+import com.example.financetracker.data.data_source.local.shared_pref.UserPreferences
+import com.example.financetracker.data.data_source.remote.CountryApi
+import com.example.financetracker.data.data_source.remote.CurrencyRatesApi
+import com.example.financetracker.data.repository.local.CategoryRepositoryImpl
+import com.example.financetracker.data.repository.local.CountryLocalRepositoryImpl
+import com.example.financetracker.data.repository.local.CurrencyRatesLocalRepositoryImpl
+import com.example.financetracker.data.repository.local.SavedItemsLocalRepositoryImpl
+import com.example.financetracker.data.repository.local.SharedPreferencesRepositoryImpl
+import com.example.financetracker.data.repository.local.TransactionsLocalRepositoryImpl
+import com.example.financetracker.data.repository.local.UserProfileRepositoryImpl
+import com.example.financetracker.data.repository.remote.BudgetRemoteRepositoryImpl
+import com.example.financetracker.data.repository.remote.CountryRemoteRepositoryImpl
+import com.example.financetracker.data.repository.remote.CurrencyRatesRemoteRepositoryImpl
+import com.example.financetracker.domain.repository.local.BudgetLocalRepository
+import com.example.financetracker.domain.repository.remote.BudgetRemoteRepository
+import com.example.financetracker.data.repository.remote.RemoteRepositoryImpl
+import com.example.financetracker.data.repository.remote.SavedItemsRemoteRepositoryImpl
+import com.example.financetracker.data.repository.remote.TransactionsRemoteRepositoryImpl
+import com.example.financetracker.domain.repository.remote.RemoteRepository
+import com.example.financetracker.domain.repository.local.CategoryRepository
+import com.example.financetracker.domain.repository.local.UserProfileRepository
+import com.example.financetracker.domain.repository.local.SharedPreferencesRepository
+import com.example.financetracker.domain.repository.local.TransactionLocalRepository
+import com.example.financetracker.domain.repository.remote.TransactionRemoteRepository
+import com.example.financetracker.domain.repository.local.SavedItemsLocalRepository
+import com.example.financetracker.domain.repository.remote.SavedItemsRemoteRepository
+import com.example.financetracker.domain.repository.local.HomePageRepository
+import com.example.financetracker.domain.repository.local.CountryLocalRepository
+import com.example.financetracker.domain.repository.local.CurrencyRatesLocalRepository
+import com.example.financetracker.domain.repository.remote.CountryRemoteRepository
+import com.example.financetracker.domain.repository.remote.CurrencyRatesRemoteRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -182,7 +180,7 @@ object RepositoryModule {
         budgetDao: BudgetDao,
         @ApplicationContext context: Context
     ): BudgetLocalRepository {
-        return BudgetLocalRepositoryImpl(
+        return com.example.financetracker.data.repository.local.BudgetLocalRepositoryImpl(
             budgetDao = budgetDao,
             context = context
         )
@@ -205,7 +203,10 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideHomePageRepository(userPreferences: UserPreferences, userProfileRepository: UserProfileRepository): HomePageRepository {
-        return HomePageRepositoryImpl(userPreferences = userPreferences,userProfileRepository = userProfileRepository)
+        return com.example.financetracker.data.repository.local.HomePageRepositoryImpl(
+            userPreferences = userPreferences,
+            userProfileRepository = userProfileRepository
+        )
     }
 
 

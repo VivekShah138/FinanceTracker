@@ -3,7 +3,6 @@ package com.example.financetracker.main_page_feature.finance_entry.saveItems.pre
 import app.cash.turbine.test
 import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import io.mockk.Runs
@@ -19,7 +18,6 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SavedItemsViewModelTest {

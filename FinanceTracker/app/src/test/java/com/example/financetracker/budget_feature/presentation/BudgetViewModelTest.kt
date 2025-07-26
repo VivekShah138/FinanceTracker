@@ -5,10 +5,10 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 
 
 import app.cash.turbine.test
-import com.example.financetracker.budget_feature.domain.model.Budget
+import com.example.financetracker.domain.model.Budget
 import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
-import com.example.financetracker.core.local.domain.room.model.UserProfile
-import com.example.financetracker.setup_account.domain.model.Currency
+import com.example.financetracker.domain.model.UserProfile
+import com.example.financetracker.domain.model.Currency
 import io.mockk.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*

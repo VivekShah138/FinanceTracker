@@ -6,8 +6,8 @@ import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCas
 import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
 import com.example.financetracker.auth_feature.domain.usecases.ValidateEmail
 import com.example.financetracker.auth_feature.domain.usecases.ValidatePassword
-import com.example.financetracker.budget_feature.domain.repository.BudgetLocalRepository
-import com.example.financetracker.budget_feature.domain.repository.BudgetRemoteRepository
+import com.example.financetracker.domain.repository.local.BudgetLocalRepository
+import com.example.financetracker.domain.repository.remote.BudgetRemoteRepository
 import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
 import com.example.financetracker.budget_feature.domain.usecases.DoesBudgetExits
 import com.example.financetracker.budget_feature.domain.usecases.GetAllUnSyncedBudgetLocalUseCase
@@ -18,11 +18,11 @@ import com.example.financetracker.budget_feature.domain.usecases.InsertRemoteBud
 import com.example.financetracker.budget_feature.domain.usecases.SaveBudgetToCloudUseCase
 import com.example.financetracker.budget_feature.domain.usecases.SaveMultipleBudgetsToCloudUseCase
 import com.example.financetracker.budget_feature.domain.usecases.SendBudgetNotificationUseCase
-import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
-import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
+import com.example.financetracker.domain.repository.local.CountryLocalRepository
+import com.example.financetracker.domain.repository.remote.CountryRemoteRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryLocally
 import com.example.financetracker.setup_account.domain.usecases.InsertCountryLocallyWorkManager
-import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
+import com.example.financetracker.domain.repository.remote.RemoteRepository
 import com.example.financetracker.core.cloud.domain.usecase.DeleteTransactionCloud
 import com.example.financetracker.core.cloud.domain.usecase.GetRemoteTransactionsList
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.CheckIsLoggedInUseCase
@@ -36,8 +36,8 @@ import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.core.cloud.domain.usecase.SaveUserProfileUseCase
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
 import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
-import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
-import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
+import com.example.financetracker.domain.repository.local.CategoryRepository
+import com.example.financetracker.domain.repository.local.UserProfileRepository
 import com.example.financetracker.core.local.domain.room.usecases.DeleteCustomCategories
 import com.example.financetracker.core.local.domain.room.usecases.GetCustomCategories
 import com.example.financetracker.core.local.domain.room.usecases.GetAllCategories
@@ -47,7 +47,7 @@ import com.example.financetracker.core.local.domain.room.usecases.InsertCustomCa
 import com.example.financetracker.core.local.domain.room.usecases.InsertPredefinedCategories
 import com.example.financetracker.core.local.domain.room.usecases.InsertUserProfileToLocalDb
 import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
-import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
+import com.example.financetracker.domain.repository.local.SharedPreferencesRepository
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCurrencyRatesUpdated
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetDarkModeLocally
@@ -61,8 +61,8 @@ import com.example.financetracker.core.local.domain.shared_preferences.usecases.
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetFirstTimeLogin
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetUserNameLocally
 import com.example.financetracker.main_page_feature.charts.domain.usecases.ChartsUseCaseWrapper
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionLocalRepository
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionRemoteRepository
+import com.example.financetracker.domain.repository.local.TransactionLocalRepository
+import com.example.financetracker.domain.repository.remote.TransactionRemoteRepository
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertTransactionsLocally
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
@@ -77,8 +77,8 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateEmptyField
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionPrice
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.local.SavedItemsLocalRepository
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.remote.SavedItemsRemoteRepository
+import com.example.financetracker.domain.repository.local.SavedItemsLocalRepository
+import com.example.financetracker.domain.repository.remote.SavedItemsRemoteRepository
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.SaveItemLocalUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
@@ -94,7 +94,7 @@ import com.example.financetracker.main_page_feature.finance_entry.saveItems.doma
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.InsertRemoteSavedItemToLocal
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveMultipleSavedItemCloud
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveSingleSavedItemCloud
-import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
+import com.example.financetracker.domain.repository.local.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
@@ -106,7 +106,7 @@ import com.example.financetracker.main_page_feature.view_records.use_cases.GetAl
 import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedSavedItemLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedTransactionsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
-import com.example.financetracker.setup_account.domain.repository.local.CurrencyRatesLocalRepository
+import com.example.financetracker.domain.repository.local.CurrencyRatesLocalRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryDetailsUseCase
 import com.example.financetracker.setup_account.domain.usecases.GetCurrencyRatesLocally
 import com.example.financetracker.setup_account.domain.usecases.InsertCountryLocally

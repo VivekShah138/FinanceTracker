@@ -1,7 +1,7 @@
 package com.example.financetracker.core.local.domain.room.usecases
 
-import com.example.financetracker.core.local.domain.room.model.Category
-import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
+import com.example.financetracker.domain.model.Category
+import com.example.financetracker.domain.repository.local.CategoryRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetCustomCategories (

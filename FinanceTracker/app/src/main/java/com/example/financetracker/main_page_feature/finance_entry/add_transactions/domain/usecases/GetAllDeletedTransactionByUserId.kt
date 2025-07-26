@@ -1,7 +1,7 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
 
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.DeletedTransactions
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionRemoteRepository
+import com.example.financetracker.domain.model.DeletedTransactions
+import com.example.financetracker.domain.repository.remote.TransactionRemoteRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetAllDeletedTransactionByUserId(

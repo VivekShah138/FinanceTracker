@@ -1,6 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation
 
-import com.example.financetracker.setup_account.domain.model.Country
+import com.example.financetracker.domain.model.Country
 
 data class SavedItemsStates(
     val itemName: String = "",

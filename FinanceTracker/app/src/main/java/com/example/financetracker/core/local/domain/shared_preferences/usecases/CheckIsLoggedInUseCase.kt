@@ -1,6 +1,6 @@
 package com.example.financetracker.core.local.domain.shared_preferences.usecases
 
-import com.example.financetracker.core.local.domain.shared_preferences.repository.SharedPreferencesRepository
+import com.example.financetracker.domain.repository.local.SharedPreferencesRepository
 import javax.inject.Inject
 
 class CheckIsLoggedInUseCase @Inject constructor(

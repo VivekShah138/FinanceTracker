@@ -3,15 +3,13 @@ package com.example.financetracker.main_page_feature.finance_entry.saveItems.pre
 import android.net.http.HttpException
 import android.os.Build
 import android.util.Log
-import android.view.View
 import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel.AddTransactionValidationEvent
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
+import com.example.financetracker.domain.model.SavedItems
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
-import com.example.financetracker.setup_account.domain.model.Currency
+import com.example.financetracker.domain.model.Currency
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import com.google.gson.JsonParseException
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -15,22 +15,19 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.text.NumberFormat
 import java.util.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import com.example.financetracker.core.core_presentation.components.AppTopBar
+import com.example.financetracker.domain.model.Currency
 import java.text.SimpleDateFormat
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import com.example.financetracker.domain.model.Transactions
 import com.example.financetracker.ui.theme.AppTheme
 
 
@@ -91,7 +88,7 @@ fun SingleTransactionWithoutExchangeRatePreview() {
 
 
 @Composable
-fun SingleTransactionScreen2(transaction: Transactions,baseCurrency: Map<String, com.example.financetracker.setup_account.domain.model.Currency>) {
+fun SingleTransactionScreen2(transaction: Transactions, baseCurrency: Map<String, Currency>) {
 
     val transactionCurrencySymbol = transaction.currency?.entries?.firstOrNull()?.value?.symbol ?: "$"
     val transactionCurrencyCode = transaction.currency?.entries?.firstOrNull()?.key ?: "USD"

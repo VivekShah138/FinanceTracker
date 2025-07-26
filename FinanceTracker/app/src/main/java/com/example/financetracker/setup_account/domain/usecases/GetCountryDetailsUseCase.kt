@@ -1,7 +1,7 @@
 package com.example.financetracker.setup_account.domain.usecases
 
-import com.example.financetracker.setup_account.domain.model.Country
-import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
+import com.example.financetracker.domain.model.Country
+import com.example.financetracker.domain.repository.remote.CountryRemoteRepository
 
 
 class GetCountryDetailsUseCase(

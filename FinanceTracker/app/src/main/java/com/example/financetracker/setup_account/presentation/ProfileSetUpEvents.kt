@@ -1,7 +1,6 @@
 package com.example.financetracker.setup_account.presentation
 
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
-import com.example.financetracker.setup_account.domain.model.Country
+import com.example.financetracker.domain.model.Country
 
 sealed class ProfileSetUpEvents {
     object LoadCountries: ProfileSetUpEvents()

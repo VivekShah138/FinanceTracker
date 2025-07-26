@@ -1,7 +1,7 @@
 package com.example.financetracker.setup_account.domain.usecases
 
-import com.example.financetracker.setup_account.domain.model.CurrencyResponse
-import com.example.financetracker.setup_account.domain.repository.local.CurrencyRatesLocalRepository
+import com.example.financetracker.domain.model.CurrencyResponse
+import com.example.financetracker.domain.repository.local.CurrencyRatesLocalRepository
 
 class GetCurrencyRatesLocally(
     private val currencyRatesLocalRepository: CurrencyRatesLocalRepository

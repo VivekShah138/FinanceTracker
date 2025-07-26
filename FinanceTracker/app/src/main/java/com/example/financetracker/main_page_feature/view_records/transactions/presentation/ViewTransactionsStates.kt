@@ -1,12 +1,12 @@
 package com.example.financetracker.main_page_feature.view_records.transactions.presentation
 
-import com.example.financetracker.core.local.domain.room.model.Category
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import com.example.financetracker.domain.model.Category
+import com.example.financetracker.domain.model.Transactions
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionTypeFilter
-import com.example.financetracker.setup_account.domain.model.Currency
+import com.example.financetracker.domain.model.Currency
 
 data class ViewTransactionsStates(
 
@@ -14,7 +14,7 @@ data class ViewTransactionsStates(
     val transactionsList: List<Transactions> = emptyList(),
     val totalAmount: Double = 0.0,
     val currencySymbol: String = "$",
-    val baseCurrency: Map<String,Currency> = emptyMap(),
+    val baseCurrency: Map<String, Currency> = emptyMap(),
 
     // Duration
     val durationRange: List<DurationFilter> = listOf(

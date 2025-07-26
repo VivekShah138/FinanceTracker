@@ -1,6 +1,6 @@
 package com.example.financetracker.auth_feature.presentation.login
 
-import com.example.financetracker.core.local.domain.room.model.UserProfile
+import com.example.financetracker.domain.model.UserProfile
 
 data class LoginPageStates(
     val loggedInUser: String? = null,

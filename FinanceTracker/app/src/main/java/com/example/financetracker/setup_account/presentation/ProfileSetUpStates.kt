@@ -1,6 +1,6 @@
 package com.example.financetracker.setup_account.presentation
 
-import com.example.financetracker.setup_account.domain.model.Country
+import com.example.financetracker.domain.model.Country
 
 data class ProfileSetUpStates(
     val email: String? = "",

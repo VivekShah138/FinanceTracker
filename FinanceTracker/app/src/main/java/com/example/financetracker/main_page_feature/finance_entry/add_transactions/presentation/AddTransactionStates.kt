@@ -1,8 +1,8 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation
 
-import com.example.financetracker.core.local.domain.room.model.Category
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
-import com.example.financetracker.setup_account.domain.model.Country
+import com.example.financetracker.domain.model.Category
+import com.example.financetracker.domain.model.SavedItems
+import com.example.financetracker.domain.model.Country
 
 data class AddTransactionStates(
 

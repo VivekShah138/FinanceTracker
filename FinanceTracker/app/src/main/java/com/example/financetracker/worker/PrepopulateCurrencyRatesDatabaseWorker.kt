@@ -5,12 +5,12 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.financetracker.data.local.data_source.room.modules.userprofile.UserProfileDao
-import com.example.financetracker.data.local.data_source.shared_pref.UserPreferences
+import com.example.financetracker.data.data_source.local.room.modules.currency_rates.CurrencyRatesDao
+import com.example.financetracker.data.data_source.local.room.modules.userprofile.UserProfileDao
+import com.example.financetracker.data.data_source.local.shared_pref.UserPreferences
+import com.example.financetracker.data.data_source.remote.CurrencyRatesApi
 import com.example.financetracker.mapper.CountryMapper
-import com.example.financetracker.data.local.data_source.room.modules.currency_rates.CurrencyRatesDao
 import com.example.financetracker.mapper.CurrencyRatesMapper
-import com.example.financetracker.data.remote.data_source.CurrencyRatesApi
 
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

@@ -1,8 +1,8 @@
 package com.example.financetracker.setup_account.domain.usecases
 
-import com.example.financetracker.core.local.domain.room.model.UserProfile
-import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
-import com.example.financetracker.setup_account.domain.model.Currency
+import com.example.financetracker.domain.model.UserProfile
+import com.example.financetracker.domain.repository.remote.RemoteRepository
+import com.example.financetracker.domain.model.Currency
 
 
 class UpdateUserProfile (
@@ -14,7 +14,7 @@ class UpdateUserProfile (
         firstName: String,
         lastName: String,
         email: String,
-        baseCurrency: Map<String,Currency>,
+        baseCurrency: Map<String, Currency>,
         country: String,
         callingCode: String,
         phoneNumber: String,

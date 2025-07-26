@@ -1,8 +1,6 @@
 package com.example.financetracker.main_page_feature.view_records.saved_items.presentation
 
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionEvents
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
-import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
+import com.example.financetracker.domain.model.SavedItems
 
 sealed class ViewSavedItemsEvents() {
     data object LoadTransactions: ViewSavedItemsEvents()

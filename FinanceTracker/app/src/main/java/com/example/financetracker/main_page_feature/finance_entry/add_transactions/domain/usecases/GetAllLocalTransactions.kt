@@ -1,7 +1,7 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
 
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionLocalRepository
+import com.example.financetracker.domain.model.Transactions
+import com.example.financetracker.domain.repository.local.TransactionLocalRepository
 import kotlinx.coroutines.flow.Flow
 
 class GetAllLocalTransactions(
