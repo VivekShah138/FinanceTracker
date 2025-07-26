@@ -64,6 +64,7 @@ import com.example.financetracker.main_page_feature.view_records.transactions.pr
 import com.example.financetracker.setup_account.presentation.ProfileSetUpViewModel
 import com.example.financetracker.setup_account.presentation.components.NewUserProfileOnBoardingScreens
 import com.example.financetracker.setup_account.presentation.components.ProfileSetUp
+import com.example.financetracker.startup_page_feature.components.StartUpPageRoot
 import com.example.financetracker.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -169,13 +170,7 @@ class MainActivity : ComponentActivity() {
                             composable(
                                 route = Screens.StartUpPageScreen.routes
                             ) {
-                                val startUpPageViewModel: StartPageViewModel = hiltViewModel()
-                                val loginPageViewModel: LoginPageViewModel = hiltViewModel()
-                                StartUpPageScreen(
-                                    startUpPageViewModel = startUpPageViewModel,
-                                    loginPageViewModel = loginPageViewModel,
-                                    navController = navController
-                                )
+                                StartUpPageRoot(navController = navController)
                             }
 
                             composable(

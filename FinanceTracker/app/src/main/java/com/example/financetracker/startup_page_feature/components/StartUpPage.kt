@@ -1,5 +1,6 @@
 package com.example.financetracker.startup_page_feature.components
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
@@ -32,37 +33,64 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.R
 import com.example.financetracker.auth_feature.presentation.AccountManager
 import com.example.financetracker.auth_feature.presentation.login.LoginPageEvents
+import com.example.financetracker.auth_feature.presentation.login.LoginPageStates
 import com.example.financetracker.auth_feature.presentation.login.LoginPageViewModel
 import com.example.financetracker.startup_page_feature.StartPageViewModel
 import com.example.financetracker.core.core_presentation.utils.Screens
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
+
+@Composable
+fun StartUpPageRoot(
+    startUpPageViewModel: StartPageViewModel = hiltViewModel(),
+    loginPageViewModel: LoginPageViewModel = hiltViewModel(),
+    navController: NavController
+){
+    val startUpPageStates by startUpPageViewModel.startUpPageStates.collectAsStateWithLifecycle()
+    val loginPageStates by loginPageViewModel.loginState.collectAsStateWithLifecycle()
+    val loginEvents = loginPageViewModel.loginEvents
+
+    StartUpPageScreen(
+        startUpPageOnEvents = { startUpPageViewModel.onEvent(it) },
+        loginPageOnEvents = { loginPageViewModel.onEvent(it) },
+        startUpPageStates = startUpPageStates,
+        loginPageStates = loginPageStates,
+        loginEvents = loginEvents,
+        navController = navController
+    )
+}
+
 
 
 @Composable
 fun StartUpPageScreen(
-    startUpPageViewModel: StartPageViewModel,
-    loginPageViewModel: LoginPageViewModel,
+    startUpPageOnEvents: (StartUpPageEvents) -> Unit,
+    loginPageOnEvents: (LoginPageEvents) -> Unit,
+    startUpPageStates: StartUpPageStates,
+    loginPageStates: LoginPageStates,
+    loginEvents: Flow<LoginPageViewModel. LoginEvent>,
     navController: NavController
 ){
-
-    val startUpPageStates by startUpPageViewModel.startUpPageStates.collectAsStateWithLifecycle()
-    val loginPageStates by loginPageViewModel.loginState.collectAsStateWithLifecycle()
-
-    val loginEvents = loginPageViewModel.loginEvents
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val accountManager = remember {
         AccountManager(context as ComponentActivity)
     }
+
+    Log.d("StartUpPage","states: $startUpPageStates")
 
 
     LaunchedEffect(key1 = context) {
@@ -100,17 +128,6 @@ fun StartUpPageScreen(
                 }
             }
         }
-    }
-
-
-    LaunchedEffect(startUpPageStates.selectedButton) {
-        if (startUpPageStates.previousSelectedButton != null && startUpPageStates.previousSelectedButton != startUpPageStates.selectedButton) {
-            when (startUpPageStates.selectedButton) {
-                "Login" -> navController.navigate(Screens.LogInScreen.routes)
-                "Register" -> navController.navigate(Screens.RegistrationScreen.routes)
-            }
-        }
-        startUpPageViewModel.onEvent(StartUpPageEvents.ChangePreviousSelectedButton(startUpPageStates.selectedButton))
     }
 
 
@@ -167,48 +184,18 @@ fun StartUpPageScreen(
                 style = MaterialTheme.typography.bodyMedium,
             )
 
-
-
-
             Spacer(modifier = Modifier.height(100.dp))
-
-
-//            SegmentedLoginButton(
-//                selectedType = states.selectedButton,
-//                onLoginSelected = {
-//                    viewModel.onEvent(StartUpPageEvents.ChangeSelectedButton("Login"))
-////                    navController.navigate(route = Screens.LogInScreen.routes)
-//                },
-//                onRegisterSelected = {
-//                    viewModel.onEvent(StartUpPageEvents.ChangeSelectedButton("Register"))
-//
-////                    navController.navigate(route = Screens.RegistrationScreen.routes)
-//                },
-//                selectedColor = MaterialTheme.colorScheme.primary,
-//                unSelectedColor = MaterialTheme.colorScheme.onPrimary
-//            )
 
             GoogleSignInButton(
                 onClick = {
                     coroutineScope.launch {
-                        loginPageViewModel.onEvent(LoginPageEvents.SetLoadingTrue(true))
+                        loginPageOnEvents(LoginPageEvents.SetLoadingTrue(true))
                         val result = accountManager.signInWithGoogle()
-                        loginPageViewModel.onEvent(LoginPageEvents.ClickLoginWithGoogle(result))
+                        loginPageOnEvents(LoginPageEvents.ClickLoginWithGoogle(result))
                     }
                 },
                 googleIcon = painterResource(R.drawable.google_icon),
                 googleText = "Sign in with Google",
-//                textStyle = MaterialTheme.typography.bodyMedium.copy(
-//                    color = MaterialTheme.colorScheme.onBackground,
-//                    fontSize = 28.sp,
-//                    textAlign = TextAlign.Center,
-//                    fontWeight = FontWeight.Bold,
-//                    shadow = Shadow(
-//                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-//                        blurRadius = 4f,
-//                        offset = Offset(2f, 2f)
-//                    )
-//                ),
             )
 
 
@@ -275,3 +262,20 @@ fun StartUpPageScreen(
         }
     }
 }
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun StartUpPagePreview(){
+    StartUpPageScreen(
+        startUpPageStates = StartUpPageStates(),
+        loginPageStates = LoginPageStates(),
+        startUpPageOnEvents = {},
+        loginPageOnEvents = {},
+        loginEvents = emptyFlow(),
+        navController = rememberNavController()
+    )
+}
+

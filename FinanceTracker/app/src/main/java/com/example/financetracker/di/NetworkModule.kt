@@ -38,9 +38,8 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(ApiClient.BASE_URL_COUNTRY) // Use the base URL from ApiClient
+            .baseUrl(ApiClient.BASE_URL_COUNTRY)
             .addConverterFactory(GsonConverterFactory.create())
-//            .client(okHttpClient)
             .build()
     }
 
