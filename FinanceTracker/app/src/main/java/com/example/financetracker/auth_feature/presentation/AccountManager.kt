@@ -11,6 +11,7 @@ import androidx.credentials.exceptions.CreateCredentialCancellationException
 import androidx.credentials.exceptions.CreateCredentialException
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
+import com.example.financetracker.BuildConfig
 import com.example.financetracker.R
 import com.example.financetracker.auth_feature.presentation.login.GoogleSignInResult
 import com.example.financetracker.auth_feature.presentation.login.LogInResult
@@ -178,7 +179,8 @@ class AccountManager(
     private fun getSignInRequest() : GetCredentialRequest{
         val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(activity.getString(R.string.web_client_id))
+//            .setServerClientId(activity.getString(R.string.web_client_id))
+            .setServerClientId(BuildConfig.WEB_CLIENT_ID)
             .build()
 
         // It packages the Google Sign-In option inside a request

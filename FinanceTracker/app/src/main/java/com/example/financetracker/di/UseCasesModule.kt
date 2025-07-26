@@ -1,25 +1,11 @@
 package com.example.financetracker.di
 
-
-import TRANSACTIONS_MIGRATION_1_2
-import TRANSACTIONS_MIGRATION_2_3
-import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.room.Room
-import androidx.work.WorkManager
 import com.example.financetracker.auth_feature.domain.usecases.InsertUIDLocally
 import com.example.financetracker.auth_feature.domain.usecases.KeepUserLoggedIn
 import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCasesWrapper
 import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
 import com.example.financetracker.auth_feature.domain.usecases.ValidateEmail
 import com.example.financetracker.auth_feature.domain.usecases.ValidatePassword
-import com.example.financetracker.budget_feature.data.data_source.BUDGET_MIGRATION_1_2
-import com.example.financetracker.budget_feature.data.data_source.BUDGET_MIGRATION_2_3
-import com.example.financetracker.budget_feature.data.data_source.BudgetDao
-import com.example.financetracker.budget_feature.data.data_source.BudgetDatabase
-import com.example.financetracker.budget_feature.data.repository.BudgetLocalRepositoryImpl
-import com.example.financetracker.budget_feature.data.repository.BudgetRemoteRepositoryImpl
 import com.example.financetracker.budget_feature.domain.repository.BudgetLocalRepository
 import com.example.financetracker.budget_feature.domain.repository.BudgetRemoteRepository
 import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
@@ -32,13 +18,10 @@ import com.example.financetracker.budget_feature.domain.usecases.InsertRemoteBud
 import com.example.financetracker.budget_feature.domain.usecases.SaveBudgetToCloudUseCase
 import com.example.financetracker.budget_feature.domain.usecases.SaveMultipleBudgetsToCloudUseCase
 import com.example.financetracker.budget_feature.domain.usecases.SendBudgetNotificationUseCase
-import com.example.financetracker.setup_account.data.remote.repository.CountryRemoteRepositoryImpl
 import com.example.financetracker.setup_account.domain.repository.local.CountryLocalRepository
 import com.example.financetracker.setup_account.domain.repository.remote.CountryRemoteRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryLocally
 import com.example.financetracker.setup_account.domain.usecases.InsertCountryLocallyWorkManager
-import com.example.financetracker.core.local.data.shared_preferences.data_source.UserPreferences
-import com.example.financetracker.core.cloud.data.repository.RemoteRepositoryImpl
 import com.example.financetracker.core.cloud.domain.repository.RemoteRepository
 import com.example.financetracker.core.cloud.domain.usecase.DeleteTransactionCloud
 import com.example.financetracker.core.cloud.domain.usecase.GetRemoteTransactionsList
@@ -53,16 +36,6 @@ import com.example.financetracker.core.core_domain.usecase.LogoutUseCase
 import com.example.financetracker.core.cloud.domain.usecase.SaveUserProfileUseCase
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
 import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
-import com.example.financetracker.core.local.data.room.data_source.category.CategoryDao
-import com.example.financetracker.core.local.data.room.data_source.category.CategoryDatabase
-import com.example.financetracker.core.local.data.room.data_source.category.migration.CATEGORY_MIGRATION_1_2
-import com.example.financetracker.core.local.data.room.data_source.category.migration.CATEGORY_MIGRATION_2_3
-import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDao
-import com.example.financetracker.core.local.data.room.data_source.userprofile.UserProfileDatabase
-import com.example.financetracker.core.local.data.room.data_source.userprofile.migration.USER_PROFILE_MIGRATION_1_2
-import com.example.financetracker.core.local.data.room.repository.CategoryRepositoryImpl
-import com.example.financetracker.core.local.data.room.repository.UserProfileRepositoryImpl
-import com.example.financetracker.core.local.data.shared_preferences.repository.SharedPreferencesRepositoryImpl
 import com.example.financetracker.core.local.domain.room.repository.CategoryRepository
 import com.example.financetracker.core.local.domain.room.repository.UserProfileRepository
 import com.example.financetracker.core.local.domain.room.usecases.DeleteCustomCategories
@@ -88,11 +61,6 @@ import com.example.financetracker.core.local.domain.shared_preferences.usecases.
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetFirstTimeLogin
 import com.example.financetracker.core.local.domain.shared_preferences.usecases.SetUserNameLocally
 import com.example.financetracker.main_page_feature.charts.domain.usecases.ChartsUseCaseWrapper
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.DeletedTransactionDao
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDao
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionDatabase
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.repository.TransactionsLocalRepositoryImpl
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.repository.TransactionsRemoteRepositoryImpl
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionLocalRepository
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.repository.TransactionRemoteRepository
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
@@ -109,13 +77,6 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateEmptyField
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionPrice
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.DeletedSavedItemsDao
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.SavedItemsDao
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.data_source.SavedItemsDatabase
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.utils.migration.SAVED_ITEM_MIGRATION_1_2
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.utils.migration.SAVED_ITEM_MIGRATION_2_3
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.repository.local.SavedItemsLocalRepositoryImpl
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.data.repository.remote.SavedItemsRemoteRepositoryImpl
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.local.SavedItemsLocalRepository
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.repository.remote.SavedItemsRemoteRepository
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
@@ -133,7 +94,6 @@ import com.example.financetracker.main_page_feature.finance_entry.saveItems.doma
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.InsertRemoteSavedItemToLocal
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveMultipleSavedItemCloud
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveSingleSavedItemCloud
-import com.example.financetracker.main_page_feature.home_page.data.repository.HomePageRepositoryImpl
 import com.example.financetracker.main_page_feature.home_page.domain.repository.HomePageRepository
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
@@ -146,17 +106,7 @@ import com.example.financetracker.main_page_feature.view_records.use_cases.GetAl
 import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedSavedItemLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.InsertDeletedTransactionsLocally
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
-import com.example.financetracker.setup_account.data.local.data_source.country.CountryDao
-import com.example.financetracker.setup_account.data.local.data_source.country.CountryDatabase
-import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesDao
-import com.example.financetracker.setup_account.data.local.data_source.currency_rates.CurrencyRatesDatabase
-import com.example.financetracker.setup_account.data.local.repository.CountryLocalRepositoryImpl
-import com.example.financetracker.setup_account.data.local.repository.CurrencyRatesLocalRepositoryImpl
-import com.example.financetracker.setup_account.data.remote.CountryApi
-import com.example.financetracker.setup_account.data.remote.CurrencyRatesApi
-import com.example.financetracker.setup_account.data.remote.repository.CurrencyRatesRemoteRepositoryImpl
 import com.example.financetracker.setup_account.domain.repository.local.CurrencyRatesLocalRepository
-import com.example.financetracker.setup_account.domain.repository.remote.CurrencyRatesRemoteRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryDetailsUseCase
 import com.example.financetracker.setup_account.domain.usecases.GetCurrencyRatesLocally
 import com.example.financetracker.setup_account.domain.usecases.InsertCountryLocally
@@ -167,105 +117,15 @@ import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseC
 import com.example.financetracker.setup_account.domain.usecases.ValidateCountry
 import com.example.financetracker.setup_account.domain.usecases.ValidateName
 import com.example.financetracker.setup_account.domain.usecases.ValidatePhoneNumber
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
-
-    @Provides
-    @Singleton
-    fun provideSharedPreferences(app: Application): SharedPreferences {
-        return app.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserPreferences(sharedPreferences: SharedPreferences): UserPreferences {
-        return UserPreferences(sharedPreferences)
-    }
-
-    @Provides
-    @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth{
-        return FirebaseAuth.getInstance()
-    }
-
-    @Provides
-    @Singleton
-    fun provideFirestore(): FirebaseFirestore{
-        return FirebaseFirestore.getInstance()
-    }
-
-
-    //CategoryWorkManager
-    @Provides
-    @Singleton
-    fun provideWorkManager(@ApplicationContext context: Context): WorkManager {
-        return WorkManager.getInstance(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideFirebaseRepository(
-        firebaseAuth: FirebaseAuth,
-        firestore: FirebaseFirestore,
-        @ApplicationContext context: Context,
-        workManager: WorkManager
-    ): RemoteRepository {
-        return RemoteRepositoryImpl(
-            firebaseAuth = firebaseAuth,
-            firestore = firestore,
-            context = context,
-            workManager = workManager
-            )
-    }
-
-    @Provides
-    @Singleton
-    fun provideSharedPreferenceRepository(
-        userPreferences: UserPreferences
-    ): SharedPreferencesRepository {
-        return SharedPreferencesRepositoryImpl(
-            userPreferences = userPreferences
-        )
-    }
-
-    // CategoryDatabase
-    @Provides
-    @Singleton
-    fun provideCategoryDatabase(app: Application): CategoryDatabase {
-        return Room.databaseBuilder(
-            context = app,
-            klass = CategoryDatabase::class.java,
-            name = CategoryDatabase.DATABASE_NAME
-        ).addMigrations(
-            CATEGORY_MIGRATION_1_2,
-            CATEGORY_MIGRATION_2_3
-        ).build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideCategoryDao(db:CategoryDatabase): CategoryDao{
-        return db.categoryDao
-    }
-
-
-
-    // Category Repository
-    @Provides
-    @Singleton
-    fun provideCategoryRepository(db: CategoryDatabase, workManager: WorkManager): CategoryRepository {
-        return CategoryRepositoryImpl(categoryDao = db.categoryDao, workManager = workManager)
-    }
+object UseCasesModule {
 
     // CategoryUseCases
     @Provides
@@ -279,10 +139,8 @@ object AppModule {
             insertCustomCategories = InsertCustomCategories(categoryRepository),
             deleteCustomCategories = DeleteCustomCategories(categoryRepository),
 
-        )
+            )
     }
-
-
 
     // Core UseCases
     @Provides
@@ -320,197 +178,6 @@ object AppModule {
         )
     }
 
-    // UserProfile Database
-    @Provides
-    @Singleton
-    fun provideUserProfileDatabase(app: Application): UserProfileDatabase{
-        return Room.databaseBuilder(
-            context = app,
-            klass = UserProfileDatabase::class.java,
-            name = UserProfileDatabase.DATABASE_NAME
-        ).addMigrations(USER_PROFILE_MIGRATION_1_2).build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserProfileDao(db: UserProfileDatabase): UserProfileDao{
-        return db.userProfileDao
-    }
-
-    // UserProfile Local Repository
-    @Provides
-    @Singleton
-    fun provideUserProfileRepository(db: UserProfileDatabase,workManager: WorkManager): UserProfileRepository {
-        return UserProfileRepositoryImpl(userProfileDao = db.userProfileDao,workManager = workManager)
-    }
-
-    // Country Database
-    @Provides
-    @Singleton
-    fun provideCountryDatabase(app: Application): CountryDatabase {
-        return Room.databaseBuilder(
-            context = app,
-            klass = CountryDatabase::class.java,
-            name = CountryDatabase.DATABASE_NAME
-        ).build()
-    }
-
-    // Country Dao
-    @Provides
-    @Singleton
-    fun provideCountryDao(db: CountryDatabase): CountryDao {
-        return db.countryDao
-    }
-
-    // Country Local Repository
-    @Provides
-    @Singleton
-    fun provideLocalCountryRepository(db: CountryDatabase, workManager: WorkManager): CountryLocalRepository {
-        return CountryLocalRepositoryImpl(countryDao = db.countryDao,workManager)
-    }
-
-    // Country Remote Repository
-    @Provides
-    @Singleton
-    fun provideCountryRepository(api: CountryApi): CountryRemoteRepository = CountryRemoteRepositoryImpl(api)
-
-    // CurrencyRates Database
-    @Provides
-    @Singleton
-    fun provideCurrencyRatesDatabase(app : Application) : CurrencyRatesDatabase{
-        return Room.databaseBuilder(
-            app,
-            CurrencyRatesDatabase::class.java,
-            CurrencyRatesDatabase.DATABASE_NAME
-        ).build()
-    }
-
-    // CurrencyRates Dao
-    @Provides
-    @Singleton
-    fun provideCurrencyRatesDao(db: CurrencyRatesDatabase): CurrencyRatesDao {
-        return db.currencyRatesDao
-    }
-
-    // Currency Rates Remote Repository
-    @Provides
-    @Singleton
-    fun provideCurrencyRatesRemoteRepository(api: CurrencyRatesApi): CurrencyRatesRemoteRepository{
-        return CurrencyRatesRemoteRepositoryImpl(api = api)
-    }
-
-    // Currency Rates Local Repository
-    @Provides
-    @Singleton
-    fun provideCurrencyRatesLocalRepository(currencyRatesDao: CurrencyRatesDao,workManager: WorkManager,userPreferences: UserPreferences): CurrencyRatesLocalRepository{
-        return CurrencyRatesLocalRepositoryImpl(
-            currencyRatesDao =  currencyRatesDao,
-            workManager = workManager,
-            userPreferences = userPreferences
-        )
-    }
-
-    //TransactionDatabase
-    @Provides
-    @Singleton
-    fun provideTransactionDatabase(app : Application) : TransactionDatabase {
-        return Room.databaseBuilder(
-            app,
-            TransactionDatabase::class.java,
-            TransactionDatabase.DATABASE_NAME
-        ).addMigrations(TRANSACTIONS_MIGRATION_1_2,TRANSACTIONS_MIGRATION_2_3).build()
-    }
-
-    // Transaction Dao
-    @Provides
-    @Singleton
-    fun provideTransactionDao(db: TransactionDatabase): TransactionDao {
-        return db.transactionDao
-    }
-
-    // Deleted Transaction Dao
-    @Provides
-    @Singleton
-    fun provideDeletedTransactionDao(db: TransactionDatabase): DeletedTransactionDao {
-        return db.deletedTransactionDao
-    }
-
-    // Transaction Local Repository
-    @Provides
-    @Singleton
-    fun provideTransactionLocalRepository(transactionDao: TransactionDao): TransactionLocalRepository {
-        return TransactionsLocalRepositoryImpl(transactionDao = transactionDao)
-    }
-
-    // Transaction Remote Repository
-    @Provides
-    @Singleton
-    fun provideTransactionRemoteRepository(
-        deletedTransactionDao: DeletedTransactionDao,
-        @ApplicationContext context: Context
-    ): TransactionRemoteRepository {
-        return TransactionsRemoteRepositoryImpl(
-            deletedTransactionDao = deletedTransactionDao,
-            context = context
-        )
-    }
-
-    // SavedItem Database
-    @Provides
-    @Singleton
-    fun provideSavedItemDatabase(app : Application) : SavedItemsDatabase {
-        return Room.databaseBuilder(
-            app,
-            SavedItemsDatabase::class.java,
-            SavedItemsDatabase.DATABASE_NAME
-        )
-            .addMigrations(SAVED_ITEM_MIGRATION_1_2, SAVED_ITEM_MIGRATION_2_3)
-            .build()
-    }
-
-    // SavedItemDao
-    @Provides
-    @Singleton
-    fun provideSavedItemDao(db: SavedItemsDatabase): SavedItemsDao {
-        return db.savedItemsDao
-    }
-
-    // DeletedSavedItemDao
-    @Provides
-    @Singleton
-    fun provideDeletedSavedItemDao(db: SavedItemsDatabase): DeletedSavedItemsDao {
-        return db.deletedSavedItemsDao
-    }
-
-    // Saved Item Local Repository
-    @Provides
-    @Singleton
-    fun provideSavedItemLocalRepository(
-        savedItemsDao: SavedItemsDao,
-        deletedSavedItemsDao: DeletedSavedItemsDao
-    ): SavedItemsLocalRepository {
-        return SavedItemsLocalRepositoryImpl(
-            savedItemsDao = savedItemsDao,
-            deletedSavedItemsDao = deletedSavedItemsDao
-        )
-    }
-
-    // Saved Item Remote Repository
-    @Provides
-    @Singleton
-    fun provideSavedItemRemoteRepository(
-        firestore: FirebaseFirestore,
-        deletedSavedItemsDao: DeletedSavedItemsDao,
-        @ApplicationContext context: Context
-    ): SavedItemsRemoteRepository {
-        return SavedItemsRemoteRepositoryImpl(
-            deletedSavedItemsDao = deletedSavedItemsDao,
-            firestore = firestore,
-            context = context
-            
-        )
-    }
-
     // Saved Item UseCaseWrapper
     @Provides
     @Singleton
@@ -542,54 +209,6 @@ object AppModule {
         )
     }
 
-    // Budget Database
-    @Provides
-    @Singleton
-    fun provideBudgetDatabase(app : Application) : BudgetDatabase {
-        return Room.databaseBuilder(
-            app,
-            BudgetDatabase::class.java,
-            BudgetDatabase.DATABASE_NAME
-        )
-            .addMigrations(BUDGET_MIGRATION_1_2, BUDGET_MIGRATION_2_3)
-            .build()
-    }
-
-    // BudgetDao
-    @Provides
-    @Singleton
-    fun provideBudgetDao(db: BudgetDatabase): BudgetDao {
-        return db.budgetDao
-    }
-
-
-    // Budget Local Repository
-    @Provides
-    @Singleton
-    fun provideBudgetLocalRepository(
-        budgetDao: BudgetDao,
-        @ApplicationContext context: Context
-    ): BudgetLocalRepository {
-        return BudgetLocalRepositoryImpl(
-            budgetDao = budgetDao,
-            context = context
-        )
-    }
-
-    // Budget Local Repository
-    @Provides
-    @Singleton
-    fun provideBudgetRemoteRepository(
-        firestore: FirebaseFirestore,
-        @ApplicationContext context: Context
-    ): BudgetRemoteRepository {
-        return BudgetRemoteRepositoryImpl(
-            firestore = firestore,
-            context = context
-        )
-    }
-
-
     @Provides
     @Singleton
     fun provideBudgetUseCases(
@@ -613,8 +232,6 @@ object AppModule {
             getRemoteBudgetsList = GetRemoteBudgetsList(budgetRemoteRepository = budgetRemoteRepository)
         )
     }
-
-
 
     // SetUpPage UseCases
     @Provides
@@ -659,13 +276,6 @@ object AppModule {
             getFirstTimeLoggedIn = GetFirstTimeLogin(sharedPreferencesRepository),
             setFirstTimeLogin = SetFirstTimeLogin(sharedPreferencesRepository)
         )
-    }
-
-    // HomePageRepository
-    @Provides
-    @Singleton
-    fun provideHomePageRepository(userPreferences: UserPreferences,userProfileRepository: UserProfileRepository): HomePageRepository{
-        return HomePageRepositoryImpl(userPreferences = userPreferences,userProfileRepository = userProfileRepository)
     }
 
     // HomePageUseCases
@@ -768,7 +378,6 @@ object AppModule {
             getAllCategories = GetAllCategories(categoryRepository = categoryRepository),
             getAllTransactionsFilters = GetAllTransactionsFilters(transactionLocalRepository = transactionLocalRepository),
             getUserProfileLocal = GetUserProfileLocal(homePageRepository = homePageRepository)
-
         )
     }
 
@@ -799,7 +408,6 @@ object AppModule {
         )
     }
 
-
     // Charts UseCases
     @Provides
     @Singleton
@@ -817,5 +425,3 @@ object AppModule {
         )
     }
 }
-
-
