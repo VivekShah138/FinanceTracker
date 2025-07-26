@@ -1,9 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model
 
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.DeletedTransactionsEntity
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.data.local.data_source.TransactionsEntity
-import com.example.financetracker.setup_account.data.local.data_source.country.CountryMapper
-import com.example.financetracker.setup_account.domain.model.Currency
+import com.example.financetracker.data.local.data_source.room.modules.transactions.DeletedTransactionsEntity
 
 
 data class DeletedTransactions(

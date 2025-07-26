@@ -1,6 +1,6 @@
 package com.example.financetracker.budget_feature.domain.model
 
-import com.example.financetracker.budget_feature.data.data_source.BudgetEntity
+import com.example.financetracker.data.local.data_source.room.modules.budget.BudgetEntity
 import java.util.UUID
 
 data class Budget(
