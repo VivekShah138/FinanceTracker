@@ -3,7 +3,7 @@ package com.example.financetracker.main_page_feature.finance_entry.saveItems.pre
 import app.cash.turbine.test
 import com.example.financetracker.domain.usecases.local.validation.ValidationResult
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import io.mockk.Runs
 import io.mockk.clearAllMocks

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel.AddTransactionValidationEvent
 import com.example.financetracker.domain.model.SavedItems
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
 import com.example.financetracker.domain.model.Currency
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import com.google.gson.JsonParseException

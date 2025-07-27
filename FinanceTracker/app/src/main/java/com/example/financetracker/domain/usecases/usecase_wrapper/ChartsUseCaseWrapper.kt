@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.charts.domain.usecases
+package com.example.financetracker.domain.usecases.usecase_wrapper
 
 import com.example.financetracker.domain.usecases.local.category.GetAllCategories
 import com.example.financetracker.domain.usecases.local.user_profile.GetUserProfileFromLocalDb

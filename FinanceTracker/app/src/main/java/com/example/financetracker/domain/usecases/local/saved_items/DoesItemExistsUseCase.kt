@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local
+package com.example.financetracker.domain.usecases.local.saved_items
 
 import com.example.financetracker.domain.repository.local.SavedItemsLocalRepository
 

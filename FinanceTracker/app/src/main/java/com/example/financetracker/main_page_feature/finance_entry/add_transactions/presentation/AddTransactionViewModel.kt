@@ -8,7 +8,7 @@ import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCate
 import com.example.financetracker.domain.model.Transactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
 import com.example.financetracker.domain.model.SavedItems
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
 import com.example.financetracker.domain.model.Currency
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel

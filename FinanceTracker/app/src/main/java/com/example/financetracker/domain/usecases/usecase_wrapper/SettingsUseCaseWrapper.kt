@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.settings.domain.use_cases
+package com.example.financetracker.domain.usecases.usecase_wrapper
 
 import com.example.financetracker.domain.usecases.local.budget.GetBudgetLocalUseCase
 import com.example.financetracker.domain.usecases.remote.transactions.GetRemoteTransactionsList
@@ -12,7 +12,7 @@ import com.example.financetracker.domain.usecases.local.shared_pref.GetUserNameL
 import com.example.financetracker.domain.usecases.local.shared_pref.SetCloudSyncLocally
 import com.example.financetracker.domain.usecases.local.shared_pref.SetDarkModeLocally
 import com.example.financetracker.domain.usecases.local.shared_pref.SetUserNameLocally
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveMultipleSavedItemCloud
+import com.example.financetracker.domain.usecases.remote.saved_items.SaveMultipleSavedItemCloud
 
 data class SettingsUseCaseWrapper (
     val getCloudSyncLocally: GetCloudSyncLocally,

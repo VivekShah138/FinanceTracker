@@ -1,12 +1,12 @@
-package com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote
+package com.example.financetracker.domain.usecases.remote.saved_items
 
 import com.example.financetracker.domain.repository.remote.SavedItemsRemoteRepository
 
-class SaveMultipleSavedItemCloud(
+class InsertRemoteSavedItemToLocal(
     private val savedItemsRemoteRepository: SavedItemsRemoteRepository,
 ) {
 
     suspend operator fun invoke(){
-        savedItemsRemoteRepository.cloudSyncMultipleSavedItems()
+        return savedItemsRemoteRepository.insertRemoteItemToLocal()
     }
 }

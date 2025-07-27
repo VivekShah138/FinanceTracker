@@ -1,17 +1,18 @@
-package com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases
+package com.example.financetracker.domain.usecases.usecase_wrapper
 
 import com.example.financetracker.domain.usecases.remote.user_profile.GetUserUIDUseCase
 import com.example.financetracker.domain.usecases.remote.user_profile.InternetConnectionAvailability
 import com.example.financetracker.domain.usecases.local.shared_pref.GetCloudSyncLocally
 import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocally
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.DoesItemExistsUseCase
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllNotSyncedSavedItemUseCase
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.SaveItemLocalUseCase
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.SaveNewItemReturnId
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.GetRemoteSavedItemList
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.InsertRemoteSavedItemToLocal
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.SaveSingleSavedItemCloud
+import com.example.financetracker.domain.usecases.local.saved_items.SavedItemsValidationUseCase
+import com.example.financetracker.domain.usecases.local.saved_items.DoesItemExistsUseCase
+import com.example.financetracker.domain.usecases.local.saved_items.GetAllNotSyncedSavedItemUseCase
+import com.example.financetracker.domain.usecases.local.saved_items.GetAllSavedItemLocalUseCase
+import com.example.financetracker.domain.usecases.local.saved_items.SaveItemLocalUseCase
+import com.example.financetracker.domain.usecases.local.saved_items.SaveNewItemReturnId
+import com.example.financetracker.domain.usecases.remote.saved_items.GetRemoteSavedItemList
+import com.example.financetracker.domain.usecases.remote.saved_items.InsertRemoteSavedItemToLocal
+import com.example.financetracker.domain.usecases.remote.saved_items.SaveSingleSavedItemCloud
 import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
 
 data class SavedItemsUseCasesWrapper (
