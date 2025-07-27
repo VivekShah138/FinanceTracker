@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.domain.model.Category
-import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.domain.model.Transactions
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
 import com.example.financetracker.domain.model.SavedItems

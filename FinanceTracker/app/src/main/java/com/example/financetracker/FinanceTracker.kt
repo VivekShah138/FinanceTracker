@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
-import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
 import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.financetracker.categories_feature.core.presentation.SharedCategoriesEvents
 import com.example.financetracker.categories_feature.core.presentation.CategoriesStates
 import com.example.financetracker.domain.model.Category
-import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

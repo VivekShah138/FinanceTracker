@@ -4,7 +4,7 @@ import com.example.financetracker.domain.usecases.local.shared_pref.InsertUIDLoc
 import com.example.financetracker.domain.usecases.local.validation.ValidateConfirmPassword
 import com.example.financetracker.domain.usecases.local.validation.ValidateEmail
 import com.example.financetracker.domain.usecases.local.validation.ValidatePassword
-import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
+import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocally
 
 data class AuthFeatureUseCasesWrapper(
     val validateEmail: ValidateEmail,

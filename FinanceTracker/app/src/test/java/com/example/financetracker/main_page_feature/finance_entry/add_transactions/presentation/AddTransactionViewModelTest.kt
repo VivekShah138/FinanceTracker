@@ -2,7 +2,7 @@ package com.example.financetracker.main_page_feature.finance_entry.add_transacti
 
 import app.cash.turbine.test
 import com.example.financetracker.domain.usecases.local.validation.ValidationResult
-import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
 import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper

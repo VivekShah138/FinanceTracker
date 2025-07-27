@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.CoreUseCasesWrapper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 

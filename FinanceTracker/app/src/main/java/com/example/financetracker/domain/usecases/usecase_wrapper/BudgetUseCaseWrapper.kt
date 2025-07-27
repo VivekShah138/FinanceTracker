@@ -8,9 +8,9 @@ import com.example.financetracker.domain.usecases.local.budget.InsertBudgetLocal
 import com.example.financetracker.domain.usecases.remote.budget.InsertRemoteBudgetsToLocal
 import com.example.financetracker.domain.usecases.remote.budget.SaveBudgetToCloudUseCase
 import com.example.financetracker.domain.usecases.remote.budget.SaveMultipleBudgetsToCloudUseCase
-import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
-import com.example.financetracker.core.local.domain.room.usecases.GetUserProfileFromLocalDb
-import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
+import com.example.financetracker.domain.usecases.remote.user_profile.GetUserUIDUseCase
+import com.example.financetracker.domain.usecases.local.user_profile.GetUserProfileFromLocalDb
+import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocally
 
 data class BudgetUseCaseWrapper(
     val getBudgetLocalUseCase: GetBudgetLocalUseCase,

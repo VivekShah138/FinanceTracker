@@ -1,9 +1,9 @@
 package com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases
 
-import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
-import com.example.financetracker.core.cloud.domain.usecase.InternetConnectionAvailability
-import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetCloudSyncLocally
-import com.example.financetracker.core.local.domain.shared_preferences.usecases.GetUIDLocally
+import com.example.financetracker.domain.usecases.remote.user_profile.GetUserUIDUseCase
+import com.example.financetracker.domain.usecases.remote.user_profile.InternetConnectionAvailability
+import com.example.financetracker.domain.usecases.local.shared_pref.GetCloudSyncLocally
+import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocally
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.DoesItemExistsUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllNotSyncedSavedItemUseCase
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.local.GetAllSavedItemLocalUseCase
