@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.domain.model.UserProfile
 import com.example.financetracker.domain.model.Currency
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

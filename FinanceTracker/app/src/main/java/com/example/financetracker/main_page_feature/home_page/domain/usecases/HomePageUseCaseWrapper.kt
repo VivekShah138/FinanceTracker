@@ -9,7 +9,7 @@ import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocall
 import com.example.financetracker.domain.usecases.local.shared_pref.SetCurrencyRatesUpdated
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.remote.InsertRemoteSavedItemToLocal
-import com.example.financetracker.main_page_feature.view_records.use_cases.GetAllTransactionsFilters
+import com.example.financetracker.domain.usecases.local.transaction.GetAllTransactionsFilters
 
 data class HomePageUseCaseWrapper (
     val logoutUseCase: LogoutUseCase,

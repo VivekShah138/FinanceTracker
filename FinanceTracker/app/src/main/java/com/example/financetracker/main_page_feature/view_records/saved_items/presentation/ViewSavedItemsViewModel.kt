@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel.AddTransactionValidationEvent
 import com.example.financetracker.domain.model.DeletedSavedItems
 import com.example.financetracker.domain.model.SavedItems
-import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.ViewRecordsUseCaseWrapper
 import com.example.financetracker.domain.model.Currency
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

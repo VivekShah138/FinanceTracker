@@ -8,8 +8,8 @@ import androidx.work.Configuration
 import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
 import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
-import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.ViewRecordsUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

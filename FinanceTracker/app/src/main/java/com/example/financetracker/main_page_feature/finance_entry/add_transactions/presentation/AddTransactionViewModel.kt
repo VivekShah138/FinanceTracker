@@ -10,7 +10,7 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.domain.model.SavedItems
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
 import com.example.financetracker.domain.model.Currency
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

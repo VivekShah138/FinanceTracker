@@ -7,7 +7,7 @@ import com.example.financetracker.categories_feature.core.presentation.SharedCat
 import com.example.financetracker.categories_feature.core.presentation.CategoriesStates
 import com.example.financetracker.domain.model.Category
 import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCategoriesUseCaseWrapper
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

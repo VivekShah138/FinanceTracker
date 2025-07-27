@@ -1,8 +1,8 @@
 package com.example.financetracker.main_page_feature.settings.domain.use_cases
 
 import com.example.financetracker.domain.usecases.local.budget.GetBudgetLocalUseCase
-import com.example.financetracker.domain.usecases.remote.transaction.GetRemoteTransactionsList
-import com.example.financetracker.domain.usecases.remote.transaction.SaveMultipleTransactionsCloud
+import com.example.financetracker.domain.usecases.remote.transactions.GetRemoteTransactionsList
+import com.example.financetracker.domain.usecases.remote.transactions.SaveMultipleTransactionsCloud
 import com.example.financetracker.domain.usecases.remote.user_profile.LogoutUseCase
 import com.example.financetracker.domain.usecases.local.user_profile.GetUserProfileFromLocalDb
 import com.example.financetracker.domain.usecases.local.shared_pref.GetCloudSyncLocally

@@ -8,7 +8,7 @@ import com.example.financetracker.main_page_feature.view_records.transactions.ut
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionTypeFilter
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
