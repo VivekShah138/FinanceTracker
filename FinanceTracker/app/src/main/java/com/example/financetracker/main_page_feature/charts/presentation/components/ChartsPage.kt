@@ -1,6 +1,5 @@
 package com.example.financetracker.main_page_feature.charts.presentation.components
 
-import BottomNavigationBar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

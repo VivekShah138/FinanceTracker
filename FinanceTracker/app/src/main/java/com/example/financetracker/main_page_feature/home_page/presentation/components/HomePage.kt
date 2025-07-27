@@ -1,7 +1,6 @@
 package com.example.financetracker.main_page_feature.home_page.presentation.components
 
 import AccountBalance
-import BottomNavigationBar
 import ExpenseIncomeCards
 import android.os.Build
 import android.util.Log
@@ -28,10 +27,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.financetracker.budget_feature.presentation.components.NoBudgetMessage
-import com.example.financetracker.core.core_presentation.utils.MenuItems
-import com.example.financetracker.core.core_presentation.components.AppTopBar
-import com.example.financetracker.core.core_presentation.utils.Screens
+import com.example.financetracker.presentation.features.budget_feature.components.NoBudgetMessage
+import com.example.financetracker.utils.MenuItems
+import com.example.financetracker.presentation.core_components.AppTopBar
+import com.example.financetracker.utils.Screens
 import com.example.financetracker.main_page_feature.home_page.presentation.HomePageEvents
 import com.example.financetracker.main_page_feature.home_page.presentation.HomePageViewModel
 import com.example.financetracker.main_page_feature.settings.presentation.SettingViewModel

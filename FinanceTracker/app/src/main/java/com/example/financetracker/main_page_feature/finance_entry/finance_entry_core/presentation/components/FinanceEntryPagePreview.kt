@@ -2,7 +2,6 @@ package com.example.financetracker.main_page_feature.finance_entry.finance_entry
 
 
 
-import BottomNavigationBar
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -17,7 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.financetracker.core.core_presentation.components.AppTopBar
+import com.example.financetracker.presentation.core_components.AppTopBar
 import kotlinx.coroutines.launch
 
 @Preview(

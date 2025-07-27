@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.financetracker.core.core_presentation.utils.Screens
+import com.example.financetracker.utils.Screens
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionEvents
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionStates
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel

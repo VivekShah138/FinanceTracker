@@ -1,8 +1,6 @@
 package com.example.financetracker.main_page_feature.settings.presentation.components
 
 
-import BottomNavigationBar
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +8,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,7 +18,6 @@ import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.MonetizationOn
-import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,15 +30,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.financetracker.core.core_presentation.components.AppTopBar
-import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.getCategoryIcon
+import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.setup_account.presentation.components.SettingsSwitchItem
 
 @Preview(

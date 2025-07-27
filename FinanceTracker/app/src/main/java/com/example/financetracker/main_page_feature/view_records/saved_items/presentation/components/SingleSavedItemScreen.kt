@@ -31,12 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.financetracker.core.core_presentation.components.AppTopBar
-import com.example.financetracker.core.core_presentation.utils.Screens
+import com.example.financetracker.presentation.core_components.AppTopBar
+import com.example.financetracker.utils.Screens
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsEvents
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsViewModel
-import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.components.DeleteConfirmationDialog
 import java.util.Locale
 

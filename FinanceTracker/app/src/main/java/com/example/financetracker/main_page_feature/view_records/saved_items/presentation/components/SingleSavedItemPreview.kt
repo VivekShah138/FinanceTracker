@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -20,9 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.financetracker.core.core_presentation.components.AppTopBar
-import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
-import com.example.financetracker.setup_account.presentation.components.SimpleDropdownMenu
+import com.example.financetracker.presentation.core_components.AppTopBar
 
 
 @Preview(

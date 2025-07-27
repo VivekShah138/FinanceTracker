@@ -11,7 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,15 +22,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.financetracker.core.core_presentation.utils.Screens
+import com.example.financetracker.utils.Screens
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.SavedItemViewModel
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.SavedItemsEvent
 import com.example.financetracker.setup_account.presentation.components.SimpleDropdownMenu
-import kotlin.math.sin
 
 @Composable
 fun SavedItemPage(

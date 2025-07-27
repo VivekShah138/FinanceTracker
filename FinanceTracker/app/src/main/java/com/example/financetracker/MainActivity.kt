@@ -1,6 +1,6 @@
 package com.example.financetracker
 
-import BottomNavigationBar
+import com.example.financetracker.presentation.core_components.BottomNavigationBar
 import android.content.pm.PackageManager
 import android.Manifest
 import android.os.Build
@@ -32,20 +32,14 @@ import androidx.navigation.navArgument
 
 import com.example.financetracker.main_page_feature.home_page.presentation.components.HomePageScreen
 import com.example.financetracker.main_page_feature.home_page.presentation.HomePageViewModel
-import com.example.financetracker.auth_feature.presentation.login.LoginPageViewModel
-import com.example.financetracker.auth_feature.presentation.register.RegisterPageViewModel
-import com.example.financetracker.auth_feature.presentation.register.register_components.RegisterPage
-import com.example.financetracker.auth_feature.presentation.login.login_components.LogInPage
-import com.example.financetracker.auth_feature.presentation.forgot_password.ForgotPasswordViewModel
-import com.example.financetracker.auth_feature.presentation.forgot_password.forgot_password_components.ForgotPasswordPage
-import com.example.financetracker.budget_feature.presentation.BudgetViewModel
-import com.example.financetracker.budget_feature.presentation.components.BudgetScreen
-import com.example.financetracker.categories_feature.core.presentation.CoreCategoriesViewModel
-import com.example.financetracker.categories_feature.expense.presentation.ExpenseCategoriesViewModel
-import com.example.financetracker.categories_feature.income.presentation.IncomeCategoriesViewModel
-import com.example.financetracker.categories_feature.core.presentation.components.CategoriesScreen
-import com.example.financetracker.core.core_presentation.utils.BottomNavItemsList
-import com.example.financetracker.core.core_presentation.utils.Screens
+import com.example.financetracker.presentation.features.budget_feature.BudgetViewModel
+import com.example.financetracker.presentation.features.budget_feature.components.BudgetScreen
+import com.example.financetracker.presentation.features.category_feature.viewmodel.CoreCategoriesViewModel
+import com.example.financetracker.presentation.features.category_feature.viewmodel.ExpenseCategoriesViewModel
+import com.example.financetracker.presentation.features.category_feature.viewmodel.IncomeCategoriesViewModel
+import com.example.financetracker.presentation.features.category_feature.component.CategoriesScreen
+import com.example.financetracker.presentation.core_components.BottomNavItemsList
+import com.example.financetracker.utils.Screens
 import com.example.financetracker.main_page_feature.charts.presentation.ChartsViewModel
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.FinanceEntryPage
@@ -59,6 +53,12 @@ import com.example.financetracker.main_page_feature.view_records.presentation.co
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsViewModel
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.components.SingleSavedItemScreen
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.components.SingleTransactionScreen
+import com.example.financetracker.presentation.features.auth_feature.components.ForgotPasswordPage
+import com.example.financetracker.presentation.features.auth_feature.components.LogInPage
+import com.example.financetracker.presentation.features.auth_feature.components.RegisterPage
+import com.example.financetracker.presentation.features.auth_feature.viewmodels.ForgotPasswordViewModel
+import com.example.financetracker.presentation.features.auth_feature.viewmodels.LoginPageViewModel
+import com.example.financetracker.presentation.features.auth_feature.viewmodels.RegisterPageViewModel
 import com.example.financetracker.setup_account.presentation.ProfileSetUpViewModel
 import com.example.financetracker.setup_account.presentation.components.NewUserProfileOnBoardingScreens
 import com.example.financetracker.setup_account.presentation.components.ProfileSetUp

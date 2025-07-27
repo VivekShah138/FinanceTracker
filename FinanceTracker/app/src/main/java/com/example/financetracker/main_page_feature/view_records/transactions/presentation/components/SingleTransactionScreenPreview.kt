@@ -24,7 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
-import com.example.financetracker.core.core_presentation.components.AppTopBar
+import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.domain.model.Currency
 import java.text.SimpleDateFormat
 import com.example.financetracker.domain.model.Transactions

@@ -1,6 +1,5 @@
 package com.example.financetracker.main_page_feature.view_records.presentation.components
 
-import BottomNavigationBar
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +17,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.financetracker.core.core_presentation.utils.MenuItems
-import com.example.financetracker.core.core_presentation.components.AppTopBar
-import com.example.financetracker.core.core_presentation.utils.Screens
+import com.example.financetracker.utils.MenuItems
+import com.example.financetracker.presentation.core_components.AppTopBar
+import com.example.financetracker.utils.Screens
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsEvents
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.ViewSavedItemsViewModel
 import com.example.financetracker.main_page_feature.view_records.saved_items.presentation.components.ViewSavedItemsPage
