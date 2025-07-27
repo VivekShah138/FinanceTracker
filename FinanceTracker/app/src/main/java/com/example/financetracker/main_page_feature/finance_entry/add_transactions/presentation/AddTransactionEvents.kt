@@ -1,6 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation
 
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
+import com.example.financetracker.domain.model.SavedItems
 
 sealed class AddTransactionEvents {
 

@@ -3,14 +3,13 @@ package com.example.financetracker.main_page_feature.view_records.transactions.p
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.DeletedTransactions
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
+import com.example.financetracker.domain.model.DeletedTransactions
+import com.example.financetracker.domain.model.Transactions
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionTypeFilter
-import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.ViewRecordsUseCaseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

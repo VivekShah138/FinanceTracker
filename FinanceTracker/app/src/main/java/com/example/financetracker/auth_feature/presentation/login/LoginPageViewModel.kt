@@ -1,17 +1,16 @@
 package com.example.financetracker.auth_feature.presentation.login
 
 import android.util.Log
-import androidx.compose.runtime.internal.isLiveLiteralsEnabled
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.AuthFeatureUseCasesWrapper
 import com.example.financetracker.auth_feature.presentation.forgot_password.ResetPasswordWithCredentialResult
-import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
-import com.example.financetracker.core.local.domain.room.model.UserProfile
-import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
+import com.example.financetracker.domain.model.UserProfile
+import com.example.financetracker.domain.usecases.usecase_wrapper.CoreUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.AddTransactionUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel

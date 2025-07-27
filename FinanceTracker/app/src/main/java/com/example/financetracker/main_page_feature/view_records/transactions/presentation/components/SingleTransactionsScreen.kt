@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,7 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.components.AppTopBar
 import com.example.financetracker.core.core_presentation.utils.Screens
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.model.Transactions
+import com.example.financetracker.domain.model.Currency
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsEvents
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsViewModel
 import java.text.SimpleDateFormat
@@ -56,7 +55,7 @@ fun SingleTransactionScreen(
 
 
     Log.d("ViewTransactionsViewModelS","transaction Single ${transaction}")
-    val baseCurrency: Map<String, com.example.financetracker.setup_account.domain.model.Currency> = states.baseCurrency
+    val baseCurrency: Map<String, Currency> = states.baseCurrency
 
     if(transaction != null){
 

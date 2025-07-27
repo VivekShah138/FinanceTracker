@@ -32,8 +32,6 @@ import androidx.navigation.navArgument
 
 import com.example.financetracker.main_page_feature.home_page.presentation.components.HomePageScreen
 import com.example.financetracker.main_page_feature.home_page.presentation.HomePageViewModel
-import com.example.financetracker.startup_page_feature.components.StartUpPageScreen
-import com.example.financetracker.startup_page_feature.StartPageViewModel
 import com.example.financetracker.auth_feature.presentation.login.LoginPageViewModel
 import com.example.financetracker.auth_feature.presentation.register.RegisterPageViewModel
 import com.example.financetracker.auth_feature.presentation.register.register_components.RegisterPage
@@ -53,7 +51,7 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.FinanceEntryPage
 import com.example.financetracker.main_page_feature.charts.presentation.components.ChartsPage
 import com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation.SavedItemViewModel
-import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SettingsUseCaseWrapper
 import com.example.financetracker.main_page_feature.settings.presentation.SettingViewModel
 import com.example.financetracker.main_page_feature.settings.presentation.components.SettingsPage
 import com.example.financetracker.main_page_feature.view_records.transactions.presentation.ViewTransactionsViewModel

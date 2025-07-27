@@ -1,6 +1,6 @@
 package com.example.financetracker.categories_feature.core.presentation
 
-import com.example.financetracker.core.local.domain.room.model.Category
+import com.example.financetracker.domain.model.Category
 
 sealed class SharedCategoriesEvents {
     data class ChangeCategoryName(val name: String): SharedCategoriesEvents()

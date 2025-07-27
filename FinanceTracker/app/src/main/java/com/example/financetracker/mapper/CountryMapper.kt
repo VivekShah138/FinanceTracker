@@ -1,12 +1,12 @@
 package com.example.financetracker.mapper
 
 import androidx.room.TypeConverter
-import com.example.financetracker.data.local.data_source.room.modules.country.CountryEntity
-import com.example.financetracker.setup_account.domain.model.Country
-import com.example.financetracker.setup_account.domain.model.Currency
-import com.example.financetracker.setup_account.domain.model.Flags
-import com.example.financetracker.setup_account.domain.model.Idd
-import com.example.financetracker.setup_account.domain.model.Name
+import com.example.financetracker.data.data_source.local.room.modules.country.CountryEntity
+import com.example.financetracker.domain.model.Country
+import com.example.financetracker.domain.model.Currency
+import com.example.financetracker.domain.model.Flags
+import com.example.financetracker.domain.model.Idd
+import com.example.financetracker.domain.model.Name
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -52,7 +52,7 @@ object CountryMapper {
         }
     }
 
-    fun fromCountryResponseToEntity(response: Country): CountryEntity {
+    fun fromCountryResponseToEntity(response: Country): CountryEntity{
         return CountryEntity(
             commonName = response.name.common ?: "N/A",
             flagUrl = response.flags.svg ?: "N/A",

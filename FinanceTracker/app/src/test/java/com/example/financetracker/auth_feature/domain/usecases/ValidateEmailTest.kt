@@ -1,5 +1,6 @@
 package com.example.financetracker.auth_feature.domain.usecases
 
+import com.example.financetracker.domain.usecases.local.validation.ValidateEmail
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Before

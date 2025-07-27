@@ -1,7 +1,7 @@
 package com.example.financetracker.mapper
 
-import com.example.financetracker.data.local.data_source.room.modules.currency_rates.CurrencyRatesEntity
-import com.example.financetracker.setup_account.domain.model.CurrencyResponse
+import com.example.financetracker.data.data_source.local.room.modules.currency_rates.CurrencyRatesEntity
+import com.example.financetracker.domain.model.CurrencyResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

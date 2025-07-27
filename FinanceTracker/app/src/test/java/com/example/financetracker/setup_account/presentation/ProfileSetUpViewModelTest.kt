@@ -1,15 +1,12 @@
 package com.example.financetracker.setup_account.presentation
 
-import org.junit.Assert.*
-
 import org.junit.Before
 
 import app.cash.turbine.test
-import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.local.validation.ValidationResult
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
-import org.junit.Rule
 import org.junit.Test
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers

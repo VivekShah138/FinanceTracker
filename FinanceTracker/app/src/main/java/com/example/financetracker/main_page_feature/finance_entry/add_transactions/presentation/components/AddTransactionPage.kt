@@ -1,7 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.components
 
 import QuantityBottomSheet
-import TransactionTypeSegmentedButton
 import TransactionTypeSegmentedButton2
 import android.util.Log
 import android.widget.Toast
@@ -49,18 +48,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.core.core_presentation.utils.Screens
-import com.example.financetracker.core.local.domain.room.model.Category
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionEvents
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionStates
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomBottomSheet
 import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomTextAlertBox
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
-import com.example.financetracker.setup_account.presentation.ProfileSetUpEvents
+import com.example.financetracker.domain.model.SavedItems
 import com.example.financetracker.setup_account.presentation.components.AutoComplete
 import com.example.financetracker.setup_account.presentation.components.CustomSwitch
-import com.example.financetracker.setup_account.presentation.components.SimpleDropdownMenu
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)

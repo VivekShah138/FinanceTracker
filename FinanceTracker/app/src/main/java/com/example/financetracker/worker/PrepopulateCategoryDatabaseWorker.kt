@@ -5,9 +5,9 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.financetracker.core.local.domain.room.model.toEntity
-import com.example.financetracker.core.local.domain.room.utils.JsonUtils
-import com.example.financetracker.data.local.data_source.room.modules.category.CategoryDao
+import com.example.financetracker.data.data_source.local.room.modules.category.CategoryDao
+import com.example.financetracker.mapper.CategoryMapper
+import com.example.financetracker.utils.JsonUtils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -41,7 +41,7 @@ class PrepopulateCategoryDatabaseWorker @AssistedInject constructor(
                 Log.d("WorkManager","predefinedCategories: $predefinedCategories")
                 categoryDao.insertCategories(
                     categories = predefinedCategories.map {
-                        it.toEntity()
+                        CategoryMapper.toEntity(it)
                     }
                 )
             }

@@ -2,9 +2,7 @@ package com.example.financetracker.startup_page_feature
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.financetracker.auth_feature.presentation.login.login_components.LogInPage
-import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionStates
+import com.example.financetracker.domain.usecases.usecase_wrapper.CoreUseCasesWrapper
 import com.example.financetracker.startup_page_feature.components.StartUpPageEvents
 import com.example.financetracker.startup_page_feature.components.StartUpPageStates
 import dagger.hilt.android.lifecycle.HiltViewModel

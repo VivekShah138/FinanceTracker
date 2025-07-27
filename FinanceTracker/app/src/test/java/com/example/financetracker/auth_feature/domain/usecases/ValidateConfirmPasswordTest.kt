@@ -1,5 +1,6 @@
 package com.example.financetracker.auth_feature.domain.usecases
 
+import com.example.financetracker.domain.usecases.local.validation.ValidateConfirmPassword
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 

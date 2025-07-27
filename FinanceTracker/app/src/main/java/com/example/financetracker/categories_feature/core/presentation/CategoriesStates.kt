@@ -1,6 +1,6 @@
 package com.example.financetracker.categories_feature.core.presentation
 
-import com.example.financetracker.core.local.domain.room.model.Category
+import com.example.financetracker.domain.model.Category
 
 data class CategoriesStates (
     val predefinedCategories: List<Category> = emptyList(),
