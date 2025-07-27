@@ -17,7 +17,7 @@ import com.example.financetracker.domain.usecases.local.saved_items.GetSavedItem
 import com.example.financetracker.domain.usecases.local.saved_items.SaveItemLocalUseCase
 import com.example.financetracker.domain.usecases.remote.saved_items.DeleteMultipleSavedItemCloud
 import com.example.financetracker.domain.usecases.remote.saved_items.SaveSingleSavedItemCloud
-import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
+import com.example.financetracker.domain.usecases.local.user_profile.GetUserProfileLocal
 import com.example.financetracker.domain.usecases.remote.transactions.DeleteMultipleTransactionsFromCloud
 import com.example.financetracker.domain.usecases.remote.saved_items.DeleteSavedItemCloud
 import com.example.financetracker.domain.usecases.local.saved_items.DeleteSelectedSavedItemsByIdsLocally

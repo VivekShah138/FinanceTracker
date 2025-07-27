@@ -13,7 +13,7 @@ import com.example.financetracker.domain.usecases.local.saved_items.SaveNewItemR
 import com.example.financetracker.domain.usecases.remote.saved_items.GetRemoteSavedItemList
 import com.example.financetracker.domain.usecases.remote.saved_items.InsertRemoteSavedItemToLocal
 import com.example.financetracker.domain.usecases.remote.saved_items.SaveSingleSavedItemCloud
-import com.example.financetracker.main_page_feature.home_page.domain.usecases.GetUserProfileLocal
+import com.example.financetracker.domain.usecases.local.user_profile.GetUserProfileLocal
 
 data class SavedItemsUseCasesWrapper (
     val saveItemLocalUseCase: SaveItemLocalUseCase,

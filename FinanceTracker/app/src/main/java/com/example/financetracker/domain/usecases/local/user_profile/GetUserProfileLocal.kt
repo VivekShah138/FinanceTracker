@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.home_page.domain.usecases
+package com.example.financetracker.domain.usecases.local.user_profile
 
 import com.example.financetracker.domain.model.UserProfile
 import com.example.financetracker.domain.repository.local.HomePageRepository

@@ -3,7 +3,7 @@ package com.example.financetracker.main_page_feature.home_page.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.main_page_feature.home_page.domain.usecases.HomePageUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.HomePageUseCaseWrapper
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
 import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder

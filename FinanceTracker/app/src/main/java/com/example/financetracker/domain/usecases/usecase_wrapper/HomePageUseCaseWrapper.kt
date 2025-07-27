@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.home_page.domain.usecases
+package com.example.financetracker.domain.usecases.usecase_wrapper
 
 import com.example.financetracker.domain.usecases.local.budget.GetBudgetLocalUseCase
 import com.example.financetracker.domain.usecases.local.budget.SendBudgetNotificationUseCase
@@ -10,6 +10,7 @@ import com.example.financetracker.domain.usecases.local.shared_pref.SetCurrencyR
 import com.example.financetracker.domain.usecases.local.transaction.GetAllTransactions
 import com.example.financetracker.domain.usecases.remote.saved_items.InsertRemoteSavedItemToLocal
 import com.example.financetracker.domain.usecases.local.transaction.GetAllTransactionsFilters
+import com.example.financetracker.domain.usecases.local.user_profile.GetUserProfileLocal
 
 data class HomePageUseCaseWrapper (
     val logoutUseCase: LogoutUseCase,
