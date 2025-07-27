@@ -1,6 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
 
-import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
+import com.example.financetracker.domain.usecases.local.validation.ValidationResult
 
 class ValidateTransactionPrice {
 

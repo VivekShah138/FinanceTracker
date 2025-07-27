@@ -1,6 +1,6 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
 
-import com.example.financetracker.budget_feature.domain.usecases.SendBudgetNotificationUseCase
+import com.example.financetracker.domain.usecases.local.budget.SendBudgetNotificationUseCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserUIDUseCase
 import com.example.financetracker.core.cloud.domain.usecase.InternetConnectionAvailability
 import com.example.financetracker.core.cloud.domain.usecase.SaveSingleTransactionCloud

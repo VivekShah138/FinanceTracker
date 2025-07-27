@@ -1,8 +1,8 @@
-package com.example.financetracker.auth_feature.domain.usecases
+package com.example.financetracker.domain.usecases.local.validation
 
 class ValidatePassword {
 
-    suspend operator fun invoke(password : String) : ValidationResult{
+    suspend operator fun invoke(password : String) : ValidationResult {
 
         if(password.length < 8){
             return ValidationResult(

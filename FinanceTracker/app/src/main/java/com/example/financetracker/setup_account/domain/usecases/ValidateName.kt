@@ -1,6 +1,6 @@
 package com.example.financetracker.setup_account.domain.usecases
 
-import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
+import com.example.financetracker.domain.usecases.local.validation.ValidationResult
 
 
 class ValidateName {

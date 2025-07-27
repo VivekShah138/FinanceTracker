@@ -1,23 +1,23 @@
 package com.example.financetracker.di
 
-import com.example.financetracker.auth_feature.domain.usecases.InsertUIDLocally
-import com.example.financetracker.auth_feature.domain.usecases.KeepUserLoggedIn
-import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCasesWrapper
-import com.example.financetracker.auth_feature.domain.usecases.ValidateConfirmPassword
-import com.example.financetracker.auth_feature.domain.usecases.ValidateEmail
-import com.example.financetracker.auth_feature.domain.usecases.ValidatePassword
+import com.example.financetracker.domain.usecases.local.shared_pref.InsertUIDLocally
+import com.example.financetracker.domain.usecases.local.shared_pref.KeepUserLoggedIn
+import com.example.financetracker.domain.usecases.usecase_wrapper.AuthFeatureUseCasesWrapper
+import com.example.financetracker.domain.usecases.local.validation.ValidateConfirmPassword
+import com.example.financetracker.domain.usecases.local.validation.ValidateEmail
+import com.example.financetracker.domain.usecases.local.validation.ValidatePassword
 import com.example.financetracker.domain.repository.local.BudgetLocalRepository
 import com.example.financetracker.domain.repository.remote.BudgetRemoteRepository
-import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
-import com.example.financetracker.budget_feature.domain.usecases.DoesBudgetExits
-import com.example.financetracker.budget_feature.domain.usecases.GetAllUnSyncedBudgetLocalUseCase
-import com.example.financetracker.budget_feature.domain.usecases.GetBudgetLocalUseCase
-import com.example.financetracker.budget_feature.domain.usecases.GetRemoteBudgetsList
-import com.example.financetracker.budget_feature.domain.usecases.InsertBudgetLocalUseCase
-import com.example.financetracker.budget_feature.domain.usecases.InsertRemoteBudgetsToLocal
-import com.example.financetracker.budget_feature.domain.usecases.SaveBudgetToCloudUseCase
-import com.example.financetracker.budget_feature.domain.usecases.SaveMultipleBudgetsToCloudUseCase
-import com.example.financetracker.budget_feature.domain.usecases.SendBudgetNotificationUseCase
+import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
+import com.example.financetracker.domain.usecases.local.budget.DoesBudgetExits
+import com.example.financetracker.domain.usecases.local.budget.GetAllUnSyncedBudgetLocalUseCase
+import com.example.financetracker.domain.usecases.local.budget.GetBudgetLocalUseCase
+import com.example.financetracker.domain.usecases.remote.budget.GetRemoteBudgetsList
+import com.example.financetracker.domain.usecases.local.budget.InsertBudgetLocalUseCase
+import com.example.financetracker.domain.usecases.remote.budget.InsertRemoteBudgetsToLocal
+import com.example.financetracker.domain.usecases.remote.budget.SaveBudgetToCloudUseCase
+import com.example.financetracker.domain.usecases.remote.budget.SaveMultipleBudgetsToCloudUseCase
+import com.example.financetracker.domain.usecases.local.budget.SendBudgetNotificationUseCase
 import com.example.financetracker.domain.repository.local.CountryLocalRepository
 import com.example.financetracker.domain.repository.remote.CountryRemoteRepository
 import com.example.financetracker.setup_account.domain.usecases.GetCountryLocally
@@ -217,7 +217,7 @@ object UseCasesModule {
         sharedPreferencesRepository: SharedPreferencesRepository,
         userProfileRepository: UserProfileRepository,
         remoteRepository: RemoteRepository
-    ): BudgetUseCaseWrapper{
+    ): BudgetUseCaseWrapper {
         return BudgetUseCaseWrapper(
             getBudgetLocalUseCase = GetBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),
             insertBudgetLocalUseCase = InsertBudgetLocalUseCase(budgetLocalRepository = budgetLocalRepository),

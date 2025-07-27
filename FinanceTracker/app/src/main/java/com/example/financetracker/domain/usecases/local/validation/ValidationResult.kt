@@ -1,4 +1,4 @@
-package com.example.financetracker.auth_feature.domain.usecases
+package com.example.financetracker.domain.usecases.local.validation
 
 
 class ValidationResult (

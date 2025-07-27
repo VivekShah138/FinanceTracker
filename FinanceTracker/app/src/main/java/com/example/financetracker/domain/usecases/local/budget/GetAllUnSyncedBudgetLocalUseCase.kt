@@ -1,4 +1,4 @@
-package com.example.financetracker.budget_feature.domain.usecases
+package com.example.financetracker.domain.usecases.local.budget
 
 import com.example.financetracker.domain.model.Budget
 import com.example.financetracker.domain.repository.local.BudgetLocalRepository

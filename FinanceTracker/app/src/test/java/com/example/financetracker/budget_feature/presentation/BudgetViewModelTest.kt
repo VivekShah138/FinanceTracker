@@ -6,7 +6,7 @@ import com.example.financetracker.main_page_feature.finance_entry.add_transactio
 
 import app.cash.turbine.test
 import com.example.financetracker.domain.model.Budget
-import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
 import com.example.financetracker.domain.model.UserProfile
 import com.example.financetracker.domain.model.Currency
 import io.mockk.*

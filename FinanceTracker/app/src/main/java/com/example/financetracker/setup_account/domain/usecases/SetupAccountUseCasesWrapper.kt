@@ -1,8 +1,6 @@
 package com.example.financetracker.setup_account.domain.usecases
 
-import com.example.financetracker.auth_feature.domain.usecases.KeepUserLoggedIn
-import com.example.financetracker.budget_feature.domain.usecases.DoesBudgetExits
-import com.example.financetracker.budget_feature.domain.usecases.GetBudgetLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.KeepUserLoggedIn
 import com.example.financetracker.core.cloud.domain.usecase.GetRemoteTransactionsList
 import com.example.financetracker.core.cloud.domain.usecase.GetUserEmailUserCase
 import com.example.financetracker.core.cloud.domain.usecase.GetUserProfileUseCase

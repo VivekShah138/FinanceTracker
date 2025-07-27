@@ -3,9 +3,9 @@ package com.example.financetracker.auth_feature.presentation.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.financetracker.auth_feature.domain.usecases.AuthFeatureUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.AuthFeatureUseCasesWrapper
 import com.example.financetracker.auth_feature.presentation.forgot_password.ResetPasswordWithCredentialResult
-import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
 import com.example.financetracker.domain.model.UserProfile
 import com.example.financetracker.core.core_domain.usecase.CoreUseCasesWrapper
 import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper

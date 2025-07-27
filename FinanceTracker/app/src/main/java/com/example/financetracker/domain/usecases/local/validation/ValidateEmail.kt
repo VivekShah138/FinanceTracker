@@ -1,11 +1,9 @@
-package com.example.financetracker.auth_feature.domain.usecases
+package com.example.financetracker.domain.usecases.local.validation
 
-
-import android.util.Patterns
 
 class ValidateEmail {
 
-    suspend operator fun invoke(email : String) : ValidationResult{
+    suspend operator fun invoke(email : String) : ValidationResult {
         if(email.isBlank()){
             return ValidationResult(
                 isSuccessful = false,
