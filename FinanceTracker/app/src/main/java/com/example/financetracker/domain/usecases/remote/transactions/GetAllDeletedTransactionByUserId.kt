@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
+package com.example.financetracker.domain.usecases.remote.transactions
 
 import com.example.financetracker.domain.model.DeletedTransactions
 import com.example.financetracker.domain.repository.remote.TransactionRemoteRepository

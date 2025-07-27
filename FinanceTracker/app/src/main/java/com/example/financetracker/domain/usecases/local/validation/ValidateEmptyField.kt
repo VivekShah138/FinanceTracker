@@ -1,6 +1,4 @@
-package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
-
-import com.example.financetracker.domain.usecases.local.validation.ValidationResult
+package com.example.financetracker.domain.usecases.local.validation
 
 class ValidateEmptyField {
 

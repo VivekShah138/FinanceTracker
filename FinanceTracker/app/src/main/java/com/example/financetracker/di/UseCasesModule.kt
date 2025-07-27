@@ -63,20 +63,20 @@ import com.example.financetracker.domain.usecases.local.shared_pref.SetUserNameL
 import com.example.financetracker.domain.usecases.usecase_wrapper.ChartsUseCaseWrapper
 import com.example.financetracker.domain.repository.local.TransactionLocalRepository
 import com.example.financetracker.domain.repository.remote.TransactionRemoteRepository
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertTransactionsLocally
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.DeleteDeletedTransactionsByIdsFromLocal
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.DoesTransactionExits
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllDeletedTransactionByUserId
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactions
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactionsById
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertCustomCategory
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertNewTransactionsReturnId
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.InsertRemoteTransactionsToLocal
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionCategory
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateEmptyField
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.ValidateTransactionPrice
+import com.example.financetracker.domain.usecases.local.transaction.GetAllTransactions
+import com.example.financetracker.domain.usecases.local.transaction.InsertTransactionsLocally
+import com.example.financetracker.domain.usecases.usecase_wrapper.AddTransactionUseCasesWrapper
+import com.example.financetracker.domain.usecases.remote.transactions.DeleteDeletedTransactionsByIdsFromLocal
+import com.example.financetracker.domain.usecases.local.transaction.DoesTransactionExits
+import com.example.financetracker.domain.usecases.remote.transactions.GetAllDeletedTransactionByUserId
+import com.example.financetracker.domain.usecases.local.transaction.GetAllLocalTransactions
+import com.example.financetracker.domain.usecases.local.transaction.GetAllLocalTransactionsById
+import com.example.financetracker.domain.usecases.local.category.InsertCustomCategory
+import com.example.financetracker.domain.usecases.local.transaction.InsertNewTransactionsReturnId
+import com.example.financetracker.domain.usecases.remote.transactions.InsertRemoteTransactionsToLocal
+import com.example.financetracker.domain.usecases.local.validation.ValidateTransactionCategory
+import com.example.financetracker.domain.usecases.local.validation.ValidateEmptyField
+import com.example.financetracker.domain.usecases.local.validation.ValidateTransactionPrice
 import com.example.financetracker.domain.repository.local.SavedItemsLocalRepository
 import com.example.financetracker.domain.repository.remote.SavedItemsRemoteRepository
 import com.example.financetracker.domain.usecases.local.saved_items.GetAllSavedItemLocalUseCase
@@ -333,7 +333,7 @@ object UseCasesModule {
             getAllLocalTransactions = GetAllLocalTransactions(transactionLocalRepository = transactionLocalRepository),
             sendBudgetNotificationUseCase = SendBudgetNotificationUseCase(budgetLocalRepository = budgetLocalRepository),
             getUserUIDUseCase = GetUserUIDUseCase(remoteRepository = remoteRepository),
-            getRemoteTransactionsList = com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetRemoteTransactionsList(remoteRepository = remoteRepository),
+            getRemoteTransactionsList = GetRemoteTransactionsList(remoteRepository = remoteRepository),
             insertRemoteTransactionsToLocal = InsertRemoteTransactionsToLocal(remoteRepository = remoteRepository),
             doesTransactionExits = DoesTransactionExits(transactionLocalRepository = transactionLocalRepository)
         )

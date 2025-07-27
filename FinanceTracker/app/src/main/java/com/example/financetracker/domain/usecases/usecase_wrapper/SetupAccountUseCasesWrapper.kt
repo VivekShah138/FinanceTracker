@@ -15,7 +15,7 @@ import com.example.financetracker.domain.usecases.local.shared_pref.SetCurrencyR
 import com.example.financetracker.domain.usecases.local.shared_pref.SetFirstTimeInstalled
 import com.example.financetracker.domain.usecases.local.shared_pref.SetFirstTimeLogin
 import com.example.financetracker.domain.usecases.remote.user_profile.UpdateUserProfile
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.DoesTransactionExits
+import com.example.financetracker.domain.usecases.local.transaction.DoesTransactionExits
 import com.example.financetracker.domain.usecases.local.saved_items.DoesItemExistsUseCase
 import com.example.financetracker.domain.usecases.remote.saved_items.GetRemoteSavedItemList
 import com.example.financetracker.domain.usecases.remote.country.GetCountryDetailsUseCase

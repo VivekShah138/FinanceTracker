@@ -7,7 +7,7 @@ import com.example.financetracker.domain.usecases.local.category.GetAllCategorie
 import com.example.financetracker.domain.usecases.local.shared_pref.GetCurrencyRatesUpdated
 import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocally
 import com.example.financetracker.domain.usecases.local.shared_pref.SetCurrencyRatesUpdated
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
+import com.example.financetracker.domain.usecases.local.transaction.GetAllTransactions
 import com.example.financetracker.domain.usecases.remote.saved_items.InsertRemoteSavedItemToLocal
 import com.example.financetracker.domain.usecases.local.transaction.GetAllTransactionsFilters
 

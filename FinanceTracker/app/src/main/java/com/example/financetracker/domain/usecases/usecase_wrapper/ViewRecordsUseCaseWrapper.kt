@@ -5,10 +5,10 @@ import com.example.financetracker.domain.usecases.remote.user_profile.InternetCo
 import com.example.financetracker.domain.usecases.local.category.GetAllCategories
 import com.example.financetracker.domain.usecases.local.shared_pref.GetCloudSyncLocally
 import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocally
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.DeleteDeletedTransactionsByIdsFromLocal
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllDeletedTransactionByUserId
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllLocalTransactionsById
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.GetAllTransactions
+import com.example.financetracker.domain.usecases.remote.transactions.DeleteDeletedTransactionsByIdsFromLocal
+import com.example.financetracker.domain.usecases.remote.transactions.GetAllDeletedTransactionByUserId
+import com.example.financetracker.domain.usecases.local.transaction.GetAllLocalTransactionsById
+import com.example.financetracker.domain.usecases.local.transaction.GetAllTransactions
 import com.example.financetracker.domain.usecases.local.saved_items.SavedItemsValidationUseCase
 import com.example.financetracker.domain.usecases.local.saved_items.DeleteDeletedSavedItemsById
 import com.example.financetracker.domain.usecases.local.saved_items.GetAllDeletedSavedItemsByUserId

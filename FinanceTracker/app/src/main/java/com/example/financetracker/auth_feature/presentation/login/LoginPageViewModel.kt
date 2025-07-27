@@ -8,7 +8,7 @@ import com.example.financetracker.auth_feature.presentation.forgot_password.Rese
 import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
 import com.example.financetracker.domain.model.UserProfile
 import com.example.financetracker.domain.usecases.usecase_wrapper.CoreUseCasesWrapper
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.AddTransactionUseCasesWrapper
 import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel

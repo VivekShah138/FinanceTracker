@@ -1,4 +1,4 @@
-package com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases
+package com.example.financetracker.domain.usecases.local.category
 
 import com.example.financetracker.domain.model.Category
 import com.example.financetracker.domain.repository.local.CategoryRepository
