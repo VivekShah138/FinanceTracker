@@ -2,9 +2,11 @@ package com.example.financetracker.main_page_feature.finance_entry.saveItems.pre
 
 import app.cash.turbine.test
 import com.example.financetracker.domain.usecases.local.validation.ValidationResult
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
+import com.example.financetracker.presentation.features.finance_entry_feature.events.SavedItemsEvents
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.SavedItemViewModel
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -66,12 +68,12 @@ class SavedItemsViewModelTest {
 
 
   // When
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemName(testItemName))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemPrice(testItemPrice))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemCurrency(testCurrencyName, testCurrencyCode, testCurrencySymbol,false))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemName(testItemName))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemPrice(testItemPrice))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemCurrency(testCurrencyName, testCurrencyCode, testCurrencySymbol,false))
 
   savedItemViewModel.savedItemsValidationEvents.test {
-   savedItemViewModel.onEvent(SavedItemsEvent.Submit)
+   savedItemViewModel.onEvent(SavedItemsEvents.Submit)
 
    testDispatcher.scheduler.advanceUntilIdle()
 
@@ -92,12 +94,12 @@ class SavedItemsViewModelTest {
 
 
   // When
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemName(testItemName))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemPrice(testItemPrice))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemName(testItemName))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemPrice(testItemPrice))
 
 
   savedItemViewModel.savedItemsValidationEvents.test {
-   savedItemViewModel.onEvent(SavedItemsEvent.Submit)
+   savedItemViewModel.onEvent(SavedItemsEvents.Submit)
 
    testDispatcher.scheduler.advanceUntilIdle()
 
@@ -122,11 +124,11 @@ class SavedItemsViewModelTest {
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Price",state = testItemPrice) } returns ValidationResult(false,"Item price required")
 
 
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemName(testItemName))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemPrice(testItemPrice))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemName(testItemName))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemPrice(testItemPrice))
 
   savedItemViewModel.savedItemsValidationEvents.test {
-   savedItemViewModel.onEvent(SavedItemsEvent.Submit)
+   savedItemViewModel.onEvent(SavedItemsEvents.Submit)
 
    testDispatcher.scheduler.advanceUntilIdle()
 
@@ -157,12 +159,12 @@ class SavedItemsViewModelTest {
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Price", state = testItemPrice) } returns ValidationResult(true)
   coEvery { savedItemsUseCasesWrapper.saveItemLocalUseCase(any()) } throws RuntimeException("Local save failed")
 
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemName(testItemName))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemPrice(testItemPrice))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemCurrency(testCurrencyName, testCurrencyCode, testCurrencySymbol,false))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemName(testItemName))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemPrice(testItemPrice))
+  savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemCurrency(testCurrencyName, testCurrencyCode, testCurrencySymbol,false))
 
   savedItemViewModel.savedItemsValidationEvents.test {
-   savedItemViewModel.onEvent(SavedItemsEvent.Submit)
+   savedItemViewModel.onEvent(SavedItemsEvents.Submit)
 
    testDispatcher.scheduler.advanceUntilIdle()
 

@@ -1,6 +1,6 @@
 package com.example.financetracker.budget_feature.presentation
 
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 
 
 

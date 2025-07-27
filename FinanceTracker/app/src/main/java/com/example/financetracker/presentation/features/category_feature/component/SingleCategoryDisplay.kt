@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.getCategoryIcon
+import com.example.financetracker.presentation.features.finance_entry_feature.components.getCategoryIcon
 
 
 @Composable

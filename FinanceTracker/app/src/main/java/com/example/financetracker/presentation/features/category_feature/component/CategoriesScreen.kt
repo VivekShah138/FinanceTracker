@@ -24,7 +24,7 @@ import com.example.financetracker.presentation.features.category_feature.viewmod
 import com.example.financetracker.presentation.features.category_feature.viewmodel.ExpenseCategoriesViewModel
 import com.example.financetracker.presentation.features.category_feature.viewmodel.IncomeCategoriesViewModel
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomTextAlertBox
+import com.example.financetracker.presentation.features.finance_entry_feature.components.CustomTextAlertBox
 import kotlinx.coroutines.launch
 
 @Composable

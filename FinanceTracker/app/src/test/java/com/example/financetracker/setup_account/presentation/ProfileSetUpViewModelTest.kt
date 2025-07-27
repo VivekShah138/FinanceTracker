@@ -5,6 +5,8 @@ import org.junit.Before
 import app.cash.turbine.test
 import com.example.financetracker.domain.usecases.local.validation.ValidationResult
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
+import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpEvents
+import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
 import org.junit.Test
@@ -117,7 +119,8 @@ class ProfileSetUpViewModelTest {
   viewModel.onEvent(ProfileSetUpEvents.ChangeLastName("Doe"))
   viewModel.onEvent(ProfileSetUpEvents.ChangePhoneNumber("1234567890"))
   viewModel.onEvent(ProfileSetUpEvents.SelectCountry("Country", "+1", expanded = false))
-  viewModel.onEvent(ProfileSetUpEvents.SelectBaseCurrency(
+  viewModel.onEvent(
+      ProfileSetUpEvents.SelectBaseCurrency(
    currency = "US Dollar",
    expanded = false,
    currencyCode = "USD",
@@ -150,7 +153,8 @@ class ProfileSetUpViewModelTest {
   viewModel.onEvent(ProfileSetUpEvents.ChangeLastName("Doe"))
   viewModel.onEvent(ProfileSetUpEvents.ChangePhoneNumber("1234567890"))
   viewModel.onEvent(ProfileSetUpEvents.SelectCountry("USA", "+1", expanded = false))
-  viewModel.onEvent(ProfileSetUpEvents.SelectBaseCurrency(
+  viewModel.onEvent(
+      ProfileSetUpEvents.SelectBaseCurrency(
    currency = "US Dollar",
    expanded = false,
    currencyCode = "USD",

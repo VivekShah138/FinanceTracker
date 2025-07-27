@@ -3,10 +3,10 @@ package com.example.financetracker.domain.usecases.local.transaction
 import android.util.Log
 import com.example.financetracker.domain.model.Transactions
 import com.example.financetracker.domain.repository.local.TransactionLocalRepository
-import com.example.financetracker.main_page_feature.view_records.transactions.utils.DurationFilter
-import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionFilter
-import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionOrder
-import com.example.financetracker.main_page_feature.view_records.transactions.utils.TransactionTypeFilter
+import com.example.financetracker.utils.DurationFilter
+import com.example.financetracker.utils.TransactionFilter
+import com.example.financetracker.utils.TransactionOrder
+import com.example.financetracker.utils.TransactionTypeFilter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat

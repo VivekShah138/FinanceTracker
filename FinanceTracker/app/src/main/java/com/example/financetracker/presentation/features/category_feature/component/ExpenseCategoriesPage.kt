@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.financetracker.presentation.features.category_feature.events.SharedCategoriesEvents
 import com.example.financetracker.presentation.features.category_feature.viewmodel.ExpenseCategoriesViewModel
-import com.example.financetracker.main_page_feature.finance_entry.finance_entry_core.presentation.components.CustomTextAlertBox
+import com.example.financetracker.presentation.features.finance_entry_feature.components.CustomTextAlertBox
 
 @Composable
 fun ExpenseCategoriesPage(
