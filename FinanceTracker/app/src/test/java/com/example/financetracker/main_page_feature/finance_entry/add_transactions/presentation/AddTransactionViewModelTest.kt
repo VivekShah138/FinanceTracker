@@ -6,6 +6,8 @@ import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCate
 import com.example.financetracker.domain.usecases.usecase_wrapper.AddTransactionUseCasesWrapper
 import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
+import com.example.financetracker.presentation.features.finance_entry_feature.events.AddTransactionEvents
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import io.mockk.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
@@ -61,7 +63,8 @@ class AddTransactionViewModelTest {
   viewModel.onEvent(AddTransactionEvents.ChangeTransactionName("Coffee"))
   viewModel.onEvent(AddTransactionEvents.ChangeTransactionPrice("3.5"))
   viewModel.onEvent(AddTransactionEvents.SelectCategory("Food", bottomSheetState = false, alertBoxState = false))
-  viewModel.onEvent(AddTransactionEvents.ChangeTransactionCurrency(
+  viewModel.onEvent(
+   AddTransactionEvents.ChangeTransactionCurrency(
    currencyName = "Dollar",
    currencySymbol = "$",
    currencyCode = "USD",

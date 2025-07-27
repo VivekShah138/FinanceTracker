@@ -1,0 +1,167 @@
+package com.example.financetracker.presentation.features.view_records_feature.components
+
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.financetracker.utils.Screens
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
+import com.example.financetracker.presentation.features.finance_entry_feature.components.SavedItemsCard
+import com.example.financetracker.presentation.features.view_records_feature.events.ViewSavedItemsEvents
+import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewSavedItemsViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ViewSavedItemsPage(
+    viewModel: ViewSavedItemsViewModel,
+    navController: NavController
+) {
+
+    val states by viewModel.viewSavedItemsStates.collectAsStateWithLifecycle()
+    val savedItemsValidationEvent = viewModel.savedItemsValidationEvents
+    val context = LocalContext.current
+    val focusRequester = remember { FocusRequester() }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val focusManager = LocalFocusManager.current
+
+    BackHandler(enabled = states.isSelectionMode) {
+        viewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+    }
+
+
+    LaunchedEffect(key1 = context) {
+        savedItemsValidationEvent.collect { event ->
+            when (event) {
+                is AddTransactionViewModel.AddTransactionValidationEvent.Success -> {
+                    Toast.makeText(context,"Item Successfully Added", Toast.LENGTH_LONG).show()
+                    viewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = false))
+                    viewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+                }
+                is AddTransactionViewModel.AddTransactionValidationEvent.Failure -> {
+                    Toast.makeText(context,event.errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
+    if(states.customDeleteAlertBoxState){
+
+        DeleteConfirmationDialog(
+            onDismiss = {
+                viewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
+            },
+            onConfirm = {
+                viewModel.onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
+                viewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
+            },
+            showDialog = states.customDeleteAlertBoxState
+        )
+
+    }
+
+
+    Column(modifier = Modifier
+        .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+
+
+        SearchBar(
+            states = states,
+            viewModel = viewModel,
+            focusRequester = focusRequester,
+            focusManager = focusManager,
+            isFocused = isFocused,
+            interactionSource = interactionSource
+        )
+
+
+        if(!isFocused){
+            LazyColumn {
+                items(states.savedItemsList){ savedItems ->
+
+                    val isSelected = states.selectedSavedItems.contains(savedItems.itemId)
+
+                    SavedItemsCard(
+                        item = savedItems,
+                        onClick = {
+                            if (states.isSelectionMode) {
+                                viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                            } else {
+                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
+                            }
+                        },
+                        onLongClick = {
+                            if (!states.isSelectionMode) {
+                                viewModel.onEvent(ViewSavedItemsEvents.EnterSelectionMode)
+                                viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                            }
+                        },
+                        isSelectionMode = states.isSelectionMode,
+                        isSelected = isSelected
+                    )
+                }
+            }
+        }
+        else{
+            LazyColumn {
+                items(states.savedItemsFilteredList){ savedItems ->
+
+                    val isSelected = states.selectedSavedItems.contains(savedItems.itemId)
+
+                    SavedItemsCard(
+                        item = savedItems,
+                        onClick = {
+                            if (states.isSelectionMode) {
+                                viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                            } else {
+                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
+                            }
+                        },
+                        onLongClick = {
+                            if (!states.isSelectionMode) {
+                                viewModel.onEvent(ViewSavedItemsEvents.EnterSelectionMode)
+                                viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                            }
+                        },
+                        isSelectionMode = states.isSelectionMode,
+                        isSelected = isSelected
+                    )
+                }
+            }
+        }
+
+        if(states.updateBottomSheetState){
+            UpdateItemDetailsBottomSheet(
+                sheetState = rememberModalBottomSheetState(),
+                viewModel = viewModel,
+                states = states,
+                onDismiss = {
+                    viewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = false))
+                },
+                onSaveClick = {
+                    viewModel.onEvent(ViewSavedItemsEvents.SaveItem)
+                }
+            )
+        }
+    }
+}
