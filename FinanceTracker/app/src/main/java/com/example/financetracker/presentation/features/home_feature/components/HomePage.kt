@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 import com.example.financetracker.presentation.features.budget_feature.components.NoBudgetMessage
 import com.example.financetracker.utils.MenuItems
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.Screens
 import com.example.financetracker.presentation.features.home_feature.HomePageEvents
 import com.example.financetracker.presentation.features.home_feature.HomePageViewModel
 import com.example.financetracker.presentation.features.settings_feature.SettingViewModel

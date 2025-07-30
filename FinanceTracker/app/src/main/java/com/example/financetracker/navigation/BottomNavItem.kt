@@ -1,4 +1,4 @@
-package com.example.financetracker.presentation.core_components
+package com.example.financetracker.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.example.financetracker.utils.Screens
 
 data class BottomNavItem (
     val screen: Screens,

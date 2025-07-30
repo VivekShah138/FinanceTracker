@@ -22,7 +22,9 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.BottomNavItem
+import com.example.financetracker.navigation.BottomNavItemsList
+import com.example.financetracker.navigation.Screens
 
 @Composable
 fun BottomNavigationBar(

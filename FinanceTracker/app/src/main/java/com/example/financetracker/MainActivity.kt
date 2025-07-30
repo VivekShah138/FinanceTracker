@@ -38,8 +38,8 @@ import com.example.financetracker.presentation.features.category_feature.viewmod
 import com.example.financetracker.presentation.features.category_feature.viewmodel.ExpenseCategoriesViewModel
 import com.example.financetracker.presentation.features.category_feature.viewmodel.IncomeCategoriesViewModel
 import com.example.financetracker.presentation.features.category_feature.component.CategoriesScreen
-import com.example.financetracker.presentation.core_components.BottomNavItemsList
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.BottomNavItemsList
+import com.example.financetracker.navigation.Screens
 import com.example.financetracker.presentation.features.charts_feature.ChartsViewModel
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import com.example.financetracker.presentation.features.finance_entry_feature.components.FinanceEntryPage

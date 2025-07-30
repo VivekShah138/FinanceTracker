@@ -33,7 +33,7 @@ import com.example.financetracker.presentation.features.auth_feature.auth_utils.
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.ResetPasswordWithEmailResult
 import com.example.financetracker.presentation.features.auth_feature.events.ForgotPasswordEvents
 import com.example.financetracker.presentation.features.auth_feature.viewmodels.ForgotPasswordViewModel
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.Screens
 import kotlinx.coroutines.launch
 
 @Composable

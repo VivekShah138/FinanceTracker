@@ -29,7 +29,7 @@ import com.example.financetracker.presentation.features.budget_feature.BudgetEve
 import com.example.financetracker.presentation.features.budget_feature.BudgetViewModel
 
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.Screens
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 
 

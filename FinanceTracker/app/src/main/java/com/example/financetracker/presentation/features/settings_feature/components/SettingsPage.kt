@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.Screens
 import com.example.financetracker.presentation.features.settings_feature.SettingEvents
 import com.example.financetracker.presentation.features.settings_feature.SettingViewModel
 import com.example.financetracker.presentation.features.setup_account_feature.components.SettingsSwitchItem

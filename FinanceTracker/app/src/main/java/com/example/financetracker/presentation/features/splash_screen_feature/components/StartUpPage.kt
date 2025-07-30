@@ -46,7 +46,7 @@ import com.example.financetracker.presentation.features.auth_feature.viewmodels.
 import com.example.financetracker.presentation.features.splash_screen_feature.StartPageViewModel
 import com.example.financetracker.presentation.features.splash_screen_feature.StartUpPageEvents
 import com.example.financetracker.presentation.features.splash_screen_feature.StartUpPageStates
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.Screens
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
