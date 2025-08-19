@@ -31,7 +31,7 @@ import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.navigation.Screens
 import com.example.financetracker.presentation.features.home_feature.HomePageEvents
 import com.example.financetracker.presentation.features.home_feature.HomePageViewModel
-import com.example.financetracker.presentation.features.settings_feature.SettingViewModel
+import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -39,13 +39,13 @@ import com.example.financetracker.presentation.features.settings_feature.Setting
 fun HomePageScreen(
     viewModel: HomePageViewModel,
     navController: NavController,
-    settingViewModel: SettingViewModel
+    settingsViewModel: SettingsViewModel
 ){
 
     val states by viewModel.homePageStates.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        settingViewModel.loadUserProfileIfReady()
+        settingsViewModel.loadUserProfileIfReady()
         Log.d("HomePage","function called")
     }
 

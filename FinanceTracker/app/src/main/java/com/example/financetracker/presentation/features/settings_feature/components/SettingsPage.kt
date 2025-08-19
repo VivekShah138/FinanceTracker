@@ -25,13 +25,13 @@ import androidx.navigation.NavController
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.navigation.Screens
 import com.example.financetracker.presentation.features.settings_feature.SettingEvents
-import com.example.financetracker.presentation.features.settings_feature.SettingViewModel
+import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
 import com.example.financetracker.presentation.features.setup_account_feature.components.SettingsSwitchItem
 
 @Composable
 fun SettingsPage(
     navController: NavController,
-    viewModel: SettingViewModel
+    viewModel: SettingsViewModel
 ){
 
     val states by viewModel.settingStates.collectAsStateWithLifecycle()

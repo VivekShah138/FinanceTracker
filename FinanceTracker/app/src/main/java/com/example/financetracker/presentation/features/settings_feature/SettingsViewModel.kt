@@ -15,7 +15,7 @@ import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingViewModel @Inject constructor(
+class SettingsViewModel @Inject constructor(
     private val settingsUseCaseWrapper: SettingsUseCaseWrapper
 ): ViewModel() {
 
