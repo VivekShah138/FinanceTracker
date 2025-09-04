@@ -20,5 +20,4 @@ val BottomNavItemsList = listOf(
     BottomNavItem(Screens.AddTransactionsScreen, icon = Icons.Default.AddCircle, label = "Add"),
     BottomNavItem(Screens.GraphicalVisualizationScreen, icon = Icons.Default.AutoGraph, label = "Charts"),
     BottomNavItem(Screens.SettingScreen, icon = Icons.Default.Settings, label = "Settings")
-
 )
