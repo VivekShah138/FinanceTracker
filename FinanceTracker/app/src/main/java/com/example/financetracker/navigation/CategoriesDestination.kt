@@ -14,9 +14,7 @@ import com.example.financetracker.presentation.features.category_feature.viewmod
 fun NavGraphBuilder.categoriesGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.CategoriesScreen.routes
-    ) {
+    composable<Screens.CategoriesScreen> {
 
         val expenseCategoriesViewModel: ExpenseCategoriesViewModel = hiltViewModel()
         val incomeCategoriesViewModel: IncomeCategoriesViewModel = hiltViewModel()

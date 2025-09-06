@@ -158,7 +158,13 @@ fun ViewTransactionsPage(
                                                 )
                                             )
 
-                                            navController.navigate("${Screens.SingleTransactionScreen.routes}/${transaction.transactionId}")
+                                            val transactionId = transaction.transactionId
+                                            if(transactionId != null){
+                                                navController.navigate(Screens.SingleTransactionScreen(transactionId = transactionId))
+                                            }
+
+
+//                                            navController.navigate("${Screens.SingleTransactionScreen.routes}/${transaction.transactionId}")
                                         }
                                     },
                                     onLongClick = {

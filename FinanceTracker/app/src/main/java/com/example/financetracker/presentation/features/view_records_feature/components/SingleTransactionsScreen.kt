@@ -114,8 +114,8 @@ fun SingleTransactionScreen(
                         onConfirm = {
                             viewTransactionsViewModel.onEvent(ViewTransactionsEvents.DeleteSelectedTransactions)
                             viewTransactionsViewModel.onEvent(ViewTransactionsEvents.ChangeCustomDateAlertBox(state = false))
-                            navController.navigate("${Screens.ViewRecordsScreen.routes}/0")
-
+//                            navController.navigate("${Screens.ViewRecordsScreen.routes}/0")
+                            navController.navigate(Screens.ViewRecordsScreen(tabIndex = 0))
                         },
                         showDialog = states.customDeleteAlertBoxState
                     )

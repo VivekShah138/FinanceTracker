@@ -12,9 +12,7 @@ import com.example.financetracker.presentation.features.budget_feature.component
 fun NavGraphBuilder.budgetGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.BudgetScreen.routes
-    ) {
+    composable<Screens.BudgetScreen>{
         val budgetViewModel: BudgetViewModel = hiltViewModel()
 
         BudgetScreen(

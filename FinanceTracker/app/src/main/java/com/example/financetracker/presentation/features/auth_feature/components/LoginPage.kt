@@ -74,10 +74,12 @@ fun LogInPage(
                         Toast.LENGTH_SHORT).show()
 
                     if(!state.userProfile.profileSetUpCompleted){
-                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
+//                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
+                        navController.navigate(Screens.NewUserProfileOnBoardingScreen)
                     }
                     else{
-                        navController.navigate(Screens.HomePageScreen.routes)
+//                        navController.navigate(Screens.HomePageScreen.routes)
+                        navController.navigate(Screens.HomePageScreen)
                     }
                 }
                 is LoginPageViewModel.LoginEvent.Error->{
@@ -216,7 +218,8 @@ fun LogInPage(
                                 viewModel.onEvent(LoginPageEvents.ClickForgotPassword(result))
                             }
                             else{
-                                navController.navigate(route = Screens.ForgotPasswordScreen.routes)
+//                                navController.navigate(route = Screens.ForgotPasswordScreen.routes)
+                                navController.navigate(route = Screens.ForgotPasswordScreen)
                             }
 
                         }
@@ -236,7 +239,8 @@ fun LogInPage(
                 Text("Don't have an account?", color = MaterialTheme.colorScheme.onBackground)
                 TextButton(
                     onClick = {
-                        navController.navigate(route = Screens.RegistrationScreen.routes)
+//                        navController.navigate(route = Screens.RegistrationScreen.routes)
+                        navController.navigate(route = Screens.RegistrationScreen)
                     }
                 ) {
                     Text("Register")

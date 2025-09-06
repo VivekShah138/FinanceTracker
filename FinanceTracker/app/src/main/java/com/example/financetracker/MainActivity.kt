@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
@@ -109,11 +110,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentRoute = currentBackStackEntry?.destination
+//                    val currentRoute = currentBackStackEntry?.destination
+//
+//                    val showBottomBar = BottomNavItemsList.any {
+//                        currentRoute?.route?.startsWith(it.screen.routes) == true
+//                    }
+                    val showBottomBar = true
 
-                    val showBottomBar = BottomNavItemsList.any {
-                        currentRoute?.route?.startsWith(it.screen.routes) == true
-                    }
 
 
                     Scaffold(
@@ -121,8 +124,8 @@ class MainActivity : ComponentActivity() {
                             if(showBottomBar){
                                 BottomNavigationBar(
                                     navController = navController,
-                                    showBadge = !settingsState.budgetExist,
-                                    currentRoute = currentRoute
+//                                    showBadge = !settingsState.budgetExist,
+//                                    currentRoute = currentRoute
                                 )
                             }
                         }

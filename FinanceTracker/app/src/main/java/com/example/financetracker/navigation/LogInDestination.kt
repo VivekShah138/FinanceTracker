@@ -10,9 +10,13 @@ import com.example.financetracker.presentation.features.auth_feature.viewmodels.
 fun NavGraphBuilder.logInPageGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.LogInScreen.routes
-    ) {
+//    composable(
+//        route = Screens.LogInScreen.routes
+//    ) {
+//        val viewModel: LoginPageViewModel = hiltViewModel()
+//        LogInPage(navController, viewModel)
+//    }
+    composable<Screens.LogInScreen>{
         val viewModel: LoginPageViewModel = hiltViewModel()
         LogInPage(navController, viewModel)
     }

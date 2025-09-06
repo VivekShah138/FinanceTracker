@@ -59,7 +59,8 @@ fun ForgotPasswordPage(
                     Toast.makeText(context,
                         "Email Sent Successfully",
                         Toast.LENGTH_SHORT).show()
-                    navController.navigate(route = Screens.LogInScreen.routes)
+//                    navController.navigate(route = Screens.LogInScreen.routes)
+                    navController.navigate(route = Screens.LogInScreen)
                 }
                 is ForgotPasswordViewModel.ForgotPasswordValidationEvent.Failure -> {
                     Toast.makeText(context,

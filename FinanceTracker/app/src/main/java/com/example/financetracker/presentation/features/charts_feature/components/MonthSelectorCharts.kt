@@ -98,7 +98,7 @@ fun MonthSelectorCharts2(
     state: ChartStates,
     onEvent: (ChartEvents) -> Unit,
     context: Context,
-    showOnlyYear: Boolean // ✅ added this flag
+    showOnlyYear: Boolean
 ) {
     val formatter = remember { SimpleDateFormat("MMMM yyyy", Locale.getDefault()) }
     val yearFormatter = remember { SimpleDateFormat("yyyy", Locale.getDefault()) }

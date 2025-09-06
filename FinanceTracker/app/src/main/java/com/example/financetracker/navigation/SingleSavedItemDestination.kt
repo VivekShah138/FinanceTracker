@@ -6,22 +6,33 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.example.financetracker.presentation.features.auth_feature.components.RegisterPage
 import com.example.financetracker.presentation.features.auth_feature.viewmodels.RegisterPageViewModel
 import com.example.financetracker.presentation.features.view_records_feature.components.SingleSavedItemScreen
+import com.example.financetracker.presentation.features.view_records_feature.components.SingleTransactionScreen
 
 fun NavGraphBuilder.singleSavedItemGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.SingleSavedItemScreen.routes + "/{savedItemId}",
-        arguments = listOf(navArgument("savedItemId") { type = NavType.IntType })
-    ) { backStackEntry ->
-        val savedItemId = backStackEntry.arguments?.getInt("savedItemId")
-        SingleSavedItemScreen(
+//    composable(
+//        route = Screens.SingleSavedItemScreen.routes + "/{savedItemId}",
+//        arguments = listOf(navArgument("savedItemId") { type = NavType.IntType })
+//    ) { backStackEntry ->
+//        val savedItemId = backStackEntry.arguments?.getInt("savedItemId")
+//        SingleSavedItemScreen(
+//            navController = navController,
+//            viewSavedItemsViewModel = hiltViewModel(),
+//            savedItemId = savedItemId ?: -1
+//        )
+//    }
+
+    composable<Screens.SingleSavedItemScreen> { backStackEntry ->
+        val args = backStackEntry.toRoute<Screens.SingleSavedItemScreen>()
+        SingleTransactionScreen(
             navController = navController,
-            viewSavedItemsViewModel = hiltViewModel(),
-            savedItemId = savedItemId ?: -1
+            viewTransactionsViewModel = hiltViewModel(),
+            transactionId = args.savedItemId
         )
     }
 }

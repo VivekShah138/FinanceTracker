@@ -12,9 +12,15 @@ import com.example.financetracker.presentation.features.charts_feature.component
 fun NavGraphBuilder.graphicalVisualizationGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.GraphicalVisualizationScreen.routes
-    ) {
+//    composable(
+//        route = Screens.GraphicalVisualizationScreen.routes
+//    ) {
+//
+//        val viewModel: ChartsViewModel = hiltViewModel()
+//
+//        ChartsPage(navController = navController, viewModel = viewModel)
+//    }
+    composable<Screens.GraphicalVisualizationScreen>{
 
         val viewModel: ChartsViewModel = hiltViewModel()
 

@@ -135,7 +135,8 @@ fun SingleSavedItemScreen(
                             viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
 //                                navController.navigate(Screens.ViewRecordsScreen.routes)
                             viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
-                            navController.navigate("${Screens.ViewRecordsScreen.routes}/1")
+//                            navController.navigate("${Screens.ViewRecordsScreen.routes}/1")
+                            navController.navigate(Screens.ViewRecordsScreen(tabIndex = 1))
 
                         },
                         showDialog = states.customDeleteAlertBoxState

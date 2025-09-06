@@ -107,7 +107,11 @@ fun ViewSavedItemsPage(
                             if (states.isSelectionMode) {
                                 viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             } else {
-                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
+                                val savedItemId = savedItems.itemId
+                                if (savedItemId != null) {
+                                    navController.navigate(Screens.SingleSavedItemScreen(savedItemId))
+                                }
+//                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
                             }
                         },
                         onLongClick = {
@@ -134,7 +138,11 @@ fun ViewSavedItemsPage(
                             if (states.isSelectionMode) {
                                 viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             } else {
-                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
+//                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
+                                val savedItemId = savedItems.itemId
+                                if (savedItemId != null) {
+                                    navController.navigate(Screens.SingleSavedItemScreen(savedItemId))
+                                }
                             }
                         },
                         onLongClick = {

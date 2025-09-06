@@ -1,6 +1,8 @@
 package com.example.financetracker.presentation.features.finance_entry_feature.components
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,7 +52,8 @@ fun SavedItemPage(
                 }
                 AddTransactionViewModel.AddTransactionValidationEvent.Success -> {
                     Toast.makeText(context,"Item Successfully Added", Toast.LENGTH_LONG).show()
-                    navController.navigate(route = Screens.HomePageScreen.routes)
+//                    navController.navigate(route = Screens.HomePageScreen.routes)
+                    navController.navigate(route = Screens.HomePageScreen)
                 }
             }
         }

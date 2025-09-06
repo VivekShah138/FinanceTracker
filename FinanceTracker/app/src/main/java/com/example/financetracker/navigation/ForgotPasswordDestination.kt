@@ -15,9 +15,13 @@ import com.example.financetracker.presentation.features.splash_screen_feature.co
 fun NavGraphBuilder.forgotPasswordGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.ForgotPasswordScreen.routes
-    ) {
+//    composable(
+//        route = Screens.ForgotPasswordScreen.routes
+//    ) {
+//        val viewModel: ForgotPasswordViewModel = hiltViewModel()
+//        ForgotPasswordPage(navController, viewModel)
+//    }
+    composable<Screens.ForgotPasswordScreen>{
         val viewModel: ForgotPasswordViewModel = hiltViewModel()
         ForgotPasswordPage(navController, viewModel)
     }

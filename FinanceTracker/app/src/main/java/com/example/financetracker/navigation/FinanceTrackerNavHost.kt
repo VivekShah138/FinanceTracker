@@ -11,14 +11,14 @@ fun FinanceTrackerNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     settingsViewModel: SettingsViewModel,
-    startDestination: String = Screens.StartUpPageScreen.routes,
+//    startDestination: String = Screens.StartUpPageScreen.routes,
+    startDestination: Screens = Screens.StartUpPageScreen
 ) {
-
     NavHost(
         navController = navController,
         startDestination = startDestination,
         modifier = modifier
-    ) {
+    ){
         startUpPageGraph(navController = navController)
 
         logInPageGraph(navController = navController)

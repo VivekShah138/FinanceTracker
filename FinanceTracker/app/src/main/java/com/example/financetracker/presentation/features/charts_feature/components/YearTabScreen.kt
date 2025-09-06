@@ -47,21 +47,5 @@ fun YearTabScreen(
         else{
             ExpensePieChartWithLegend(expenseData = yearlyExpenses, currencySymbol = states.baseCurrencySymbol)
         }
-
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(300.dp), // 👈 same height you'd use for the pie chart
-//            contentAlignment = Alignment.Center
-//        ) {
-//            if (yearlyExpenses.isEmpty()) {
-//                Text("No Transactions")
-//            } else {
-//                ExpensePieChartWithLegend(yearlyExpenses)
-//            }
-//        }
-
-
     }
-
 }

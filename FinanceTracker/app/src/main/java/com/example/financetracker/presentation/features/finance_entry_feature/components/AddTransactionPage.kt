@@ -77,7 +77,8 @@ fun AddTransactionPage(
                 }
                 AddTransactionViewModel.AddTransactionValidationEvent.Success -> {
                     Toast.makeText(context,"Transaction Successfully Added",Toast.LENGTH_LONG).show()
-                    navController.navigate(route = Screens.HomePageScreen.routes)
+//                    navController.navigate(route = Screens.HomePageScreen.routes)
+                    navController.navigate(route = Screens.HomePageScreen)
                 }
             }
         }

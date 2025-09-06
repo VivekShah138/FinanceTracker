@@ -10,9 +10,7 @@ import com.example.financetracker.presentation.features.auth_feature.viewmodels.
 fun NavGraphBuilder.registrationPageGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.RegistrationScreen.routes
-    ) {
+    composable<Screens.RegistrationScreen>{
         val viewModel: RegisterPageViewModel = hiltViewModel()
         RegisterPage(navController, viewModel)
     }

@@ -13,9 +13,18 @@ import com.example.financetracker.presentation.features.finance_entry_feature.vi
 fun NavGraphBuilder.addTransactionsGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.AddTransactionsScreen.routes
-    ) {
+//    composable(
+//        route = Screens.AddTransactionsScreen.routes
+//    ) {
+//        val addTransactionViewModel: AddTransactionViewModel = hiltViewModel()
+//        val savedItemViewModel: SavedItemViewModel = hiltViewModel()
+//        FinanceEntryPage(
+//            navController = navController,
+//            addTransactionViewModel = addTransactionViewModel,
+//            savedItemViewModel = savedItemViewModel
+//        )
+//    }
+    composable<Screens.AddTransactionsScreen> {
         val addTransactionViewModel: AddTransactionViewModel = hiltViewModel()
         val savedItemViewModel: SavedItemViewModel = hiltViewModel()
         FinanceEntryPage(

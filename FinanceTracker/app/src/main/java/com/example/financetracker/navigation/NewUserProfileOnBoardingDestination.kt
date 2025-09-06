@@ -12,9 +12,7 @@ import com.example.financetracker.presentation.features.setup_account_feature.co
 fun NavGraphBuilder.newUserProfileOnBoardingGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.NewUserProfileOnBoardingScreen.routes
-    ) {
+    composable<Screens.NewUserProfileOnBoardingScreen>{
         val viewModel: ProfileSetUpViewModel = hiltViewModel()
         NewUserProfileOnBoardingScreens(viewModel, navController)
     }

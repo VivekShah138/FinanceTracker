@@ -13,9 +13,7 @@ fun NavGraphBuilder.settingsGraph(
     navController: NavController,
     settingsViewModel: SettingsViewModel
 ){
-    composable(
-        route = Screens.SettingScreen.routes
-    ) {
+    composable<Screens.SettingScreen>{
         SettingsPage(navController = navController, viewModel = settingsViewModel)
     }
 }

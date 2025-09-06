@@ -47,7 +47,8 @@ fun ProfileSetUp(
                 }
                 is ProfileSetUpViewModel.ProfileUpdateEvent.Success -> {
                     Toast.makeText(context,"Profile Successfully Update",Toast.LENGTH_LONG).show()
-                    navController.navigate(Screens.HomePageScreen.routes)
+//                    navController.navigate(Screens.HomePageScreen.routes)
+                    navController.navigate(Screens.HomePageScreen)
                 }
             }
         }

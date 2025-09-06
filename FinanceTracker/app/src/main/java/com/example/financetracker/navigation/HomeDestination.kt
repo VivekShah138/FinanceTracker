@@ -14,9 +14,13 @@ fun NavGraphBuilder.homePageGraph(
     navController: NavController,
     settingsViewModel: SettingsViewModel
 ){
-    composable(
-        route = Screens.HomePageScreen.routes
-    ) {
+//    composable(
+//        route = Screens.HomePageScreen.routes
+//    ) {
+//        val viewModel: HomePageViewModel = hiltViewModel()
+//        HomePageScreen(viewModel, navController, settingsViewModel = settingsViewModel)
+//    }
+    composable<Screens.HomePageScreen> {
         val viewModel: HomePageViewModel = hiltViewModel()
         HomePageScreen(viewModel, navController, settingsViewModel = settingsViewModel)
     }

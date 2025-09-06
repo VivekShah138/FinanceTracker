@@ -8,9 +8,7 @@ import com.example.financetracker.presentation.features.splash_screen_feature.co
 fun NavGraphBuilder.startUpPageGraph(
     navController: NavController
 ){
-    composable(
-        route = Screens.StartUpPageScreen.routes
-    ) {
+    composable<Screens.StartUpPageScreen>{
         StartUpPageRoot(navController = navController)
     }
 }

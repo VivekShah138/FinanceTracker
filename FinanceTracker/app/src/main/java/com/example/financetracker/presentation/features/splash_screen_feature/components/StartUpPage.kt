@@ -101,10 +101,12 @@ fun StartUpPageScreen(
                         Toast.LENGTH_SHORT).show()
 
                     if(!loginPageStates.userProfile.profileSetUpCompleted){
-                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
+//                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
+                        navController.navigate(Screens.NewUserProfileOnBoardingScreen)
                     }
                     else{
-                        navController.navigate(Screens.HomePageScreen.routes)
+//                        navController.navigate(Screens.HomePageScreen.routes)
+                        navController.navigate(Screens.HomePageScreen)
                     }
                 }
                 is LoginPageViewModel.LoginEvent.Error->{
@@ -121,8 +123,13 @@ fun StartUpPageScreen(
 
     LaunchedEffect(startUpPageStates.isLoggedIn) {
         if(startUpPageStates.isLoggedIn){
-            navController.navigate(route = Screens.HomePageScreen.routes) {
-                popUpTo(route = Screens.LogInScreen.routes) {
+//            navController.navigate(route = Screens.HomePageScreen.routes) {
+//                popUpTo(route = Screens.LogInScreen.routes) {
+//                    inclusive = true
+//                }
+//            }
+            navController.navigate(route = Screens.HomePageScreen) {
+                popUpTo(route = Screens.LogInScreen) {
                     inclusive = true
                 }
             }

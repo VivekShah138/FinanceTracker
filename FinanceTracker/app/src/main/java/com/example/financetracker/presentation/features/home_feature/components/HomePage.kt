@@ -63,14 +63,16 @@ fun HomePageScreen(
                         MenuItems(
                             text = "View Budget",
                             onClick = {
-                                navController.navigate(route = Screens.BudgetScreen.routes )
+//                                navController.navigate(route = Screens.BudgetScreen.routes )
+                                navController.navigate(route = Screens.BudgetScreen)
                             }
                         ),
                         MenuItems(
                             text = "Logout",
                             onClick = {
                                 viewModel.onEvent(HomePageEvents.Logout)
-                                navController.navigate(route = Screens.StartUpPageScreen.routes )
+//                                navController.navigate(route = Screens.StartUpPageScreen.routes )
+                                navController.navigate(route = Screens.StartUpPageScreen)
                             }
                         )
                     )
@@ -125,7 +127,7 @@ fun HomePageScreen(
                                     style = MaterialTheme.typography.titleSmall,
                                     textAlign = TextAlign.End,
                                     modifier = Modifier.clickable {
-                                        navController.navigate(route = "${Screens.ViewRecordsScreen.routes}/0")
+                                        navController.navigate(route = Screens.ViewRecordsScreen(tabIndex = 0))
                                     },
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -159,7 +161,8 @@ fun HomePageScreen(
                                         NoBudgetMessage()
                                         Button(
                                             onClick = {
-                                                navController.navigate(Screens.BudgetScreen.routes)
+//                                                navController.navigate(Screens.BudgetScreen.routes)
+                                                navController.navigate(Screens.BudgetScreen)
                                             },
                                             modifier = Modifier
                                                 .fillMaxWidth()

@@ -63,7 +63,8 @@ fun RegisterPage(
                     Toast.makeText(context,
                         "Registration Successful " + event.username,
                         Toast.LENGTH_SHORT).show()
-                    navController.navigate(Screens.LogInScreen.routes)
+//                    navController.navigate(Screens.LogInScreen.routes)
+                    navController.navigate(Screens.LogInScreen)
                 }
                 is RegisterPageViewModel.RegisterEvent.Error -> {
                     Toast.makeText(context,
@@ -200,7 +201,8 @@ fun RegisterPage(
                 Text("Already have an account?",color = MaterialTheme.colorScheme.onBackground)
                 TextButton(
                     onClick = {
-                        navController.navigate(route = Screens.LogInScreen.routes)
+//                        navController.navigate(route = Screens.LogInScreen.routes)
+                        navController.navigate(route = Screens.LogInScreen)
                     }
                 ) {
                     Text("Login")
@@ -235,6 +237,5 @@ fun handleRegistrationResult(
         is RegisterResult.UnknownFailure -> {
             onEvent(RegisterPageEvents.RegistrationFailure(error = "Registration Failed Unknown Error"))
         }
-
     }
 }

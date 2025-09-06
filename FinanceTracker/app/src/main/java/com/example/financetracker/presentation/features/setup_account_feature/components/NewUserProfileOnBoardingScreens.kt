@@ -62,7 +62,8 @@ fun NewUserProfileOnBoardingScreens(
                     }
                     else{
                         Toast.makeText(context,"Profile Successfully Update",Toast.LENGTH_SHORT).show()
-                        navController.navigate(Screens.HomePageScreen.routes)
+//                        navController.navigate(Screens.HomePageScreen.routes)
+                        navController.navigate(Screens.HomePageScreen)
                     }
                 }
             }

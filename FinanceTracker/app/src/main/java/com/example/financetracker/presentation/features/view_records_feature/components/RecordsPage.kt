@@ -66,7 +66,12 @@ fun RecordsPage(
                                 text = "Info",
                                 onClick = {
 //                                    navController.navigate(Screens.SingleTransactionScreen.routes)
-                                    navController.navigate("${Screens.SingleTransactionScreen.routes}/${viewTransactionsStates.selectedTransactions.firstOrNull()}")
+//                                    navController.navigate("${Screens.SingleTransactionScreen.routes}/${viewTransactionsStates.selectedTransactions.firstOrNull()}")
+                                    val transactionId = viewTransactionsStates.selectedTransactions.firstOrNull()
+
+                                    if (transactionId != null) {
+                                        navController.navigate(Screens.SingleTransactionScreen(transactionId))
+                                    }
 
                                 }
                             ),
@@ -127,7 +132,12 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Info",
                                 onClick = {
-                                    navController.navigate("${Screens.SingleSavedItemScreen.routes}/${viewSavedItemsStates.selectedSavedItems.firstOrNull()}")
+//                                    navController.navigate("${Screens.SingleSavedItemScreen.routes}/${viewSavedItemsStates.selectedSavedItems.firstOrNull()}")
+                                    val savedItemId = viewSavedItemsStates.selectedSavedItems.firstOrNull()
+
+                                    if (savedItemId != null) {
+                                        navController.navigate(Screens.SingleTransactionScreen(savedItemId))
+                                    }
                                 }
                             ),
                             MenuItems(
