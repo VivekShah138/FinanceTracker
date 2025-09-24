@@ -38,7 +38,7 @@ import com.example.financetracker.presentation.features.auth_feature.auth_utils.
 import com.example.financetracker.presentation.features.auth_feature.events.RegisterPageEvents
 import com.example.financetracker.presentation.features.auth_feature.viewmodels.RegisterPageViewModel
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.RegisterResult
-import com.example.financetracker.navigation.Screens
+import com.example.financetracker.navigation.core.Screens
 import kotlinx.coroutines.launch
 
 @Composable

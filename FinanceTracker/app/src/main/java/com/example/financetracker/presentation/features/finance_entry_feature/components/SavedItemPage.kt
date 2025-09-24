@@ -1,8 +1,6 @@
 package com.example.financetracker.presentation.features.finance_entry_feature.components
 
-import android.os.Build
 import android.widget.Toast
-import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.financetracker.navigation.Screens
+import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.SavedItemViewModel
 import com.example.financetracker.presentation.features.finance_entry_feature.events.SavedItemsEvents

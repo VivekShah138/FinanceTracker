@@ -1,4 +1,4 @@
-package com.example.financetracker.navigation
+package com.example.financetracker.navigation.core
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List

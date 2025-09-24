@@ -1,9 +1,9 @@
-package com.example.financetracker.navigation
+package com.example.financetracker.navigation.core
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Screens {
+sealed class Screens{
     @Serializable
     data object RegistrationScreen: Screens()
 

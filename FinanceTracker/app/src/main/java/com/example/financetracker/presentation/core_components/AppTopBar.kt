@@ -20,12 +20,12 @@ import com.example.financetracker.utils.MenuItems
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    title: String,
-    showBackButton: Boolean = false,  // Optional Back Button
-    showMenu: Boolean = false,        // Optional Menu Button
-    onBackClick: () -> Unit,     // Non-nullable function
-    menuItems: List<MenuItems> = listOf(),      // Non-nullable function
     modifier: Modifier = Modifier,
+    title: String,
+    showBackButton: Boolean = false,
+    showMenu: Boolean = false,
+    onBackClick: () -> Unit,
+    menuItems: List<MenuItems> = listOf(),
     customActions: @Composable RowScope.() -> Unit = {},
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     titleContentColor: Color = MaterialTheme.colorScheme.onBackground,

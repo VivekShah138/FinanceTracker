@@ -4,8 +4,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.financetracker.presentation.features.auth_feature.components.RegisterPage
-import com.example.financetracker.presentation.features.auth_feature.viewmodels.RegisterPageViewModel
+import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.category_feature.component.CategoriesScreen
 import com.example.financetracker.presentation.features.category_feature.viewmodel.CoreCategoriesViewModel
 import com.example.financetracker.presentation.features.category_feature.viewmodel.ExpenseCategoriesViewModel

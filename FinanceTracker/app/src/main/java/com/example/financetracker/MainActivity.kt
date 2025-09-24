@@ -23,15 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 
-import com.example.financetracker.navigation.BottomNavItemsList
+import com.example.financetracker.navigation.core.BottomNavItemsList
 import com.example.financetracker.domain.usecases.usecase_wrapper.SettingsUseCaseWrapper
-import com.example.financetracker.navigation.FinanceTrackerNavHost
-import com.example.financetracker.navigation.Screens
+import com.example.financetracker.navigation.core.FinanceTrackerNavHost
 import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
 import com.example.financetracker.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint

@@ -12,80 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import com.example.financetracker.navigation.BottomNavItem
-import com.example.financetracker.navigation.BottomNavItemsList
-
-//@Composable
-//fun BottomNavigationBar(
-//    navController: NavController = rememberNavController(),
-//    items: List<BottomNavItem> = BottomNavItemsList,
-//    showBadge: Boolean = false,
-//    currentRoute: NavDestination?,
-//    containerColor: Color = MaterialTheme.colorScheme.background
-//) {
-//    Column(
-//        modifier = Modifier.fillMaxWidth()
-//    ) {
-//        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-//        NavigationBar(
-//            containerColor = containerColor,
-//            modifier = Modifier.height(100.dp)
-//        ) {
-//            items.forEachIndexed { index, bottomNavItem ->
-//                val ifIncluded = currentRoute?.hierarchy?.any {
-//                    if(bottomNavItem.screen == Screens.ViewRecordsScreen){
-//                        it.route?.startsWith(bottomNavItem.screen.routes) == true
-//                    }else{
-//                        it.route == bottomNavItem.screen.routes
-//                    }
-//
-//                }
-//
-//                NavigationBarItem(
-//                    selected = ifIncluded == true,
-//                    onClick = {
-//                        val route = if (bottomNavItem.screen.routes == Screens.ViewRecordsScreen.routes) {
-//                            "${bottomNavItem.screen.routes}/0"
-//                        } else {
-//                            bottomNavItem.screen.routes
-//                        }
-//                        navController.navigate(route) {
-//                            popUpTo(navController.graph.findStartDestination().id) {
-//                                saveState = true
-//                            }
-//                            launchSingleTop = true
-//                        }
-//                    },
-//                    icon = {
-//                        BadgedBox(
-//                            badge = {
-//                                if (bottomNavItem.screen is Screens.SettingScreen && showBadge) {
-//                                    Badge(
-//                                        modifier = Modifier.offset(x = (-8.5).dp,y = (24).dp)
-//                                    )
-//                                }
-//                            }
-//                        ) {
-//                            Icon(
-//                                imageVector = bottomNavItem.icon,
-//                                contentDescription = bottomNavItem.label,
-//                                modifier = Modifier.size(
-//                                    if (bottomNavItem.screen is Screens.AddTransactionsScreen) 36.dp else 24.dp
-//                                )
-//                            )
-//                        }
-//
-//                    },
-//                    colors = NavigationBarItemDefaults.colors(
-//                        selectedIconColor = MaterialTheme.colorScheme.primary,
-//                        unselectedIconColor = Color.Gray,
-//                        indicatorColor = MaterialTheme.colorScheme.primaryContainer
-//                    )
-//                )
-//            }
-//        }
-//    }
-//}
+import com.example.financetracker.navigation.core.BottomNavItem
+import com.example.financetracker.navigation.core.BottomNavItemsList
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -94,7 +22,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.financetracker.navigation.FinanceTrackerTopLevelDestination
+import com.example.financetracker.navigation.core.FinanceTrackerTopLevelDestination
 
 @Composable
 fun BottomNavigationBar(

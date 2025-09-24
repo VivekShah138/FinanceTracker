@@ -45,7 +45,7 @@ import com.example.financetracker.presentation.features.auth_feature.auth_utils.
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.LogInResult
 import com.example.financetracker.presentation.features.auth_feature.events.LoginPageEvents
 import com.example.financetracker.presentation.features.auth_feature.viewmodels.LoginPageViewModel
-import com.example.financetracker.navigation.Screens
+import com.example.financetracker.navigation.core.Screens
 
 import kotlinx.coroutines.launch
 

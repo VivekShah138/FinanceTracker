@@ -15,7 +15,7 @@ import com.example.financetracker.presentation.features.setup_account_feature.Pr
 import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.navigation.Screens
+import com.example.financetracker.navigation.core.Screens
 
 @Composable
 fun NewUserProfileOnBoardingScreens(
