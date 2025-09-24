@@ -26,10 +26,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 
 import com.example.financetracker.navigation.BottomNavItemsList
 import com.example.financetracker.domain.usecases.usecase_wrapper.SettingsUseCaseWrapper
 import com.example.financetracker.navigation.FinanceTrackerNavHost
+import com.example.financetracker.navigation.Screens
 import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
 import com.example.financetracker.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -109,23 +111,27 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
+
                     val currentBackStackEntry by navController.currentBackStackEntryAsState()
-//                    val currentRoute = currentBackStackEntry?.destination
-//
-//                    val showBottomBar = BottomNavItemsList.any {
-//                        currentRoute?.route?.startsWith(it.screen.routes) == true
-//                    }
-                    val showBottomBar = true
 
+                    val currentDestination = currentBackStackEntry?.destination
 
+                    val bottomNavLabels = BottomNavItemsList.map { it.label }
+
+                    val showBottomBar = bottomNavLabels.any { label ->
+                        Log.d("Main Activity","label: $label")
+                        Log.d("Main Activity","currentDestination?.route?: ${currentDestination?.route}")
+                        currentDestination?.route?.contains(label, ignoreCase = true) == true
+
+                    }
+
+                    Log.d("Main Activity","show bottom bar: $showBottomBar")
 
                     Scaffold(
                         bottomBar = {
                             if(showBottomBar){
                                 BottomNavigationBar(
                                     navController = navController,
-//                                    showBadge = !settingsState.budgetExist,
-//                                    currentRoute = currentRoute
                                 )
                             }
                         }

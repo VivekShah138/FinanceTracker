@@ -2,6 +2,7 @@ package com.example.financetracker.navigation
 
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class Screens {
     @Serializable
     data object RegistrationScreen: Screens()
@@ -28,7 +29,7 @@ sealed class Screens {
     data class ViewRecordsScreen(val tabIndex: Int = 0): Screens()
 
     @Serializable
-    data object GraphicalVisualizationScreen: Screens()
+    data object ChartsScreen: Screens()
 
     @Serializable
     data object SettingScreen: Screens()

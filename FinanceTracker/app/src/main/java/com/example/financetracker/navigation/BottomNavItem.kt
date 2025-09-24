@@ -6,12 +6,10 @@ import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.AutoGraph
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
@@ -67,7 +65,7 @@ val BottomNavItemsList = listOf(
         label = "Add"
     ),
     BottomNavItem(
-        Screens.GraphicalVisualizationScreen,
+        Screens.ChartsScreen,
         selectedIcon = Icons.Filled.AutoGraph,
         unselectedIcon = Icons.Outlined.AutoGraph,
         label = "Charts"
