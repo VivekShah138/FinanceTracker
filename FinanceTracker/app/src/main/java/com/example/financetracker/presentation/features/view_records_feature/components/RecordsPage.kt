@@ -19,7 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.utils.MenuItems
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewSavedItemsEvents
 import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewSavedItemsViewModel
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewTransactionsEvents
@@ -66,7 +66,12 @@ fun RecordsPage(
                                 text = "Info",
                                 onClick = {
 //                                    navController.navigate(Screens.SingleTransactionScreen.routes)
-                                    navController.navigate("${Screens.SingleTransactionScreen.routes}/${viewTransactionsStates.selectedTransactions.firstOrNull()}")
+//                                    navController.navigate("${Screens.SingleTransactionScreen.routes}/${viewTransactionsStates.selectedTransactions.firstOrNull()}")
+                                    val transactionId = viewTransactionsStates.selectedTransactions.firstOrNull()
+
+                                    if (transactionId != null) {
+                                        navController.navigate(Screens.SingleTransactionScreen(transactionId))
+                                    }
 
                                 }
                             ),
@@ -127,7 +132,12 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Info",
                                 onClick = {
-                                    navController.navigate("${Screens.SingleSavedItemScreen.routes}/${viewSavedItemsStates.selectedSavedItems.firstOrNull()}")
+//                                    navController.navigate("${Screens.SingleSavedItemScreen.routes}/${viewSavedItemsStates.selectedSavedItems.firstOrNull()}")
+                                    val savedItemId = viewSavedItemsStates.selectedSavedItems.firstOrNull()
+
+                                    if (savedItemId != null) {
+                                        navController.navigate(Screens.SingleTransactionScreen(savedItemId))
+                                    }
                                 }
                             ),
                             MenuItems(

@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.domain.model.Currency
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewTransactionsEvents
 import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewTransactionsViewModel
@@ -114,8 +114,8 @@ fun SingleTransactionScreen(
                         onConfirm = {
                             viewTransactionsViewModel.onEvent(ViewTransactionsEvents.DeleteSelectedTransactions)
                             viewTransactionsViewModel.onEvent(ViewTransactionsEvents.ChangeCustomDateAlertBox(state = false))
-                            navController.navigate("${Screens.ViewRecordsScreen.routes}/0")
-
+//                            navController.navigate("${Screens.ViewRecordsScreen.routes}/0")
+                            navController.navigate(Screens.ViewRecordsScreen(tabIndex = 0))
                         },
                         showDialog = states.customDeleteAlertBoxState
                     )

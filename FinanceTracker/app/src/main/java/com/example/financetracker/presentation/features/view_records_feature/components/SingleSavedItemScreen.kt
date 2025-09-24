@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewSavedItemsEvents
 import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewSavedItemsViewModel
@@ -135,7 +135,8 @@ fun SingleSavedItemScreen(
                             viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
 //                                navController.navigate(Screens.ViewRecordsScreen.routes)
                             viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
-                            navController.navigate("${Screens.ViewRecordsScreen.routes}/1")
+//                            navController.navigate("${Screens.ViewRecordsScreen.routes}/1")
+                            navController.navigate(Screens.ViewRecordsScreen(tabIndex = 1))
 
                         },
                         showDialog = states.customDeleteAlertBoxState

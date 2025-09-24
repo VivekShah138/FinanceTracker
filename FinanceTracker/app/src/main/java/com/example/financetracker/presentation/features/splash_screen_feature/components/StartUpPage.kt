@@ -46,7 +46,7 @@ import com.example.financetracker.presentation.features.auth_feature.viewmodels.
 import com.example.financetracker.presentation.features.splash_screen_feature.StartPageViewModel
 import com.example.financetracker.presentation.features.splash_screen_feature.StartUpPageEvents
 import com.example.financetracker.presentation.features.splash_screen_feature.StartUpPageStates
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
@@ -101,10 +101,12 @@ fun StartUpPageScreen(
                         Toast.LENGTH_SHORT).show()
 
                     if(!loginPageStates.userProfile.profileSetUpCompleted){
-                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
+//                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
+                        navController.navigate(Screens.NewUserProfileOnBoardingScreen)
                     }
                     else{
-                        navController.navigate(Screens.HomePageScreen.routes)
+//                        navController.navigate(Screens.HomePageScreen.routes)
+                        navController.navigate(Screens.HomePageScreen)
                     }
                 }
                 is LoginPageViewModel.LoginEvent.Error->{
@@ -121,8 +123,13 @@ fun StartUpPageScreen(
 
     LaunchedEffect(startUpPageStates.isLoggedIn) {
         if(startUpPageStates.isLoggedIn){
-            navController.navigate(route = Screens.HomePageScreen.routes) {
-                popUpTo(route = Screens.LogInScreen.routes) {
+//            navController.navigate(route = Screens.HomePageScreen.routes) {
+//                popUpTo(route = Screens.LogInScreen.routes) {
+//                    inclusive = true
+//                }
+//            }
+            navController.navigate(route = Screens.HomePageScreen) {
+                popUpTo(route = Screens.LogInScreen) {
                     inclusive = true
                 }
             }

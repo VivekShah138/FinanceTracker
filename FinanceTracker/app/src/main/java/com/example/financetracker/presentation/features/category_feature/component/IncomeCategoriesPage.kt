@@ -28,66 +28,6 @@ fun IncomeCategoriesPage(
     val states by viewModel.incomeCategoriesState.collectAsStateWithLifecycle()
     val categoryStates by viewModel.categoryState.collectAsStateWithLifecycle()
 
-//    LazyColumn(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(16.dp)
-//    ) {
-//        // Predefined Section
-//        item {
-//            Text(
-//                text = "Predefined Categories",
-//                style = MaterialTheme.typography.titleMedium,
-//                modifier = Modifier.padding(vertical = 8.dp)
-//            )
-//        }
-//
-//        items(states.predefinedCategories) { category ->
-//            SingleCategoryDisplay(
-//                onClickDelete = {},
-//                onClickItem = {},
-//                text = category.name,
-//                isPredefined = true
-//            )
-//        }
-//
-//        // Custom Section
-//        item {
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Text(
-//                text = "Custom Categories",
-//                style = MaterialTheme.typography.titleMedium,
-//                modifier = Modifier.padding(vertical = 8.dp)
-//            )
-//        }
-//
-//        items(states.customCategories) { category ->
-//            SingleCategoryDisplay(
-//                onClickDelete = {
-//                    viewModel.onEvent(
-//                        SharedCategoriesEvents.ChangeSelectedCategory(category)
-//                    )
-//                    viewModel.onEvent(
-//                        SharedCategoriesEvents.DeleteCategory
-//                    )
-//                },
-//                onClickItem = {
-//                    Log.d("ExpenseCategoriesPage","category: $category")
-//                    viewModel.onEvent(
-//                        SharedCategoriesEvents.ChangeSelectedCategory(category)
-//                    )
-//
-//                    viewModel.onEvent(
-//                        SharedCategoriesEvents.ChangeCategoryAlertBoxState(true)
-//                    )
-//                },
-//                text = category.name,
-//                isPredefined = false
-//            )
-//        }
-//    }
-
-
 
     LazyColumn(
         modifier = Modifier

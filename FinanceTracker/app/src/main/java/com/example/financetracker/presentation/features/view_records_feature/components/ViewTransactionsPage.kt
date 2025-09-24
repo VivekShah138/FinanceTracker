@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.finance_entry_feature.components.TransactionItemCard
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewTransactionsEvents
 import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewTransactionsViewModel
@@ -158,7 +158,13 @@ fun ViewTransactionsPage(
                                                 )
                                             )
 
-                                            navController.navigate("${Screens.SingleTransactionScreen.routes}/${transaction.transactionId}")
+                                            val transactionId = transaction.transactionId
+                                            if(transactionId != null){
+                                                navController.navigate(Screens.SingleTransactionScreen(transactionId = transactionId))
+                                            }
+
+
+//                                            navController.navigate("${Screens.SingleTransactionScreen.routes}/${transaction.transactionId}")
                                         }
                                     },
                                     onLongClick = {

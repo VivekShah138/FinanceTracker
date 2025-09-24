@@ -33,7 +33,7 @@ import com.example.financetracker.presentation.features.auth_feature.auth_utils.
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.ResetPasswordWithEmailResult
 import com.example.financetracker.presentation.features.auth_feature.events.ForgotPasswordEvents
 import com.example.financetracker.presentation.features.auth_feature.viewmodels.ForgotPasswordViewModel
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 import kotlinx.coroutines.launch
 
 @Composable
@@ -59,7 +59,8 @@ fun ForgotPasswordPage(
                     Toast.makeText(context,
                         "Email Sent Successfully",
                         Toast.LENGTH_SHORT).show()
-                    navController.navigate(route = Screens.LogInScreen.routes)
+//                    navController.navigate(route = Screens.LogInScreen.routes)
+                    navController.navigate(route = Screens.LogInScreen)
                 }
                 is ForgotPasswordViewModel.ForgotPasswordValidationEvent.Failure -> {
                     Toast.makeText(context,

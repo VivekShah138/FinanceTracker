@@ -28,10 +28,10 @@ import androidx.navigation.NavController
 import com.example.financetracker.presentation.features.budget_feature.components.NoBudgetMessage
 import com.example.financetracker.utils.MenuItems
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.home_feature.HomePageEvents
 import com.example.financetracker.presentation.features.home_feature.HomePageViewModel
-import com.example.financetracker.presentation.features.settings_feature.SettingViewModel
+import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -39,13 +39,13 @@ import com.example.financetracker.presentation.features.settings_feature.Setting
 fun HomePageScreen(
     viewModel: HomePageViewModel,
     navController: NavController,
-    settingViewModel: SettingViewModel
+    settingsViewModel: SettingsViewModel
 ){
 
     val states by viewModel.homePageStates.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        settingViewModel.loadUserProfileIfReady()
+        settingsViewModel.loadUserProfileIfReady()
         Log.d("HomePage","function called")
     }
 
@@ -63,14 +63,16 @@ fun HomePageScreen(
                         MenuItems(
                             text = "View Budget",
                             onClick = {
-                                navController.navigate(route = Screens.BudgetScreen.routes )
+//                                navController.navigate(route = Screens.BudgetScreen.routes )
+                                navController.navigate(route = Screens.BudgetScreen)
                             }
                         ),
                         MenuItems(
                             text = "Logout",
                             onClick = {
                                 viewModel.onEvent(HomePageEvents.Logout)
-                                navController.navigate(route = Screens.StartUpPageScreen.routes )
+//                                navController.navigate(route = Screens.StartUpPageScreen.routes )
+                                navController.navigate(route = Screens.StartUpPageScreen)
                             }
                         )
                     )
@@ -125,7 +127,7 @@ fun HomePageScreen(
                                     style = MaterialTheme.typography.titleSmall,
                                     textAlign = TextAlign.End,
                                     modifier = Modifier.clickable {
-                                        navController.navigate(route = "${Screens.ViewRecordsScreen.routes}/0")
+                                        navController.navigate(route = Screens.ViewRecordsScreen(tabIndex = 0))
                                     },
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -159,7 +161,8 @@ fun HomePageScreen(
                                         NoBudgetMessage()
                                         Button(
                                             onClick = {
-                                                navController.navigate(Screens.BudgetScreen.routes)
+//                                                navController.navigate(Screens.BudgetScreen.routes)
+                                                navController.navigate(Screens.BudgetScreen)
                                             },
                                             modifier = Modifier
                                                 .fillMaxWidth()

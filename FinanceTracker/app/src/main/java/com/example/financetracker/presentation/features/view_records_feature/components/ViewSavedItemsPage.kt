@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import com.example.financetracker.presentation.features.finance_entry_feature.components.SavedItemsCard
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewSavedItemsEvents
@@ -107,7 +107,11 @@ fun ViewSavedItemsPage(
                             if (states.isSelectionMode) {
                                 viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             } else {
-                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
+                                val savedItemId = savedItems.itemId
+                                if (savedItemId != null) {
+                                    navController.navigate(Screens.SingleSavedItemScreen(savedItemId))
+                                }
+//                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
                             }
                         },
                         onLongClick = {
@@ -134,7 +138,11 @@ fun ViewSavedItemsPage(
                             if (states.isSelectionMode) {
                                 viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             } else {
-                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
+//                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
+                                val savedItemId = savedItems.itemId
+                                if (savedItemId != null) {
+                                    navController.navigate(Screens.SingleSavedItemScreen(savedItemId))
+                                }
                             }
                         },
                         onLongClick = {

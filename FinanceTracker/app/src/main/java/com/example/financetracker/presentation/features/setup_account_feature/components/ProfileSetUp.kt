@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpEvents
 import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpViewModel
 
@@ -47,7 +47,8 @@ fun ProfileSetUp(
                 }
                 is ProfileSetUpViewModel.ProfileUpdateEvent.Success -> {
                     Toast.makeText(context,"Profile Successfully Update",Toast.LENGTH_LONG).show()
-                    navController.navigate(Screens.HomePageScreen.routes)
+//                    navController.navigate(Screens.HomePageScreen.routes)
+                    navController.navigate(Screens.HomePageScreen)
                 }
             }
         }

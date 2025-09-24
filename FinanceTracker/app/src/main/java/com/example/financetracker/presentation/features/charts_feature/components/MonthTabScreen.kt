@@ -26,31 +26,7 @@ fun MonthTabScreen(
     showOnlyYear: Boolean,
     onEvent: (ChartEvents) -> Unit
 ){
-
-//    Column(
-//        modifier = Modifier.fillMaxWidth(),
-//        verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//
-//        Log.d("YearTabScreen" ,"show Only Year: $showOnlyYear")
-//
-//        MonthSelectorCharts2(
-//            state = states,
-//            onEvent = onEvent,
-//            context = context,
-//            showOnlyYear = showOnlyYear
-//        )
-//
-//        Spacer(modifier = Modifier.height(8.dp))
-//
-//        if(monthlyExpenses.isEmpty()){
-//            Text("No Transactions")
-//        }
-//        else{
-//            ExpensePieChartWithLegend(monthlyExpenses)
-//        }
-//    }
+    
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -73,22 +49,7 @@ fun MonthTabScreen(
         } else {
             ExpensePieChartWithLegend(expenseData = monthlyExpenses, currencySymbol = states.baseCurrencySymbol)
         }
-
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(300.dp), // 👈 same height you'd use for the pie chart
-//            contentAlignment = Alignment.Center
-//        ) {
-//            if (monthlyExpenses.isEmpty()) {
-//                Text("No Transactions")
-//            } else {
-//                ExpensePieChartWithLegend(monthlyExpenses)
-//            }
-//        }
     }
-
-
 }
 
 @Preview(

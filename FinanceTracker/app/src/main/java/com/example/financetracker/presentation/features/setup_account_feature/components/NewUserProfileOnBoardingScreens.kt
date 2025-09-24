@@ -15,7 +15,7 @@ import com.example.financetracker.presentation.features.setup_account_feature.Pr
 import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.utils.Screens
+import com.example.financetracker.navigation.core.Screens
 
 @Composable
 fun NewUserProfileOnBoardingScreens(
@@ -62,7 +62,8 @@ fun NewUserProfileOnBoardingScreens(
                     }
                     else{
                         Toast.makeText(context,"Profile Successfully Update",Toast.LENGTH_SHORT).show()
-                        navController.navigate(Screens.HomePageScreen.routes)
+//                        navController.navigate(Screens.HomePageScreen.routes)
+                        navController.navigate(Screens.HomePageScreen)
                     }
                 }
             }
