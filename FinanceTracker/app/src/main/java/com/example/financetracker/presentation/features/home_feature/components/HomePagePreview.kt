@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(
@@ -40,7 +40,7 @@ fun HomePagePreviewScreen(){
     )
 
 
-    AppTheme (darkTheme = true) {
+    FinanceTrackerTheme (darkTheme = true) {
         Scaffold(
             topBar = {
                 AppTopBar(

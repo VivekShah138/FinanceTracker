@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @Composable
 fun ExpenseIncomeCards(
@@ -121,7 +121,7 @@ fun ExpenseIncomeCards(
 @Composable
 fun ExpenseIncomeCardsPreview(){
 
-    AppTheme(
+    FinanceTrackerTheme(
         darkTheme = true,
         dynamicColor = true
     ) {

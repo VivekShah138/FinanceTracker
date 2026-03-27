@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @Preview(
     showBackground = true,
@@ -26,7 +26,7 @@ import com.example.financetracker.ui.theme.AppTheme
 @Composable
 fun ProfileSetUpPreview(){
 
-    AppTheme(darkTheme = true) {
+    FinanceTrackerTheme(darkTheme = true) {
 
 
         Scaffold(

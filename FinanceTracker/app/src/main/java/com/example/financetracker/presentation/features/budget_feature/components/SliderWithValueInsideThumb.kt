@@ -23,7 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.material3.*
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +97,7 @@ fun CustomThumb(sliderPosition: Float) {
 @Composable
 fun SliderWithValueInsideCustomThumbPreview(){
 
-    AppTheme(dynamicColor = false) {
+    FinanceTrackerTheme(dynamicColor = false) {
 
         SliderWithValueInsideCustomThumb(
             sliderPosition = 50f,

@@ -23,14 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.financetracker.presentation.features.auth_feature.states.RegisterPageStates
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @Preview(
     showBackground = true,
     showSystemUi = true)
 @Composable
 fun RegistrationPagePreview() {
-    AppTheme(dynamicColor = false, darkTheme = true) { // Wrap with MaterialTheme to apply colors properly
+    FinanceTrackerTheme(dynamicColor = false, darkTheme = true) { // Wrap with MaterialTheme to apply colors properly
 
         Content(
             RegisterPageStates(

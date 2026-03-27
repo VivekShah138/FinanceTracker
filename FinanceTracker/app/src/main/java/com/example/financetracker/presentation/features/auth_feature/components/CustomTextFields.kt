@@ -28,7 +28,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 
 @Composable
@@ -222,7 +222,7 @@ fun CustomPasswordField(
 @Composable
 fun CustomTextFieldsPreview2() {
 
-    AppTheme(
+    FinanceTrackerTheme(
         darkTheme = true,
         dynamicColor = true
     ) {
@@ -250,7 +250,7 @@ fun CustomTextFieldsPreview2() {
 @Composable
 fun CustomTextFieldsPreview(){
 
-    AppTheme(
+    FinanceTrackerTheme(
         darkTheme = true,
         dynamicColor = true
     ) {
@@ -268,7 +268,7 @@ fun CustomTextFieldsPreview(){
 
     }
 
-    AppTheme(
+    FinanceTrackerTheme(
         darkTheme = false,
         dynamicColor = true
     ) {

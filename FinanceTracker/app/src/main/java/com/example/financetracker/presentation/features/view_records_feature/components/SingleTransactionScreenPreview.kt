@@ -28,7 +28,7 @@ import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.domain.model.Currency
 import java.text.SimpleDateFormat
 import com.example.financetracker.domain.model.Transactions
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 
 @Preview(showBackground = true, showSystemUi = true, name = "With Exchange Rate")
@@ -49,7 +49,7 @@ fun SingleTransactionWithExchangeRatePreview() {
         isRecurring = false
     )
 
-    AppTheme(
+    FinanceTrackerTheme(
         dynamicColor = false
     ) {
         SingleTransactionScreen2(transaction = transaction, baseCurrency = emptyMap())
@@ -76,7 +76,7 @@ fun SingleTransactionWithoutExchangeRatePreview() {
         isRecurring = false
     )
 
-    AppTheme(
+    FinanceTrackerTheme(
         dynamicColor = false
     ) {
         SingleTransactionScreen2(transaction = transaction, baseCurrency = emptyMap())

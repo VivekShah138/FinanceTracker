@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.financetracker.presentation.features.auth_feature.states.LoginPageStates
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 
 @Preview(
@@ -41,7 +41,7 @@ import com.example.financetracker.ui.theme.AppTheme
     showSystemUi = true)
 @Composable
 fun LoginPagePreview() {
-    AppTheme { // Wrap with MaterialTheme to apply colors properly
+    FinanceTrackerTheme { // Wrap with MaterialTheme to apply colors properly
 
         Content2(
             LoginPageStates(

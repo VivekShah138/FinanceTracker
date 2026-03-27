@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.financetracker.presentation.features.budget_feature.BudgetStates
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @Preview(
     showBackground = true,
@@ -146,7 +146,7 @@ fun BudgetScreenPreview2(
 
 ){
 
-    AppTheme(
+    FinanceTrackerTheme(
         dynamicColor = false,
         darkTheme = true
     ) {

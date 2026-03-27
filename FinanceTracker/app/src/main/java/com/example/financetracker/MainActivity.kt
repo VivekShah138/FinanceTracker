@@ -30,7 +30,7 @@ import com.example.financetracker.navigation.core.BottomNavItemsList
 import com.example.financetracker.domain.usecases.usecase_wrapper.SettingsUseCaseWrapper
 import com.example.financetracker.navigation.core.FinanceTrackerNavHost
 import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -103,7 +103,7 @@ class MainActivity : ComponentActivity() {
             Log.d("MainActivitySetting","Dark Mode $darkMode")
             Log.d("MainActivitySettings","Dark Mode State ${settingsState.darkMode}")
 
-            AppTheme (dynamicColor = false, darkTheme = darkMode) {
+            FinanceTrackerTheme (dynamicColor = false, darkTheme = darkMode) {
                 Surface(
                     color = MaterialTheme.colorScheme.background
                 ) {

@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.example.financetracker.domain.model.Transactions
 import com.example.financetracker.presentation.features.finance_entry_feature.components.TransactionItemCard
 import com.example.financetracker.utils.DurationFilter
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @Preview(
     showBackground = true,
@@ -43,7 +43,7 @@ import com.example.financetracker.ui.theme.AppTheme
 @Composable
 fun ViewTransactionsPagePreview(){
 
-    AppTheme(dynamicColor = false, darkTheme = true) {
+    FinanceTrackerTheme(dynamicColor = false, darkTheme = true) {
 
 
         val transactionList: List<Transactions> = listOf(

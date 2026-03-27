@@ -79,6 +79,4 @@ class FinanceTracker : Application(), Configuration.Provider {
             notificationManager.createNotificationChannel(channel)
         }
     }
-
-
 }

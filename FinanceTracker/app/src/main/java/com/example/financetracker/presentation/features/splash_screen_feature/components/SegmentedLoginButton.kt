@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.clip
-import com.example.financetracker.ui.theme.AppTheme
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @Composable
 fun SegmentedLoginButton(
@@ -76,7 +76,7 @@ fun SegmentedLoginButton(
 fun SegmentedButtonPreview() {
     var selectedType by remember { mutableStateOf("Register") }
 
-    AppTheme(dynamicColor = false, darkTheme = true) {
+    FinanceTrackerTheme(dynamicColor = false, darkTheme = true) {
         SegmentedLoginButton(
             selectedType = selectedType,
             onLoginSelected = { selectedType = it },
