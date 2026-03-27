@@ -111,13 +111,4 @@ class UserPreferences @Inject constructor(
             remove(USER_NAME)
         }
     }
-
-
-
-    fun clearLogInPreference(){
-        sharedPreferences.edit() {
-            clear()
-        }
-    }
-
 }

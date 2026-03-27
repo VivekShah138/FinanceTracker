@@ -6,7 +6,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 val CATEGORY_MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        // Step 1: Create a temporary table with the new schema
+        // Create a temporary table with the new schema
         db.execSQL("""
             CREATE TABLE category_temp(
                 uid TEXT NOT NULL PRIMARY KEY,
@@ -17,7 +17,7 @@ val CATEGORY_MIGRATION_1_2 = object : Migration(1, 2) {
             )
         """)
 
-        // Step 2: Copy data from the old table to the new table
+        // Copy data from the old table to the new table
         db.execSQL("""
             INSERT INTO category_temp(uid, name, type, icon, isCustom)
             SELECT 
@@ -29,10 +29,10 @@ val CATEGORY_MIGRATION_1_2 = object : Migration(1, 2) {
             FROM CategoryEntity
         """)
 
-        // Step 3: Drop the old table
+        // Drop the old table
         db.execSQL("DROP TABLE CategoryEntity")
 
-        // Step 4: Rename the new table to the old table's name
+        // Rename the new table to the old table's name
         db.execSQL("ALTER TABLE category_temp RENAME TO CategoryEntity")
     }
 }

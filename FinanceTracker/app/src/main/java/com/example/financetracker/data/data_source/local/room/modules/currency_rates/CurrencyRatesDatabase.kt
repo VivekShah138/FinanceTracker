@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [com.example.financetracker.data.data_source.local.room.modules.currency_rates.CurrencyRatesEntity::class],
+    entities = [CurrencyRatesEntity::class],
     version = 1
 )
 abstract class CurrencyRatesDatabase: RoomDatabase(){

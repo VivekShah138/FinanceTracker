@@ -32,5 +32,4 @@ interface TransactionDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM TransactionsEntity WHERE transactionId = :transactionId AND userUid = :userId LIMIT 1)")
     suspend fun doesTransactionExist(userId: String, transactionId: Int): Boolean
-
 }

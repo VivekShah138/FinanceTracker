@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [com.example.financetracker.data.data_source.local.room.modules.userprofile.UserProfileEntity::class],
+    entities = [UserProfileEntity::class],
     version = 2
 )
 abstract class UserProfileDatabase:RoomDatabase() {

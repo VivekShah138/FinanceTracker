@@ -32,22 +32,22 @@ class CountryLocalRepositoryImpl @Inject constructor(
     override suspend fun insertCountries() {
 
         val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED) // Ensures work runs only when connected
+            .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<PrepopulateCountryDatabaseWorker>()
             .setConstraints(constraints)
-            .setBackoffCriteria( // Set retry strategy
+            .setBackoffCriteria(
                 BackoffPolicy.LINEAR,
-                30, TimeUnit.SECONDS // Minimum delay before retry
+                30, TimeUnit.SECONDS
             )
-            .addTag("PrepopulateCountries") // Add a tag for tracking logs
+            .addTag("PrepopulateCountries")
             .build()
 
         Log.d("WorkManagerCountries", "WorkManager enqueued: $workRequest")
         workManager.enqueueUniqueWork(
             "PrepopulateCountries",
-            ExistingWorkPolicy.KEEP,  // Ensures it runs even after app restart
+            ExistingWorkPolicy.KEEP,
             workRequest
         )
     }
@@ -58,6 +58,4 @@ class CountryLocalRepositoryImpl @Inject constructor(
         }
         countryDao.insertAll(countriesEntity)
     }
-
-
 }

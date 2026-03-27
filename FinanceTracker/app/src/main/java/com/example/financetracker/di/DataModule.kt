@@ -1,7 +1,7 @@
 package com.example.financetracker.di
 
-import TRANSACTIONS_MIGRATION_1_2
-import TRANSACTIONS_MIGRATION_2_3
+import com.example.financetracker.data.data_source.local.room.migration.TRANSACTIONS_MIGRATION_1_2
+import com.example.financetracker.data.data_source.local.room.migration.TRANSACTIONS_MIGRATION_2_3
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences

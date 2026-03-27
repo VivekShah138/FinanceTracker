@@ -9,7 +9,7 @@ interface CurrencyRatesApi {
 
     @GET("{apiKey}/latest/{baseCurrency}")
     suspend fun getExchangeRates(
-        @Path("apiKey") apiKey: String = ApiClient.API_KEY,  // Pass the API key dynamically
+        @Path("apiKey") apiKey: String = ApiClient.API_KEY,
         @Path("baseCurrency") baseCurrency: String
     ): CurrencyResponse
 }

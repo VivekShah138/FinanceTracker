@@ -23,22 +23,19 @@ class BudgetRemoteRepositoryImpl(
 ): BudgetRemoteRepository {
     override suspend fun uploadSingleBudgetToCloud(userId: String, budget: Budget) {
 
-        val budgetId = budget.id ?: firestore.collection("Users")
-            .document(userId)
-            .collection("Budgets")
-            .document().id
+        val budgetId = budget.id
 
         firestore.collection("Users")
             .document(userId)
             .collection("Budgets")
             .document(budgetId)
-            .set(budget.copy(cloudSync = true)) // Save with cloudSync = true
+            .set(budget.copy(cloudSync = true))
             .await()
     }
 
     override suspend fun uploadMultipleBudgetsToCloud() {
         val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED) // Ensures work runs only when connected
+            .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<UploadAllBudgetsToCloudDatabaseWorker>()

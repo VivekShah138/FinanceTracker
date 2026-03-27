@@ -29,10 +29,10 @@ val SAVED_ITEM_MIGRATION_1_2 = object : Migration(1, 2) {
 val SAVED_ITEM_MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(db: SupportSQLiteDatabase) {
 
-        // 1. Rename the existing table
+        // Rename the existing table
         db.execSQL("ALTER TABLE `SavedItemsEntity` RENAME TO `SavedItemsEntity_old`")
 
-        // 2. Create new table with `cloudSync` column
+        // Create new table with `cloudSync` column
         db.execSQL(
             """
             CREATE TABLE IF NOT EXISTS `SavedItemsEntity` (
@@ -48,7 +48,7 @@ val SAVED_ITEM_MIGRATION_2_3 = object : Migration(2, 3) {
             """
         )
 
-        // 3. Copy the data from old table to new table, set `cloudSync = 0`
+        // Copy the data from old table to new table, set `cloudSync = 0`
         db.execSQL(
             """
             INSERT INTO `SavedItemsEntity` (
@@ -74,7 +74,7 @@ val SAVED_ITEM_MIGRATION_2_3 = object : Migration(2, 3) {
             """
         )
 
-        // 4. Drop the old table
+        // Drop the old table
         db.execSQL("DROP TABLE `SavedItemsEntity_old`")
 
 

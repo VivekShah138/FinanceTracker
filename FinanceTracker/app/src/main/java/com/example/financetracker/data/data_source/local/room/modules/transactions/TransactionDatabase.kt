@@ -11,7 +11,6 @@ import com.example.financetracker.mapper.DateTypeConverters
 )
 @TypeConverters(DateTypeConverters::class)
 abstract class TransactionDatabase: RoomDatabase() {
-
     abstract val transactionDao: TransactionDao
     abstract val deletedTransactionDao: DeletedTransactionDao
 

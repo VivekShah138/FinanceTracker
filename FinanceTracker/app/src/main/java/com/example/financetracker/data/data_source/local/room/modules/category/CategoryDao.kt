@@ -10,19 +10,19 @@ import kotlinx.coroutines.flow.Flow
 interface CategoryDao {
 
     @Query(" SELECT * FROM CategoryEntity WHERE (type = :type AND uid = :uid) OR (type = :type AND isCustom = 0)")
-    fun getCategories(type: String, uid: String): Flow<List<com.example.financetracker.data.data_source.local.room.modules.category.CategoryEntity>>
+    fun getCategories(type: String, uid: String): Flow<List<CategoryEntity>>
 
     @Query(" SELECT * FROM CategoryEntity WHERE (type = :type AND uid = :uid AND isCustom = 1)")
-    fun getCustomCategories(type: String, uid: String): Flow<List<com.example.financetracker.data.data_source.local.room.modules.category.CategoryEntity>>
+    fun getCustomCategories(type: String, uid: String): Flow<List<CategoryEntity>>
 
     @Query(" SELECT * FROM CategoryEntity WHERE (type = :type AND isCustom = 0)")
-    fun getPredefinedCategories(type: String): Flow<List<com.example.financetracker.data.data_source.local.room.modules.category.CategoryEntity>>
+    fun getPredefinedCategories(type: String): Flow<List<CategoryEntity>>
 
     @Upsert
-    suspend fun insertCategories(categories: List<com.example.financetracker.data.data_source.local.room.modules.category.CategoryEntity>)
+    suspend fun insertCategories(categories: List<CategoryEntity>)
 
     @Upsert
-    suspend fun insertCategory(category: com.example.financetracker.data.data_source.local.room.modules.category.CategoryEntity)
+    suspend fun insertCategory(category: CategoryEntity)
 
     @Query("SELECT COUNT(*) FROM CategoryEntity")
     suspend fun getCategoryCount(): Int

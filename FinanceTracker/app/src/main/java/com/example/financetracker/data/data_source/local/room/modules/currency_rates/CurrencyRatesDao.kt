@@ -8,8 +8,8 @@ import androidx.room.Upsert
 interface CurrencyRatesDao {
 
     @Upsert
-    suspend fun insertCurrencyRates(currencyRates: com.example.financetracker.data.data_source.local.room.modules.currency_rates.CurrencyRatesEntity)
+    suspend fun insertCurrencyRates(currencyRates: CurrencyRatesEntity)
 
     @Query("SELECT * FROM CurrencyRatesEntity WHERE baseCurrency = :baseCurrency LIMIT 1")
-    suspend fun getCurrencyRates(baseCurrency: String): com.example.financetracker.data.data_source.local.room.modules.currency_rates.CurrencyRatesEntity?
+    suspend fun getCurrencyRates(baseCurrency: String): CurrencyRatesEntity?
 }

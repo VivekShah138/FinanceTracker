@@ -79,6 +79,4 @@ class SharedPreferencesRepositoryImpl @Inject constructor(
     override fun setFirstTimeLoggedIn(uid: String) {
         return userPreferences.setFirstTimeLoggedIn(uid)
     }
-
-
 }

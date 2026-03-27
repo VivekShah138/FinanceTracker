@@ -19,5 +19,4 @@ data class TransactionsEntity(
     val description: String?,
     val isRecurring: Boolean,
     val cloudSync: Boolean,
-
 )

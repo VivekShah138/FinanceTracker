@@ -46,7 +46,7 @@ class SavedItemsRemoteRepositoryImpl(
 
     override suspend fun deleteMultipleSavedItemsFromCloud() {
         val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED) // Ensures work runs only when connected
+            .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<DeletedAllSavedItemsFromCloudDatabaseWorker>()
@@ -79,7 +79,7 @@ class SavedItemsRemoteRepositoryImpl(
 
         } catch (e: Exception) {
             Log.e("FirestoreDelete", "Failed to delete saved item from cloud: ${e.localizedMessage}")
-            throw e // Optional: rethrow to retry from worker
+            throw e
         }
     }
 
@@ -99,7 +99,7 @@ class SavedItemsRemoteRepositoryImpl(
                 .document(userId)
                 .collection("SavedItems")
                 .document(itemId)
-                .set(savedItems.copy(cloudSync = true)) // Save with cloudSync = true
+                .set(savedItems.copy(cloudSync = true))
                 .await()
 
             // Update local Room DB

@@ -52,7 +52,7 @@ class RemoteRepositoryImpl @Inject constructor(
 
             // Overwrite the "userProfile" field completely (no merge)
             firestore.collection("Users").document(userId)
-                .set(mapOf("userProfile" to profile)) // No SetOptions.merge()
+                .set(mapOf("userProfile" to profile))
                 .await()
 
             Log.d("RemoteRepository", "User profile saved successfully")

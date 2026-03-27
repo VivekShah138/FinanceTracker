@@ -111,7 +111,6 @@ class CurrencyRatesLocalRepositoryImpl(
         if (now.after(targetTime)) {
             targetTime.add(Calendar.DAY_OF_YEAR, 1) // Schedule for next day if time has passed
         }
-
         return targetTime.timeInMillis - now.timeInMillis
     }
 }

@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DeletedTransactionDao {
-
     @Upsert
     suspend fun insertDeletedTransaction(deletedTransactionsEntity: DeletedTransactionsEntity)
 
@@ -16,8 +15,4 @@ interface DeletedTransactionDao {
 
     @Query("DELETE FROM DeletedTransactionsEntity WHERE transactionId =:transactionId")
     suspend fun deleteSelectedDeletedTransactionsByIds(transactionId: Int)
-
-
-
-
 }
