@@ -32,7 +32,7 @@ class ViewTransactionsViewModel @Inject constructor(
     private val _selectedItem = MutableStateFlow<Transactions?>(null)
     val selectedItem: StateFlow<Transactions?> = _selectedItem.asStateFlow()
 
-    private val uid = viewRecordsUseCaseWrapper.getUIDLocally() ?: "Unknown"
+    private val uid = viewRecordsUseCaseWrapper.getUIDLocalUseCase() ?: "Unknown"
 
     init {
         updateCategoryState()
@@ -71,7 +71,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
                 viewModelScope.launch(Dispatchers.IO) {
 
-                    val transaction = viewRecordsUseCaseWrapper.getAllLocalTransactionsById(viewTransactionsEvents.transactionId)
+                    val transaction = viewRecordsUseCaseWrapper.getTransactionByIdLocalUseCase(viewTransactionsEvents.transactionId)
                     Log.d("ViewTransactionsViewModelS","SavedItems Before ${_selectedItem.value}")
                     _selectedItem.value = transaction
                     Log.d("ViewTransactionsViewModelS","SavedItems After ${_selectedItem.value}")
@@ -214,12 +214,12 @@ class ViewTransactionsViewModel @Inject constructor(
                     selectedIds!!.forEach { selectedTransactionId ->
 
                         val selectedTransaction =
-                            viewRecordsUseCaseWrapper.getAllLocalTransactionsById(
+                            viewRecordsUseCaseWrapper.getTransactionByIdLocalUseCase(
                                 selectedTransactionId
                             )
 
                         if (selectedTransaction.cloudSync) {
-                            viewRecordsUseCaseWrapper.insertDeletedTransactionsLocally(
+                            viewRecordsUseCaseWrapper.insertDeletedTransactionsLocalUseCase(
                                 DeletedTransactions(
                                     transactionId = selectedTransactionId,
                                     userUid = uid
@@ -228,7 +228,7 @@ class ViewTransactionsViewModel @Inject constructor(
                         }
 
                         // 1. Delete locally
-                        viewRecordsUseCaseWrapper.deleteSelectedTransactionsByIdsLocally(
+                        viewRecordsUseCaseWrapper.deleteTransactionByIdLocalUseCase(
                             selectedTransactionId
                         )
                     }
@@ -301,11 +301,11 @@ class ViewTransactionsViewModel @Inject constructor(
             Log.d("ViewTransactionsViewModelType","SelectedTransaction Type: $selectedType ")
 
             val allCategories = when (selectedType) {
-                TransactionTypeFilter.Income -> viewRecordsUseCaseWrapper.getAllCategories(type = "income", uid).first()
-                TransactionTypeFilter.Expense -> viewRecordsUseCaseWrapper.getAllCategories("expense", uid).first()
+                TransactionTypeFilter.Income -> viewRecordsUseCaseWrapper.getAllCategoriesLocalUseCase(type = "income", uid).first()
+                TransactionTypeFilter.Expense -> viewRecordsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", uid).first()
                 TransactionTypeFilter.Both -> {
-                    val expense = viewRecordsUseCaseWrapper.getAllCategories("expense", uid).first()
-                    val income = viewRecordsUseCaseWrapper.getAllCategories("income", uid).first()
+                    val expense = viewRecordsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", uid).first()
+                    val income = viewRecordsUseCaseWrapper.getAllCategoriesLocalUseCase("income", uid).first()
                     expense + income
                 }
             }
@@ -376,7 +376,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
     fun getUserProfile(){
         viewModelScope.launch(Dispatchers.IO) {
-            val userProfile = viewRecordsUseCaseWrapper.getUserProfileLocal()
+            val userProfile = viewRecordsUseCaseWrapper.getUserProfileLocalUseCase()
             val baseCurrency = userProfile?.baseCurrency ?: emptyMap()
             val currencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
 

@@ -22,7 +22,7 @@ class UploadAllBudgetsToCloudDatabaseWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Log.d("WorkManagerUploadBudgets", "Worker started Upload All Budgets To Cloud")
 
-        val userId = budgetUseCaseWrapper.getUIDLocally() ?: return Result.failure()
+        val userId = budgetUseCaseWrapper.getUIDLocalUseCase() ?: return Result.failure()
 
         return try {
             val allLocalBudgets = budgetUseCaseWrapper.getAllUnSyncedBudgetLocalUseCase(userId = userId).first()
@@ -46,7 +46,7 @@ class UploadAllBudgetsToCloudDatabaseWorker @AssistedInject constructor(
                     val budgetId = budget.id
                     val budgetWithId = budget.copy(id = budgetId, cloudSync = true)
 
-                    budgetUseCaseWrapper.saveBudgetToCloudUseCase(userId = userId, budget = budgetWithId)
+                    budgetUseCaseWrapper.insertBudgetRemoteUseCase(userId = userId, budget = budgetWithId)
                     budgetUseCaseWrapper.insertBudgetLocalUseCase(budget = budgetWithId)
                 }
                 Log.d("WorkManagerUploadBudgets", "All local budgets inserted to cloud successfully.")

@@ -62,7 +62,7 @@ fun AppTopBar(
                             text = { Text(menuItem.text) },
                             onClick = {
                                 menuExpanded = false
-                                menuItem.onClick()  // Directly invoke onMenuClick()
+                                menuItem.onClick()
                             }
                         )
                     }

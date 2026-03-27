@@ -27,7 +27,7 @@ class DeletedAllSavedItemsFromCloudDatabaseWorker @AssistedInject constructor(
         return try {
 
             Log.d("WorkManagerDeletedSavedItems","UserId: $userId")
-            val allDeletedSavedItems = viewRecordsUseCaseWrapper.getAllDeletedSavedItemsByUserId(userId = userId).first()
+            val allDeletedSavedItems = viewRecordsUseCaseWrapper.getAllDeletedSavedItemsByUserIdUseCase(userId = userId).first()
 
             Log.d("WorkManagerDeletedSavedItems","deletedSavedItems $allDeletedSavedItems")
 
@@ -40,7 +40,7 @@ class DeletedAllSavedItemsFromCloudDatabaseWorker @AssistedInject constructor(
             else{
                 allDeletedSavedItems.forEach { deletedSavedItems ->
                     viewRecordsUseCaseWrapper.deleteSavedItemCloud(userId = userId, itemId = deletedSavedItems.itemId ?: 0)
-                    viewRecordsUseCaseWrapper.deleteDeletedSavedItemsById(itemId = deletedSavedItems.itemId ?: 0)
+                    viewRecordsUseCaseWrapper.deleteDeletedSavedItemByIdUseCase(itemId = deletedSavedItems.itemId ?: 0)
                 }
                 Log.d("WorkManagerDeletedSavedItems", "All Cloud saved items deleted from cloud successfully.")
 

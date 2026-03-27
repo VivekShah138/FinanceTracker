@@ -16,16 +16,16 @@ interface TransactionDao {
     suspend fun insertTransactionReturningId(transactionsEntity: TransactionsEntity): Long
 
     @Query("SELECT * FROM TransactionsEntity WHERE userUid = :uid")
-    fun getAllTransactions(uid: String): Flow<List<TransactionsEntity>>
+    fun getAllTransactionsByUID(uid: String): Flow<List<TransactionsEntity>>
 
     @Query("SELECT * FROM TransactionsEntity WHERE userUid = :uid AND cloudSync == false")
-    fun getAllLocalTransactions(uid: String): Flow<List<TransactionsEntity>>
+    fun getAllUnsyncedTransactionsByUID(uid: String): Flow<List<TransactionsEntity>>
 
     @Query("SELECT * FROM TransactionsEntity WHERE transactionId = :transactionId")
-    fun getAllTransactionsById(transactionId: Int): TransactionsEntity
+    fun getTransactionById(transactionId: Int): TransactionsEntity
 
     @Query("DELETE FROM TransactionsEntity WHERE transactionId =:transactionId")
-    suspend fun deleteSelectedTransactionsByIds(transactionId: Int)
+    suspend fun deleteTransactionById(transactionId: Int)
 
     @Query("UPDATE TransactionsEntity SET cloudSync = :syncStatus WHERE transactionId = :id")
     suspend fun updateCloudSyncStatus(id: Int, syncStatus: Boolean)

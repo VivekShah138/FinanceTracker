@@ -11,5 +11,5 @@ interface CategoryRepository {
     suspend fun insertCategory(category: Category)
     suspend fun deleteCategory(categoryId: Int)
     suspend fun getCategoriesCount(): Int
-    suspend fun insertPredefinedCategories()
+    suspend fun seedPredefinedCategories()
 }

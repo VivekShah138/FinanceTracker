@@ -45,7 +45,7 @@ class CurrencyRatesLocalRepositoryImpl(
     }
 
 
-    override suspend fun insertCurrencyRatesLocalOneTime() {
+    override suspend fun syncCurrencyRatesOnce() {
         if (!userPreferences.getCurrencyRatesUpdated()) {
             Log.d("WorkManagerCurrencies", "Currency rates is not updated One Time Request Started.")
             val workRequest = OneTimeWorkRequestBuilder<PrepopulateCurrencyRatesDatabaseWorker>()
@@ -73,7 +73,7 @@ class CurrencyRatesLocalRepositoryImpl(
         }
     }
 
-    override suspend fun insertCurrencyRatesLocalPeriodically() {
+    override suspend fun syncCurrencyRatesPeriodically() {
         val workRequest = PeriodicWorkRequestBuilder<PrepopulateCurrencyRatesDatabaseWorker>(
             24, TimeUnit.HOURS
         )

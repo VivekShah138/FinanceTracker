@@ -2,50 +2,49 @@ package com.example.financetracker.navigation.core
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-sealed class Screens{
+sealed interface Screens{
     @Serializable
-    data object RegistrationScreen: Screens()
+    data object RegistrationScreen: Screens
 
     @Serializable
-    data object StartUpPageScreen: Screens()
+    data object StartUpPageScreen: Screens
 
     @Serializable
-    data object LogInScreen: Screens()
+    data object LogInScreen: Screens
 
     @Serializable
-    data object ForgotPasswordScreen: Screens()
+    data object ForgotPasswordScreen: Screens
 
     @Serializable
-    data object HomePageScreen: Screens()
+    data object HomePageScreen: Screens
 
     @Serializable
-    data object ProfileSetUpScreen: Screens()
+    data object ProfileSetUpScreen: Screens
 
     @Serializable
-    data object NewUserProfileOnBoardingScreen: Screens()
+    data object NewUserProfileOnBoardingScreen: Screens
 
     @Serializable
-    data class ViewRecordsScreen(val tabIndex: Int = 0): Screens()
+    data class ViewRecordsScreen(val tabIndex: Int = 0): Screens
 
     @Serializable
-    data object ChartsScreen: Screens()
+    data object ChartsScreen: Screens
 
     @Serializable
-    data object SettingScreen: Screens()
+    data object SettingScreen: Screens
 
     @Serializable
-    data object AddTransactionsScreen: Screens()
+    data object AddTransactionsScreen: Screens
 
     @Serializable
-    data object CategoriesScreen: Screens()
+    data object CategoriesScreen: Screens
 
     @Serializable
-    data object BudgetScreen: Screens()
+    data object BudgetScreen: Screens
 
     @Serializable
-    data class SingleTransactionScreen(val transactionId: Int): Screens()
+    data class SingleTransactionScreen(val transactionId: Int): Screens
 
     @Serializable
-    data class SingleSavedItemScreen(val savedItemId: Int): Screens()
+    data class SingleSavedItemScreen(val savedItemId: Int): Screens
 }

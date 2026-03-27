@@ -27,10 +27,10 @@ class SettingsViewModel @Inject constructor(
 
     init {
         // Load cloud sync state when the ViewModel is initialized
-        val cloudSyncState = settingsUseCaseWrapper.getCloudSyncLocally()
+        val cloudSyncState = settingsUseCaseWrapper.getCloudSyncLocalUseCase()
         _settingStates.value = _settingStates.value.copy(cloudSync = cloudSyncState)
 
-        val darkMode = settingsUseCaseWrapper.getDarkModeLocally()
+        val darkMode = settingsUseCaseWrapper.getDarkModeLocalUseCase()
         _settingStates.value = _settingStates.value.copy(darkMode = darkMode)
 
 //        val userName = settingsUseCaseWrapper.getUserNameLocally()
@@ -45,15 +45,15 @@ class SettingsViewModel @Inject constructor(
                 )
 
                 // Setting CloudSync in shared preferences
-                settingsUseCaseWrapper.setCloudSyncLocally(settingEvents.isChecked)
+                settingsUseCaseWrapper.setCloudSyncLocalUseCase(settingEvents.isChecked)
                 Log.d(
                     "SettingsViewModel",
-                    "CloudSync: ${settingsUseCaseWrapper.getCloudSyncLocally()}"
+                    "CloudSync: ${settingsUseCaseWrapper.getCloudSyncLocalUseCase()}"
                 )
 
                 if (settingEvents.isChecked) {
                     viewModelScope.launch(Dispatchers.IO) {
-                        settingsUseCaseWrapper.saveMultipleTransactionsCloud()
+                        settingsUseCaseWrapper.insertTransactionsRemoteUseCase()
                         settingsUseCaseWrapper.saveMultipleSavedItemCloud()
                     }
                 }
@@ -64,10 +64,10 @@ class SettingsViewModel @Inject constructor(
                     darkMode = settingEvents.isDarkMode
                 )
 
-                settingsUseCaseWrapper.setDarkModeLocally(settingEvents.isDarkMode)
+                settingsUseCaseWrapper.setDarkModeLocalUseCase(settingEvents.isDarkMode)
                 Log.d(
                     "SettingsViewModel",
-                    "Dark Mode: ${settingsUseCaseWrapper.getDarkModeLocally}"
+                    "Dark Mode: ${settingsUseCaseWrapper.getDarkModeLocalUseCase}"
                 )
             }
 
@@ -85,7 +85,7 @@ class SettingsViewModel @Inject constructor(
 
             Log.d("SettingsViewModel", "UserId inside Func $uid")
 
-            val userProfile = settingsUseCaseWrapper.getUserProfileFromLocalDb(uid)
+            val userProfile = settingsUseCaseWrapper.getUserProfileFromLocalUseCase(uid)
             Log.d("SettingsViewModel", "User Profile $userProfile")
 
             val name = (userProfile?.firstName + " " + userProfile?.lastName)
@@ -110,7 +110,7 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun loadUserProfileIfReady() {
-        val uid = settingsUseCaseWrapper.getUIDLocally()
+        val uid = settingsUseCaseWrapper.getUIDLocalUseCase()
         if (!uid.isNullOrEmpty()) {
             getUserDetails(uid)
         } else {

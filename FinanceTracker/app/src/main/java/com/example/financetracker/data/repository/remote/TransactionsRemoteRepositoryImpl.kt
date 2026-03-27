@@ -32,11 +32,11 @@ class TransactionsRemoteRepositoryImpl(
         }
     }
 
-    override suspend fun deleteSelectedDeletedTransactionsByIds(transactionId: Int) {
+    override suspend fun deleteDeletedTransactionById(transactionId: Int) {
         return deletedTransactionDao.deleteSelectedDeletedTransactionsByIds(transactionId)
     }
 
-    override suspend fun deleteMultipleTransactionsFromCloud() {
+    override suspend fun deleteMultipleTransactionsRemote() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED) // Ensures work runs only when connected
             .build()

@@ -1,15 +1,15 @@
 package com.example.financetracker.domain.usecases.usecase_wrapper
 
-import com.example.financetracker.domain.usecases.local.shared_pref.InsertUIDLocally
-import com.example.financetracker.domain.usecases.local.validation.ValidateConfirmPassword
-import com.example.financetracker.domain.usecases.local.validation.ValidateEmail
-import com.example.financetracker.domain.usecases.local.validation.ValidatePassword
-import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocally
+import com.example.financetracker.domain.usecases.local.shared_pref.InsertUIDLocalUseCase
+import com.example.financetracker.domain.usecases.local.validation.ConfirmPasswordValidationUseCase
+import com.example.financetracker.domain.usecases.local.validation.EmailValidationUseCase
+import com.example.financetracker.domain.usecases.local.validation.PasswordValidationUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocalUseCase
 
 data class AuthFeatureUseCasesWrapper(
-    val validateEmail: ValidateEmail,
-    val validatePassword: ValidatePassword,
-    val validateConfirmPassword: ValidateConfirmPassword,
-    val insertUIDLocally: InsertUIDLocally,
-    val getUIDLocally: GetUIDLocally
+    val emailValidationUseCase: EmailValidationUseCase,
+    val passwordValidationUseCase: PasswordValidationUseCase,
+    val confirmPasswordValidationUseCase: ConfirmPasswordValidationUseCase,
+    val insertUIDLocalUseCase: InsertUIDLocalUseCase,
+    val getUIDLocalUseCase: GetUIDLocalUseCase
 )

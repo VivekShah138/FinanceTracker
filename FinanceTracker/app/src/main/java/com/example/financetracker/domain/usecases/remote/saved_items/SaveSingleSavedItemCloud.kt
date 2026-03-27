@@ -10,7 +10,7 @@ class SaveSingleSavedItemCloud(
 ) {
 
     suspend operator fun invoke(userId: String,savedItems: SavedItems){
-        savedItemsRemoteRepository.cloudSyncSingleSavedItem(
+        savedItemsRemoteRepository.syncSavedItem(
             userId = userId,
             savedItems = savedItems,
             updateCloudSync = {id,status ->

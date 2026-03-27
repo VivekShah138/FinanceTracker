@@ -38,22 +38,22 @@ class FinanceTracker : Application(), Configuration.Provider {
 
         applicationScope.launch {
 
-            val firstInstall = setupAccountUseCasesWrapper.getFirstTimeInstalled()
+            val firstInstall = setupAccountUseCasesWrapper.getFirstTimeInstalledLocalUseCase()
             Log.d("AppEntry","FirstTimeInstalled -> $firstInstall")
             if(firstInstall){
-                predefinedCategoriesUseCaseWrapper.insertPredefinedCategories()
-                setupAccountUseCasesWrapper.insertCountryLocallyWorkManager()
-                setupAccountUseCasesWrapper.setFirstTimeInstalled()
+                predefinedCategoriesUseCaseWrapper.seedPredefinedCategoriesLocalUseCase()
+                setupAccountUseCasesWrapper.seedCountryLocalUseCase()
+                setupAccountUseCasesWrapper.setFirstTimeInstalledLocalUseCase()
                 Log.d("AppEntry","FirstTimeInstalled set to false")
             }
 
 
 
-            viewRecordsUseCaseWrapper.deleteMultipleTransactionsFromCloud()
+            viewRecordsUseCaseWrapper.deleteTransactionsRemoteUseCase()
             viewRecordsUseCaseWrapper.deleteMultipleSavedItemCloud()
-            settingsUseCaseWrapper.saveMultipleTransactionsCloud()
+            settingsUseCaseWrapper.insertTransactionsRemoteUseCase()
             settingsUseCaseWrapper.saveMultipleSavedItemCloud()
-            budgetUseCaseWrapper.saveMultipleBudgetsToCloudUseCase()
+            budgetUseCaseWrapper.insertBudgetsRemoteUseCase()
         }
     }
 

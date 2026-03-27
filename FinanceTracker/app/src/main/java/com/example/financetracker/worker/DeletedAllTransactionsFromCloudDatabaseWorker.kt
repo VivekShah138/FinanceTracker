@@ -27,7 +27,7 @@ class DeletedAllTransactionsFromCloudDatabaseWorker @AssistedInject constructor(
         return try {
 
             Log.d("WorkManagerDeletedTransactions","UserId: $userId")
-            val allDeletedTransactions = viewRecordsUseCaseWrapper.getAllDeletedTransactionByUserId(userId = userId).first()
+            val allDeletedTransactions = viewRecordsUseCaseWrapper.getAllDeletedTransactionByUIDUseCase(userId = userId).first()
 
             Log.d("WorkManagerDeletedTransactions","deletedTransactions $allDeletedTransactions")
 
@@ -39,8 +39,8 @@ class DeletedAllTransactionsFromCloudDatabaseWorker @AssistedInject constructor(
             }
             else{
                 allDeletedTransactions.forEach { deletedTransaction ->
-                    viewRecordsUseCaseWrapper.deleteTransactionCloud(userId = userId, transactionId = deletedTransaction.transactionId)
-                    viewRecordsUseCaseWrapper.deleteDeletedTransactionsByIdsFromLocal(transactionId = deletedTransaction.transactionId)
+                    viewRecordsUseCaseWrapper.deleteTransactionRemoteUseCase(userId = userId, transactionId = deletedTransaction.transactionId)
+                    viewRecordsUseCaseWrapper.deleteDeletedTransactionsByIdRemoteUseCase(transactionId = deletedTransaction.transactionId)
                 }
                 Log.d("WorkManagerDeletedTransactions", "All Cloud transactions deleted from cloud successfully.")
 

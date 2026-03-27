@@ -19,7 +19,7 @@ class InsertAllSavedItemsToLocalDatabaseWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Log.d("WorkManagerInsertToSavedItems", "Worker started Insert All Saved Items To Local Db from Cloud")
 
-        val userId = savedItemsUseCasesWrapper.getUserUIDUseCase() ?: return Result.failure()
+        val userId = savedItemsUseCasesWrapper.getUserUIDRemoteUseCase() ?: return Result.failure()
 
         return try {
             val allRemoteSavedItems = savedItemsUseCasesWrapper.getRemoteSavedItemList(userId = userId)
@@ -36,10 +36,10 @@ class InsertAllSavedItemsToLocalDatabaseWorker @AssistedInject constructor(
                 allRemoteSavedItems.forEach { savedItems ->
                     val itemId = savedItems.itemId!!
 
-                    val doesExists = savedItemsUseCasesWrapper.doesItemExistsUseCase(userId = userId,itemId = itemId)
+                    val doesExists = savedItemsUseCasesWrapper.doesSavedItemExistsUseCase(userId = userId,itemId = itemId)
 
                     if(!doesExists){
-                        savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems)
+                        savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems)
                         Log.d("WorkManagerInsertToSavedItems", "Remote saved item $itemId inserted to Local Database successfully.")
                     }
                     else{

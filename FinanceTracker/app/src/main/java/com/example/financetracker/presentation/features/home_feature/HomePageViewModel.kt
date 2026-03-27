@@ -48,7 +48,7 @@ class HomePageViewModel @Inject constructor(
 
     fun getUserProfile(){
         viewModelScope.launch {
-            val userProfile = homePageUseCaseWrapper.getUserProfileLocal()
+            val userProfile = homePageUseCaseWrapper.getUserProfileLocalUseCase()
             Log.d("HomePageViewModel","userProfile $userProfile")
         }
     }
@@ -57,28 +57,28 @@ class HomePageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("WorkManagerCurrencies","one time function called inside homepage")
 
-            userCasesWrapperSetupAccount.insertCurrencyRatesLocalOneTime()
+            userCasesWrapperSetupAccount.seedCurrencyRatesLocalOneTime()
         }
     }
 
     private fun updateCurrencyRatesPeriodically(){
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("WorkManagerCurrencies","periodically time function called inside homepage")
-            userCasesWrapperSetupAccount.insertCurrencyRatesLocalPeriodically()
+            userCasesWrapperSetupAccount.seedCurrencyRatesLocalPeriodical()
         }
     }
 
     private fun getIncomeAndExpenseAmount() {
         viewModelScope.launch(Dispatchers.IO) {
-            val userId2 = homePageUseCaseWrapper.getUIDLocally() ?: "Unknown"
+            val userId2 = homePageUseCaseWrapper.getUIDLocalUseCase() ?: "Unknown"
             Log.d("HomePageViewModel","userId $userId2")
 
-            val allTransactions = homePageUseCaseWrapper.getAllTransactions(uid = userId2).first()
+            val allTransactions = homePageUseCaseWrapper.getAllTransactionsByUIDLocalUseCase(uid = userId2).first()
             Log.d("HomePageViewModel","allTransactions $allTransactions")
 
 
-            val expense = homePageUseCaseWrapper.getAllCategories("expense", userId2).first()
-            val income = homePageUseCaseWrapper.getAllCategories("income", userId2).first()
+            val expense = homePageUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId2).first()
+            val income = homePageUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId2).first()
             val allCategories = expense + income
             val allTransactionsThisMonth = homePageUseCaseWrapper.getAllTransactionsFilters(
                 uid = userId2,
@@ -95,7 +95,7 @@ class HomePageViewModel @Inject constructor(
 
 
 
-            val userProfile = homePageUseCaseWrapper.getUserProfileLocal()
+            val userProfile = homePageUseCaseWrapper.getUserProfileLocalUseCase()
             Log.d("HomePageViewModel","userProfile $userProfile")
 
 
@@ -165,7 +165,7 @@ class HomePageViewModel @Inject constructor(
 
     private fun getBudget(){
         viewModelScope.launch(Dispatchers.IO) {
-            val userId2 = homePageUseCaseWrapper.getUIDLocally() ?: "Unknown"
+            val userId2 = homePageUseCaseWrapper.getUIDLocalUseCase() ?: "Unknown"
             val selectedYear = Calendar.getInstance().get(Calendar.YEAR)
             val selectedMonth = Calendar.getInstance().get(Calendar.MONTH)
             val budget = homePageUseCaseWrapper.getBudgetLocalUseCase(
@@ -194,7 +194,7 @@ class HomePageViewModel @Inject constructor(
 
             if(alertNotification >= _homePageStates.value.receiveAlert){
                 Log.d("HomePageViewModelN","Inside If")
-                homePageUseCaseWrapper.sendBudgetNotificationUseCase(title = "Alert", message = "You have crossed your ${_homePageStates.value.receiveAlert}% of your budget")
+                homePageUseCaseWrapper.sendBudgetNotificationLocalUseCase(title = "Alert", message = "You have crossed your ${_homePageStates.value.receiveAlert}% of your budget")
                 Log.d("HomePageViewModelN","Notification Sent")
             }
         }

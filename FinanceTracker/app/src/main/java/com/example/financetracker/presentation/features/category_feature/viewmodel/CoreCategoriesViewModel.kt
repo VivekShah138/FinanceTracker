@@ -50,7 +50,7 @@ class CoreCategoriesViewModel @Inject constructor(
 
     private fun insertCustomCategory() {
         viewModelScope.launch(Dispatchers.IO) {
-            val uid = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
+            val uid = setupAccountUseCasesWrapper.getUIDLocalUseCase() ?: "Unknown"
             val category = Category(
                 uid = uid,
                 name = _coreCategoriesState.value.categoryName,
@@ -59,7 +59,7 @@ class CoreCategoriesViewModel @Inject constructor(
                 isCustom = true
             )
             try{
-                addTransactionUseCasesWrapper.insertCustomCategory(category)
+                addTransactionUseCasesWrapper.insertCustomCategoryLocalUseCase(category)
                 _coreCategoriesState.value = coreCategoriesState.value.copy(
                     categoryName = ""
                 )

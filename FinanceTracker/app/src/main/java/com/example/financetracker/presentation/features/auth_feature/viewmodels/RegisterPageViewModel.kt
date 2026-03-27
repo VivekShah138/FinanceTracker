@@ -71,10 +71,10 @@ class RegisterPageViewModel @Inject constructor(
 
     private suspend fun validateFields(){
 
-        val emailResult = authFeatureUseCasesWrapper.validateEmail(registerState.value.email)
+        val emailResult = authFeatureUseCasesWrapper.emailValidationUseCase(registerState.value.email)
 //        val nameResult = useCasesWrapper.validateName(registerState.value.userName)
-        val passwordResult = authFeatureUseCasesWrapper.validatePassword(registerState.value.password)
-        val confirmPasswordResult = authFeatureUseCasesWrapper.validateConfirmPassword(
+        val passwordResult = authFeatureUseCasesWrapper.passwordValidationUseCase(registerState.value.password)
+        val confirmPasswordResult = authFeatureUseCasesWrapper.confirmPasswordValidationUseCase(
             registerState.value.password,
             registerState.value.confirmPassword
         )

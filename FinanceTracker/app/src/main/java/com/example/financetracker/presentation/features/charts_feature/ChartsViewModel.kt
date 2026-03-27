@@ -36,7 +36,7 @@ class ChartsViewModel @Inject constructor(
     )
     val chartStates : StateFlow<ChartStates> = _chartStates.asStateFlow()
 
-    private val userId = chartsUseCaseWrapper.getUIDLocally()
+    private val userId = chartsUseCaseWrapper.getUIDLocalUseCase()
 
 
     init {
@@ -273,8 +273,8 @@ class ChartsViewModel @Inject constructor(
                 return@launch
             }
 
-            val expense = chartsUseCaseWrapper.getAllCategories("expense", userId).first()
-            val income = chartsUseCaseWrapper.getAllCategories("income", userId).first()
+            val expense = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId).first()
+            val income = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId).first()
             val allCategories = expense + income
 
             val (fromDate, toDate) = if (showOnlyYear) {
@@ -333,7 +333,7 @@ class ChartsViewModel @Inject constructor(
             Log.d("ChartsViewModel","incomeDataWithCategory: ${_chartStates.value.incomeDataWithCategory}")
             Log.d("ChartsViewModel","expenseDataWithCategory: ${_chartStates.value.expenseDataWithCategory}")
 
-            val userProfile = chartsUseCaseWrapper.getUserProfileFromLocalDb(userId)
+            val userProfile = chartsUseCaseWrapper.getUserProfileFromLocalUseCase(userId)
             Log.d("ChartsViewModel","userProfile: ${userProfile}")
             val baseCurrencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
             Log.d("ChartsViewModel","baseCurrencySymbol: $baseCurrencySymbol")
@@ -354,8 +354,8 @@ class ChartsViewModel @Inject constructor(
                 Log.e("ChartsViewModel", "UserId is null! Cannot fetch categories.")
                 return@launch
             }
-            val expense = chartsUseCaseWrapper.getAllCategories("expense", userId).first()
-            val income = chartsUseCaseWrapper.getAllCategories("income", userId).first()
+            val expense = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId).first()
+            val income = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId).first()
             val allCategories = expense + income
 
             val (fromDateYear, toDateYear) = getYearRangeInMillis(year = onlyYear)
@@ -410,8 +410,8 @@ class ChartsViewModel @Inject constructor(
                 Log.e("ChartsViewModel", "UserId is null! Cannot fetch categories.")
                 return@launch
             }
-            val expense = chartsUseCaseWrapper.getAllCategories("expense", userId).first()
-            val income = chartsUseCaseWrapper.getAllCategories("income", userId).first()
+            val expense = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId).first()
+            val income = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId).first()
             val allCategories = expense + income
 
             val (fromDateMonthYear, toDateMonthYear) = getDateRangeInMillis(year = year, month = month)

@@ -29,7 +29,7 @@ class CountryLocalRepositoryImpl @Inject constructor(
         return countries
     }
 
-    override suspend fun insertCountries() {
+    override suspend fun ensureCountriesPopulated() {
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)

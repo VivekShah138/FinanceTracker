@@ -7,6 +7,6 @@ class SaveMultipleSavedItemCloud(
 ) {
 
     suspend operator fun invoke(){
-        savedItemsRemoteRepository.cloudSyncMultipleSavedItems()
+        savedItemsRemoteRepository.syncMultipleSavedItemsToRemote()
     }
 }

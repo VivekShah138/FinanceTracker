@@ -58,7 +58,7 @@ class ForgotPasswordViewModel @Inject constructor(
     }
 
     private suspend fun emailValidationCheck(){
-        val emailResult = authFeatureUseCasesWrapper.validateEmail(forgotPasswordState.value.email)
+        val emailResult = authFeatureUseCasesWrapper.emailValidationUseCase(forgotPasswordState.value.email)
         if(!emailResult.isSuccessful){
             return
         }

@@ -38,8 +38,8 @@ class SavedItemViewModel @Inject constructor(
     private val savedItemsValidationEventChannel = Channel<AddTransactionValidationEvent>()
     val savedItemsValidationEvents = savedItemsValidationEventChannel.receiveAsFlow()
 
-    private val userUID = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
-    private val cloudSyncStatus = savedItemsUseCasesWrapper.getCloudSyncLocally()
+    private val userUID = setupAccountUseCasesWrapper.getUIDLocalUseCase() ?: "Unknown"
+    private val cloudSyncStatus = savedItemsUseCasesWrapper.getCloudSyncLocalUseCase()
 
     init {
         loadInitialCurrency()
@@ -95,7 +95,7 @@ class SavedItemViewModel @Inject constructor(
     private suspend fun fetchBaseCurrencies() {
         withContext(Dispatchers.IO) {
             try {
-                val sortedCurrencies = setupAccountUseCasesWrapper.getCountryDetailsUseCase()
+                val sortedCurrencies = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
                     .filter {
                         it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
                     }
@@ -128,7 +128,7 @@ class SavedItemViewModel @Inject constructor(
 
                 Log.d("SavedItemViewModel","Country Error: ${e.localizedMessage}")
 
-                val sortedCurrenciesLocally = setupAccountUseCasesWrapper.getCountryLocally()
+                val sortedCurrenciesLocally = setupAccountUseCasesWrapper.getCountryLocalUseCase()
                     .filter {
                         it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
                     }
@@ -208,7 +208,7 @@ class SavedItemViewModel @Inject constructor(
                     if (isInternetAvailable) {
                         try {
                             // 1. Insert locally first to generate the ID
-                            val rowId = savedItemsUseCasesWrapper.saveNewItemReturnId(savedItems = savedItem)
+                            val rowId = savedItemsUseCasesWrapper.insertSavedItemAndReturnIdLocalUseCase(savedItems = savedItem)
 
 //                            Log.d("SavedItemViewModel", "savedItemId $rowId")
 
@@ -221,14 +221,14 @@ class SavedItemViewModel @Inject constructor(
                             savedItemsUseCasesWrapper.saveSingleSavedItemCloud(userId = userUID, savedItems = savedItemWithId)
 
                             // 4. Update local record to reflect cloudSync = true
-                            savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItemWithId)
+                            savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems = savedItemWithId)
 
 
                         } catch (e: Exception) {
 //                            Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
 
                             try {
-                                savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItem)
+                                savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
                             } catch (e: Exception) {
 //                                Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                                 savedItemsValidationEventChannel.send(
@@ -240,7 +240,7 @@ class SavedItemViewModel @Inject constructor(
                     } else {
                         // No internet, save locally
                         try {
-                            savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItem)
+                            savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
 //                            Log.d("AddExpenseViewModel", "Local save No Internet")
                         } catch (e: Exception) {
 //                            Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
@@ -253,7 +253,7 @@ class SavedItemViewModel @Inject constructor(
                 } else {
                     // Cloud sync disabled, save locally
                     try {
-                        savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItems = savedItem)
+                        savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
 //                        Log.d("AddExpenseViewModel", "Local save No CloudSync")
                     } catch (e: Exception) {
 //                        Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
@@ -271,7 +271,7 @@ class SavedItemViewModel @Inject constructor(
 
     private fun loadInitialCurrency(){
         viewModelScope.launch(Dispatchers.IO){
-            val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalDb(userUID)
+            val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalUseCase(userUID)
 
             if(userProfile != null){
                 val baseCurrency = userProfile.baseCurrency

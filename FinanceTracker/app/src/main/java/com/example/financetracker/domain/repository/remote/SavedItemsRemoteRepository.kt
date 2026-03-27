@@ -8,12 +8,12 @@ interface SavedItemsRemoteRepository {
 
     suspend fun insertDeletedSavedItems(deletedSavedItems: DeletedSavedItems)
     suspend fun getAllDeletedSavedItems(uid: String): Flow<List<DeletedSavedItems>>
-    suspend fun deleteSelectedDeletedTransactionsByIds(itemId: Int)
+    suspend fun deleteDeletedSavedItemById(itemId: Int)
     suspend fun deleteMultipleSavedItemsFromCloud()
-    suspend fun deletedSingleSavedItemRemote(itemId: Int, userId: String)
-    suspend fun cloudSyncSingleSavedItem(userId: String, savedItems: SavedItems, updateCloudSync:suspend (Int, Boolean) -> Unit)
-    suspend fun cloudSyncMultipleSavedItems()
-    suspend fun insertRemoteItemToLocal()
-    suspend fun getRemoteSavedItems(userId:String): List<SavedItems>
+    suspend fun deleteSavedItemRemote(itemId: Int, userId: String)
+    suspend fun syncSavedItem(userId: String, savedItems: SavedItems, updateCloudSync:suspend (Int, Boolean) -> Unit)
+    suspend fun syncMultipleSavedItemsToRemote()
+    suspend fun insertSavedItemRemoteToLocal()
+    suspend fun getSavedItemsRemote(userId:String): List<SavedItems>
 
 }

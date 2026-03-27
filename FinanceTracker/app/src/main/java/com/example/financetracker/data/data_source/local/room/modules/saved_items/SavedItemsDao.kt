@@ -31,5 +31,5 @@ interface SavedItemsDao {
     suspend fun updateCloudSyncStatus(id: Int, syncStatus: Boolean)
 
     @Query("SELECT EXISTS(SELECT 1 FROM SavedItemsEntity WHERE itemId = :itemId AND userUid = :userId LIMIT 1)")
-    suspend fun doesTransactionExist(userId: String, itemId: Int): Boolean
+    suspend fun doesSavedItemExist(userId: String, itemId: Int): Boolean
 }

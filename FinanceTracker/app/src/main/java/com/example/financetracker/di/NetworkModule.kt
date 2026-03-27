@@ -20,33 +20,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-
-        return OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-            .writeTimeout(20, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(true)
-            .protocols(listOf(okhttp3.Protocol.HTTP_1_1))
-            .addInterceptor(loggingInterceptor)
-            .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideCountryApi(retrofit: Retrofit): CountryApi {
         return Retrofit.Builder()
             .baseUrl(ApiClient.BASE_URL_COUNTRY)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideCountryApi(retrofit: Retrofit): CountryApi {
-        return retrofit.create(CountryApi::class.java)
+            .create(CountryApi::class.java)
     }
 
     @Provides

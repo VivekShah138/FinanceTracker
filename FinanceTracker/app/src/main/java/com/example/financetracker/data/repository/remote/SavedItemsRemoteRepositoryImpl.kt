@@ -40,7 +40,7 @@ class SavedItemsRemoteRepositoryImpl(
         }
     }
 
-    override suspend fun deleteSelectedDeletedTransactionsByIds(itemId: Int) {
+    override suspend fun deleteDeletedSavedItemById(itemId: Int) {
         return deletedSavedItemsDao.deleteDeletedSavedItemsByIds(itemId = itemId)
     }
 
@@ -64,7 +64,7 @@ class SavedItemsRemoteRepositoryImpl(
         )
     }
 
-    override suspend fun deletedSingleSavedItemRemote(itemId: Int, userId: String) {
+    override suspend fun deleteSavedItemRemote(itemId: Int, userId: String) {
         try {
             val itemIds = itemId.toString()
 
@@ -83,7 +83,7 @@ class SavedItemsRemoteRepositoryImpl(
         }
     }
 
-    override suspend fun cloudSyncSingleSavedItem(
+    override suspend fun syncSavedItem(
         userId: String,
         savedItems: SavedItems,
         updateCloudSync: suspend (Int, Boolean) -> Unit
@@ -111,7 +111,7 @@ class SavedItemsRemoteRepositoryImpl(
         }
     }
 
-    override suspend fun cloudSyncMultipleSavedItems() {
+    override suspend fun syncMultipleSavedItemsToRemote() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -131,7 +131,7 @@ class SavedItemsRemoteRepositoryImpl(
         )
     }
 
-    override suspend fun insertRemoteItemToLocal() {
+    override suspend fun insertSavedItemRemoteToLocal() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
@@ -151,7 +151,7 @@ class SavedItemsRemoteRepositoryImpl(
         )
     }
 
-    override suspend fun getRemoteSavedItems(userId: String): List<SavedItems> {
+    override suspend fun getSavedItemsRemote(userId: String): List<SavedItems> {
         return try {
             val snapshot = firestore.collection("Users")
                 .document(userId)

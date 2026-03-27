@@ -37,7 +37,7 @@ class BudgetViewModel @Inject constructor(
     private val budgetValidationEventChannel = Channel<AddTransactionValidationEvent>()
     val budgetValidationEvents = budgetValidationEventChannel.receiveAsFlow()
 
-    private val uid = budgetUseCaseWrapper.getUIDLocally() ?: "Unknown"
+    private val uid = budgetUseCaseWrapper.getUIDLocalUseCase() ?: "Unknown"
     private val updatedAt: Long = System.currentTimeMillis()
 
     init {
@@ -184,7 +184,7 @@ class BudgetViewModel @Inject constructor(
                 month = _budgetStates.value.selectedMonth,
                 year = _budgetStates.value.selectedYear
             )
-            val userProfile = budgetUseCaseWrapper.getUserProfileFromLocalDb(uid = uid)
+            val userProfile = budgetUseCaseWrapper.getUserProfileFromLocalUseCase(uid = uid)
             val baseCurrencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
 
 

@@ -25,7 +25,7 @@ class UploadAllSavedItemsToCloudDatabaseWorker @AssistedInject constructor(
         val userId = userPreferences.getUserIdLocally() ?: return Result.failure()
 
         return try {
-            val allLocalSavedItems = savedItemsUseCasesWrapper.getAllNotSyncedSavedItemUseCase(userUID = userId).first()
+            val allLocalSavedItems = savedItemsUseCasesWrapper.getAllUnSyncedSavedItemLocalUseCase(userUID = userId).first()
 
             Log.d("WorkManagerUploadSavedItems", "userId $userId ")
             Log.d("WorkManagerUploadSavedItems", "allLocalSavedItems $allLocalSavedItems")
@@ -47,7 +47,7 @@ class UploadAllSavedItemsToCloudDatabaseWorker @AssistedInject constructor(
                     val savedItemWithId = savedItems.copy(itemId = itemId, cloudSync = true)
 
                     savedItemsUseCasesWrapper.saveSingleSavedItemCloud(userId = userId,savedItems = savedItemWithId)
-                    savedItemsUseCasesWrapper.saveItemLocalUseCase(savedItemWithId)
+                    savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItemWithId)
 
                 }
                 Log.d("WorkManagerUploadSavedItems", "All local saved items inserted to cloud successfully.")

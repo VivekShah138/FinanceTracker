@@ -28,7 +28,7 @@ class ExpenseCategoriesViewModel @Inject constructor(
     private val _categoryState = MutableStateFlow<Category?>(null)
     val categoryState : StateFlow<Category?> = _categoryState.asStateFlow()
 
-    private val uid = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
+    private val uid = setupAccountUseCasesWrapper.getUIDLocalUseCase() ?: "Unknown"
 
     init {
         loadPredefinedCategories()
@@ -45,7 +45,7 @@ class ExpenseCategoriesViewModel @Inject constructor(
             is SharedCategoriesEvents.SaveCategory -> {
                 Log.d("ExpenseCategoriesViewModel","category: ${_categoryState.value}")
                 viewModelScope.launch(Dispatchers.IO) {
-                    predefinedCategoriesUseCaseWrapper.insertCustomCategories(_categoryState.value!!)
+                    predefinedCategoriesUseCaseWrapper.insertCustomCategoriesLocalUseCase(_categoryState.value!!)
                 }
             }
             is SharedCategoriesEvents.ChangeCategoryAlertBoxState -> {
@@ -58,7 +58,7 @@ class ExpenseCategoriesViewModel @Inject constructor(
             }
             is SharedCategoriesEvents.DeleteCategory -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    predefinedCategoriesUseCaseWrapper.deleteCustomCategories(_categoryState.value?.categoryId!!)
+                    predefinedCategoriesUseCaseWrapper.deleteCustomCategoriesLocalUseCase(_categoryState.value?.categoryId!!)
                 }
             }
         }
@@ -67,7 +67,7 @@ class ExpenseCategoriesViewModel @Inject constructor(
     private fun loadPredefinedCategories(){
         viewModelScope.launch(Dispatchers.IO) {
             try{
-                predefinedCategoriesUseCaseWrapper.getPredefinedCategories("Expense".lowercase(),uid).collect{ predefinedCategories ->
+                predefinedCategoriesUseCaseWrapper.getPredefinedCategoriesLocalUseCase("Expense".lowercase(),uid).collect{ predefinedCategories ->
                     _expenseCategoriesState.value = expenseCategoriesState.value.copy(
                         predefinedCategories = predefinedCategories
                     )
@@ -82,7 +82,7 @@ class ExpenseCategoriesViewModel @Inject constructor(
     private fun loadCustomCategories(){
         viewModelScope.launch(Dispatchers.IO) {
             try{
-                predefinedCategoriesUseCaseWrapper.getCustomCategories("Expense".lowercase(),uid).collect{ customCategories ->
+                predefinedCategoriesUseCaseWrapper.getCustomCategoriesLocalUseCase("Expense".lowercase(),uid).collect{ customCategories ->
                     _expenseCategoriesState.value = expenseCategoriesState.value.copy(
                         customCategories = customCategories
                     )

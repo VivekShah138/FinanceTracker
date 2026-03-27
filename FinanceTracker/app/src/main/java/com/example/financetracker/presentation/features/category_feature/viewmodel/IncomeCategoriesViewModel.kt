@@ -28,7 +28,7 @@ class IncomeCategoriesViewModel @Inject constructor(
     private val _categoryState = MutableStateFlow<Category?>(null)
     val categoryState : StateFlow<Category?> = _categoryState.asStateFlow()
 
-    private val uid = setupAccountUseCasesWrapper.getUIDLocally() ?: "Unknown"
+    private val uid = setupAccountUseCasesWrapper.getUIDLocalUseCase() ?: "Unknown"
 
     init {
         loadPredefinedCategories()
@@ -48,7 +48,7 @@ class IncomeCategoriesViewModel @Inject constructor(
                 )
 
                 viewModelScope.launch {
-                    predefinedCategoriesUseCaseWrapper.insertCustomCategories(_categoryState.value!!)
+                    predefinedCategoriesUseCaseWrapper.insertCustomCategoriesLocalUseCase(_categoryState.value!!)
                 }
             }
             is SharedCategoriesEvents.ChangeCategoryAlertBoxState -> {
@@ -61,7 +61,7 @@ class IncomeCategoriesViewModel @Inject constructor(
             }
             is SharedCategoriesEvents.DeleteCategory -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    predefinedCategoriesUseCaseWrapper.deleteCustomCategories(_categoryState.value?.categoryId!!)
+                    predefinedCategoriesUseCaseWrapper.deleteCustomCategoriesLocalUseCase(_categoryState.value?.categoryId!!)
                 }
             }
         }
@@ -70,7 +70,7 @@ class IncomeCategoriesViewModel @Inject constructor(
     private fun loadPredefinedCategories(){
         viewModelScope.launch(Dispatchers.IO) {
             try{
-                predefinedCategoriesUseCaseWrapper.getPredefinedCategories("Income".lowercase(),uid).collect{ predefinedCategories ->
+                predefinedCategoriesUseCaseWrapper.getPredefinedCategoriesLocalUseCase("Income".lowercase(),uid).collect{ predefinedCategories ->
                     _incomeCategoriesState.value = incomeCategoriesState.value.copy(
                         predefinedCategories = predefinedCategories
                     )
@@ -85,7 +85,7 @@ class IncomeCategoriesViewModel @Inject constructor(
     private fun loadCustomCategories(){
         viewModelScope.launch(Dispatchers.IO) {
             try{
-                predefinedCategoriesUseCaseWrapper.getCustomCategories("Income".lowercase(),uid).collect{ customCategories ->
+                predefinedCategoriesUseCaseWrapper.getCustomCategoriesLocalUseCase("Income".lowercase(),uid).collect{ customCategories ->
                     _incomeCategoriesState.value = incomeCategoriesState.value.copy(
                         customCategories = customCategories
                     )

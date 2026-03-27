@@ -63,7 +63,7 @@ class CategoryRepositoryImpl @Inject constructor(
         return categoryDao.getCategoryCount()
     }
 
-    override suspend fun insertPredefinedCategories() {
+    override suspend fun seedPredefinedCategories() {
         val workRequest = OneTimeWorkRequestBuilder<PrepopulateCategoryDatabaseWorker>()
             .build()
         workManager.enqueueUniqueWork(

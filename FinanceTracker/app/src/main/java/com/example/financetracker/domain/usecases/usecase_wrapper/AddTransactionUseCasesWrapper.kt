@@ -1,38 +1,38 @@
 package com.example.financetracker.domain.usecases.usecase_wrapper
 
-import com.example.financetracker.domain.usecases.local.budget.SendBudgetNotificationUseCase
-import com.example.financetracker.domain.usecases.remote.user_profile.GetUserUIDUseCase
+import com.example.financetracker.domain.usecases.local.budget.SendBudgetNotificationLocalUseCase
+import com.example.financetracker.domain.usecases.remote.user_profile.GetUserUIDRemoteUseCase
 import com.example.financetracker.domain.usecases.remote.user_profile.InternetConnectionAvailability
-import com.example.financetracker.domain.usecases.remote.transactions.SaveSingleTransactionCloud
-import com.example.financetracker.domain.usecases.local.shared_pref.GetCloudSyncLocally
-import com.example.financetracker.domain.usecases.local.currency_rates.GetCurrencyRatesLocally
-import com.example.financetracker.domain.usecases.local.transaction.DoesTransactionExits
-import com.example.financetracker.domain.usecases.local.transaction.GetAllLocalTransactions
-import com.example.financetracker.domain.usecases.remote.transactions.GetRemoteTransactionsList
-import com.example.financetracker.domain.usecases.local.category.InsertCustomCategory
-import com.example.financetracker.domain.usecases.local.transaction.InsertNewTransactionsReturnId
-import com.example.financetracker.domain.usecases.remote.transactions.InsertRemoteTransactionsToLocal
-import com.example.financetracker.domain.usecases.local.transaction.InsertTransactionsLocally
-import com.example.financetracker.domain.usecases.local.validation.ValidateEmptyField
-import com.example.financetracker.domain.usecases.local.validation.ValidateTransactionCategory
-import com.example.financetracker.domain.usecases.local.validation.ValidateTransactionPrice
+import com.example.financetracker.domain.usecases.remote.transactions.InsertSingleTransactionRemoteUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.GetCloudSyncLocalUseCase
+import com.example.financetracker.domain.usecases.local.currency_rates.GetCurrencyRatesLocal
+import com.example.financetracker.domain.usecases.local.transaction.DoesTransactionExitsLocalUseCase
+import com.example.financetracker.domain.usecases.local.transaction.GetAllUnsyncedTransactionsLocalUseCase
+import com.example.financetracker.domain.usecases.remote.transactions.GetAllTransactionsRemoteUseCase
+import com.example.financetracker.domain.usecases.local.category.InsertCustomCategoryLocalUseCase
+import com.example.financetracker.domain.usecases.local.transaction.InsertTransactionsAndReturnIdLocalUseCase
+import com.example.financetracker.domain.usecases.remote.transactions.SyncTransactionsRemoteToLocalUseCase
+import com.example.financetracker.domain.usecases.local.transaction.InsertTransactionsLocalUseCase
+import com.example.financetracker.domain.usecases.local.validation.EmptyFieldValidationUseCase
+import com.example.financetracker.domain.usecases.local.validation.TransactionCategoryValidationUseCase
+import com.example.financetracker.domain.usecases.local.validation.TransactionPriceValidationUseCase
 
 data class AddTransactionUseCasesWrapper (
-    val getCurrencyRatesLocally: GetCurrencyRatesLocally,
-    val insertCustomCategory: InsertCustomCategory,
-    val validateEmptyField: ValidateEmptyField,
-    val validateTransactionCategory: ValidateTransactionCategory,
-    val validateTransactionPrice: ValidateTransactionPrice,
-    val insertTransactionsLocally: InsertTransactionsLocally,
-    val insertNewTransactionsReturnId: InsertNewTransactionsReturnId,
-    val saveSingleTransactionCloud: SaveSingleTransactionCloud,
-    val getCloudSyncLocally: GetCloudSyncLocally,
+    val getCurrencyRatesLocal: GetCurrencyRatesLocal,
+    val insertCustomCategoryLocalUseCase: InsertCustomCategoryLocalUseCase,
+    val emptyFieldValidationUseCase: EmptyFieldValidationUseCase,
+    val transactionCategoryValidationUseCase: TransactionCategoryValidationUseCase,
+    val transactionPriceValidationUseCase: TransactionPriceValidationUseCase,
+    val insertTransactionsLocalUseCase: InsertTransactionsLocalUseCase,
+    val insertTransactionsAndReturnIdLocalUseCase: InsertTransactionsAndReturnIdLocalUseCase,
+    val insertSingleTransactionRemoteUseCase: InsertSingleTransactionRemoteUseCase,
+    val getCloudSyncLocalUseCase: GetCloudSyncLocalUseCase,
     val internetConnectionAvailability: InternetConnectionAvailability,
-    val getAllLocalTransactions: GetAllLocalTransactions,
-    val sendBudgetNotificationUseCase: SendBudgetNotificationUseCase,
-    val doesTransactionExits: DoesTransactionExits,
-    val getRemoteTransactionsList: GetRemoteTransactionsList,
-    val getUserUIDUseCase: GetUserUIDUseCase,
-    val insertRemoteTransactionsToLocal: InsertRemoteTransactionsToLocal
+    val getAllUnsyncedTransactionsLocalUseCase: GetAllUnsyncedTransactionsLocalUseCase,
+    val sendBudgetNotificationLocalUseCase: SendBudgetNotificationLocalUseCase,
+    val doesTransactionExitsLocalUseCase: DoesTransactionExitsLocalUseCase,
+    val getAllTransactionsRemoteUseCase: GetAllTransactionsRemoteUseCase,
+    val getUserUIDRemoteUseCase: GetUserUIDRemoteUseCase,
+    val syncTransactionsRemoteToLocalUseCase: SyncTransactionsRemoteToLocalUseCase
 
 )

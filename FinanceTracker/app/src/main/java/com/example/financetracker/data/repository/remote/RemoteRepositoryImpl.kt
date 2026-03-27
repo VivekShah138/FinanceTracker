@@ -78,7 +78,7 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun cloudSyncSingleTransaction(
+    override suspend fun syncTransactionRemote(
         userId: String,
         transactions: Transactions,
         updateCloudSync: suspend (Int, Boolean) -> Unit
@@ -94,7 +94,7 @@ class RemoteRepositoryImpl @Inject constructor(
                 .document(userId)
                 .collection("Transactions")
                 .document(transactionId)
-                .set(transactions.copy(cloudSync = true)) // Save with cloudSync = true
+                .set(transactions.copy(cloudSync = true))
                 .await()
 
             // Update local Room DB
@@ -107,7 +107,7 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun cloudSyncMultipleTransaction() {
+    override suspend fun syncTransactionsRemote() {
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED) // Ensures work runs only when connected
@@ -155,7 +155,7 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRemoteTransactions(userId: String): List<Transactions> {
+    override suspend fun getTransactionsRemote(userId: String): List<Transactions> {
         return try {
             val snapshot = firestore.collection("Users")
                 .document(userId)
@@ -176,7 +176,7 @@ class RemoteRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertRemoteTransactionToLocal() {
+    override suspend fun syncRemoteTransactionsToLocal() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()

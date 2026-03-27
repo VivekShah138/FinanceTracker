@@ -9,9 +9,9 @@ object CurrencyRatesMapper {
     private val gson = Gson()
 
     fun fromCurrencyResponseToEntity(response: CurrencyResponse): CurrencyRatesEntity {
-        val ratesJson = gson.toJson(response.conversion_rates)
+        val ratesJson = gson.toJson(response.conversionRates)
         return CurrencyRatesEntity(
-            baseCurrency = response.base_code,
+            baseCurrency = response.baseCode,
             rates = ratesJson
         )
     }
@@ -20,8 +20,8 @@ object CurrencyRatesMapper {
         val type = object : TypeToken<Map<String, Double>>() {}.type
         val ratesMap: Map<String, Double> = gson.fromJson(entity.rates, type)
         return CurrencyResponse(
-            base_code = entity.baseCurrency,
-            conversion_rates = ratesMap
+            baseCode = entity.baseCurrency,
+            conversionRates = ratesMap
         )
     }
 }

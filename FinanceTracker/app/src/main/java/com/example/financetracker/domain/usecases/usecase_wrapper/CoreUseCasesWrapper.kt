@@ -1,21 +1,21 @@
 package com.example.financetracker.domain.usecases.usecase_wrapper
 
 import com.example.financetracker.domain.usecases.remote.user_profile.LogoutUseCase
-import com.example.financetracker.domain.usecases.remote.user_profile.GetUserEmailUserCase
-import com.example.financetracker.domain.usecases.remote.user_profile.GetUserProfileUseCase
-import com.example.financetracker.domain.usecases.remote.user_profile.GetUserUIDUseCase
-import com.example.financetracker.domain.usecases.remote.user_profile.SaveUserProfileUseCase
-import com.example.financetracker.domain.usecases.local.user_profile.InsertUserProfileToLocalDb
-import com.example.financetracker.domain.usecases.local.shared_pref.CheckIsLoggedInUseCase
-import com.example.financetracker.domain.usecases.local.shared_pref.SetUserNameLocally
+import com.example.financetracker.domain.usecases.remote.user_profile.GetUserEmailRemoteUserCase
+import com.example.financetracker.domain.usecases.remote.user_profile.GetUserProfileRemoteUseCase
+import com.example.financetracker.domain.usecases.remote.user_profile.GetUserUIDRemoteUseCase
+import com.example.financetracker.domain.usecases.remote.user_profile.SaveUserProfileRemoteUseCase
+import com.example.financetracker.domain.usecases.local.user_profile.InsertUserProfileLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.CheckIsLoggedInLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.SetUserNameLocalUseCase
 
 data class CoreUseCasesWrapper(
     val logoutUseCase: LogoutUseCase,
-    val checkIsLoggedInUseCase: CheckIsLoggedInUseCase,
-    val getUserEmailUserCase: GetUserEmailUserCase,
-    val getUserUIDUseCase: GetUserUIDUseCase,
-    val getUserProfileUseCase: GetUserProfileUseCase,
-    val saveUserProfileUseCase: SaveUserProfileUseCase,
-    val setUserNameLocally: SetUserNameLocally,
-    val insertUserProfileToLocalDb: InsertUserProfileToLocalDb
+    val checkIsLoggedInLocalUseCase: CheckIsLoggedInLocalUseCase,
+    val getUserEmailRemoteUserCase: GetUserEmailRemoteUserCase,
+    val getUserUIDRemoteUseCase: GetUserUIDRemoteUseCase,
+    val getUserProfileRemoteUseCase: GetUserProfileRemoteUseCase,
+    val saveUserProfileRemoteUseCase: SaveUserProfileRemoteUseCase,
+    val setUserNameLocalUseCase: SetUserNameLocalUseCase,
+    val insertUserProfileLocalUseCase: InsertUserProfileLocalUseCase
 )

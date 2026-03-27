@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
 
             Log.d("MainActivitySetting","UserId state after launched Effect ${settingsState.userId}")
 
-            val darkMode = settingsState.darkMode || settingsUseCaseWrapper.getDarkModeLocally() || isSystemInDarkTheme()
+            val darkMode = settingsState.darkMode || settingsUseCaseWrapper.getDarkModeLocalUseCase() || isSystemInDarkTheme()
             Log.d("MainActivitySetting","Dark Mode $darkMode")
             Log.d("MainActivitySettings","Dark Mode State ${settingsState.darkMode}")
 

@@ -40,8 +40,8 @@ class StartPageViewModel @Inject constructor(
 
     private fun checkUserLogin() {
         _startUpPageStates.value = startUpPageStates.value.copy(
-            isLoggedIn = coreUseCasesWrapper.checkIsLoggedInUseCase()
+            isLoggedIn = coreUseCasesWrapper.checkIsLoggedInLocalUseCase()
         )
-        Log.d("StartUpViewModel","Is Logged In: ${coreUseCasesWrapper.checkIsLoggedInUseCase()}")
+        Log.d("StartUpViewModel","Is Logged In: ${coreUseCasesWrapper.checkIsLoggedInLocalUseCase()}")
     }
 }

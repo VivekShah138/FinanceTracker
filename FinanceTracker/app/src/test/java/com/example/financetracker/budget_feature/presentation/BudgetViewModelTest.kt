@@ -36,7 +36,7 @@ class BudgetViewModelTest {
  fun setup() {
   Dispatchers.setMain(testDispatcher)
 
-  every { budgetUseCaseWrapper.getUIDLocally() } returns testUserId
+  every { budgetUseCaseWrapper.getUIDLocalUseCase() } returns testUserId
 
 
 
@@ -179,7 +179,7 @@ class BudgetViewModelTest {
   } returns dummyBudget
 
   coEvery {
-   budgetUseCaseWrapper.getUserProfileFromLocalDb(testUserId)
+   budgetUseCaseWrapper.getUserProfileFromLocalUseCase(testUserId)
   } returns dummyUserProfile
 
   viewModel.onEvent(BudgetEvents.MonthSelected(year, month))

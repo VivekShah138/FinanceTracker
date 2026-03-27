@@ -7,6 +7,6 @@ class DeleteSavedItemCloud(
 ) {
 
     suspend operator fun invoke(userId: String,itemId: Int){
-        savedItemsRemoteRepository.deletedSingleSavedItemRemote (itemId = itemId,userId = userId)
+        savedItemsRemoteRepository.deleteSavedItemRemote (itemId = itemId,userId = userId)
     }
 }

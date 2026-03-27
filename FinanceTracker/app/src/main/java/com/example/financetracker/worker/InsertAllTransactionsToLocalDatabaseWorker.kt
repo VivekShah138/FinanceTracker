@@ -19,10 +19,10 @@ class InsertAllTransactionsToLocalDatabaseWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Log.d("WorkManagerInsertToTransactions", "Worker started Insert All Transactions To Local Db from Cloud")
 
-        val userId = addTransactionUseCasesWrapper.getUserUIDUseCase() ?: return Result.failure()
+        val userId = addTransactionUseCasesWrapper.getUserUIDRemoteUseCase() ?: return Result.failure()
 
         return try {
-            val allRemoteTransactions = addTransactionUseCasesWrapper.getRemoteTransactionsList(userId = userId)
+            val allRemoteTransactions = addTransactionUseCasesWrapper.getAllTransactionsRemoteUseCase(userId = userId)
 
             Log.d("WorkManagerInsertToTransactions", "userId $userId ")
             Log.d("WorkManagerInsertToTransactions", "allLocalTransactions $allRemoteTransactions")
@@ -36,10 +36,10 @@ class InsertAllTransactionsToLocalDatabaseWorker @AssistedInject constructor(
                 allRemoteTransactions.forEach { transaction ->
                     val transactionId = transaction.transactionId!!
 
-                    val doesExists = addTransactionUseCasesWrapper.doesTransactionExits(userId = userId,transactionId = transactionId)
+                    val doesExists = addTransactionUseCasesWrapper.doesTransactionExitsLocalUseCase(userId = userId,transactionId = transactionId)
 
                     if(!doesExists){
-                        addTransactionUseCasesWrapper.insertTransactionsLocally(transactions = transaction)
+                        addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transactions = transaction)
                         Log.d("WorkManagerInsertToTransactions", "Remote Transaction $transactionId inserted to Local Database successfully.")
                     }
                     else{

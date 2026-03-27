@@ -1,31 +1,31 @@
 package com.example.financetracker.domain.usecases.usecase_wrapper
 
 import com.example.financetracker.domain.usecases.local.budget.GetBudgetLocalUseCase
-import com.example.financetracker.domain.usecases.remote.transactions.GetRemoteTransactionsList
-import com.example.financetracker.domain.usecases.remote.transactions.SaveMultipleTransactionsCloud
+import com.example.financetracker.domain.usecases.remote.transactions.GetAllTransactionsRemoteUseCase
+import com.example.financetracker.domain.usecases.remote.transactions.InsertTransactionsRemoteUseCase
 import com.example.financetracker.domain.usecases.remote.user_profile.LogoutUseCase
-import com.example.financetracker.domain.usecases.local.user_profile.GetUserProfileFromLocalDb
-import com.example.financetracker.domain.usecases.local.shared_pref.GetCloudSyncLocally
-import com.example.financetracker.domain.usecases.local.shared_pref.GetDarkModeLocally
-import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocally
-import com.example.financetracker.domain.usecases.local.shared_pref.GetUserNameLocally
-import com.example.financetracker.domain.usecases.local.shared_pref.SetCloudSyncLocally
-import com.example.financetracker.domain.usecases.local.shared_pref.SetDarkModeLocally
-import com.example.financetracker.domain.usecases.local.shared_pref.SetUserNameLocally
+import com.example.financetracker.domain.usecases.local.user_profile.GetUserProfileFromLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.GetCloudSyncLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.GetDarkModeLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.GetUIDLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.GetUserNameLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.SetCloudSyncLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.SetDarkModeLocalUseCase
+import com.example.financetracker.domain.usecases.local.shared_pref.SetUserNameLocalUseCase
 import com.example.financetracker.domain.usecases.remote.saved_items.SaveMultipleSavedItemCloud
 
 data class SettingsUseCaseWrapper (
-    val getCloudSyncLocally: GetCloudSyncLocally,
-    val setCloudSyncLocally: SetCloudSyncLocally,
-    val saveMultipleTransactionsCloud: SaveMultipleTransactionsCloud,
+    val getCloudSyncLocalUseCase: GetCloudSyncLocalUseCase,
+    val setCloudSyncLocalUseCase: SetCloudSyncLocalUseCase,
+    val insertTransactionsRemoteUseCase: InsertTransactionsRemoteUseCase,
     val saveMultipleSavedItemCloud: SaveMultipleSavedItemCloud,
     val logoutUseCase: LogoutUseCase,
-    val getUIDLocally: GetUIDLocally,
-    val getUserProfileFromLocalDb: GetUserProfileFromLocalDb,
-    val setDarkModeLocally: SetDarkModeLocally,
-    val getDarkModeLocally: GetDarkModeLocally,
-    val setUserNameLocally: SetUserNameLocally,
-    val getUserNameLocally: GetUserNameLocally,
-    val getRemoteTransactionsList: GetRemoteTransactionsList,
+    val getUIDLocalUseCase: GetUIDLocalUseCase,
+    val getUserProfileFromLocalUseCase: GetUserProfileFromLocalUseCase,
+    val setDarkModeLocalUseCase: SetDarkModeLocalUseCase,
+    val getDarkModeLocalUseCase: GetDarkModeLocalUseCase,
+    val setUserNameLocalUseCase: SetUserNameLocalUseCase,
+    val getUserNameLocalUseCase: GetUserNameLocalUseCase,
+    val getAllTransactionsRemoteUseCase: GetAllTransactionsRemoteUseCase,
     val getBudgetLocalUseCase: GetBudgetLocalUseCase
 )

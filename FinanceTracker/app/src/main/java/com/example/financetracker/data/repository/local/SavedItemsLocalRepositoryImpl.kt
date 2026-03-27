@@ -18,7 +18,7 @@ class SavedItemsLocalRepositoryImpl(
         return savedItemsDao.insertSavedItems(SavedItemsMapper.toEntity(savedItems))
     }
 
-    override suspend fun insertNewSavedItemReturnId(savedItems: SavedItems): Long {
+    override suspend fun insertSavedItemAndReturnId(savedItems: SavedItems): Long {
         return savedItemsDao.insertSavedItemReturningId(savedItemsEntity = SavedItemsMapper.toEntity(savedItems))
     }
 
@@ -30,7 +30,7 @@ class SavedItemsLocalRepositoryImpl(
         }
     }
 
-    override suspend fun getAllNotSyncedSavedItems(userUID: String): Flow<List<SavedItems>> {
+    override suspend fun getAllUnSyncedSavedItems(userUID: String): Flow<List<SavedItems>> {
         return savedItemsDao.getAllNotSyncedSavedItems(userUID).map { savedItemList ->
             savedItemList.map { savedItem ->
                 SavedItemsMapper.toDomain(savedItem)
@@ -43,7 +43,7 @@ class SavedItemsLocalRepositoryImpl(
         return SavedItemsMapper.toDomain(savedItemEntity)
     }
 
-    override suspend fun deleteSelectedSavedItemsByIds(savedItemsId: Int) {
+    override suspend fun deleteSavedItemsById(savedItemsId: Int) {
         return savedItemsDao.deleteSelectedSavedItemsByIds(savedItemsId)
     }
 
@@ -68,7 +68,7 @@ class SavedItemsLocalRepositoryImpl(
         return deletedSavedItemsDao.deleteDeletedSavedItemsByIds(itemId)
     }
 
-    override suspend fun doesTransactionExist(userId: String, itemId: Int): Boolean {
-        return savedItemsDao.doesTransactionExist(userId = userId,itemId = itemId)
+    override suspend fun doesSavedItemExist(userId: String, itemId: Int): Boolean {
+        return savedItemsDao.doesSavedItemExist(userId = userId,itemId = itemId)
     }
 }

@@ -35,8 +35,8 @@ class ViewSavedItemsViewModel @Inject constructor(
     private val savedItemsValidationEventChannel = Channel<AddTransactionValidationEvent>()
     val savedItemsValidationEvents = savedItemsValidationEventChannel.receiveAsFlow()
 
-    private val uid = viewRecordsUseCaseWrapper.getUIDLocally() ?: "Unknown"
-    private val cloudSyncStatus = viewRecordsUseCaseWrapper.getCloudSyncLocally()
+    private val uid = viewRecordsUseCaseWrapper.getUIDLocalUseCase() ?: "Unknown"
+    private val cloudSyncStatus = viewRecordsUseCaseWrapper.getCloudSyncLocalUseCase()
 
     init {
         getAllSavedItems()
@@ -93,11 +93,11 @@ class ViewSavedItemsViewModel @Inject constructor(
 
                     selectedIds!!.forEach { selectedSavedItemId ->
 
-                        val selectedSavedItem = viewRecordsUseCaseWrapper.getSavedItemById(selectedSavedItemId)
+                        val selectedSavedItem = viewRecordsUseCaseWrapper.getSavedItemByIdLocalUseCase(selectedSavedItemId)
 
                         // If Item is Saved In Cloud Then Add it to deleted from cloud
                         if(selectedSavedItem.cloudSync){
-                            viewRecordsUseCaseWrapper.insertDeletedSavedItemLocally(
+                            viewRecordsUseCaseWrapper.insertDeletedSavedItemLocalUseCase(
                                 DeletedSavedItems(
                                     itemId = selectedSavedItemId,
                                     userUID = uid
@@ -106,7 +106,7 @@ class ViewSavedItemsViewModel @Inject constructor(
                         }
 
                         // Delete Saved Item Locally
-                        viewRecordsUseCaseWrapper.deleteSelectedSavedItemsByIdsLocally(selectedSavedItemId)
+                        viewRecordsUseCaseWrapper.deleteSavedItemByIdLocalUseCase(selectedSavedItemId)
                     }
 
                     _viewSavedItemsStates.value = viewSavedItemsStates.value.copy(
@@ -193,7 +193,7 @@ class ViewSavedItemsViewModel @Inject constructor(
 
             is ViewSavedItemsEvents.GetSingleSavedItem -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    val savedItem = viewRecordsUseCaseWrapper.getSavedItemById(viewSavedItemsEvents.id)
+                    val savedItem = viewRecordsUseCaseWrapper.getSavedItemByIdLocalUseCase(viewSavedItemsEvents.id)
 
                     _savedItemState.value = savedItem
                 }
@@ -204,7 +204,7 @@ class ViewSavedItemsViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.IO) {
 
                     val itemId = _savedItemState.value!!.itemId ?: 0
-                    val savedItem = viewRecordsUseCaseWrapper.getSavedItemById(itemId)
+                    val savedItem = viewRecordsUseCaseWrapper.getSavedItemByIdLocalUseCase(itemId)
                     _savedItemState.value = savedItem
                 }
 
@@ -234,7 +234,7 @@ class ViewSavedItemsViewModel @Inject constructor(
 
             itemId!!.forEach { savedItemId ->
 
-                val savedItems = viewRecordsUseCaseWrapper.getSavedItemById(savedItemId)
+                val savedItems = viewRecordsUseCaseWrapper.getSavedItemByIdLocalUseCase(savedItemId)
                 val itemName = savedItems.itemName
                 val itemDescription = savedItems.itemDescription ?: "N/A"
                 val itemShopName =savedItems.itemShopName ?: "N/A"
@@ -332,14 +332,14 @@ class ViewSavedItemsViewModel @Inject constructor(
                             viewRecordsUseCaseWrapper.saveSingleSavedItemCloud(userId = uid, savedItems = savedItemWithId)
 
                             // 4. Update local record to reflect cloudSync = true
-                            viewRecordsUseCaseWrapper.saveItemLocalUseCase(savedItems = savedItemWithId)
+                            viewRecordsUseCaseWrapper.insertSavedItemLocalUseCase(savedItems = savedItemWithId)
 
 
                         } catch (e: Exception) {
                             Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
 
                             try {
-                                viewRecordsUseCaseWrapper.saveItemLocalUseCase(savedItems = savedItem)
+                                viewRecordsUseCaseWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
                             } catch (e: Exception) {
                                 Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                                 savedItemsValidationEventChannel.send(
@@ -351,7 +351,7 @@ class ViewSavedItemsViewModel @Inject constructor(
                     } else {
                         // No internet, save locally
                         try {
-                            viewRecordsUseCaseWrapper.saveItemLocalUseCase(savedItems = savedItem)
+                            viewRecordsUseCaseWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
                             Log.d("AddExpenseViewModel", "Local save No Internet")
                         } catch (e: Exception) {
                             Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
@@ -364,7 +364,7 @@ class ViewSavedItemsViewModel @Inject constructor(
                 } else {
                     // Cloud sync disabled, save locally
                     try {
-                        viewRecordsUseCaseWrapper.saveItemLocalUseCase(savedItems = savedItem)
+                        viewRecordsUseCaseWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
                         Log.d("AddExpenseViewModel", "Local save No CloudSync")
                     } catch (e: Exception) {
                         Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")

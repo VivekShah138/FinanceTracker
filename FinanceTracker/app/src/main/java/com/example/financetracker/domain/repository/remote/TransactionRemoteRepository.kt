@@ -7,7 +7,7 @@ interface TransactionRemoteRepository {
 
     suspend fun insertDeletedTransaction(deletedTransactions: DeletedTransactions)
     suspend fun getAllDeletedTransactions(uid: String): Flow<List<DeletedTransactions>>
-    suspend fun deleteSelectedDeletedTransactionsByIds(transactionId: Int)
-    suspend fun deleteMultipleTransactionsFromCloud()
+    suspend fun deleteDeletedTransactionById(transactionId: Int)
+    suspend fun deleteMultipleTransactionsRemote()
 
 }

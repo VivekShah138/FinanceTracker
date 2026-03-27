@@ -8,6 +8,6 @@ class GetRemoteSavedItemList(
 ) {
 
     suspend operator fun invoke(userId: String): List<SavedItems>{
-        return savedItemsRemoteRepository.getRemoteSavedItems(userId = userId)
+        return savedItemsRemoteRepository.getSavedItemsRemote(userId = userId)
     }
 }

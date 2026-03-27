@@ -131,8 +131,8 @@ class LoginPageViewModel @Inject constructor(
 
     private suspend fun validateFields() {
 
-        val emailResult = authFeatureUseCasesWrapper.validateEmail(loginState.value.email)
-        val passwordResult = authFeatureUseCasesWrapper.validatePassword(loginState.value.password)
+        val emailResult = authFeatureUseCasesWrapper.emailValidationUseCase(loginState.value.email)
+        val passwordResult = authFeatureUseCasesWrapper.passwordValidationUseCase(loginState.value.password)
 
         if(!emailResult.isSuccessful || !passwordResult.isSuccessful){
             _loginState.value = loginState.value.copy(
@@ -150,40 +150,40 @@ class LoginPageViewModel @Inject constructor(
     private suspend fun handleUserProfile(){
         _loginState.value = _loginState.value.copy(isLoading = true)
         try {
-            val userId = coreUseCasesWrapper.getUserUIDUseCase() ?: "Unknown"
+            val userId = coreUseCasesWrapper.getUserUIDRemoteUseCase() ?: "Unknown"
             Log.d("LoginViewModel","userId: $userId")
 
-            authFeatureUseCasesWrapper.insertUIDLocally(userId)
+            authFeatureUseCasesWrapper.insertUIDLocalUseCase(userId)
             Log.d("LoginViewModel","Inserted UserId")
             viewModelScope.launch(Dispatchers.IO) {
-                val userId2 = authFeatureUseCasesWrapper.getUIDLocally()
+                val userId2 = authFeatureUseCasesWrapper.getUIDLocalUseCase()
                 Log.d("LoginViewModel","UserId Local $userId2")
             }
 
-            val userProfile = coreUseCasesWrapper.getUserProfileUseCase(userId)
+            val userProfile = coreUseCasesWrapper.getUserProfileRemoteUseCase(userId)
             val userName = userProfile?.firstName + " " + userProfile?.lastName
             Log.d("LoginViewModel","userProfile: ${userProfile}")
             Log.d("LoginViewModel","userName: ${userName}")
 
-            coreUseCasesWrapper.setUserNameLocally(userName)
+            coreUseCasesWrapper.setUserNameLocalUseCase(userName)
             Log.d("LoginViewModel","userName: ${userName}")
 
 
             if(userProfile == null){
-                val email = coreUseCasesWrapper.getUserEmailUserCase() ?: "Unknown"
+                val email = coreUseCasesWrapper.getUserEmailRemoteUserCase() ?: "Unknown"
                 val newUserProfile = UserProfile(email = email, profileSetUpCompleted = false)
-                coreUseCasesWrapper.saveUserProfileUseCase(userId, newUserProfile)
+                coreUseCasesWrapper.saveUserProfileRemoteUseCase(userId, newUserProfile)
                 _loginState.value = loginState.value.copy(
                     userProfile = newUserProfile
                 )
-                Log.d("LoginViewModel","KeepLogIn ${coreUseCasesWrapper.checkIsLoggedInUseCase}")
+                Log.d("LoginViewModel","KeepLogIn ${coreUseCasesWrapper.checkIsLoggedInLocalUseCase}")
             }
             else{
                 _loginState.value = loginState.value.copy(
                     userProfile = userProfile
                 )
                 if(userProfile.profileSetUpCompleted){
-                    setupAccountUseCasesWrapper.keepUserLoggedIn(keepLoggedIn = true)
+                    setupAccountUseCasesWrapper.keepUserLoggedInLocalUseCase(keepLoggedIn = true)
                 }
             }
         }catch (e:Exception){
@@ -219,7 +219,7 @@ class LoginPageViewModel @Inject constructor(
     private suspend fun loadRemoteDataItems() {
         _loginState.value = _loginState.value.copy(isDataSyncing = true)
         try {
-            val userId = coreUseCasesWrapper.getUserUIDUseCase() ?: "Unknown"
+            val userId = coreUseCasesWrapper.getUserUIDRemoteUseCase() ?: "Unknown"
             val isFirstTimeLoggedIn = setupAccountUseCasesWrapper.getFirstTimeLoggedIn(userId)
             Log.d("AppEntry", "FirstTimeLoggedIn -> $isFirstTimeLoggedIn")
             if (isFirstTimeLoggedIn) {
@@ -228,19 +228,19 @@ class LoginPageViewModel @Inject constructor(
                 Log.d("LoadRemoteData", "Completed insertRemoteSavedItemToLocal")
 
                 Log.d("LoadRemoteData", "Starting insertRemoteTransactionsToLocal")
-                addTransactionUseCasesWrapper.insertRemoteTransactionsToLocal()
+                addTransactionUseCasesWrapper.syncTransactionsRemoteToLocalUseCase()
                 Log.d("LoadRemoteData", "Completed insertRemoteTransactionsToLocal")
 
                 Log.d("LoadRemoteData", "Starting insertUserProfileToLocalDb")
-                coreUseCasesWrapper.insertUserProfileToLocalDb()
+                coreUseCasesWrapper.insertUserProfileLocalUseCase()
                 Log.d("LoadRemoteData", "Completed insertUserProfileToLocalDb")
 
                 Log.d("LoadRemoteData", "Starting insertRemoteBudgetsToLocal")
-                budgetUseCaseWrapper.insertRemoteBudgetsToLocal()
+                budgetUseCaseWrapper.insertBudgetsRemoteToLocalUseCase()
                 Log.d("LoadRemoteData", "Completed insertRemoteBudgetsToLocal")
 
-                setupAccountUseCasesWrapper.setFirstTimeLogin(uid = userId)
-                setupAccountUseCasesWrapper.setCurrencyRatesUpdated(isUpdated = false)
+                setupAccountUseCasesWrapper.setFirstTimeLoginUseCase(uid = userId)
+                setupAccountUseCasesWrapper.setCurrencyRatesUpdatedLocalUseCase(isUpdated = false)
                 Log.d("AppEntry", "FirstTimeLoggedIn set to false")
             }
         } catch (e: Exception) {

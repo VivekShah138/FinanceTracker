@@ -19,10 +19,10 @@ class InsertAllBudgetsToLocalDatabaseWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Log.d("WorkManagerInsertToBudgets", "Worker started Insert All Budgets To Local Db from Cloud")
 
-        val userId = budgetUseCaseWrapper.getUserUIDUseCase() ?: return Result.failure()
+        val userId = budgetUseCaseWrapper.getUserUIDRemoteUseCase() ?: return Result.failure()
 
         return try {
-            val allRemoteBudgets = budgetUseCaseWrapper.getRemoteBudgetsList(userId = userId)
+            val allRemoteBudgets = budgetUseCaseWrapper.getBudgetsRemoteUseCase(userId = userId)
 
             Log.d("WorkManagerInsertToBudgets", "userId $userId ")
             Log.d("WorkManagerInsertToBudgets", "allLocalTransactions $allRemoteBudgets")
@@ -36,7 +36,7 @@ class InsertAllBudgetsToLocalDatabaseWorker @AssistedInject constructor(
                 allRemoteBudgets.forEach { budget ->
                     val budgetId = budget.id
 
-                    val doesExists = budgetUseCaseWrapper.doesBudgetExits(userId = userId,id = budgetId)
+                    val doesExists = budgetUseCaseWrapper.doesBudgetExitsLocalUseCase(userId = userId,id = budgetId)
 
                     if(!doesExists){
                         budgetUseCaseWrapper.insertBudgetLocalUseCase(budget = budget)

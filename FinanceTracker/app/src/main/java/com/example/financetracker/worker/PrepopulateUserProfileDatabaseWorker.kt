@@ -20,18 +20,18 @@ class PrepopulateUserProfileDatabaseWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Log.d("WorkManagerUserProfile", "Worker started")
 
-        val userId = coreUseCasesWrapper.getUserUIDUseCase() ?: return Result.failure()
+        val userId = coreUseCasesWrapper.getUserUIDRemoteUseCase() ?: return Result.failure()
 
         return try {
             Log.d("WorkManagerUserProfile", "Fetching UserProfile Remotely...")
 
-            val userProfile = coreUseCasesWrapper.getUserProfileUseCase(userId = userId)!!
+            val userProfile = coreUseCasesWrapper.getUserProfileRemoteUseCase(userId = userId)!!
 
             Log.d("WorkManagerUserProfile", "Received UserProfile: $userProfile")
 
 
             Log.d("WorkManagerUserProfile", "Inserting userProfile into Room...")
-            coreUseCasesWrapper.insertUserProfileToLocalDb(userProfile = userProfile,uid = userId)
+            coreUseCasesWrapper.insertUserProfileLocalUseCase(userProfile = userProfile,uid = userId)
 
             Log.d("WorkManagerUserProfile", "UserProfile inserted successfully")
             Result.success()

@@ -25,7 +25,7 @@ class UploadAllTransactionsToCloudDatabaseWorker @AssistedInject constructor(
         val userId = userPreferences.getUserIdLocally() ?: return Result.failure()
 
         return try {
-            val allLocalTransactions = addTransactionUseCasesWrapper.getAllLocalTransactions(uid = userId).first()
+            val allLocalTransactions = addTransactionUseCasesWrapper.getAllUnsyncedTransactionsLocalUseCase(uid = userId).first()
 
             Log.d("WorkManagerUploadTransactions", "userId $userId ")
             Log.d("WorkManagerUploadTransactions", "allLocalTransactions $allLocalTransactions")
@@ -46,8 +46,8 @@ class UploadAllTransactionsToCloudDatabaseWorker @AssistedInject constructor(
                     val transactionId = transaction.transactionId
                     val transactionWithId = transaction.copy(transactionId = transactionId, cloudSync = true)
 
-                    addTransactionUseCasesWrapper.saveSingleTransactionCloud(userId = userId, transaction)
-                    addTransactionUseCasesWrapper.insertTransactionsLocally(transactionWithId)
+                    addTransactionUseCasesWrapper.insertSingleTransactionRemoteUseCase(userId = userId, transaction)
+                    addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transactionWithId)
                 }
                 Log.d("WorkManagerUploadTransactions", "All local transactions inserted to cloud successfully.")
                 Result.success()

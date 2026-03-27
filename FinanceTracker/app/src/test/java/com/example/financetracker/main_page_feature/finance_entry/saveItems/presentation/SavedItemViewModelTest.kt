@@ -60,11 +60,11 @@ class SavedItemsViewModelTest {
   val testCurrencySymbol = "₹"
 
 
-  every { savedItemsUseCasesWrapper.getCloudSyncLocally() } returns true
+  every { savedItemsUseCasesWrapper.getCloudSyncLocalUseCase() } returns true
   coEvery { savedItemsUseCasesWrapper.internetConnectionAvailability() } returns true
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Name",state = testItemName) } returns ValidationResult(true)
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Price", state =  testItemPrice) } returns ValidationResult(true)
-  coEvery { savedItemsUseCasesWrapper.saveItemLocalUseCase(any()) } just Runs
+  coEvery { savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(any()) } just Runs
 
 
   // When
@@ -157,7 +157,7 @@ class SavedItemsViewModelTest {
 
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Name", state = testItemName) } returns ValidationResult(true)
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Price", state = testItemPrice) } returns ValidationResult(true)
-  coEvery { savedItemsUseCasesWrapper.saveItemLocalUseCase(any()) } throws RuntimeException("Local save failed")
+  coEvery { savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(any()) } throws RuntimeException("Local save failed")
 
   savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemName(testItemName))
   savedItemViewModel.onEvent(SavedItemsEvents.OnChangeItemPrice(testItemPrice))

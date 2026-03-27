@@ -7,6 +7,6 @@ class InsertRemoteSavedItemToLocal(
 ) {
 
     suspend operator fun invoke(){
-        return savedItemsRemoteRepository.insertRemoteItemToLocal()
+        return savedItemsRemoteRepository.insertSavedItemRemoteToLocal()
     }
 }
