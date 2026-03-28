@@ -20,7 +20,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideCountryApi(retrofit: Retrofit): CountryApi {
+    fun provideCountryApi(): CountryApi {
         return Retrofit.Builder()
             .baseUrl(ApiClient.BASE_URL_COUNTRY)
             .addConverterFactory(GsonConverterFactory.create())

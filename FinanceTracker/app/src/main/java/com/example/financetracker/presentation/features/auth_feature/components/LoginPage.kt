@@ -38,35 +38,64 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.AccountManager
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.ResetPasswordWithCredentialResult
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.LogInResult
 import com.example.financetracker.presentation.features.auth_feature.events.LoginPageEvents
 import com.example.financetracker.presentation.features.auth_feature.viewmodels.LoginPageViewModel
 import com.example.financetracker.navigation.core.Screens
+import com.example.financetracker.presentation.features.auth_feature.states.LoginPageStates
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
 
 import kotlinx.coroutines.launch
+
+
+@Composable
+fun LoginPageRoot(
+    viewModel: LoginPageViewModel = hiltViewModel(),
+    navController: NavController
+) {
+    val state by viewModel.loginState.collectAsStateWithLifecycle()
+
+    LogInPage(
+        navController = navController,
+        onEvents = viewModel::onEvent,
+        state = state,
+        loginResult = viewModel.loginEvents
+    )
+}
 
 @Composable
 fun LogInPage(
     navController: NavController,
-    viewModel: LoginPageViewModel
+    onEvents : (LoginPageEvents) -> Unit,
+    state: LoginPageStates,
+    loginResult: Flow<LoginPageViewModel.LoginEvent>
 ){
-
-    val state by viewModel.loginState.collectAsStateWithLifecycle()
-    val loginEvents = viewModel.loginEvents
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val accountManager = remember {
-        AccountManager(context as ComponentActivity)
+
+    val accountManager = if (!LocalInspectionMode.current) {
+        remember {
+            AccountManager(context as ComponentActivity)
+        }
+    } else {
+        null
     }
 
 
     LaunchedEffect(key1 = context) {
-        loginEvents.collect{event->
+        loginResult.collect{event->
             when(event){
                 is LoginPageViewModel.LoginEvent.Success->{
                     Toast.makeText(context,
@@ -74,11 +103,9 @@ fun LogInPage(
                         Toast.LENGTH_SHORT).show()
 
                     if(!state.userProfile.profileSetUpCompleted){
-//                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
                         navController.navigate(Screens.NewUserProfileOnBoardingScreen)
                     }
                     else{
-//                        navController.navigate(Screens.HomePageScreen.routes)
                         navController.navigate(Screens.HomePageScreen)
                     }
                 }
@@ -90,8 +117,10 @@ fun LogInPage(
 
                 LoginPageViewModel.LoginEvent.TriggerFirebaseLogIn -> {
                     coroutineScope.launch {
-                        val result = accountManager.loginInUser(state.email,state.password)
-                        handleLoginResult(result,viewModel::onEvent)
+                        accountManager?.let { manager ->
+                            val result = manager.loginInUser(state.email, state.password)
+                            handleLoginResult(result, onEvents)
+                        }
                     }
 
                 }
@@ -116,7 +145,7 @@ fun LogInPage(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // TEXT
+
             CustomText(
                 text = "LogIn",
                 size = 30.sp
@@ -130,12 +159,12 @@ fun LogInPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                CustomTextFields2(
+                CustomTextFields(
                     modifier = Modifier
                         .fillMaxWidth(),
                     text = state.email,
                     onValueChange = {
-                        viewModel.onEvent(LoginPageEvents.ChangeEmail(it))
+                        onEvents(LoginPageEvents.ChangeEmail(it))
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
                     singleLine = true,
@@ -158,8 +187,7 @@ fun LogInPage(
                         .fillMaxWidth(),
                     text = state.password,
                     onValueChange = {
-                        // Add Function Change
-                        viewModel.onEvent(LoginPageEvents.ChangePassword(it))
+                        onEvents(LoginPageEvents.ChangePassword(it))
 
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
@@ -179,9 +207,7 @@ fun LogInPage(
 
             Button(
                 onClick = {
-                    //  Add Login Functionality
-                    viewModel.onEvent(LoginPageEvents.SubmitLogIn)
-
+                    onEvents(LoginPageEvents.SubmitLogIn)
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -192,11 +218,13 @@ fun LogInPage(
 
             Button(
                 onClick = {
-                    // Add Google Functionality
                     coroutineScope.launch {
-                        viewModel.onEvent(LoginPageEvents.SetLoadingTrue(true))
-                        val result = accountManager.signInWithGoogle()
-                        viewModel.onEvent(LoginPageEvents.ClickLoginWithGoogle(result))
+                        onEvents(LoginPageEvents.SetLoadingTrue(true))
+                        accountManager?.let { manager ->
+                            val result =  manager.signInWithGoogle()
+                            onEvents(LoginPageEvents.ClickLoginWithGoogle(result))
+                        }
+
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -211,17 +239,16 @@ fun LogInPage(
             ){
                 TextButton(
                     onClick = {
-                        // Navigate to Forget Password Page
                         coroutineScope.launch {
-                            val result = accountManager.resetPasswordWithCredential()
-                            if(result is ResetPasswordWithCredentialResult.CredentialLoginSuccess){
-                                viewModel.onEvent(LoginPageEvents.ClickForgotPassword(result))
+                            accountManager?.let { manager ->
+                                val result = manager.resetPasswordWithCredential()
+                                if(result is ResetPasswordWithCredentialResult.CredentialLoginSuccess){
+                                    onEvents(LoginPageEvents.ClickForgotPassword(result))
+                                }
+                                else{
+                                    navController.navigate(route = Screens.ForgotPasswordScreen)
+                                }
                             }
-                            else{
-//                                navController.navigate(route = Screens.ForgotPasswordScreen.routes)
-                                navController.navigate(route = Screens.ForgotPasswordScreen)
-                            }
-
                         }
                     }
                 ) {
@@ -239,7 +266,6 @@ fun LogInPage(
                 Text("Don't have an account?", color = MaterialTheme.colorScheme.onBackground)
                 TextButton(
                     onClick = {
-//                        navController.navigate(route = Screens.RegistrationScreen.routes)
                         navController.navigate(route = Screens.RegistrationScreen)
                     }
                 ) {
@@ -323,5 +349,29 @@ private fun handleLoginResult(
         is LogInResult.Failure -> {
             onEvent(LoginPageEvents.LoginFailure("Log In Failed"))
         }
+    }
+}
+
+@Preview(
+    showSystemUi = true,
+    showBackground = true
+)
+@Composable
+fun LoginPagePreview(){
+    FinanceTrackerTheme {
+        LogInPage(
+            navController = rememberNavController(),
+            state = LoginPageStates(
+                email = "shah@138gmail.com",
+                password = "VivekShah",
+                emailError = "emailError",
+                passwordError = "passwordError",
+                isDataSyncing = true
+            ),
+            onEvents = {
+
+            },
+            loginResult = emptyFlow()
+        )
     }
 }

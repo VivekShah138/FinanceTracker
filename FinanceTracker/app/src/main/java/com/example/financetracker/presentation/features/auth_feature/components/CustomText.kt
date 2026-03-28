@@ -23,14 +23,12 @@ fun CustomText(
     fontStyle : FontStyle = FontStyle.Normal,
     fontWeight: FontWeight = FontWeight.Bold,
     color : Color = MaterialTheme.colorScheme.onBackground,
-    heightValue : Dp = 80.dp,
     textAlign: TextAlign = TextAlign.Center
 ){
     Box(modifier = modifier){
         Text(
             modifier = Modifier
                 .fillMaxWidth(),
-//                .heightIn(heightValue),
             text = text,
             style = TextStyle(
                 color = color,

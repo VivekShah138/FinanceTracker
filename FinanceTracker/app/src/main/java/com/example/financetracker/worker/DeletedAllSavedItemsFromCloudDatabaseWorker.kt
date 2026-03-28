@@ -50,7 +50,7 @@ class DeletedAllSavedItemsFromCloudDatabaseWorker @AssistedInject constructor(
         } catch (e: Exception) {
             Log.e("WorkManagerDeletedSavedItems", "Error during sync: ${e.message}")
             e.printStackTrace()
-            Result.retry() // This will schedule a retry with backoff
+            Result.retry()
         }
     }
 }

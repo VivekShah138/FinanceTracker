@@ -28,36 +28,66 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.AccountManager
 import com.example.financetracker.presentation.features.auth_feature.events.RegisterPageEvents
 import com.example.financetracker.presentation.features.auth_feature.viewmodels.RegisterPageViewModel
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.RegisterResult
 import com.example.financetracker.navigation.core.Screens
+import com.example.financetracker.presentation.features.auth_feature.states.RegisterPageStates
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
+
+@Composable
+fun RegisterPageRoot(
+    navController: NavController,
+    viewModel: RegisterPageViewModel = hiltViewModel()
+){
+    val states by viewModel.registerState.collectAsStateWithLifecycle()
+    val registrationResult = viewModel.registerEvents
+
+    RegisterPage(
+        navController = navController,
+        state = states,
+        onEvent = viewModel::onEvent,
+        registrationResult = registrationResult
+    )
+
+}
 @Composable
 fun RegisterPage(
     navController: NavController,
-    viewModel: RegisterPageViewModel
+    state: RegisterPageStates,
+    onEvent: (RegisterPageEvents) -> Unit,
+    registrationResult : Flow<RegisterPageViewModel.RegisterEvent>
 ) {
 
-    val state by viewModel.registerState.collectAsStateWithLifecycle()
-    val registrationEvents = viewModel.registerEvents
+
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val accountManager = remember {
-        AccountManager(context as ComponentActivity)
+    val accountManager = if (!LocalInspectionMode.current) {
+        remember {
+            AccountManager(context as ComponentActivity)
+        }
+    } else {
+        null
     }
 
     LaunchedEffect(key1 = context) {
-        registrationEvents.collect{event->
+        registrationResult.collect{event->
             when(event){
                 is RegisterPageViewModel.RegisterEvent.Success -> {
                     Toast.makeText(context,
@@ -73,10 +103,12 @@ fun RegisterPage(
                 }
                 is RegisterPageViewModel.RegisterEvent.TriggerFirebaseRegistration->{
                     coroutineScope.launch {
-                        val result = accountManager.registerUser(
-                            username = state.email,
-                            password = state.password)
-                        handleRegistrationResult(result,viewModel::onEvent)
+                        accountManager?.let {
+                            val result = accountManager.registerUser(
+                                username = state.email,
+                                password = state.password)
+                            handleRegistrationResult(result,onEvent)
+                        }
                     }
                 }
             }
@@ -116,12 +148,12 @@ fun RegisterPage(
             ) {
 
 
-                CustomTextFields2(
+                CustomTextFields(
                     modifier = Modifier
                         .fillMaxWidth(),
                     text = state.email,
                     onValueChange = {
-                        viewModel.onEvent(RegisterPageEvents.ChangeEmail(it))
+                        onEvent(RegisterPageEvents.ChangeEmail(it))
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
                     singleLine = true,
@@ -143,7 +175,7 @@ fun RegisterPage(
                         .fillMaxWidth(),
                     text = state.password,
                     onValueChange = {
-                        viewModel.onEvent(RegisterPageEvents.ChangePassword(it))
+                        onEvent(RegisterPageEvents.ChangePassword(it))
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
                     singleLine = true,
@@ -165,7 +197,7 @@ fun RegisterPage(
                         .fillMaxWidth(),
                     text = state.confirmPassword,
                     onValueChange = {
-                        viewModel.onEvent(RegisterPageEvents.ChangeConfirmPassword(it))
+                        onEvent(RegisterPageEvents.ChangeConfirmPassword(it))
                     },
                     textStyle = MaterialTheme.typography.bodySmall,
                     singleLine = true,
@@ -183,7 +215,7 @@ fun RegisterPage(
 
             Button(
                 onClick = {
-                    viewModel.onEvent(RegisterPageEvents.SubmitRegister)
+                    onEvent(RegisterPageEvents.SubmitRegister)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -201,7 +233,6 @@ fun RegisterPage(
                 Text("Already have an account?",color = MaterialTheme.colorScheme.onBackground)
                 TextButton(
                     onClick = {
-//                        navController.navigate(route = Screens.LogInScreen.routes)
                         navController.navigate(route = Screens.LogInScreen)
                     }
                 ) {
@@ -237,5 +268,31 @@ fun handleRegistrationResult(
         is RegisterResult.UnknownFailure -> {
             onEvent(RegisterPageEvents.RegistrationFailure(error = "Registration Failed Unknown Error"))
         }
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun RegisterPagePreview(){
+    FinanceTrackerTheme(darkTheme = true) {
+        RegisterPage(
+            navController = rememberNavController(),
+            state = RegisterPageStates(
+                email = "shah@138gmail.com",
+                password = "VivekShah",
+                confirmPassword = "VivekShah",
+                emailError = "null",
+                passwordError = "null",
+                confirmPasswordError = "null"
+            ),
+            onEvent = {
+
+            },
+            registrationResult = emptyFlow()
+        )
     }
 }

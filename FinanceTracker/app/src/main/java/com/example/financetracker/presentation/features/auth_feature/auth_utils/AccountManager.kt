@@ -73,27 +73,23 @@ class AccountManager(
                     )
                 )
             } catch (e: Exception) {
-                // Handle when the user cancels the credentials dialog
                 null
             }
 
             val credential = credentialResponse?.credential as? PasswordCredential
 
             val authResult = if (credential != null) {
-                // Use saved credentials to sign in
                 firebaseAuth.signInWithEmailAndPassword(credential.id, credential.password).await()
             } else {
-                // Fallback to manual login with provided username and password
                 firebaseAuth.signInWithEmailAndPassword(username, password).await()
             }
-
             LogInResult.Success(authResult.user?.email ?: "Unknown")
         } catch (e: FirebaseAuthException) {
             e.printStackTrace()
-            LogInResult.Failure // Firebase-specific failure
+            LogInResult.Failure
         } catch (e: Exception) {
             e.printStackTrace()
-            LogInResult.Failure // General failure (network issues, etc.)
+            LogInResult.Failure
         }
     }
 
@@ -173,7 +169,6 @@ class AccountManager(
     private fun getSignInRequest() : GetCredentialRequest{
         val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
-//            .setServerClientId(activity.getString(R.string.web_client_id))
             .setServerClientId(BuildConfig.WEB_CLIENT_ID)
             .build()
 

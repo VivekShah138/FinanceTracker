@@ -1,8 +1,6 @@
 package com.example.financetracker.utils
 
-
 sealed class TransactionFilter {
-
     data class TransactionType(val type: TransactionTypeFilter) : TransactionFilter()
     data class Order(val order: TransactionOrder) : TransactionFilter()
     data class Category(val selectedCategories: List<com.example.financetracker.domain.model.Category>) : TransactionFilter()

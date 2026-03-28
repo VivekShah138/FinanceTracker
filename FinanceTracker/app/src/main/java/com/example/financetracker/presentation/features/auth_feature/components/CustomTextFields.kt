@@ -13,7 +13,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,32 +32,6 @@ import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @Composable
 fun CustomTextFields(
-    modifier: Modifier = Modifier,
-    text : String,
-    onValueChange : (String) -> Unit,
-    textStyle: TextStyle,
-    singleLine : Boolean,
-    inputType : KeyboardOptions,
-    isError : Boolean
-){
-    Box(modifier = modifier){
-
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth(),
-            value = text,
-            onValueChange = onValueChange,
-            textStyle = textStyle,
-            singleLine = singleLine,
-            keyboardOptions = inputType,
-            isError = isError
-        )
-    }
-}
-
-
-@Composable
-fun CustomTextFields2(
     modifier: Modifier = Modifier,
     text : String,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
@@ -104,53 +77,6 @@ fun CustomTextFields2(
     }
 }
 
-//@Composable
-//fun CustomPasswordField(
-//    modifier: Modifier = Modifier,
-//    text : String,
-//    textColor: Color = MaterialTheme.colorScheme.onBackground,
-//    onValueChange : (String) -> Unit,
-//    textStyle: TextStyle,
-//    singleLine : Boolean,
-//    inputType : KeyboardOptions,
-//    isError : Boolean,
-//    errorMessage: String,
-//    label: String
-//){
-//    Box(modifier = modifier){
-//        Column{
-//
-//            OutlinedTextField(
-//                value = text,
-//                onValueChange = onValueChange,
-//                label = { Text(label) },
-//                textStyle = textStyle.copy(color = textColor),
-//                singleLine = singleLine,
-//                modifier = Modifier.fillMaxWidth(),
-//                keyboardOptions = inputType,
-//                trailingIcon = {
-//                    if(isError){
-//                        Icon(
-//                            imageVector = Icons.Default.Error,
-//                            contentDescription = "Error Icon",
-//                            tint = MaterialTheme.colorScheme.error
-//                        )
-//                    }
-//                }
-//            )
-//            if(isError){
-//                Text(
-//                    text = errorMessage,
-//                    textAlign = TextAlign.End,
-//                    fontSize = 12.sp,
-//                    color = MaterialTheme.colorScheme.error,
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//            }
-//        }
-//    }
-//}
-
 @Composable
 fun CustomPasswordField(
     modifier: Modifier = Modifier,
@@ -175,7 +101,6 @@ fun CustomPasswordField(
                 textStyle = textStyle.copy(color = textColor),
                 singleLine = singleLine,
                 modifier = Modifier.fillMaxWidth(),
-//                keyboardOptions = inputType,
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 keyboardOptions = inputType,
                 trailingIcon = {
@@ -216,18 +141,17 @@ fun CustomPasswordField(
 
 
 @Preview(
-    showBackground = true,
-//    showSystemUi = true
+    showBackground = true
 )
 @Composable
-fun CustomTextFieldsPreview2() {
+fun CustomTextFieldsPreview() {
 
     FinanceTrackerTheme(
         darkTheme = true,
         dynamicColor = true
     ) {
 
-        CustomTextFields2(
+        CustomTextFields(
             text = "Vivek",
             onValueChange = {
 
@@ -241,49 +165,4 @@ fun CustomTextFieldsPreview2() {
         )
 
     }
-}
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-fun CustomTextFieldsPreview(){
-
-    FinanceTrackerTheme(
-        darkTheme = true,
-        dynamicColor = true
-    ) {
-
-        CustomTextFields(
-            text = "Vivek",
-            onValueChange = {
-
-            },
-            textStyle = MaterialTheme.typography.bodySmall,
-            singleLine = true,
-            inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
-            isError = false
-        )
-
-    }
-
-    FinanceTrackerTheme(
-        darkTheme = false,
-        dynamicColor = true
-    ) {
-
-        CustomTextFields(
-            text = "Vivek",
-            onValueChange = {
-
-            },
-            textStyle = MaterialTheme.typography.bodySmall,
-            singleLine = true,
-            inputType = KeyboardOptions(keyboardType = KeyboardType.Email),
-            isError = false
-        )
-
-    }
-
 }

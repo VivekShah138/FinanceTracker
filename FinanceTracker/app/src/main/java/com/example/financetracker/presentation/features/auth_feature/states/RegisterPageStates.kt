@@ -1,8 +1,6 @@
 package com.example.financetracker.presentation.features.auth_feature.states
 
 data class RegisterPageStates (
-//    val userName : String = "",
-//    val userNameError : String? = null,
     val email : String = "",
     val emailError : String? = null,
     val password : String = "",

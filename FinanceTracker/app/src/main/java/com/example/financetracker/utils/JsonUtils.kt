@@ -12,10 +12,10 @@ object JsonUtils {
     fun loadJsonFromAssets(context: Context, fileName: String): String? {
         return try {
             val assetManager = context.assets
-            val files = assetManager.list("") // List all assets
+            val files = assetManager.list("")
             if (files != null) {
                 for (file in files) {
-                    Log.d("Assets", "Asset file: $file") // Debugging log
+                    Log.d("Assets", "Asset file: $file")
                 }
             }
 
@@ -33,10 +33,9 @@ object JsonUtils {
         Log.d("Categories", "Categories $categories")
 
         return categories.map {category->
-            // For each category, generate a unique uid and set isCustom to false
             category.copy(
                 uid = uid,
-                isCustom = false  // Assuming these categories are predefined
+                isCustom = false
             )
         }
     }

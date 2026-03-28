@@ -24,42 +24,70 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.AccountManager
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.ResetPasswordWithEmailResult
 import com.example.financetracker.presentation.features.auth_feature.events.ForgotPasswordEvents
 import com.example.financetracker.presentation.features.auth_feature.viewmodels.ForgotPasswordViewModel
 import com.example.financetracker.navigation.core.Screens
+import com.example.financetracker.presentation.features.auth_feature.states.ForgotPasswordStates
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
+
+@Composable
+fun ForgotPasswordRoot(
+    viewModel: ForgotPasswordViewModel = hiltViewModel(),
+    navController: NavController,
+){
+    val state by viewModel.forgotPasswordState.collectAsStateWithLifecycle()
+    val forgotPasswordResults = viewModel.forgotPasswordValidationEvent
+
+    ForgotPasswordPage(
+        navController = navController,
+        state = state,
+        onEvent = viewModel::onEvent,
+        forgotPasswordResult = forgotPasswordResults
+    )
+
+}
 @Composable
 fun ForgotPasswordPage(
     navController: NavController,
-    viewModel: ForgotPasswordViewModel
+    state: ForgotPasswordStates,
+    onEvent: (ForgotPasswordEvents) -> Unit,
+    forgotPasswordResult: Flow<ForgotPasswordViewModel.ForgotPasswordValidationEvent>
 ) {
 
-    val state by viewModel.forgotPasswordState.collectAsStateWithLifecycle()
-    val forgotPasswordEvents = viewModel.forgotPasswordValidationEvent
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val accountManager = remember {
-        AccountManager(context as ComponentActivity)
+    val accountManager = if (!LocalInspectionMode.current) {
+        remember {
+            AccountManager(context as ComponentActivity)
+        }
+    } else {
+        null
     }
 
 
     LaunchedEffect(key1 = context) {
-        forgotPasswordEvents.collect(){events->
+        forgotPasswordResult.collect{events->
             when(events){
                 is ForgotPasswordViewModel.ForgotPasswordValidationEvent.Success -> {
                     Toast.makeText(context,
                         "Email Sent Successfully",
                         Toast.LENGTH_SHORT).show()
-//                    navController.navigate(route = Screens.LogInScreen.routes)
                     navController.navigate(route = Screens.LogInScreen)
                 }
                 is ForgotPasswordViewModel.ForgotPasswordValidationEvent.Failure -> {
@@ -69,8 +97,10 @@ fun ForgotPasswordPage(
                 }
                 is ForgotPasswordViewModel.ForgotPasswordValidationEvent.TriggerSendResetEmail -> {
                     coroutineScope.launch {
-                        val result = accountManager.resetPasswordWithEmail(state.email)
-                        handleForgotPassword(result,viewModel::onEvent)
+                        accountManager?.let { manager ->
+                            val result = manager.resetPasswordWithEmail(state.email)
+                            handleForgotPassword(result,onEvent)
+                        }
                     }
                 }
             }
@@ -93,34 +123,24 @@ fun ForgotPasswordPage(
 
         CustomTextFields(
             modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 2.dp,
-                    color = Color.Black,
-                    shape = RoundedCornerShape(10.dp)
-                ),
+                .fillMaxWidth(),
             text = state.email,
             onValueChange = {
-                viewModel.onEvent(ForgotPasswordEvents.ChangeEmail(it))
+                onEvent(ForgotPasswordEvents.ChangeEmail(it))
             },
             textStyle = MaterialTheme.typography.bodySmall,
             singleLine = true,
             inputType = KeyboardOptions(keyboardType = KeyboardType.Text),
-            isError = state.emailError != null
+            isError = state.emailError != null,
+            errorMessage = state.emailError ?: "",
+            label = "Email"
         )
-        if(state.emailError != null){
-            Text(
-                text = state.emailError ?: "Unknown",
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.align(Alignment.End)
-            )
-        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
             onClick = {
-                viewModel.onEvent(ForgotPasswordEvents.Submit)
+                onEvent(ForgotPasswordEvents.Submit)
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -148,5 +168,27 @@ private fun handleForgotPassword(
         is ResetPasswordWithEmailResult.UnknownFailure -> {
             onEvent(ForgotPasswordEvents.EmailSendFailure("Unknown Failure"))
         }
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun ForgotPassword(){
+    FinanceTrackerTheme {
+        ForgotPasswordPage(
+            navController = rememberNavController(),
+            state = ForgotPasswordStates(
+                email = "shahvivek138@gmail.com",
+                emailError = "email Error"
+            ),
+            onEvent = {
+
+            },
+            forgotPasswordResult = emptyFlow(),
+        )
     }
 }
