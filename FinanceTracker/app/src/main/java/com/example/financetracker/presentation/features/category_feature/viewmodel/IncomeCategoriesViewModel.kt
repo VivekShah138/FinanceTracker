@@ -96,5 +96,4 @@ class IncomeCategoriesViewModel @Inject constructor(
             }
         }
     }
-
 }

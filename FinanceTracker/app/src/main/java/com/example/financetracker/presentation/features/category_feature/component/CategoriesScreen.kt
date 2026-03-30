@@ -16,26 +16,65 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.financetracker.domain.model.Category
 import com.example.financetracker.presentation.features.category_feature.events.CoreCategoriesEvents
 import com.example.financetracker.presentation.features.category_feature.viewmodel.CoreCategoriesViewModel
 import com.example.financetracker.presentation.features.category_feature.viewmodel.ExpenseCategoriesViewModel
 import com.example.financetracker.presentation.features.category_feature.viewmodel.IncomeCategoriesViewModel
 import com.example.financetracker.presentation.core_components.AppTopBar
+import com.example.financetracker.presentation.features.category_feature.events.SharedCategoriesEvents
+import com.example.financetracker.presentation.features.category_feature.states.CategoriesStates
 import com.example.financetracker.presentation.features.finance_entry_feature.components.CustomTextAlertBox
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 import kotlinx.coroutines.launch
+
+@Composable
+fun CategoriesRoot(
+    navController: NavController,
+    expenseCategoriesViewModel: ExpenseCategoriesViewModel = hiltViewModel(),
+    incomeCategoriesViewModel: IncomeCategoriesViewModel = hiltViewModel(),
+    coreCategoriesViewModel: CoreCategoriesViewModel = hiltViewModel()
+){
+    val states  by  coreCategoriesViewModel.coreCategoriesState.collectAsStateWithLifecycle()
+
+    val expenseCategoriesStates by expenseCategoriesViewModel.expenseCategoriesState.collectAsStateWithLifecycle()
+    val incomeCategoriesStates by incomeCategoriesViewModel.incomeCategoriesState.collectAsStateWithLifecycle()
+    val incomeCategoryStates by incomeCategoriesViewModel.categoryState.collectAsStateWithLifecycle()
+    val expenseCategoryStates by expenseCategoriesViewModel.categoryState.collectAsStateWithLifecycle()
+
+
+    CategoriesScreen(
+        navController = navController,
+        states = states,
+        onEvent = coreCategoriesViewModel::onEvent,
+        onSharedIncomeEvent = incomeCategoriesViewModel::onEvent,
+        onSharedExpenseEvent = expenseCategoriesViewModel::onEvent,
+        expenseCategoriesStates = expenseCategoriesStates,
+        incomeCategoriesStates = incomeCategoriesStates,
+        expenseCategoryStates = expenseCategoryStates,
+        incomeCategoryStates = incomeCategoryStates
+    )
+}
 
 @Composable
 fun CategoriesScreen(
     navController: NavController,
-    expenseCategoriesViewModel: ExpenseCategoriesViewModel,
-    incomeCategoriesViewModel: IncomeCategoriesViewModel,
-    coreCategoriesViewModel: CoreCategoriesViewModel
-){
+    states: CategoriesStates,
+    onEvent: (CoreCategoriesEvents) -> Unit,
+    onSharedIncomeEvent: (SharedCategoriesEvents) -> Unit,
+    onSharedExpenseEvent: (SharedCategoriesEvents) -> Unit,
+    expenseCategoriesStates: CategoriesStates,
+    incomeCategoriesStates: CategoriesStates,
+    expenseCategoryStates: Category?,
+    incomeCategoryStates: Category?
 
-    val states  by  coreCategoriesViewModel.coreCategoriesState.collectAsStateWithLifecycle()
+){
 
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
@@ -60,7 +99,7 @@ fun CategoriesScreen(
         ) {
 
             LaunchedEffect(pagerState.currentPage) {
-                coreCategoriesViewModel.onEvent(
+                onEvent(
                     CoreCategoriesEvents.SelectCategoryType(
                         if (pagerState.currentPage == 0) "Expense" else "Income"
                     )
@@ -90,18 +129,25 @@ fun CategoriesScreen(
                 )
             }
 
-            // Uncomment this to enable HorizontalPager
             HorizontalPager(state = pagerState,
                 modifier = Modifier.weight(1f) ) { page ->
                 when (page) {
-                    0 -> ExpenseCategoriesPage(viewModel = expenseCategoriesViewModel)
-                    1 -> IncomeCategoriesPage(viewModel = incomeCategoriesViewModel)
+                    0 -> ExpenseCategoriesScreen(
+                        states = expenseCategoriesStates,
+                        categoryStates = expenseCategoryStates,
+                        onEvent = onSharedExpenseEvent
+                    )
+                    1 -> IncomeCategoriesScreen(
+                        states = incomeCategoriesStates,
+                        categoryStates = incomeCategoryStates,
+                        onEvent = onSharedIncomeEvent
+                    )
                 }
             }
 
             Button(
                 onClick = {
-                    coreCategoriesViewModel.onEvent(
+                    onEvent(
                         CoreCategoriesEvents.ChangeCategoryAlertBoxState(state = true)
                     )
                 },
@@ -118,29 +164,54 @@ fun CategoriesScreen(
                 CustomTextAlertBox(
                     selectedCategory = states.categoryName,
                     onCategoryChange = {
-                        coreCategoriesViewModel.onEvent(
+                        onEvent(
                             CoreCategoriesEvents.ChangeCategoryName(it)
                         )
                     },
                     onDismissRequest = {
-                        coreCategoriesViewModel.onEvent(
+                        onEvent(
                             CoreCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
                         )
                     },
                     onSaveCategory = {
-                        coreCategoriesViewModel.onEvent(
+                        onEvent(
                             CoreCategoriesEvents.AddCategory
                         )
-                        coreCategoriesViewModel.onEvent(
+                        onEvent(
                             CoreCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
                         )
                     },
                     title = "Enter Custom Category",
                     label = "Category Title"
-
                 )
             }
         }
     }
+}
 
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun CategoriesScreenPreview() {
+    FinanceTrackerTheme {
+        CategoriesScreen(
+            navController = rememberNavController(),
+            states = CategoriesStates(),
+            onEvent = {
+
+            },
+            onSharedIncomeEvent = {
+
+            },
+            onSharedExpenseEvent = {
+
+            },
+            expenseCategoriesStates = CategoriesStates(),
+            incomeCategoriesStates = CategoriesStates(),
+            expenseCategoryStates = null,
+            incomeCategoryStates = null
+        )
+    }
 }

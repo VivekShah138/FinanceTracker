@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
@@ -29,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.financetracker.presentation.features.finance_entry_feature.components.getCategoryIcon
 
-
 @Composable
 fun SingleCategoryDisplay(
     onClickDelete: () -> Unit,
@@ -37,131 +35,69 @@ fun SingleCategoryDisplay(
     text: String,
     isPredefined: Boolean
 ) {
-
-    Card(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 16.dp)
             .clickable {
                 onClickItem()
             },
-        shape = RoundedCornerShape(5.dp),
-        elevation = CardDefaults.cardElevation(5.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+        verticalAlignment = Alignment.CenterVertically
     ){
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ){
 
-            Icon(
-                imageVector = getCategoryIcon(text),
-                contentDescription = null,
-                modifier = Modifier.size(15.dp)
-            )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Text(
-                text = text,
-                fontSize = 16.sp,
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-                fontWeight = FontWeight.Bold
-            )
-            if(!isPredefined){
+        Card(
+            modifier = Modifier.size(40.dp),
+            shape = CircleShape,
+            border = BorderStroke(width = 0.5.dp,color =  MaterialTheme.colorScheme.onSurface),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
+                    imageVector = getCategoryIcon(text),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clickable {
-                            onClickDelete()
-                        }
+                    modifier = Modifier.size(22.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
+        }
+
+        Spacer(modifier = Modifier.width(10.dp))
+
+        Text(
+            text = text,
+            fontSize = 16.sp,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+            fontWeight = FontWeight.Bold
+        )
+        if(!isPredefined){
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(20.dp)
+                    .clickable {
+                        onClickDelete()
+                    }
+            )
         }
     }
 }
 
-@Composable
-fun SingleCategoryDisplay2(
-    onClickDelete: () -> Unit,
-    onClickItem: () -> Unit,
-    text: String,
-    isPredefined: Boolean
-) {
-
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .clickable {
-                    onClickItem()
-                },
-//                .background(color =  MaterialTheme.colorScheme.primaryContainer),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-
-
-            Card(
-                modifier = Modifier.size(40.dp),
-                shape = CircleShape,
-                border = BorderStroke(width = 0.5.dp,color =  MaterialTheme.colorScheme.onSurface),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = getCategoryIcon(text),
-                        contentDescription = null,
-                        modifier = Modifier.size(22.dp),
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Text(
-                text = text,
-                fontSize = 16.sp,
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-                fontWeight = FontWeight.Bold
-            )
-            if(!isPredefined){
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .clickable {
-                            onClickDelete()
-                        }
-                )
-            }
-        }
-}
-
 @Preview(
     showBackground = true,
-//    showSystemUi = true
+    showSystemUi = true
 )
 @Composable
 fun SingleCategoryDisplayPreview(){
 
-    SingleCategoryDisplay2(
+    SingleCategoryDisplay(
         onClickDelete = {},
         onClickItem = {},
         text = "HouseHold",

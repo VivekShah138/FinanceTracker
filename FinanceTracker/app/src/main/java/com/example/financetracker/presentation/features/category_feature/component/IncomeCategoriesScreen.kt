@@ -13,28 +13,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.financetracker.domain.model.Category
 import com.example.financetracker.presentation.features.category_feature.events.SharedCategoriesEvents
-import com.example.financetracker.presentation.features.category_feature.viewmodel.ExpenseCategoriesViewModel
+import com.example.financetracker.presentation.features.category_feature.states.CategoriesStates
 import com.example.financetracker.presentation.features.finance_entry_feature.components.CustomTextAlertBox
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+
 
 @Composable
-fun ExpenseCategoriesPage(
-    viewModel: ExpenseCategoriesViewModel
+fun IncomeCategoriesScreen(
+    states: CategoriesStates,
+    categoryStates: Category?,
+    onEvent: (SharedCategoriesEvents) -> Unit
 ){
-    val states by viewModel.expenseCategoriesState.collectAsStateWithLifecycle()
-    val categoryStates by viewModel.categoryState.collectAsStateWithLifecycle()
-
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Section title (outside the surface)
+
         item {
             Text(
                 text = "Predefined Categories",
@@ -43,7 +43,6 @@ fun ExpenseCategoriesPage(
             )
         }
 
-        // All items inside one surface
         item {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
@@ -55,8 +54,7 @@ fun ExpenseCategoriesPage(
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     states.predefinedCategories.forEachIndexed { index, category ->
                         Column {
-                            SingleCategoryDisplay2(
-
+                            SingleCategoryDisplay(
                                 onClickDelete = {},
                                 onClickItem = {},
                                 text = category.name,
@@ -71,7 +69,7 @@ fun ExpenseCategoriesPage(
             }
         }
 
-        // Custom Section
+
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -92,29 +90,24 @@ fun ExpenseCategoriesPage(
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     states.customCategories.forEachIndexed { index, category ->
                         Column {
-                            SingleCategoryDisplay2(
-
+                            SingleCategoryDisplay(
                                 onClickDelete = {
-                                    viewModel.onEvent(
+                                    onEvent(
                                         SharedCategoriesEvents.ChangeSelectedCategory(category)
                                     )
-                                    viewModel.onEvent(
+                                    onEvent(
                                         SharedCategoriesEvents.DeleteCategory
                                     )
                                 },
                                 onClickItem = {
                                     Log.d("ExpenseCategoriesPage","category: $category")
-                                    viewModel.onEvent(
+                                    onEvent(
                                         SharedCategoriesEvents.ChangeSelectedCategory(category)
                                     )
-
-                                    viewModel.onEvent(
+                                    onEvent(
                                         SharedCategoriesEvents.ChangeCategoryAlertBoxState(true)
                                     )
                                 },
-
-//                                onClickDelete = {},
-//                                onClickItem = {},
                                 text = category.name,
                                 isPredefined = false
                             )
@@ -126,29 +119,27 @@ fun ExpenseCategoriesPage(
                 }
             }
         }
-
-
     }
 
-    // if view alert box is true
+
     if(states.updateCategoryAlertBoxState){
         CustomTextAlertBox(
             selectedCategory = categoryStates?.name ?: "N/A",
             onCategoryChange = {
-                viewModel.onEvent(
+                onEvent(
                     SharedCategoriesEvents.ChangeCategoryName(it)
                 )
             },
             onDismissRequest = {
-                viewModel.onEvent(
+                onEvent(
                     SharedCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
                 )
             },
             onSaveCategory = {
-                viewModel.onEvent(
+                onEvent(
                     SharedCategoriesEvents.SaveCategory
                 )
-                viewModel.onEvent(
+                onEvent(
                     SharedCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
                 )
             },
@@ -156,5 +147,120 @@ fun ExpenseCategoriesPage(
             label = "Category Title"
         )
     }
+}
 
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun IncomeCategoriesScreenPreview() {
+    FinanceTrackerTheme(darkTheme = true) {
+
+        val dummyPredefinedCategories = listOf(
+            Category(
+                categoryId = 1,
+                uid = "user_123",
+                name = "Salary",
+                type = "income",
+                icon = "ic_salary",
+                isCustom = false
+            ),
+            Category(
+                categoryId = 2,
+                uid = "user_123",
+                name = "Freelance",
+                type = "income",
+                icon = "ic_freelance",
+                isCustom = false
+            ),
+            Category(
+                categoryId = 3,
+                uid = "user_123",
+                name = "Investments",
+                type = "income",
+                icon = "ic_investments",
+                isCustom = false
+            ),
+            Category(
+                categoryId = 4,
+                uid = "user_123",
+                name = "Food & Dining",
+                type = "expense",
+                icon = "ic_food",
+                isCustom = false
+            ),
+            Category(
+                categoryId = 5,
+                uid = "user_123",
+                name = "Transport",
+                type = "expense",
+                icon = "ic_transport",
+                isCustom = false
+            ),
+            Category(
+                categoryId = 6,
+                uid = "user_123",
+                name = "Shopping",
+                type = "expense",
+                icon = "ic_shopping",
+                isCustom = false
+            ),
+            Category(
+                categoryId = 7,
+                uid = "user_123",
+                name = "Entertainment",
+                type = "expense",
+                icon = "ic_entertainment",
+                isCustom = false
+            ),
+            Category(
+                categoryId = 8,
+                uid = "user_123",
+                name = "Health",
+                type = "expense",
+                icon = "ic_health",
+                isCustom = false
+            )
+        )
+
+        val dummyCustomCategories = listOf(
+            Category(
+                categoryId = 1,
+                uid = "user_123",
+                name = "Salary",
+                type = "income",
+                icon = "ic_salary",
+                isCustom = false
+            ),
+            Category(
+                categoryId = 2,
+                uid = "user_123",
+                name = "Freelance",
+                type = "income",
+                icon = "ic_freelance",
+                isCustom = false
+            ),
+            Category(
+                categoryId = 3,
+                uid = "user_123",
+                name = "Investments",
+                type = "income",
+                icon = "ic_investments",
+                isCustom = false
+            )
+        )
+
+        IncomeCategoriesScreen(
+            states = CategoriesStates(
+                predefinedCategories = dummyPredefinedCategories,
+                customCategories = dummyCustomCategories
+            ),
+            categoryStates = null,
+            onEvent = {
+
+            }
+        )
+    }
 }

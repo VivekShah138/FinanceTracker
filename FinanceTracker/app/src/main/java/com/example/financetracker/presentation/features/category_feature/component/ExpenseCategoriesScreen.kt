@@ -13,28 +13,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.financetracker.domain.model.Category
 import com.example.financetracker.presentation.features.category_feature.events.SharedCategoriesEvents
-import com.example.financetracker.presentation.features.category_feature.viewmodel.IncomeCategoriesViewModel
+import com.example.financetracker.presentation.features.category_feature.states.CategoriesStates
 import com.example.financetracker.presentation.features.finance_entry_feature.components.CustomTextAlertBox
 
 @Composable
-fun IncomeCategoriesPage(
-    viewModel: IncomeCategoriesViewModel
+fun ExpenseCategoriesScreen(
+    states: CategoriesStates,
+    categoryStates: Category?,
+    onEvent: (SharedCategoriesEvents) -> Unit
 ){
-    val states by viewModel.incomeCategoriesState.collectAsStateWithLifecycle()
-    val categoryStates by viewModel.categoryState.collectAsStateWithLifecycle()
-
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Section title (outside the surface)
+
         item {
             Text(
                 text = "Predefined Categories",
@@ -43,7 +40,7 @@ fun IncomeCategoriesPage(
             )
         }
 
-        // All items inside one surface
+
         item {
             Surface(
                 modifier = Modifier.fillMaxWidth(),
@@ -55,7 +52,7 @@ fun IncomeCategoriesPage(
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     states.predefinedCategories.forEachIndexed { index, category ->
                         Column {
-                            SingleCategoryDisplay2(
+                            SingleCategoryDisplay(
 
                                 onClickDelete = {},
                                 onClickItem = {},
@@ -92,29 +89,25 @@ fun IncomeCategoriesPage(
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                     states.customCategories.forEachIndexed { index, category ->
                         Column {
-                            SingleCategoryDisplay2(
+                            SingleCategoryDisplay(
 
                                 onClickDelete = {
-                                    viewModel.onEvent(
+                                    onEvent(
                                         SharedCategoriesEvents.ChangeSelectedCategory(category)
                                     )
-                                    viewModel.onEvent(
+                                    onEvent(
                                         SharedCategoriesEvents.DeleteCategory
                                     )
                                 },
                                 onClickItem = {
                                     Log.d("ExpenseCategoriesPage","category: $category")
-                                    viewModel.onEvent(
+                                    onEvent(
                                         SharedCategoriesEvents.ChangeSelectedCategory(category)
                                     )
-
-                                    viewModel.onEvent(
+                                    onEvent(
                                         SharedCategoriesEvents.ChangeCategoryAlertBoxState(true)
                                     )
                                 },
-
-//                                onClickDelete = {},
-//                                onClickItem = {},
                                 text = category.name,
                                 isPredefined = false
                             )
@@ -126,27 +119,28 @@ fun IncomeCategoriesPage(
                 }
             }
         }
+
+
     }
 
-    // if view alert box is true
     if(states.updateCategoryAlertBoxState){
         CustomTextAlertBox(
             selectedCategory = categoryStates?.name ?: "N/A",
             onCategoryChange = {
-                viewModel.onEvent(
+                onEvent(
                     SharedCategoriesEvents.ChangeCategoryName(it)
                 )
             },
             onDismissRequest = {
-                viewModel.onEvent(
+                onEvent(
                     SharedCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
                 )
             },
             onSaveCategory = {
-                viewModel.onEvent(
+                onEvent(
                     SharedCategoriesEvents.SaveCategory
                 )
-                viewModel.onEvent(
+                onEvent(
                     SharedCategoriesEvents.ChangeCategoryAlertBoxState(state = false)
                 )
             },
@@ -154,4 +148,5 @@ fun IncomeCategoriesPage(
             label = "Category Title"
         )
     }
+
 }
