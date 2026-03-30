@@ -62,7 +62,6 @@ fun NewUserProfileOnBoardingScreens(
                     }
                     else{
                         Toast.makeText(context,"Profile Successfully Update",Toast.LENGTH_SHORT).show()
-//                        navController.navigate(Screens.HomePageScreen.routes)
                         navController.navigate(Screens.HomePageScreen)
                     }
                 }
@@ -71,13 +70,8 @@ fun NewUserProfileOnBoardingScreens(
     }
 
 
-
-
-
-    // Display current field
     val currentField = onboardingFields[states.onBoardingSteps]
 
-    // Display UI
     Scaffold(
         topBar = {
             AppTopBar(
@@ -101,7 +95,6 @@ fun NewUserProfileOnBoardingScreens(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Dynamically show input fields
             when (currentField) {
                 "Name" -> {
                     Names(
@@ -149,11 +142,11 @@ fun NewUserProfileOnBoardingScreens(
                         },
                         onItemSelect = {
                             val country = it.name.common
-                            val phoneCode = when {
-                                it.idd?.root == null -> "N/A"
-                                it.idd.suffixes.isNullOrEmpty() -> it.idd.root
-                                it.idd.suffixes.size > 1 -> it.idd.root
-                                else -> it.idd.root + it.idd.suffixes.firstOrNull()
+                            val phoneCode = if (it.idd.root.isEmpty()) {
+                                "N/A"
+                            } else {
+                                val suffix = it.idd.suffixes.firstOrNull().orEmpty()
+                                it.idd.root + suffix
                             }
                             val firstCurrency = it.currencies?.entries?.firstOrNull()
                             val currencyName = firstCurrency?.value?.name ?: "N/A"

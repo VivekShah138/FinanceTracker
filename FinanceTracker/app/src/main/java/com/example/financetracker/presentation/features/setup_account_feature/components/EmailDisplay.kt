@@ -10,16 +10,11 @@ import androidx.compose.ui.Modifier
 fun EmailDisplay(label: String, email: String, onChangeEmailClick: () -> Unit) {
     OutlinedTextField(
         value = email,
-        onValueChange = {}, // No direct editing, only display
+        onValueChange = {},
         label = { Text(label) },
-        readOnly = true, // Prevents direct typing
-//        trailingIcon = {
-//            IconButton(onClick = onChangeEmailClick) {
-//                Icon(imageVector = Icons.Default.Edit, contentDescription = "Change Email")
-//            }
-//        },
+        readOnly = true,
+
         modifier = Modifier
             .fillMaxWidth()
-//            .padding(16.dp)
     )
 }

@@ -19,22 +19,47 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpEvents
+import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpStates
 import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpViewModel
+import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpViewModel.ProfileUpdateEvent
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 
 @Composable
-fun ProfileSetUp(
-    viewModel: ProfileSetUpViewModel,
+fun ProfileSetUpRoot(
+    viewModel: ProfileSetUpViewModel = hiltViewModel(),
     navController: NavController
 ){
     val states by viewModel.profileSetUpStates.collectAsStateWithLifecycle()
     val profileSetUpValidationEvents = viewModel.profileSetUpValidationEvents
+
+    ProfileSetUpScreen(
+        navController = navController,
+        states = states,
+        onEvent = viewModel::onEvent,
+        profileSetUpValidationEvents = profileSetUpValidationEvents
+    )
+}
+
+@Composable
+fun ProfileSetUpScreen(
+    navController: NavController,
+    states: ProfileSetUpStates,
+    onEvent: (ProfileSetUpEvents) -> Unit,
+    profileSetUpValidationEvents: Flow<ProfileUpdateEvent>
+){
+
     val context = LocalContext.current
 
 
@@ -42,12 +67,11 @@ fun ProfileSetUp(
     LaunchedEffect(key1 = context) {
         profileSetUpValidationEvents.collect { event ->
             when (event) {
-                is ProfileSetUpViewModel.ProfileUpdateEvent.Failure -> {
+                is ProfileUpdateEvent.Failure -> {
                     Toast.makeText(context,event.errorMessage,Toast.LENGTH_SHORT).show()
                 }
-                is ProfileSetUpViewModel.ProfileUpdateEvent.Success -> {
+                is ProfileUpdateEvent.Success -> {
                     Toast.makeText(context,"Profile Successfully Update",Toast.LENGTH_LONG).show()
-//                    navController.navigate(Screens.HomePageScreen.routes)
                     navController.navigate(Screens.HomePageScreen)
                 }
             }
@@ -100,111 +124,28 @@ fun ProfileSetUp(
                 Names(firstName = states.firstName,
                     lastName = states.lastName,
                     onFirstNameChange = {
-                        viewModel.onEvent(ProfileSetUpEvents.ChangeFirstName(it))
+                        onEvent(ProfileSetUpEvents.ChangeFirstName(it))
                     },
                     onLastNameChange = {
-                        viewModel.onEvent(ProfileSetUpEvents.ChangeLastName(it))
+                        onEvent(ProfileSetUpEvents.ChangeLastName(it))
                     }
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Country/Region
-//                SearchableDropdown3(
-//                    label = "Country",
-//                    selectedText = states.searchCountry,
-//                    expanded = states.countryExpanded,
-//                    list = states.countryFilteredSearchList,
-//                    onExpandedChange = {
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.SelectCountry(
-//                                country = states.selectedCountry,
-//                                callingCode = states.callingCode,
-//                                expanded = !states.countryExpanded
-//                            )
-//                        )
-//                        if (it) {
-//                            viewModel.onEvent(ProfileSetUpEvents.LoadCountries)
-//                        }
-//                    },
-//                    onDismissRequest = {
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.SelectCountry(
-//                                country = states.selectedCountry,
-//                                callingCode = states.callingCode,
-//                                expanded = !states.countryExpanded
-//                            )
-//                        )
-//                    },
-//                    displayText = {
-//                        if(it.name.common.isEmpty()){
-//                            "No Countries To Show"
-//                        }else{
-//                            it.name.common
-//                        }
-//                    },
-//                    onItemSelect = {
-//                        val country = it.name.common
-//                        val phoneCode = when {
-//                            it.idd?.root == null -> "N/A"
-//                            it.idd.suffixes.isNullOrEmpty() -> it.idd.root
-//                            it.idd.suffixes.size > 1 -> it.idd.root
-//                            else -> it.idd.root + it.idd.suffixes.firstOrNull()
-//                        }
-//                        val firstCurrency = it.currencies?.entries?.firstOrNull()
-//                        val currencyName = firstCurrency?.value?.name ?: "N/A"
-//                        val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
-//                        val currencyCode = firstCurrency?.key ?: "N/A"
-//
-//                        Log.d("ProfileSetUp","firstCurrency Country $firstCurrency")
-//                        Log.d("ProfileSetUp","currencyName Country $currencyName")
-//                        Log.d("ProfileSetUp","currencyCode Country $currencySymbol")
-//                        Log.d("ProfileSetUp","currencySymbol Country $currencyCode")
-//
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.SelectBaseCurrency(
-//                                currency = currencyName,
-//                                currencyCode = currencyCode,
-//                                currencySymbol = currencySymbol,
-//                                expanded = false
-//                            )
-//                        )
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.SelectCountry(
-//                                country = country,
-//                                callingCode = phoneCode,
-//                                expanded = !states.countryExpanded
-//                            )
-//                        )
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.ChangeSearchCountry(country)
-//                        )
-//                    },
-//                    isLoading = states.isLoadingDropdownCountry,
-//                    onChangeSearchValue = {
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.ChangeSearchCountry(it)
-//                        )
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.FilterCountryNameList(
-//                                list = states.countries,
-//                                newWord = it
-//                            )
-//                        )
-//                    }
-//                )
+
                 AutoComplete(
                     categories = states.countries,
                     loadCountry = {
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.LoadCountries
                         )
                     },
                     onSearchValueChange = {
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.ChangeSearchCountry(it)
                         )
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.FilterCountryNameList(
                                 list = states.countries,
                                 newWord = it
@@ -213,7 +154,7 @@ fun ProfileSetUp(
                     },
                     expanded = states.countryExpanded,
                     onExpandedChange = {
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.SelectCountry(
                                 country = states.selectedCountry,
                                 callingCode = states.callingCode,
@@ -221,16 +162,16 @@ fun ProfileSetUp(
                             )
                         )
                         if (it) {
-                            viewModel.onEvent(ProfileSetUpEvents.LoadCountries)
+                            onEvent(ProfileSetUpEvents.LoadCountries)
                         }
                     },
                     onItemSelect = {
                         val country = it.name.common
-                        val phoneCode = when {
-                            it.idd?.root == null -> "N/A"
-                            it.idd.suffixes.isNullOrEmpty() -> it.idd.root
-                            it.idd.suffixes.size > 1 -> it.idd.root
-                            else -> it.idd.root + it.idd.suffixes.firstOrNull()
+                        val phoneCode = if (it.idd.root.isEmpty()) {
+                            "N/A"
+                        } else {
+                            val suffix = it.idd.suffixes.firstOrNull().orEmpty()
+                            it.idd.root + suffix
                         }
                         val firstCurrency = it.currencies?.entries?.firstOrNull()
                         val currencyName = firstCurrency?.value?.name ?: "N/A"
@@ -242,7 +183,7 @@ fun ProfileSetUp(
                         Log.d("ProfileSetUp","currencyCode Country $currencySymbol")
                         Log.d("ProfileSetUp","currencySymbol Country $currencyCode")
 
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.SelectBaseCurrency(
                                 currency = currencyName,
                                 currencyCode = currencyCode,
@@ -250,14 +191,14 @@ fun ProfileSetUp(
                                 expanded = false
                             )
                         )
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.SelectCountry(
                                 country = country,
                                 callingCode = phoneCode,
                                 expanded = !states.countryExpanded
                             )
                         )
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.ChangeSearchCountry(country)
                         )
                     },
@@ -274,83 +215,24 @@ fun ProfileSetUp(
                 PhoneNumberInput(countryCode = states.callingCode,
                     phoneNumber = states.phoneNumber,
                     onPhoneNumberChange = {
-                        viewModel.onEvent(ProfileSetUpEvents.ChangePhoneNumber(it))
+                        onEvent(ProfileSetUpEvents.ChangePhoneNumber(it))
                     }
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
-                // Base Currency
-//                SimpleDropdownMenu3(
-//                    label = "Base Currency",
-//                    selectedText = "${states.searchCurrency} (${states.baseCurrencyCode})",
-//                    expanded = states.baseCurrencyExpanded,
-//                    list = states.currencies,
-//                    onExpandedChange = {
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.SelectBaseCurrency(
-//                                currency = states.selectedBaseCurrency,
-//                                currencyCode = states.baseCurrencyCode,
-//                                currencySymbol = states.baseCurrencySymbol,
-//                                expanded = it
-//                            )
-//                        )
-//                        if (it) {
-//                            viewModel.onEvent(ProfileSetUpEvents.LoadCurrencies)
-//                        }
-//                    },
-//                    onDismissRequest = {
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.SelectBaseCurrency(
-//                                currency = states.selectedBaseCurrency,
-//                                currencyCode = states.baseCurrencyCode,
-//                                currencySymbol = states.baseCurrencySymbol,
-//                                expanded = !states.baseCurrencyExpanded
-//                            )
-//                        )
-//
-//                    },
-//                    displayText = {
-//                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
-//                    },
-//                    onItemSelect = {
-//                        val firstCurrency = it.currencies?.entries?.firstOrNull()
-//
-//
-//
-//                        val currencyName = firstCurrency?.value?.name ?: "N/A"
-//                        val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
-//                        val currencyCode = firstCurrency?.key ?: "N/A"
-//
-//                        Log.d("ProfileSetUp","firstCurrency BaseCurrency $firstCurrency")
-//                        Log.d("ProfileSetUp","currencyName BaseCurrency $currencyName")
-//                        Log.d("ProfileSetUp","currencyCode BaseCurrency $currencySymbol")
-//                        Log.d("ProfileSetUp","currencySymbol BaseCurrency $currencyCode")
-//
-//                        viewModel.onEvent(
-//                            ProfileSetUpEvents.SelectBaseCurrency(
-//                                currency = currencyName,
-//                                currencyCode = currencyCode,
-//                                currencySymbol = currencySymbol,
-//                                expanded = false
-//                            )
-//                        )
-//                    },
-//                    isLoading = states.isLoadingDropdownCurrency
-//                )
-
                 AutoComplete(
                     categories = states.currencies,
                     loadCountry = {
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.LoadCurrencies
                         )
                     },
                     onSearchValueChange = {
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.ChangeSearchCurrency(it)
                         )
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.FilterCountryNameList(
                                 list = states.countries,
                                 newWord = it
@@ -359,7 +241,7 @@ fun ProfileSetUp(
                     },
                     expanded = states.baseCurrencyExpanded,
                     onExpandedChange = {
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.SelectBaseCurrency(
                                 currency = states.selectedBaseCurrency,
                                 currencyCode = states.baseCurrencyCode,
@@ -368,14 +250,11 @@ fun ProfileSetUp(
                             )
                         )
                         if (it) {
-                            viewModel.onEvent(ProfileSetUpEvents.LoadCurrencies)
+                            onEvent(ProfileSetUpEvents.LoadCurrencies)
                         }
                     },
                     onItemSelect = {
                         val firstCurrency = it.currencies?.entries?.firstOrNull()
-
-
-
                         val currencyName = firstCurrency?.value?.name ?: "N/A"
                         val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                         val currencyCode = firstCurrency?.key ?: "N/A"
@@ -385,7 +264,7 @@ fun ProfileSetUp(
                         Log.d("ProfileSetUp","currencyCode BaseCurrency $currencySymbol")
                         Log.d("ProfileSetUp","currencySymbol BaseCurrency $currencyCode")
 
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.SelectBaseCurrency(
                                 currency = currencyName,
                                 currencyCode = currencyCode,
@@ -393,7 +272,7 @@ fun ProfileSetUp(
                                 expanded = false
                             )
                         )
-                        viewModel.onEvent(
+                        onEvent(
                             ProfileSetUpEvents.ChangeSearchCurrency(currencyName)
                         )
                     },
@@ -409,11 +288,32 @@ fun ProfileSetUp(
                 // Submit
                 SaveButton(text = "Save",
                     onClick = {
-                        viewModel.onEvent(ProfileSetUpEvents.Submit)
+                        onEvent(ProfileSetUpEvents.Submit)
                     }
                 )
             }
 
         }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true)
+@Composable
+fun ProfileSetUpPreview(){
+    FinanceTrackerTheme(darkTheme = true) {
+
+        ProfileSetUpScreen(
+            navController = rememberNavController(),
+            states = ProfileSetUpStates(
+                email = "shahvivek138@gmail.com"
+            ),
+            onEvent = {
+
+            },
+            profileSetUpValidationEvents = emptyFlow()
+        )
+
     }
 }

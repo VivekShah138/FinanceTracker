@@ -43,10 +43,7 @@ class ProfileSetUpViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalUseCase(userId)
             val baseCurrency = userProfile?.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
-//            Log.d("WorkManagerCurrencyRates","baseCurrency $baseCurrency")
-
             oldBaseCurrency = baseCurrency
-//            Log.d("WorkManagerCurrencyRates","oldBaseCurrency $oldBaseCurrency")
         }
     }
 
@@ -199,10 +196,6 @@ class ProfileSetUpViewModel @Inject constructor(
 
 
         if(!firstName.isSuccessful || !lastName.isSuccessful || !phoneNumber.isSuccessful || !country.isSuccessful){
-//            Log.d("ProfileFN", "FN: ${_profileSetUpStates.value.firstName} ${firstName.isSuccessful}  ${firstName.errorMessage}")
-//            Log.d("ProfileLN", "LN: ${_profileSetUpStates.value.lastName} ${lastName.isSuccessful}  ${lastName.errorMessage}")
-//            Log.d("ProfilePN", "PN: ${_profileSetUpStates.value.phoneNumber} ${phoneNumber.isSuccessful}  ${phoneNumber.errorMessage}")
-//            Log.d("ProfileC", "C: ${_profileSetUpStates.value.selectedCountry} ${country.isSuccessful}  ${country.errorMessage}")
             profileSetUpEventChannel.send(
                 ProfileUpdateEvent.Failure(
                     firstName.errorMessage ?: lastName.errorMessage ?: phoneNumber.errorMessage
@@ -227,7 +220,6 @@ class ProfileSetUpViewModel @Inject constructor(
                 // Create the Currency object
                 val selectedCurrency = Currency(name = baseCurrencyName, symbol = baseCurrencySymbol)
 
-//                Log.d("ProfileSetUpViewModel","selectedCurrency firebaseUpdate $selectedCurrency")
 
                 // Create the baseCurrency map with the code as key and the map as value
                 val baseCurrency: Map<String, Currency> = mapOf(
@@ -285,9 +277,6 @@ class ProfileSetUpViewModel @Inject constructor(
             _profileSetUpStates.value.lastName
         )
         if(!firstName.isSuccessful || !lastName.isSuccessful){
-//            Log.d("ProfileFN", "FN: ${_profileSetUpStates.value.firstName} ${firstName.isSuccessful}  ${firstName.errorMessage}")
-//            Log.d("ProfileLN", "LN: ${_profileSetUpStates.value.lastName} ${lastName.isSuccessful}  ${lastName.errorMessage}")
-
             profileSetUpEventChannel.send(
                 ProfileUpdateEvent.Failure(
                     firstName.errorMessage ?: lastName.errorMessage
@@ -303,7 +292,6 @@ class ProfileSetUpViewModel @Inject constructor(
             _profileSetUpStates.value.phoneNumber
         )
         if(!phoneNumber.isSuccessful){
-//            Log.d("ProfilePN", "PN: ${_profileSetUpStates.value.phoneNumber} ${phoneNumber.isSuccessful}  ${phoneNumber.errorMessage}")
             profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(phoneNumber.errorMessage))
             return
         }
@@ -317,7 +305,6 @@ class ProfileSetUpViewModel @Inject constructor(
         val countryExpanded = _profileSetUpStates.value.countryExpanded
 
         if(!country.isSuccessful ){
-//            Log.d("ProfileC", "C: ${_profileSetUpStates.value.selectedCountry} ${country.isSuccessful}  ${country.errorMessage}")
             profileSetUpEventChannel.send(ProfileUpdateEvent.Failure(country.errorMessage))
             return
         }
@@ -349,7 +336,6 @@ class ProfileSetUpViewModel @Inject constructor(
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
                     countries = sortedCountries,
-//                    countryFilteredSearchList = sortedCountries
                 )
             } catch (e: Exception) {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
@@ -390,13 +376,13 @@ class ProfileSetUpViewModel @Inject constructor(
             try {
                 val sortedCurrencies = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
                     .filter {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
                     }
                     .sortedBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
                     }
                     .distinctBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
                     }
 
                 setupAccountUseCasesWrapper.insertCountryLocalUseCase(sortedCurrencies)
@@ -413,13 +399,13 @@ class ProfileSetUpViewModel @Inject constructor(
 
                 val sortedCurrenciesLocally = setupAccountUseCasesWrapper.getCountryLocalUseCase()
                     .filter {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
                     }
                     .sortedBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
                     }
                     .distinctBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
                     }
 
                 if(sortedCurrenciesLocally.isEmpty()){
@@ -486,8 +472,8 @@ class ProfileSetUpViewModel @Inject constructor(
                 }
                 else{
                     val baseCurrencyCode = userProfile.baseCurrency.keys.firstOrNull() ?: "N/A"
-                    val baseCurrencyName = userProfile.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
-                    val baseCurrencySymbol = userProfile.baseCurrency?.values?.firstOrNull()?.symbol ?: "N/A"
+                    val baseCurrencyName = userProfile.baseCurrency.values.firstOrNull()?.name ?: "N/A"
+                    val baseCurrencySymbol = userProfile.baseCurrency.values.firstOrNull()?.symbol ?: "N/A"
 
 
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
@@ -515,7 +501,7 @@ class ProfileSetUpViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalUseCase(userId)
 
-            if(((!oldBaseCurrency.isNullOrEmpty() && oldBaseCurrency != _profileSetUpStates.value.selectedBaseCurrency) || userProfile == null)){
+            if(((oldBaseCurrency.isNotEmpty() && oldBaseCurrency != _profileSetUpStates.value.selectedBaseCurrency) || userProfile == null)){
                 setupAccountUseCasesWrapper.setCurrencyRatesUpdatedLocalUseCase(isUpdated = false)
                 setupAccountUseCasesWrapper.seedCurrencyRatesLocalOneTime()
             }

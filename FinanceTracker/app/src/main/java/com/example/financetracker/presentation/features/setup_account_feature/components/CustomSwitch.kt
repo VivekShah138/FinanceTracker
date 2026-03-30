@@ -59,9 +59,9 @@ fun SettingsSwitchItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)  // Padding inside the row
-                .height(50.dp),  // Align items vertically
-            verticalAlignment = Alignment.CenterVertically  // Align items vertically in the center
+                .padding(16.dp)
+                .height(50.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Default.Cloud,
@@ -71,12 +71,12 @@ fun SettingsSwitchItem(
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)  // Text takes the available space
+                modifier = Modifier.weight(1f)
             )
             Switch(
                 checked = isCheck,
                 onCheckedChange = { onCheckChange(it) },
-                modifier = Modifier.scale(0.8f)  // Adjust switch size
+                modifier = Modifier.scale(0.8f)
             )
         }
 }
