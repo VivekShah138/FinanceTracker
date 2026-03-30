@@ -19,24 +19,41 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.settings_feature.SettingEvents
+import com.example.financetracker.presentation.features.settings_feature.SettingStates
 import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
 import com.example.financetracker.presentation.features.setup_account_feature.components.SettingsSwitchItem
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+
 
 @Composable
-fun SettingsPage(
+fun SettingsRoot(
     navController: NavController,
     viewModel: SettingsViewModel
 ){
-
     val states by viewModel.settingStates.collectAsStateWithLifecycle()
 
+    SettingsScreen(
+        navController =navController,
+        states = states,
+        onEvent = viewModel::onEvent
+    )
+}
 
+@Composable
+fun SettingsScreen(
+    navController: NavController,
+    states: SettingStates,
+    onEvent: (SettingEvents) -> Unit
+){
     Scaffold(
         topBar = {
             AppTopBar(
@@ -72,14 +89,12 @@ fun SettingsPage(
 
                     NameCard(states.name)
 
-
                     SettingsItemCard(
                         leadingImageVector = Icons.Default.Person,
                         leadingImageVectorState = true,
                         trailingImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                         trailingImageVectorState = true,
                         onClick = {
-//                            navController.navigate(route = Screens.ProfileSetUpScreen.routes)
                             navController.navigate(route = Screens.ProfileSetUpScreen)
                         },
                         text = "Profile"
@@ -89,7 +104,7 @@ fun SettingsPage(
                         text = "Cloud Sync",
                         isCheck = states.cloudSync,
                         onCheckChange = {
-                            viewModel.onEvent(SettingEvents.ChangeCloudSync(it))
+                            onEvent(SettingEvents.ChangeCloudSync(it))
                         }
                     )
 
@@ -99,7 +114,6 @@ fun SettingsPage(
                         trailingImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                         trailingImageVectorState = true,
                         onClick = {
-//                            navController.navigate(route = Screens.CategoriesScreen.routes)
                             navController.navigate(route = Screens.CategoriesScreen)
                         },
                         text = "Categories"
@@ -111,7 +125,6 @@ fun SettingsPage(
                         trailingImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                         trailingImageVectorState = true,
                         onClick = {
-//                            navController.navigate(route = Screens.BudgetScreen.routes)
                             navController.navigate(route = Screens.BudgetScreen)
                         },
                         text = "Budget",
@@ -122,7 +135,7 @@ fun SettingsPage(
                         text = "Dark Mode",
                         isCheck = states.darkMode,
                         onCheckChange = {
-                            viewModel.onEvent(SettingEvents.ChangeDarkMode(it))
+                            onEvent(SettingEvents.ChangeDarkMode(it))
                         }
                     )
 
@@ -133,8 +146,7 @@ fun SettingsPage(
                         trailingImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                         trailingImageVectorState = true,
                         onClick = {
-                            viewModel.onEvent(SettingEvents.LogOut)
-//                            navController.navigate(route = Screens.StartUpPageScreen.routes )
+                            onEvent(SettingEvents.LogOut)
                             navController.navigate(route = Screens.StartUpPageScreen)
                         },
                         text = "Log Out"
@@ -142,5 +154,25 @@ fun SettingsPage(
                 }
             }
         }
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true)
+@Composable
+fun SettingsPagePreview(){
+
+    FinanceTrackerTheme {
+        SettingsScreen(
+            navController = rememberNavController(),
+            states = SettingStates(
+
+            ),
+            onEvent = {
+
+            }
+        )
     }
 }

@@ -23,18 +23,12 @@ class SettingsViewModel @Inject constructor(
     val settingStates: StateFlow<SettingStates> = _settingStates.asStateFlow()
 
 
-
-
     init {
-        // Load cloud sync state when the ViewModel is initialized
         val cloudSyncState = settingsUseCaseWrapper.getCloudSyncLocalUseCase()
         _settingStates.value = _settingStates.value.copy(cloudSync = cloudSyncState)
 
         val darkMode = settingsUseCaseWrapper.getDarkModeLocalUseCase()
         _settingStates.value = _settingStates.value.copy(darkMode = darkMode)
-
-//        val userName = settingsUseCaseWrapper.getUserNameLocally()
-//        _settingStates.value = settingStates.value.copy(name = userName ?: "")
     }
 
     fun onEvent(settingEvents: SettingEvents) {
@@ -117,7 +111,4 @@ class SettingsViewModel @Inject constructor(
             Log.d("SettingsViewModel", "UID still null, cannot load profile.")
         }
     }
-
-
-
 }

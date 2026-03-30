@@ -26,56 +26,44 @@ fun SettingsItemCard(
     onClick: () -> Unit,
     showBadge: Boolean = false
 ){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .height(50.dp)
+            .clickable {
+                onClick()
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if(leadingImageVectorState){
+            Icon(
+                imageVector = leadingImageVector,
+                contentDescription = "Leading Icon",
+                modifier = Modifier.padding(end = 16.dp)
+            )
+        }
 
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .clickable {
-//                onClick()
-//            },
-//        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
-//        shape = MaterialTheme.shapes.medium
-//    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .height(50.dp)
-                .clickable {
-                    onClick()
-                },  // To align items vertically
-            verticalAlignment = Alignment.CenterVertically  // Align items vertically in the center
-        ) {
-            if(leadingImageVectorState){
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.weight(1f)
+        )
+
+        if(trailingImageVectorState){
+            BadgedBox(
+                badge = {
+                    if (showBadge) {
+                        Badge()
+                    }
+                }
+            ) {
                 Icon(
-                    imageVector = leadingImageVector,
-                    contentDescription = "Leading Icon",
-                    modifier = Modifier.padding(end = 16.dp)
+                    imageVector = trailingImageVector,
+                    contentDescription = "Navigate to "
                 )
             }
-
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)  // This ensures the text takes available space
-            )
-
-            if(trailingImageVectorState){
-                BadgedBox(
-                    badge = {
-                        if (showBadge) {
-                            Badge()
-                        }
-                    }
-                ) {
-                    Icon(
-                        imageVector = trailingImageVector,
-                        contentDescription = "Navigate to "
-                    )
-                }
-            }
-
         }
-//    }
 
+    }
 }
