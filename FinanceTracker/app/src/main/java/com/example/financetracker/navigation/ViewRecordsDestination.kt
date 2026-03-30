@@ -16,8 +16,6 @@ fun NavGraphBuilder.viewRecordsGraph(
 ) {
     composable<Screens.ViewRecordsScreen> { backStackEntry ->
         val args = backStackEntry.toRoute<Screens.ViewRecordsScreen>()
-        val viewTransactionsViewModel: ViewTransactionsViewModel = hiltViewModel()
-        val viewSavedItemsViewModel: ViewSavedItemsViewModel = hiltViewModel()
 
         RecordsRoot(
             navController = navController,

@@ -32,31 +32,21 @@ fun SliderWithValueInsideCustomThumb(
     sliderPosition: Float,
     onValueChange: (Float) -> Unit
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
 
-    // Custom slider with custom thumb
     Slider(
         value = sliderPosition,
         onValueChange =  onValueChange ,
         valueRange = 0f..100f,
         steps = 19,
         modifier = Modifier.fillMaxWidth(),
-//        interactionSource = interactionSource,
         thumb = {
             CustomThumb(sliderPosition)
         },
-//        colors = SliderColors(
-//            activeTrackColor = MaterialTheme.colorScheme.primary,
-//            inactiveTrackColor = MaterialTheme.colorScheme.primaryContainer,
-//            thumbColor = MaterialTheme.colorScheme.primary
-//        )
         colors = SliderColors(
             thumbColor =  MaterialTheme.colorScheme.primary,
             activeTrackColor = MaterialTheme.colorScheme.primary,
             inactiveTrackColor = MaterialTheme.colorScheme.surface,
-//            activeTickColor = MaterialTheme.colorScheme.onPrimary,
             activeTickColor = Color.Transparent,
-//            inactiveTickColor = MaterialTheme.colorScheme.onSurface,
             inactiveTickColor = Color.Transparent,
             disabledThumbColor = MaterialTheme.colorScheme.onSurface,
             disabledActiveTrackColor= MaterialTheme.colorScheme.onSurface,
@@ -74,12 +64,9 @@ fun CustomThumb(sliderPosition: Float) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .size(width = 40.dp, height = 30.dp) // Thumb size
-            .clip(RoundedCornerShape(25.dp)) // Thumb shape
-            .graphicsLayer {
-                // Optionally, add scale or rotation effects here if needed
-            }
-            .background(MaterialTheme.colorScheme.primary) // Thumb color
+            .size(width = 40.dp, height = 30.dp)
+            .clip(RoundedCornerShape(25.dp))
+            .background(MaterialTheme.colorScheme.primary)
     ) {
         Text(
             text = "${sliderPosition.toInt()}%",
@@ -105,9 +92,7 @@ fun SliderWithValueInsideCustomThumbPreview(){
 
             }
         )
-
     }
-
 }
 
 

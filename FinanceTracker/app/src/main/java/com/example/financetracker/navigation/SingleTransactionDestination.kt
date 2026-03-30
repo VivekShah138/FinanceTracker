@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.financetracker.navigation.core.Screens
+import com.example.financetracker.presentation.features.view_records_feature.components.SingleTransactionRoot
 import com.example.financetracker.presentation.features.view_records_feature.components.SingleTransactionScreen
 
 fun NavGraphBuilder.singleTransactionGraph(
@@ -13,9 +14,8 @@ fun NavGraphBuilder.singleTransactionGraph(
 ){
     composable<Screens.SingleTransactionScreen> { backStackEntry ->
         val args = backStackEntry.toRoute<Screens.SingleTransactionScreen>()
-        SingleTransactionScreen(
+        SingleTransactionRoot(
             navController = navController,
-            viewTransactionsViewModel = hiltViewModel(),
             transactionId = args.transactionId
         )
     }

@@ -22,37 +22,56 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.presentation.features.budget_feature.BudgetEvents
 import com.example.financetracker.presentation.features.budget_feature.BudgetViewModel
 
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.navigation.core.Screens
+import com.example.financetracker.presentation.features.budget_feature.BudgetStates
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel.AddTransactionValidationEvent
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
+@Composable
+fun BudgetRoot(
+    navController: NavController,
+    budgetViewModel: BudgetViewModel = hiltViewModel()
+){
+    val states by budgetViewModel.budgetStates.collectAsStateWithLifecycle()
+
+    BudgetScreen(
+        navController = navController,
+        states = states,
+        onEvent = budgetViewModel::onEvent,
+        budgetValidationEvents = budgetViewModel.budgetValidationEvents
+    )
+}
 
 @Composable
 fun BudgetScreen(
     navController: NavController,
-    budgetViewModel: BudgetViewModel
+    states: BudgetStates,
+    onEvent: (BudgetEvents) -> Unit,
+    budgetValidationEvents: Flow<AddTransactionValidationEvent>
 ){
-
-    val states by budgetViewModel.budgetStates.collectAsStateWithLifecycle()
-    val singleBudgetState by budgetViewModel.singleBudgetState.collectAsStateWithLifecycle()
-    val events =  budgetViewModel.budgetValidationEvents
     val context = LocalContext.current
 
     LaunchedEffect(key1 = context) {
-        events.collect { event ->
+        budgetValidationEvents.collect { event ->
             when (event) {
-                is AddTransactionViewModel.AddTransactionValidationEvent.Failure -> {
+                is AddTransactionValidationEvent.Failure -> {
                     Toast.makeText(context,event.errorMessage, Toast.LENGTH_SHORT).show()
                 }
-                AddTransactionViewModel.AddTransactionValidationEvent.Success -> {
+                is AddTransactionValidationEvent.Success -> {
                     Toast.makeText(context,"Budget Successfully Added", Toast.LENGTH_LONG).show()
-//                    navController.navigate(route = Screens.HomePageScreen.routes)
                     navController.navigate(route = Screens.HomePageScreen)
                 }
             }
@@ -93,7 +112,7 @@ fun BudgetScreen(
                 ) {
                     MonthSelectorBudget(
                         state = states,
-                        onEvent = budgetViewModel::onEvent,
+                        onEvent = onEvent,
                         context = context
                     )
                 }
@@ -108,7 +127,6 @@ fun BudgetScreen(
                     }
 
                 } else {
-
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -122,7 +140,7 @@ fun BudgetScreen(
                                 amount = states.budget,
                                 currencySymbol = states.budgetCurrencySymbol,
                                 onAmountChange = {
-                                    budgetViewModel.onEvent(BudgetEvents.ChangeBudget(it))
+                                    onEvent(BudgetEvents.ChangeBudget(it))
                                 }
                             )
 
@@ -133,7 +151,7 @@ fun BudgetScreen(
                                 text = "Receive Alert",
                                 isCheck = states.receiveAlerts,
                                 onCheckChange = {
-                                    budgetViewModel.onEvent(
+                                    onEvent(
                                         BudgetEvents.ChangeReceiveBudgetAlerts(it)
                                     )
                                 },
@@ -146,7 +164,7 @@ fun BudgetScreen(
                                 SliderWithValueInsideCustomThumb(
                                     sliderPosition = states.alertThresholdPercent,
                                     onValueChange = {
-                                        budgetViewModel.onEvent(BudgetEvents.ChangeAlertThresholdAmount(it))
+                                        onEvent(BudgetEvents.ChangeAlertThresholdAmount(it))
                                     }
                                 )
                             }
@@ -165,10 +183,10 @@ fun BudgetScreen(
                     onClick = {
 
                         if(states.createBudgetState){
-                            budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
+                            onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
                         }else{
-                            budgetViewModel.onEvent(BudgetEvents.SaveBudget)
-                            budgetViewModel.onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
+                            onEvent(BudgetEvents.SaveBudget)
+                            onEvent(BudgetEvents.ChangeCreateBudgetState(state = false))
                         }
 
                     },
@@ -182,5 +200,24 @@ fun BudgetScreen(
                 }
             }
         }
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun BudgetScreenPreview(){
+    FinanceTrackerTheme {
+        BudgetScreen(
+            navController = rememberNavController(),
+            states = BudgetStates(),
+            onEvent = {
+
+            },
+            budgetValidationEvents = emptyFlow()
+        )
     }
 }
