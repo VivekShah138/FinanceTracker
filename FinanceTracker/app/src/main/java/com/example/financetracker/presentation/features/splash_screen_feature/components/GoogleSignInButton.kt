@@ -21,7 +21,6 @@ fun GoogleSignInButton(
     onClick:() -> Unit,
     googleIcon: Painter,
     googleText: String,
-//    textStyle: TextStyle
 ) {
 
 
@@ -50,7 +49,6 @@ fun GoogleSignInButton(
 
         Text(
             text = googleText,
-//            style = textStyle
         )
     }
 }

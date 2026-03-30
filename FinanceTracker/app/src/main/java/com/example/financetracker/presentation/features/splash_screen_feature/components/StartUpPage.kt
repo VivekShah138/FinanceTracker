@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -85,9 +86,14 @@ fun StartUpPageScreen(
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val accountManager = remember {
-        AccountManager(context as ComponentActivity)
+    val accountManager = if (!LocalInspectionMode.current) {
+        remember {
+            AccountManager(context as ComponentActivity)
+        }
+    } else {
+        null
     }
+
 
     Log.d("StartUpPage","states: $startUpPageStates")
 
@@ -101,11 +107,9 @@ fun StartUpPageScreen(
                         Toast.LENGTH_SHORT).show()
 
                     if(!loginPageStates.userProfile.profileSetUpCompleted){
-//                        navController.navigate(Screens.NewUserProfileOnBoardingScreen.routes)
                         navController.navigate(Screens.NewUserProfileOnBoardingScreen)
                     }
                     else{
-//                        navController.navigate(Screens.HomePageScreen.routes)
                         navController.navigate(Screens.HomePageScreen)
                     }
                 }
@@ -123,11 +127,6 @@ fun StartUpPageScreen(
 
     LaunchedEffect(startUpPageStates.isLoggedIn) {
         if(startUpPageStates.isLoggedIn){
-//            navController.navigate(route = Screens.HomePageScreen.routes) {
-//                popUpTo(route = Screens.LogInScreen.routes) {
-//                    inclusive = true
-//                }
-//            }
             navController.navigate(route = Screens.HomePageScreen) {
                 popUpTo(route = Screens.LogInScreen) {
                     inclusive = true
@@ -195,9 +194,11 @@ fun StartUpPageScreen(
             GoogleSignInButton(
                 onClick = {
                     coroutineScope.launch {
-                        loginPageOnEvents(LoginPageEvents.SetLoadingTrue(true))
-                        val result = accountManager.signInWithGoogle()
-                        loginPageOnEvents(LoginPageEvents.ClickLoginWithGoogle(result))
+                        accountManager?.let {
+                            loginPageOnEvents(LoginPageEvents.SetLoadingTrue(true))
+                            val result = accountManager.signInWithGoogle()
+                            loginPageOnEvents(LoginPageEvents.ClickLoginWithGoogle(result))
+                        }
                     }
                 },
                 googleIcon = painterResource(R.drawable.google_icon),
