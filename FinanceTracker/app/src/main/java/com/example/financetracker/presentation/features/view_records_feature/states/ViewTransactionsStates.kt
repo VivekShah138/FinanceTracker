@@ -27,16 +27,15 @@ data class ViewTransactionsStates(
 
     val selectedDuration: DurationFilter = DurationFilter.Today,
     val rangeDropDownExpanded: Boolean = false,
-//    val customDateAlertBoxState: Boolean = false,
     val customDeleteAlertBoxState: Boolean = false,
     val fromDate: Long = 0,
     val toDate: Long = 0,
 
     val filters: List<TransactionFilter> = listOf(
-        TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
-        TransactionFilter.Order(TransactionOrder.Descending), // Default to Ascending order
-        TransactionFilter.Category(emptyList()), // Default to all categories (empty list means no category filter)
-        TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
+        TransactionFilter.TransactionType(TransactionTypeFilter.Both),
+        TransactionFilter.Order(TransactionOrder.Descending),
+        TransactionFilter.Category(emptyList()),
+        TransactionFilter.Duration(DurationFilter.ThisMonth)
     ),
 
     val categories: List<Category> = emptyList(),
@@ -48,9 +47,6 @@ data class ViewTransactionsStates(
 
 
     // selected Transaction
-    val selectedTransactions: Set<Int> = emptySet(), // Store transaction IDs or whole objects
-    val isSelectionMode: Boolean = false,
-
-
-
-    )
+    val selectedTransactions: Set<Int> = emptySet(),
+    val isSelectionMode: Boolean = false
+)

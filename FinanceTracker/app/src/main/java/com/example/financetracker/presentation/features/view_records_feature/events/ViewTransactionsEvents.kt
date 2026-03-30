@@ -35,6 +35,4 @@ sealed class ViewTransactionsEvents() {
 
     // Get Selected Transaction
     data class GetSingleTransaction(val transactionId: Int): ViewTransactionsEvents()
-
-
 }

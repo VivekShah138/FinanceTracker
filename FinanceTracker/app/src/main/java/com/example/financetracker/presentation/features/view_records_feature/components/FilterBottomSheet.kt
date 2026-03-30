@@ -29,43 +29,6 @@ import java.util.Calendar
 fun FilterBottomSheetModal(
     showSheet: Boolean,
     onDismiss: () -> Unit,
-    sortOrder: String,
-    onSortOrderChange: (String) -> Unit,
-    type: String,
-    onTypeChange: (String) -> Unit,
-    selectedCategories: List<String>,
-    onCategoryToggle: (String) -> Unit,
-    allCategories: List<String>,
-    onClearAll: () -> Unit,
-    onApply: () -> Unit
-
-) {
-    if (showSheet) {
-        ModalBottomSheet(
-            onDismissRequest = onDismiss,
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        ) {
-            FilterBottomSheet2(
-                sortOrder = sortOrder,
-                onSortOrderChange = onSortOrderChange,
-                type = type,
-                onTypeChange = onTypeChange,
-                selectedCategories = selectedCategories,
-                onCategoryToggle = onCategoryToggle,
-                allCategories = allCategories,
-                onApply = onApply,
-                onClearAll = onClearAll
-            )
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FilterBottomSheetModal2(
-    showSheet: Boolean,
-    onDismiss: () -> Unit,
     filters: List<TransactionFilter>,
     onFilterChange: (TransactionFilter) -> Unit,
     onClearAll: () -> Unit,
@@ -79,14 +42,13 @@ fun FilterBottomSheetModal2(
             onDismissRequest = onDismiss,
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
         ) {
-            FilterBottomSheet3(
+            FilterBottomSheet(
                 filters = filters,
                 onFilterChange = onFilterChange,
                 allCategories = allCategories,
                 onApply = onApply,
                 onClearAll = onClearAll,
                 applyFilterVisibility = applyFilterVisibility,
-//                onEvent: (ViewTransactionsEvents) -> Unit
             )
         }
     }
@@ -94,276 +56,6 @@ fun FilterBottomSheetModal2(
 
 @Composable
 fun FilterBottomSheet(
-    sortOrder: String,
-    onSortOrderChange: (String) -> Unit,
-    type: String,
-    onTypeChange: (String) -> Unit,
-    selectedCategories: List<String>,
-    onCategoryToggle: (String) -> Unit,
-    allCategories: List<String>
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        // Sort By
-        Text(text = "Sort By", style = MaterialTheme.typography.titleMedium)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            listOf("Ascending", "Descending").forEach { order ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable { onSortOrderChange(order) }
-                ) {
-                    RadioButton(
-                        selected = sortOrder == order,
-                        onClick = { onSortOrderChange(order) }
-                    )
-                    Text(order)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Type
-        Text(text = "Type", style = MaterialTheme.typography.titleMedium)
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(vertical = 8.dp)
-        ) {
-            listOf("Income", "Expense", "Both").forEach { t ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clickable { onTypeChange(t) }
-                        .padding(end = 16.dp)
-                        .weight(1f)
-                ) {
-                    RadioButton(
-                        selected = type == t,
-                        onClick = { onTypeChange(t) }
-                    )
-                    Text(t, modifier = Modifier.weight(1f))
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Category
-        Text(text = "Category", style = MaterialTheme.typography.titleMedium)
-        Column(modifier = Modifier.padding(top = 8.dp)) {
-            allCategories.forEach { category ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onCategoryToggle(category) }
-                        .padding(vertical = 4.dp)
-                ) {
-                    Checkbox(
-                        checked = selectedCategories.contains(category),
-                        onCheckedChange = { onCategoryToggle(category) }
-                    )
-                    Text(text = category)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-    }
-}
-
-
-@Composable
-fun FilterBottomSheet2(
-    sortOrder: String,
-    onSortOrderChange: (String) -> Unit,
-    type: String,
-    onTypeChange: (String) -> Unit,
-    selectedCategories: List<String>,
-    onCategoryToggle: (String) -> Unit,
-    allCategories: List<String>,
-    onClearAll: () -> Unit,
-    onApply: () -> Unit
-) {
-    var selectedSection by remember { mutableStateOf("Sort By") }
-    val categoryScrollState = rememberScrollState()
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Row(
-            modifier = Modifier
-                .weight(1f)
-        ) {
-            // Left Panel - Section Titles
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.surfaceVariant) // Tint left side
-            ) {
-                listOf("Sort By", "Type", "Category","Date Range").forEach { section ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                if (selectedSection == section)
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-                                else Color.Transparent
-                            )
-                            .clickable { selectedSection = section }
-                            .padding(vertical = 12.dp, horizontal = 8.dp)
-                    ) {
-                        Text(
-                            text = section,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                color = if (selectedSection == section)
-                                    MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface
-                            )
-                        )
-                    }
-
-                }
-            }
-
-            // Right Panel - Options
-            Column(
-                modifier = Modifier
-                    .weight(2f)
-                    .padding(start = 8.dp)
-            ) {
-                when (selectedSection) {
-                    "Sort By" -> {
-                        listOf("Ascending", "Descending").forEach { order ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { onSortOrderChange(order) }
-                                    .padding(vertical = 6.dp)
-                            ) {
-                                RadioButton(
-                                    selected = sortOrder == order,
-                                    onClick = { onSortOrderChange(order) },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = MaterialTheme.colorScheme.primary
-                                    )
-                                )
-                                Text(order)
-                            }
-                        }
-                    }
-
-                    "Type" -> {
-                        listOf("Income", "Expense", "Both").forEach { t ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { onTypeChange(t) }
-                                    .padding(vertical = 6.dp)
-                            ) {
-                                RadioButton(
-                                    selected = type == t,
-                                    onClick = { onTypeChange(t) },
-                                    colors = RadioButtonDefaults.colors(
-                                        selectedColor = MaterialTheme.colorScheme.primary
-                                    )
-                                )
-                                Text(t)
-                            }
-                        }
-                    }
-
-                    "Date Range" -> {
-                        var showDialog by remember { mutableStateOf(false) }
-
-                        OutlinedTextField(
-                            value = "textValue",
-                            onValueChange = {}, // no manual editing
-                            readOnly = true,
-                            label = { Text("On") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    showDialog = true
-                                }
-                        )
-
-                        if(showDialog){
-                            Text("True")
-                        }
-
-
-                    }
-
-                    "Category" -> {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .verticalScroll(categoryScrollState)
-                        ) {
-                            allCategories.forEach { category ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable { onCategoryToggle(category) }
-                                        .padding(vertical = 4.dp)
-                                ) {
-                                    Checkbox(
-                                        checked = selectedCategories.contains(category),
-                                        onCheckedChange = { onCategoryToggle(category) },
-                                        colors = CheckboxDefaults.colors(
-                                            checkedColor = MaterialTheme.colorScheme.primary
-                                        )
-                                    )
-                                    Text(text = category)
-                                }
-                            }
-                        }
-                    }
-
-
-
-                }
-            }
-        }
-
-        // Bottom Buttons
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp) // Optional spacing between buttons
-        ) {
-            Button(
-                onClick = onClearAll,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Clear All")
-            }
-            Button(
-                onClick = onApply,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Apply")
-            }
-        }
-    }
-}
-
-@Composable
-fun FilterBottomSheet3(
     filters: List<TransactionFilter>,
     onFilterChange: (TransactionFilter) -> Unit,
     onClearAll: () -> Unit,
@@ -402,7 +94,7 @@ fun FilterBottomSheet3(
             modifier = Modifier
                 .weight(1f)
         ) {
-            // Left Panel - Section Titles
+
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -549,7 +241,7 @@ fun FilterBottomSheet3(
                                         } else {
                                             dateError = null
 
-                                            // Update the to and from dates
+
                                             val customRange = DurationFilter.CustomRange(
                                                 fromDate!!.timeInMillis,
                                                 toDate!!.timeInMillis
@@ -611,7 +303,7 @@ fun FilterBottomSheet3(
                                             checkedColor = MaterialTheme.colorScheme.primary
                                         )
                                     )
-                                    Text(text = category.name) // assuming Category has a `name` field
+                                    Text(text = category.name)
                                 }
                             }
                         }

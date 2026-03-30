@@ -11,27 +11,24 @@ fun DeleteConfirmationDialog(
     message: String = "Are you sure you want to delete this item?",
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    showDialog: Boolean
 ) {
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = {
-                Text(text = title)
-            },
-            text = {
-                Text(text = message)
-            },
-            confirmButton = {
-                TextButton(onClick = onConfirm) {
-                    Text("Delete")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text("Cancel")
-                }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = title)
+        },
+        text = {
+            Text(text = message)
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Delete")
             }
-        )
-    }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }

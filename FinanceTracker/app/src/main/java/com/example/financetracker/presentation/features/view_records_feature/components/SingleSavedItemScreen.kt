@@ -3,10 +3,12 @@ package com.example.financetracker.presentation.features.view_records_feature.co
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -27,33 +29,59 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.financetracker.domain.model.Currency
+import com.example.financetracker.domain.model.SavedItems
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewSavedItemsEvents
+import com.example.financetracker.presentation.features.view_records_feature.states.ViewSavedItemsStates
 import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewSavedItemsViewModel
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import java.util.Locale
 
+@Composable
+fun SingleSavedItemRoot(
+    navController: NavController,
+    viewSavedItemsViewModel: ViewSavedItemsViewModel = hiltViewModel(),
+    savedItemId: Int
+){
+    val states by viewSavedItemsViewModel.viewSavedItemsStates.collectAsStateWithLifecycle()
+    val singleItemState by viewSavedItemsViewModel.savedItemState.collectAsStateWithLifecycle()
+    val savedItemsValidationEvent = viewSavedItemsViewModel.savedItemsValidationEvents
 
+    SingleSavedItemScreen(
+        navController = navController,
+        states = states,
+        singleItemState = singleItemState,
+        onEvent = viewSavedItemsViewModel::onEvent,
+        savedItemsValidationEvent = viewSavedItemsViewModel.savedItemsValidationEvents,
+        savedItemId = savedItemId
+    )
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SingleSavedItemScreen(
     navController: NavController,
-    viewSavedItemsViewModel: ViewSavedItemsViewModel,
-    savedItemId: Int
+    states: ViewSavedItemsStates,
+    singleItemState: SavedItems?,
+    onEvent: (ViewSavedItemsEvents) -> Unit,
+    savedItemId: Int,
+    savedItemsValidationEvent: Flow<AddTransactionViewModel.AddTransactionValidationEvent>
 ){
-
-    val states by viewSavedItemsViewModel.viewSavedItemsStates.collectAsStateWithLifecycle()
-    val singleItemState by viewSavedItemsViewModel.savedItemState.collectAsStateWithLifecycle()
-    val savedItemsValidationEvent = viewSavedItemsViewModel.savedItemsValidationEvents
     val context = LocalContext.current
 
     LaunchedEffect(savedItemId) {
-        viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.GetSingleSavedItem(savedItemId))
+        onEvent(ViewSavedItemsEvents.GetSingleSavedItem(savedItemId))
     }
 
     LaunchedEffect(key1 = context) {
@@ -61,8 +89,8 @@ fun SingleSavedItemScreen(
             when (event) {
                 is AddTransactionViewModel.AddTransactionValidationEvent.Success -> {
                     Toast.makeText(context,"Item Successfully Updated", Toast.LENGTH_LONG).show()
-                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = false))
-                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.RefreshUpdatedItem)
+                    onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = false))
+                    onEvent(ViewSavedItemsEvents.RefreshUpdatedItem)
                 }
                 is AddTransactionViewModel.AddTransactionValidationEvent.Failure -> {
                     Toast.makeText(context,event.errorMessage, Toast.LENGTH_SHORT).show()
@@ -71,19 +99,18 @@ fun SingleSavedItemScreen(
         }
     }
 
-    val savedItem = singleItemState
-    Log.d("ViewSavedItemsViewModelS","transaction Single ${savedItem}")
+    Log.d("ViewSavedItemsViewModelS","transaction Single $singleItemState")
 
-    if(savedItem!=null){
+    if(singleItemState != null){
 
 
-        val itemName = savedItem.itemName
-        val itemCurrencyCode = savedItem.itemCurrency?.entries?.firstOrNull()?.key
-        val itemCurrencyName = savedItem.itemCurrency?.entries?.firstOrNull()?.value?.name
-        val itemCurrencySymbol = savedItem.itemCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
-        val itemPrice = savedItem.itemPrice
-        val itemDescription = savedItem.itemDescription
-        val itemShopName = savedItem.itemShopName
+        val itemName = singleItemState.itemName
+        val itemCurrencyCode = singleItemState.itemCurrency.entries.firstOrNull()?.key
+        val itemCurrencyName = singleItemState.itemCurrency.entries.firstOrNull()?.value?.name
+        val itemCurrencySymbol = singleItemState.itemCurrency.entries.firstOrNull()?.value?.symbol ?: "$"
+        val itemPrice = singleItemState.itemPrice
+        val itemDescription = singleItemState.itemDescription
+        val itemShopName = singleItemState.itemShopName
 
         Scaffold(
 
@@ -95,16 +122,13 @@ fun SingleSavedItemScreen(
                     onBackClick = {
                         navController.popBackStack()
                         if(states.isSelectionMode){
-                            viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+                            onEvent(ViewSavedItemsEvents.ExitSelectionMode)
                         }
                     },
                     customActions = {
                         IconButton(
                             onClick = {
-//                                viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
-////                                navController.navigate(Screens.ViewRecordsScreen.routes)
-//                                navController.navigate("${Screens.ViewRecordsScreen.routes}/1")
-                                viewSavedItemsViewModel.onEvent(
+                                onEvent(
                                     ViewSavedItemsEvents.ChangeCustomDateAlertBox(true)
                                 )
                             }
@@ -129,22 +153,17 @@ fun SingleSavedItemScreen(
 
                     DeleteConfirmationDialog(
                         onDismiss = {
-                            viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
+                            onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
                         },
                         onConfirm = {
-                            viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
-//                                navController.navigate(Screens.ViewRecordsScreen.routes)
-                            viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
-//                            navController.navigate("${Screens.ViewRecordsScreen.routes}/1")
+                            onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
+                            onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
                             navController.navigate(Screens.ViewRecordsScreen(tabIndex = 1))
 
-                        },
-                        showDialog = states.customDeleteAlertBoxState
+                        }
                     )
 
                 }
-
-
 
                 OutlinedTextField(
                     value = itemName,
@@ -198,7 +217,7 @@ fun SingleSavedItemScreen(
 
                 Button(
                     onClick = {
-                        viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(true))
+                        onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(true))
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -209,27 +228,86 @@ fun SingleSavedItemScreen(
             if(states.updateBottomSheetState){
                 UpdateItemDetailsBottomSheet(
                     sheetState = rememberModalBottomSheetState(),
-                    viewModel = viewSavedItemsViewModel,
                     states = states,
                     onDismiss = {
-                        viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = false))
+                        onEvent(
+                            ViewSavedItemsEvents.ChangeUpdateBottomSheetState(
+                                state = false
+                            )
+                        )
                     },
                     onSaveClick = {
-                        viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.SaveItem)
-                    }
+                        onEvent(ViewSavedItemsEvents.SaveItem)
+                    },
+                    onEvent = onEvent
                 )
             }
-
         }
-
     }
     else{
-        Column(
+        Box(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(
+                modifier = Modifier.size(48.dp)
+            )
         }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "With Valid Saved Item"
+)
+@Composable
+fun SingleSavedItemScreenPreview(){
+    FinanceTrackerTheme {
+        val savedItem = SavedItems(
+            itemId = 1,
+            itemName = "Wireless Headphones",
+            itemCurrency = mapOf(
+                "USD" to Currency(name = "US Dollar", symbol = "$"),
+                "INR" to Currency(name = "Indian Rupee", symbol = "₹")
+            ),
+            itemPrice = 99.99,
+            itemDescription = "Noise cancelling Bluetooth headphones",
+            itemShopName = "Amazon",
+            userUID = "user_123",
+            cloudSync = true
+        )
+
+        SingleSavedItemScreen(
+            navController = rememberNavController(),
+            states = ViewSavedItemsStates(),
+            singleItemState = savedItem,
+            onEvent = {
+
+            },
+            savedItemId = 1,
+            savedItemsValidationEvent = emptyFlow()
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "With Null"
+)
+@Composable
+fun SingleSavedItemScreenPreview2(){
+    FinanceTrackerTheme {
+        SingleSavedItemScreen(
+            navController = rememberNavController(),
+            states = ViewSavedItemsStates(),
+            singleItemState = null,
+            onEvent = {
+
+            },
+            savedItemId = 1,
+            savedItemsValidationEvent = emptyFlow()
+        )
     }
 }

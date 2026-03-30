@@ -25,7 +25,7 @@ import com.example.financetracker.presentation.features.view_records_feature.vie
 @Composable
 fun SearchBar(
     states: ViewSavedItemsStates,
-    viewModel: ViewSavedItemsViewModel,
+    onEvent: (ViewSavedItemsEvents) -> Unit,
     focusRequester: FocusRequester,
     interactionSource: MutableInteractionSource,
     isFocused: Boolean,
@@ -35,8 +35,8 @@ fun SearchBar(
     OutlinedTextField(
         value = states.savedItem,
         onValueChange = {
-            viewModel.onEvent(ViewSavedItemsEvents.ChangeSearchSavedItem(it))
-            viewModel.onEvent(
+            onEvent(ViewSavedItemsEvents.ChangeSearchSavedItem(it))
+            onEvent(
                 ViewSavedItemsEvents.FilterSavedItemList(
                     list = states.savedItemsList,
                     newWord = it
@@ -51,9 +51,8 @@ fun SearchBar(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back Arrow",
                     modifier = Modifier.clickable {
-                        // Clear text, reload transactions, and remove focus
-                        viewModel.onEvent(ViewSavedItemsEvents.ChangeSearchSavedItem(""))
-                        viewModel.onEvent(ViewSavedItemsEvents.LoadTransactions)
+                        onEvent(ViewSavedItemsEvents.ChangeSearchSavedItem(""))
+                        onEvent(ViewSavedItemsEvents.LoadTransactions)
                         focusManager.clearFocus()
                     }
                 )
@@ -62,7 +61,6 @@ fun SearchBar(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search Icon",
                     modifier = Modifier.clickable {
-                        // Optional: focus the text field when search icon is clicked
                         focusRequester.requestFocus()
                     }
                 )

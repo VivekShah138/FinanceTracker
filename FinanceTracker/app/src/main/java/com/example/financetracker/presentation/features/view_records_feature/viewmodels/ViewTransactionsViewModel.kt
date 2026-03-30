@@ -122,7 +122,7 @@ class ViewTransactionsViewModel @Inject constructor(
                 _viewTransactionStates.value = _viewTransactionStates.value.copy(
                     filters = viewTransactionStates.value.filters.map {
                         if (it is TransactionFilter.Order) {
-                            it.copy(viewTransactionsEvents.order) // Update the categories filter with fetched categories
+                            it.copy(order = viewTransactionsEvents.order) // Update the categories filter with fetched categories
                         } else {
                             it
                         }
@@ -134,7 +134,7 @@ class ViewTransactionsViewModel @Inject constructor(
                 _viewTransactionStates.value = _viewTransactionStates.value.copy(
                     filters = viewTransactionStates.value.filters.map {
                         if (it is TransactionFilter.TransactionType) {
-                            it.copy(viewTransactionsEvents.type) // Update the categories filter with fetched categories
+                            it.copy(type = viewTransactionsEvents.type) // Update the categories filter with fetched categories
                         } else {
                             it
                         }
@@ -165,7 +165,7 @@ class ViewTransactionsViewModel @Inject constructor(
                         Log.d("ViewTransactionsViewModelFilter","existing Filter:  $existingFilter")
                         Log.d("ViewTransactionsViewModelFilter","filter Selected Categories:  ${filter.selectedCategories}")
                         val newSelectedCategories = if (existingFilter != null) {
-                            filter.selectedCategories // already merged in UI
+                            filter.selectedCategories
                         } else {
                             filter.selectedCategories
                         }
@@ -207,7 +207,6 @@ class ViewTransactionsViewModel @Inject constructor(
             is ViewTransactionsEvents.DeleteSelectedTransactions -> {
                 viewModelScope.launch(Dispatchers.IO) {
 
-//
                     val selectedSingleTransaction = _selectedItem.value?.transactionId?.let { mutableSetOf(it) }
 
                     val selectedIds = if(_viewTransactionStates.value.selectedTransactions.isEmpty()) selectedSingleTransaction else _viewTransactionStates.value.selectedTransactions
@@ -374,7 +373,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
     }
 
-    fun getUserProfile(){
+    private fun getUserProfile(){
         viewModelScope.launch(Dispatchers.IO) {
             val userProfile = viewRecordsUseCaseWrapper.getUserProfileLocalUseCase()
             val baseCurrency = userProfile?.baseCurrency ?: emptyMap()

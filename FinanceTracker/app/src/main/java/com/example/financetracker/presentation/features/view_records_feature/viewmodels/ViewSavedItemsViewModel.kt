@@ -45,7 +45,7 @@ class ViewSavedItemsViewModel @Inject constructor(
     fun onEvent(viewSavedItemsEvents: ViewSavedItemsEvents){
 
         when(viewSavedItemsEvents){
-            // Load Saved Items
+
             is ViewSavedItemsEvents.LoadTransactions -> {
                 getAllSavedItems()
             }
@@ -229,8 +229,7 @@ class ViewSavedItemsViewModel @Inject constructor(
 
             val selectedSingleSavedItem = _savedItemState.value?.itemId?.let { mutableSetOf(it) }
 
-            val itemId = if(_viewSavedItemsStates.value.selectedSavedItems.isEmpty()) selectedSingleSavedItem else _viewSavedItemsStates.value.selectedSavedItems
-//            val itemId = _viewSavedItemsStates.value.selectedSavedItems
+            val itemId = _viewSavedItemsStates.value.selectedSavedItems.ifEmpty { selectedSingleSavedItem }
 
             itemId!!.forEach { savedItemId ->
 
@@ -375,7 +374,6 @@ class ViewSavedItemsViewModel @Inject constructor(
                     }
                 }
                 savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Success)
-
             }
         }
     }

@@ -14,73 +14,75 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.financetracker.domain.model.Transactions
 import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.finance_entry_feature.components.TransactionItemCard
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewTransactionsEvents
-import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewTransactionsViewModel
+import com.example.financetracker.presentation.features.view_records_feature.states.ViewTransactionsStates
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+import kotlin.Int
+import kotlin.collections.Set
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewTransactionsPage(
     navController: NavController,
-    viewModel: ViewTransactionsViewModel
+    onEvent: (ViewTransactionsEvents) -> Unit,
+    states: ViewTransactionsStates
 ) {
 
 
-    val states by viewModel.viewTransactionStates.collectAsStateWithLifecycle()
-
     BackHandler(enabled = states.isSelectionMode) {
-        viewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
+        onEvent(ViewTransactionsEvents.ExitSelectionMode)
     }
 
 
     if (states.customDeleteAlertBoxState) {
         DeleteConfirmationDialog(
             onDismiss = {
-                viewModel.onEvent(ViewTransactionsEvents.ChangeCustomDateAlertBox(state = false))
+                onEvent(ViewTransactionsEvents.ChangeCustomDateAlertBox(state = false))
             },
             onConfirm = {
-                viewModel.onEvent(ViewTransactionsEvents.DeleteSelectedTransactions)
-                viewModel.onEvent(ViewTransactionsEvents.ChangeCustomDateAlertBox(state = false))
-            },
-            showDialog = states.customDeleteAlertBoxState
+                onEvent(ViewTransactionsEvents.DeleteSelectedTransactions)
+                onEvent(ViewTransactionsEvents.ChangeCustomDateAlertBox(state = false))
+            }
         )
     }
 
     Surface {
-        FilterBottomSheetModal2(
+        FilterBottomSheetModal(
             showSheet = states.filterBottomSheetState,
             onDismiss = {
-                viewModel.onEvent(
+                onEvent(
                     ViewTransactionsEvents.SelectTransactionsFilter(state = false)
                 )
             },
             filters = states.filters,
             onApply = {
-                viewModel.onEvent(
+                onEvent(
                     ViewTransactionsEvents.ApplyFilter
                 )
-                viewModel.onEvent(
+                onEvent(
                     ViewTransactionsEvents.SelectTransactionsFilter(state = false)
                 )
             },
             onFilterChange = { filter ->
-                viewModel.onEvent(
+                onEvent(
                     ViewTransactionsEvents.UpdateFilter(filter = filter)
                 )
             },
             onClearAll = {
-                viewModel.onEvent(
+                onEvent(
                     ViewTransactionsEvents.ClearFilter(duration = states.selectedDuration)
                 )
-                viewModel.onEvent(
+                onEvent(
                     ViewTransactionsEvents.SelectTransactionsFilter(state = false)
                 )
             },
@@ -97,7 +99,6 @@ fun ViewTransactionsPage(
     ) {
 
         item {
-
             TransactionsTotal(
                 currencySymbol = states.currencySymbol,
                 amount = states.totalAmount
@@ -116,13 +117,13 @@ fun ViewTransactionsPage(
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
 
-                    DateFilterWithIcon2(
+                    DateFilterWithIcon(
                         onFilterIconClick = {
-                            viewModel.onEvent(
+                            onEvent(
                                 ViewTransactionsEvents.SelectTransactionsFilter(state = true)
                             )
                             if (states.isSelectionMode) {
-                                viewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
+                                onEvent(ViewTransactionsEvents.ExitSelectionMode)
                             }
                         }
                     )
@@ -146,13 +147,13 @@ fun ViewTransactionsPage(
                                     isSelectionMode = states.isSelectionMode,
                                     onClick = {
                                         if (states.isSelectionMode) {
-                                            viewModel.onEvent(
+                                            onEvent(
                                                 ViewTransactionsEvents.ToggleTransactionSelection(
                                                     transaction.transactionId!!
                                                 )
                                             )
                                         } else {
-                                            viewModel.onEvent(
+                                            onEvent(
                                                 ViewTransactionsEvents.SelectItems(
                                                     transactions = transaction
                                                 )
@@ -162,20 +163,17 @@ fun ViewTransactionsPage(
                                             if(transactionId != null){
                                                 navController.navigate(Screens.SingleTransactionScreen(transactionId = transactionId))
                                             }
-
-
-//                                            navController.navigate("${Screens.SingleTransactionScreen.routes}/${transaction.transactionId}")
                                         }
                                     },
                                     onLongClick = {
                                         if (!states.isSelectionMode) {
-                                            viewModel.onEvent(ViewTransactionsEvents.EnterSelectionMode)
-                                            viewModel.onEvent(
+                                            onEvent(ViewTransactionsEvents.EnterSelectionMode)
+                                            onEvent(
                                                 ViewTransactionsEvents.ToggleTransactionSelection(
                                                     transaction.transactionId!!
                                                 )
                                             )
-                                            viewModel.onEvent(
+                                            onEvent(
                                                 ViewTransactionsEvents.SelectItems(transactions = transaction)
                                             )
                                         }
@@ -193,3 +191,84 @@ fun ViewTransactionsPage(
     }
 }
 
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun ViewTransactionsPagePreview(){
+    FinanceTrackerTheme(dynamicColor = false, darkTheme = true) {
+        ViewTransactionsPage(
+            navController = rememberNavController(),
+            onEvent = {
+
+            },
+            states = ViewTransactionsStates(
+                transactionsList = listOf(
+                    Transactions(
+                        transactionId = 1,
+                        amount = 1.45,
+                        currency = null,
+                        convertedAmount = 0.0,
+                        exchangeRate = 0.0,
+                        transactionType = "Expense",
+                        category = "Groceries",
+                        dateTime = 1744486763759,
+                        userUid = "He",
+                        description = "ItemDescription",
+                        isRecurring = false,
+                        cloudSync = false,
+                        transactionName = "Milk"
+                    ),
+                    Transactions(
+                        transactionId = 2,
+                        amount = 1.45,
+                        currency = null,
+                        convertedAmount = 0.0,
+                        exchangeRate = 0.0,
+                        transactionType = "Expense",
+                        category = "Groceries",
+                        dateTime = 1744486763759,
+                        userUid = "He",
+                        description = "ItemDescription",
+                        isRecurring = false,
+                        cloudSync = false,
+                        transactionName = "Milk"
+                    ),
+                    Transactions(
+                        transactionId = 3,
+                        amount = 1.45,
+                        currency = null,
+                        convertedAmount = 0.0,
+                        exchangeRate = 0.0,
+                        transactionType = "Expense",
+                        category = "Groceries",
+                        dateTime = 1744486763759,
+                        userUid = "He",
+                        description = "ItemDescription",
+                        isRecurring = false,
+                        cloudSync = false,
+                        transactionName = "Milk"
+                    ),
+                    Transactions(
+                        transactionId = 4,
+                        amount = 228.8,
+                        currency = null,
+                        convertedAmount = 0.0,
+                        exchangeRate = 0.0,
+                        transactionType = "Income",
+                        category = "Groceries",
+                        dateTime = 1744486763759,
+                        userUid = "He",
+                        description = "ItemDescription",
+                        isRecurring = false,
+                        cloudSync = false,
+                        transactionName = "Salary"
+                    )
+                ),
+                selectedTransactions = setOf(4),
+                totalAmount = 100.0
+            )
+        )
+    }
+}

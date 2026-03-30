@@ -17,7 +17,7 @@ import com.example.financetracker.presentation.features.view_records_feature.vie
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateItemDetailsBottomSheet(
-    viewModel: ViewSavedItemsViewModel,
+    onEvent: (ViewSavedItemsEvents) -> Unit,
     states: ViewSavedItemsStates,
     sheetState: SheetState,
     onDismiss: () -> Unit,
@@ -28,7 +28,6 @@ fun UpdateItemDetailsBottomSheet(
         sheetState = sheetState,
         onDismissRequest = onDismiss
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -44,7 +43,7 @@ fun UpdateItemDetailsBottomSheet(
             OutlinedTextField(
                 value = states.updatedItemName,
                 onValueChange = {
-                    viewModel.onEvent(
+                    onEvent(
                         ViewSavedItemsEvents.ChangeSavedItem(
                             itemName = it,
                             itemPrice = states.updatedItemPrice,
@@ -62,7 +61,7 @@ fun UpdateItemDetailsBottomSheet(
             OutlinedTextField(
                 value = states.updatedItemPrice,
                 onValueChange = {
-                    viewModel.onEvent(
+                    onEvent(
                         ViewSavedItemsEvents.ChangeSavedItem(
                             itemName = states.updatedItemName,
                             itemPrice = it,
@@ -88,7 +87,7 @@ fun UpdateItemDetailsBottomSheet(
             OutlinedTextField(
                 value = states.updatedItemDescription,
                 onValueChange = {
-                    viewModel.onEvent(
+                    onEvent(
                         ViewSavedItemsEvents.ChangeSavedItem(
                             itemName = states.updatedItemName,
                             itemPrice = states.updatedItemPrice,
@@ -106,7 +105,7 @@ fun UpdateItemDetailsBottomSheet(
             OutlinedTextField(
                 value = states.updatedItemShopName,
                 onValueChange = {
-                    viewModel.onEvent(
+                    onEvent(
                         ViewSavedItemsEvents.ChangeSavedItem(
                             itemName = states.updatedItemName,
                             itemPrice = states.updatedItemPrice,
@@ -132,23 +131,3 @@ fun UpdateItemDetailsBottomSheet(
         }
     }
 }
-
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun ItemDetailsBottomSheetPreview() {
-//    UpdateItemDetailsBottomSheet(
-//        sheetState = rememberModalBottomSheetState(),
-//        onDismiss = {},
-//        onSaveClick = {},
-//        states = ViewSavedItemsStates(
-//            updatedItemName = "Milk",
-//            updatedItemPrice = "5.0",
-//            updatedItemDescription = "1.5L",
-//            updatedItemShopName = "Tesco",
-//            updatedItemCurrencySymbol = "£"
-//        )
-//    )
-//}
-

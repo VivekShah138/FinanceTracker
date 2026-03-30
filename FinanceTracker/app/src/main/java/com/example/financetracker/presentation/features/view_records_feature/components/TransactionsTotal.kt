@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Locale
+import kotlin.math.abs
 
 
 @Preview(showBackground = true)
@@ -44,13 +45,13 @@ fun TransactionsTotal(
         )
 
         val color = when {
-            amount < 0 -> Color(0xFFD32F2F) // red for negative
-            amount > 0 -> Color(0xFF2E7D32) // green or your main color
-            else -> MaterialTheme.colorScheme.onBackground // neutral for zero
+            amount < 0 -> Color(0xFFD32F2F)
+            amount > 0 -> Color(0xFF2E7D32)
+            else -> MaterialTheme.colorScheme.onBackground
         }
 
         Text(
-            text = String.format(Locale.US, "$currencySymbol %.2f", Math.abs(amount)),
+            text = String.format(Locale.US, "$currencySymbol %.2f", abs(amount)),
             style = MaterialTheme.typography.headlineMedium,
             color = color,
             fontWeight = FontWeight.Bold

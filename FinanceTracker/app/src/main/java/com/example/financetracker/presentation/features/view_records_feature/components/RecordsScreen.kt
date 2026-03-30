@@ -15,32 +15,60 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.utils.MenuItems
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.navigation.core.Screens
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewSavedItemsEvents
 import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewSavedItemsViewModel
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewTransactionsEvents
+import com.example.financetracker.presentation.features.view_records_feature.states.ViewSavedItemsStates
+import com.example.financetracker.presentation.features.view_records_feature.states.ViewTransactionsStates
 import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewTransactionsViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
-
 @Composable
-fun RecordsPage(
+fun RecordsRoot(
     navController: NavController,
-    viewTransactionsViewModel: ViewTransactionsViewModel,
-    viewSavedItemsViewModel: ViewSavedItemsViewModel,
+    viewTransactionsViewModel: ViewTransactionsViewModel = hiltViewModel(),
+    viewSavedItemsViewModel: ViewSavedItemsViewModel = hiltViewModel(),
     defaultTabIndex: Int = 0
-) {
-
+){
     val viewTransactionsStates by viewTransactionsViewModel.viewTransactionStates.collectAsStateWithLifecycle()
     val viewSavedItemsStates by viewSavedItemsViewModel.viewSavedItemsStates.collectAsStateWithLifecycle()
 
+    RecordsScreen(
+        navController = navController,
+        viewTransactionsStates = viewTransactionsStates,
+        viewSavedItemsStates = viewSavedItemsStates,
+        viewSavedItemsEvents = viewSavedItemsViewModel::onEvent,
+        viewTransactionsEvents = viewTransactionsViewModel::onEvent,
+        defaultTabIndex = defaultTabIndex,
+        savedItemsValidationEvent = viewSavedItemsViewModel.savedItemsValidationEvents
+    )
+}
+
+@Composable
+fun RecordsScreen(
+    navController: NavController,
+    viewTransactionsStates: ViewTransactionsStates,
+    viewSavedItemsStates: ViewSavedItemsStates,
+    viewTransactionsEvents: (ViewTransactionsEvents) -> Unit,
+    viewSavedItemsEvents: (ViewSavedItemsEvents) -> Unit,
+    defaultTabIndex: Int,
+    savedItemsValidationEvent: Flow<AddTransactionViewModel.AddTransactionValidationEvent>
+) {
+
     val pagerState = rememberPagerState(
         initialPage = defaultTabIndex,
-        pageCount = {2} // or however many pages you have
+        pageCount = {2}
     )
 
     Log.d("RecordsPage", "pagerStateInitial ${pagerState.currentPage}")
@@ -56,17 +84,13 @@ fun RecordsPage(
                     showMenu = true,
                     showBackButton = true,
                     onBackClick = {
-                        viewTransactionsViewModel.onEvent(
-                            ViewTransactionsEvents.ExitSelectionMode
-                        )
+                        viewTransactionsEvents(ViewTransactionsEvents.ExitSelectionMode)
                     },
                     menuItems = if(viewTransactionsStates.selectedTransactions.size == 1){
-                        listOf<MenuItems>(
+                        listOf(
                             MenuItems(
                                 text = "Info",
                                 onClick = {
-//                                    navController.navigate(Screens.SingleTransactionScreen.routes)
-//                                    navController.navigate("${Screens.SingleTransactionScreen.routes}/${viewTransactionsStates.selectedTransactions.firstOrNull()}")
                                     val transactionId = viewTransactionsStates.selectedTransactions.firstOrNull()
 
                                     if (transactionId != null) {
@@ -78,10 +102,7 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Delete",
                                 onClick = {
-//                                    viewTransactionsViewModel.onEvent(
-//                                        ViewTransactionsEvents.DeleteSelectedTransactions
-//                                    )
-                                    viewTransactionsViewModel.onEvent(
+                                    viewTransactionsEvents(
                                         ViewTransactionsEvents.ChangeCustomDateAlertBox(true)
                                     )
                                 }
@@ -89,20 +110,17 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Select All",
                                 onClick = {
-                                    viewTransactionsViewModel.onEvent(ViewTransactionsEvents.SelectAllTransactions)
+                                    viewTransactionsEvents(ViewTransactionsEvents.SelectAllTransactions)
                                 }
                             )
                         )
                     }
                     else{
-                        listOf<MenuItems>(
+                        listOf(
                             MenuItems(
                                 text = "Delete All",
                                 onClick = {
-//                                    viewTransactionsViewModel.onEvent(
-//                                        ViewTransactionsEvents.DeleteSelectedTransactions
-//                                    )
-                                    viewTransactionsViewModel.onEvent(
+                                    viewTransactionsEvents(
                                         ViewTransactionsEvents.ChangeCustomDateAlertBox(true)
                                     )
                                 }
@@ -110,7 +128,7 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Select All",
                                 onClick = {
-                                    viewTransactionsViewModel.onEvent(ViewTransactionsEvents.SelectAllTransactions)
+                                    viewTransactionsEvents(ViewTransactionsEvents.SelectAllTransactions)
                                 }
                             )
                         )
@@ -123,7 +141,7 @@ fun RecordsPage(
                     showMenu = true,
                     showBackButton = true,
                     onBackClick = {
-                        viewSavedItemsViewModel.onEvent(
+                        viewSavedItemsEvents(
                             ViewSavedItemsEvents.ExitSelectionMode
                         )
                     },
@@ -132,7 +150,6 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Info",
                                 onClick = {
-//                                    navController.navigate("${Screens.SingleSavedItemScreen.routes}/${viewSavedItemsStates.selectedSavedItems.firstOrNull()}")
                                     val savedItemId = viewSavedItemsStates.selectedSavedItems.firstOrNull()
 
                                     if (savedItemId != null) {
@@ -143,10 +160,7 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Delete",
                                 onClick = {
-//                                    viewSavedItemsViewModel.onEvent(
-//                                        ViewSavedItemsEvents.DeleteSelectedSavedItems
-//                                    )
-                                    viewSavedItemsViewModel.onEvent(
+                                    viewSavedItemsEvents(
                                         ViewSavedItemsEvents.ChangeCustomDateAlertBox(true)
                                     )
                                 }
@@ -154,28 +168,23 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Edit",
                                 onClick = {
-
-                                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = true))
+                                    viewSavedItemsEvents(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = true))
                                 }
                             ),
                             MenuItems(
                                 text = "Select All",
                                 onClick = {
-                                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.SelectAllItems)
-
+                                    viewSavedItemsEvents(ViewSavedItemsEvents.SelectAllItems)
                                 }
                             )
                         )
                     }
                     else{
-                        listOf<MenuItems>(
+                        listOf(
                             MenuItems(
                                 text = "Delete All",
                                 onClick = {
-//                                    viewSavedItemsViewModel.onEvent(
-//                                        ViewSavedItemsEvents.DeleteSelectedSavedItems
-//                                    )
-                                    viewSavedItemsViewModel.onEvent(
+                                    viewSavedItemsEvents(
                                         ViewSavedItemsEvents.ChangeCustomDateAlertBox(true)
                                     )
                                 }
@@ -183,7 +192,7 @@ fun RecordsPage(
                             MenuItems(
                                 text = "Select All",
                                 onClick = {
-                                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.SelectAllItems)
+                                    viewSavedItemsEvents(ViewSavedItemsEvents.SelectAllItems)
                                 }
                             )
                         )
@@ -200,14 +209,29 @@ fun RecordsPage(
                 )
             }
 
+            RecordsTopBar(
+                onNavigateToTransactionInfo = {
+                    val transactionId = viewTransactionsStates.selectedTransactions.firstOrNull()
+                    if (transactionId != null) {
+                        navController.navigate(Screens.SingleTransactionScreen(transactionId))
+                    }
+                },
+                onNavigateToSavedItemInfo = {
+                    val savedItemId = viewSavedItemsStates.selectedSavedItems.firstOrNull()
+                    if (savedItemId != null) {
+                        navController.navigate(Screens.SingleTransactionScreen(savedItemId))
+                    }
+                },
+                transactionsState = viewTransactionsStates,
+                savedItemsState = viewSavedItemsStates,
+                viewTransactionsEvents = viewTransactionsEvents,
+                viewSavedItemsEvents = viewSavedItemsEvents
+            )
+
         },
-//        bottomBar = {
-//            BottomNavigationBar(navController)
-//        }
 
     ) { padding ->
 
-        // Column now takes full height and includes padding for content
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -216,15 +240,14 @@ fun RecordsPage(
 
             LaunchedEffect(pagerState.currentPage) {
                 if (pagerState.currentPage == 0 && viewSavedItemsStates.isSelectionMode) {
-                    viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+                    viewSavedItemsEvents(ViewSavedItemsEvents.ExitSelectionMode)
                 }
                 if (pagerState.currentPage == 1 && viewTransactionsStates.isSelectionMode) {
-                    viewTransactionsViewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
+                    viewTransactionsEvents(ViewTransactionsEvents.ExitSelectionMode)
                 }
             }
 
 
-            // TabRow should now be visible
             TabRow(selectedTabIndex = pagerState.currentPage) {
                 Tab(
                     selected = pagerState.currentPage == 0,
@@ -232,7 +255,7 @@ fun RecordsPage(
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(0)
                             if (viewSavedItemsStates.isSelectionMode) {
-                                viewSavedItemsViewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+                                viewSavedItemsEvents(ViewSavedItemsEvents.ExitSelectionMode)
                             }
                         }
                     },
@@ -244,7 +267,7 @@ fun RecordsPage(
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(1)
                             if (viewTransactionsStates.isSelectionMode) {
-                                viewTransactionsViewModel.onEvent(ViewTransactionsEvents.ExitSelectionMode)
+                                viewTransactionsEvents(ViewTransactionsEvents.ExitSelectionMode)
                             }
                         }
                     },
@@ -252,17 +275,42 @@ fun RecordsPage(
                 )
             }
 
-                // Uncomment this to enable HorizontalPager
+
                 HorizontalPager(state = pagerState) { page ->
                     when (page) {
-                        0 -> ViewTransactionsPage(viewModel = viewTransactionsViewModel, navController = navController) // Transactions Screen
-                        1 -> ViewSavedItemsPage(viewModel = viewSavedItemsViewModel,navController = navController)
+                        0 -> ViewTransactionsPage(
+                            navController = navController,
+                            onEvent = viewTransactionsEvents,
+                            states = viewTransactionsStates
+                        )
+                        1 -> ViewSavedItemsPage(
+                            navController = navController,
+                            states = viewSavedItemsStates,
+                            savedItemsValidationEvent = savedItemsValidationEvent,
+                            onEvent = viewSavedItemsEvents
+                        )
                     }
                 }
-
-
-
         }
-
     }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true)
+@Composable
+fun RecordsPagePreview(){
+    RecordsScreen(
+        navController = rememberNavController(),
+        viewTransactionsStates = ViewTransactionsStates(),
+        viewSavedItemsStates = ViewSavedItemsStates(),
+        viewTransactionsEvents = {
+
+        },
+        viewSavedItemsEvents = {
+
+        },
+        defaultTabIndex = 0,
+        savedItemsValidationEvent = emptyFlow()
+    )
 }

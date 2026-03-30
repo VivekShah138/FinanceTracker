@@ -19,23 +19,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import com.example.financetracker.presentation.features.finance_entry_feature.components.SavedItemsCard
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel.AddTransactionValidationEvent
 import com.example.financetracker.presentation.features.view_records_feature.events.ViewSavedItemsEvents
+import com.example.financetracker.presentation.features.view_records_feature.states.ViewSavedItemsStates
 import com.example.financetracker.presentation.features.view_records_feature.viewmodels.ViewSavedItemsViewModel
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewSavedItemsPage(
-    viewModel: ViewSavedItemsViewModel,
+    states: ViewSavedItemsStates,
+    savedItemsValidationEvent: Flow<AddTransactionValidationEvent>,
+    onEvent: (ViewSavedItemsEvents) -> Unit,
     navController: NavController
 ) {
 
-    val states by viewModel.viewSavedItemsStates.collectAsStateWithLifecycle()
-    val savedItemsValidationEvent = viewModel.savedItemsValidationEvents
     val context = LocalContext.current
     val focusRequester = remember { FocusRequester() }
     val interactionSource = remember { MutableInteractionSource() }
@@ -43,19 +50,19 @@ fun ViewSavedItemsPage(
     val focusManager = LocalFocusManager.current
 
     BackHandler(enabled = states.isSelectionMode) {
-        viewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+        onEvent(ViewSavedItemsEvents.ExitSelectionMode)
     }
 
 
     LaunchedEffect(key1 = context) {
         savedItemsValidationEvent.collect { event ->
             when (event) {
-                is AddTransactionViewModel.AddTransactionValidationEvent.Success -> {
+                is AddTransactionValidationEvent.Success -> {
                     Toast.makeText(context,"Item Successfully Added", Toast.LENGTH_LONG).show()
-                    viewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = false))
-                    viewModel.onEvent(ViewSavedItemsEvents.ExitSelectionMode)
+                    onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = false))
+                    onEvent(ViewSavedItemsEvents.ExitSelectionMode)
                 }
-                is AddTransactionViewModel.AddTransactionValidationEvent.Failure -> {
+                is AddTransactionValidationEvent.Failure -> {
                     Toast.makeText(context,event.errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -67,13 +74,12 @@ fun ViewSavedItemsPage(
 
         DeleteConfirmationDialog(
             onDismiss = {
-                viewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
+                onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
             },
             onConfirm = {
-                viewModel.onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
-                viewModel.onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
-            },
-            showDialog = states.customDeleteAlertBoxState
+                onEvent(ViewSavedItemsEvents.DeleteSelectedSavedItems)
+                onEvent(ViewSavedItemsEvents.ChangeCustomDateAlertBox(state = false))
+            }
         )
 
     }
@@ -87,7 +93,7 @@ fun ViewSavedItemsPage(
 
         SearchBar(
             states = states,
-            viewModel = viewModel,
+            onEvent = onEvent,
             focusRequester = focusRequester,
             focusManager = focusManager,
             isFocused = isFocused,
@@ -105,19 +111,18 @@ fun ViewSavedItemsPage(
                         item = savedItems,
                         onClick = {
                             if (states.isSelectionMode) {
-                                viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                                onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             } else {
                                 val savedItemId = savedItems.itemId
                                 if (savedItemId != null) {
                                     navController.navigate(Screens.SingleSavedItemScreen(savedItemId))
                                 }
-//                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
                             }
                         },
                         onLongClick = {
                             if (!states.isSelectionMode) {
-                                viewModel.onEvent(ViewSavedItemsEvents.EnterSelectionMode)
-                                viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                                onEvent(ViewSavedItemsEvents.EnterSelectionMode)
+                                onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             }
                         },
                         isSelectionMode = states.isSelectionMode,
@@ -136,9 +141,8 @@ fun ViewSavedItemsPage(
                         item = savedItems,
                         onClick = {
                             if (states.isSelectionMode) {
-                                viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                                onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             } else {
-//                                navController.navigate("${Screens.SingleSavedItemScreen.routes}/${savedItems.itemId}")
                                 val savedItemId = savedItems.itemId
                                 if (savedItemId != null) {
                                     navController.navigate(Screens.SingleSavedItemScreen(savedItemId))
@@ -147,8 +151,8 @@ fun ViewSavedItemsPage(
                         },
                         onLongClick = {
                             if (!states.isSelectionMode) {
-                                viewModel.onEvent(ViewSavedItemsEvents.EnterSelectionMode)
-                                viewModel.onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
+                                onEvent(ViewSavedItemsEvents.EnterSelectionMode)
+                                onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             }
                         },
                         isSelectionMode = states.isSelectionMode,
@@ -161,15 +165,33 @@ fun ViewSavedItemsPage(
         if(states.updateBottomSheetState){
             UpdateItemDetailsBottomSheet(
                 sheetState = rememberModalBottomSheetState(),
-                viewModel = viewModel,
+                onEvent = onEvent,
                 states = states,
                 onDismiss = {
-                    viewModel.onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = false))
+                    onEvent(ViewSavedItemsEvents.ChangeUpdateBottomSheetState(state = false))
                 },
                 onSaveClick = {
-                    viewModel.onEvent(ViewSavedItemsEvents.SaveItem)
+                    onEvent(ViewSavedItemsEvents.SaveItem)
                 }
             )
         }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun ViewSavedItemsPagePreview(){
+    FinanceTrackerTheme { 
+        ViewSavedItemsPage(
+            navController = rememberNavController(),
+            onEvent = {
+
+            },
+            states = ViewSavedItemsStates(),
+            savedItemsValidationEvent = emptyFlow(),
+        )
     }
 }
