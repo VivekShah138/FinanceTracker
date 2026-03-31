@@ -1,14 +1,16 @@
 package com.example.financetracker.budget_feature.presentation
 
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 
 
 
 import app.cash.turbine.test
-import com.example.financetracker.budget_feature.domain.model.Budget
-import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
-import com.example.financetracker.core.local.domain.room.model.UserProfile
-import com.example.financetracker.setup_account.domain.model.Currency
+import com.example.financetracker.domain.model.Budget
+import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
+import com.example.financetracker.domain.model.UserProfile
+import com.example.financetracker.domain.model.Currency
+import com.example.financetracker.presentation.features.budget_feature.BudgetEvents
+import com.example.financetracker.presentation.features.budget_feature.BudgetViewModel
 import io.mockk.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
@@ -34,7 +36,7 @@ class BudgetViewModelTest {
  fun setup() {
   Dispatchers.setMain(testDispatcher)
 
-  every { budgetUseCaseWrapper.getUIDLocally() } returns testUserId
+  every { budgetUseCaseWrapper.getUIDLocalUseCase() } returns testUserId
 
 
 
@@ -177,7 +179,7 @@ class BudgetViewModelTest {
   } returns dummyBudget
 
   coEvery {
-   budgetUseCaseWrapper.getUserProfileFromLocalDb(testUserId)
+   budgetUseCaseWrapper.getUserProfileFromLocalUseCase(testUserId)
   } returns dummyUserProfile
 
   viewModel.onEvent(BudgetEvents.MonthSelected(year, month))

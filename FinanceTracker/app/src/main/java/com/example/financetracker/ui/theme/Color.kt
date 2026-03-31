@@ -2,7 +2,6 @@ package com.example.financetracker.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF415F91)
-//val primaryLight = Color(0xFF93000A)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFD6E3FF)
 val onPrimaryContainerLight = Color(0xFF284777)

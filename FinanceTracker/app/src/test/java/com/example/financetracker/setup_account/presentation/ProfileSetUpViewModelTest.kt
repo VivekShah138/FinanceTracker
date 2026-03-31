@@ -1,15 +1,14 @@
 package com.example.financetracker.setup_account.presentation
 
-import org.junit.Assert.*
-
 import org.junit.Before
 
 import app.cash.turbine.test
-import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.local.validation.ValidationResult
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
+import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpEvents
+import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
-import org.junit.Rule
 import org.junit.Test
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
@@ -34,9 +33,9 @@ class ProfileSetUpViewModelTest {
  @Test
  fun `validateFields failure sends failure event`() = runTest {
   // Arrange: mock validations to fail
-  coEvery { setupAccountUseCasesWrapper.validateName(any()) } returns ValidationResult(false, "Invalid Name")
-  coEvery { setupAccountUseCasesWrapper.validatePhoneNumber(any()) } returns ValidationResult(true)
-  coEvery { setupAccountUseCasesWrapper.validateCountry(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.nameValidationUseCase(any()) } returns ValidationResult(false, "Invalid Name")
+  coEvery { setupAccountUseCasesWrapper.phoneNumberValidationUseCase(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.countryValidationUseCase(any()) } returns ValidationResult(true)
 
   // Set profile state with dummy data
   viewModel.onEvent(ProfileSetUpEvents.ChangeFirstName(""))
@@ -59,7 +58,7 @@ class ProfileSetUpViewModelTest {
 
  @Test
  fun `validateNames event emits failure when name is invalid`() = runTest {
-  coEvery { setupAccountUseCasesWrapper.validateName(any()) } returns ValidationResult(false, "Invalid Name")
+  coEvery { setupAccountUseCasesWrapper.nameValidationUseCase(any()) } returns ValidationResult(false, "Invalid Name")
 
   viewModel.profileSetUpValidationEvents.test {
    viewModel.onEvent(ProfileSetUpEvents.ValidateNames)
@@ -74,7 +73,7 @@ class ProfileSetUpViewModelTest {
 
  @Test
  fun `validatePhoneNumber event emits success when phone number is valid`() = runTest {
-  coEvery { setupAccountUseCasesWrapper.validatePhoneNumber(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.phoneNumberValidationUseCase(any()) } returns ValidationResult(true)
 
   viewModel.profileSetUpValidationEvents.test {
    viewModel.onEvent(ProfileSetUpEvents.ValidatePhoneNumber)
@@ -88,7 +87,7 @@ class ProfileSetUpViewModelTest {
 
  @Test
  fun `validateCountry event emits success when country is valid`() = runTest {
-  coEvery { setupAccountUseCasesWrapper.validateCountry(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.countryValidationUseCase(any()) } returns ValidationResult(true)
 
   viewModel.profileSetUpValidationEvents.test {
    viewModel.onEvent(ProfileSetUpEvents.ValidateCountry)
@@ -105,22 +104,23 @@ class ProfileSetUpViewModelTest {
  @Test
  fun `validateFields success sends success event`() = runTest {
   // Arrange: mock all validations successful
-  coEvery { setupAccountUseCasesWrapper.validateName(any()) } returns ValidationResult(true)
-  coEvery { setupAccountUseCasesWrapper.validatePhoneNumber(any()) } returns ValidationResult(true)
-  coEvery { setupAccountUseCasesWrapper.validateCountry(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.nameValidationUseCase(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.phoneNumberValidationUseCase(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.countryValidationUseCase(any()) } returns ValidationResult(true)
 
   // Mock other use case calls
-  coEvery { setupAccountUseCasesWrapper.getUserUIDUseCase() } returns "user123"
-  coEvery { setupAccountUseCasesWrapper.insertUserProfileToLocalDb(any(), any()) } just Runs
-  coEvery { setupAccountUseCasesWrapper.updateUserProfile(any(), any(), any(), any(), any(), any(), any(),any()) } just Runs
-  coEvery { setupAccountUseCasesWrapper.keepUserLoggedIn(true) } just Runs
+  coEvery { setupAccountUseCasesWrapper.getUserUIDRemoteUseCase() } returns "user123"
+  coEvery { setupAccountUseCasesWrapper.insertUserProfileLocalUseCase(any(), any()) } just Runs
+  coEvery { setupAccountUseCasesWrapper.updateUserProfileRemoteUseCase(any(), any(), any(), any(), any(), any(), any(),any()) } just Runs
+  coEvery { setupAccountUseCasesWrapper.keepUserLoggedInLocalUseCase(true) } just Runs
 
 
   viewModel.onEvent(ProfileSetUpEvents.ChangeFirstName("John"))
   viewModel.onEvent(ProfileSetUpEvents.ChangeLastName("Doe"))
   viewModel.onEvent(ProfileSetUpEvents.ChangePhoneNumber("1234567890"))
   viewModel.onEvent(ProfileSetUpEvents.SelectCountry("Country", "+1", expanded = false))
-  viewModel.onEvent(ProfileSetUpEvents.SelectBaseCurrency(
+  viewModel.onEvent(
+      ProfileSetUpEvents.SelectBaseCurrency(
    currency = "US Dollar",
    expanded = false,
    currencyCode = "USD",
@@ -139,21 +139,22 @@ class ProfileSetUpViewModelTest {
  @Test
  fun `validateFields throws exception sends failure event`() = runTest {
   // Arrange: all validations successful
-  coEvery { setupAccountUseCasesWrapper.validateName(any()) } returns ValidationResult(true)
-  coEvery { setupAccountUseCasesWrapper.validatePhoneNumber(any()) } returns ValidationResult(true)
-  coEvery { setupAccountUseCasesWrapper.validateCountry(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.nameValidationUseCase(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.phoneNumberValidationUseCase(any()) } returns ValidationResult(true)
+  coEvery { setupAccountUseCasesWrapper.countryValidationUseCase(any()) } returns ValidationResult(true)
 
   // Mock getUserUIDUseCase to return user id
-  coEvery { setupAccountUseCasesWrapper.getUserUIDUseCase() } returns "user123"
+  coEvery { setupAccountUseCasesWrapper.getUserUIDRemoteUseCase() } returns "user123"
   // Mock insertUserProfileToLocalDb to throw exception
-  coEvery { setupAccountUseCasesWrapper.insertUserProfileToLocalDb(any(), any()) } throws Exception("DB error")
+  coEvery { setupAccountUseCasesWrapper.insertUserProfileLocalUseCase(any(), any()) } throws Exception("DB error")
 
   // Set profile state with valid data
   viewModel.onEvent(ProfileSetUpEvents.ChangeFirstName("John"))
   viewModel.onEvent(ProfileSetUpEvents.ChangeLastName("Doe"))
   viewModel.onEvent(ProfileSetUpEvents.ChangePhoneNumber("1234567890"))
   viewModel.onEvent(ProfileSetUpEvents.SelectCountry("USA", "+1", expanded = false))
-  viewModel.onEvent(ProfileSetUpEvents.SelectBaseCurrency(
+  viewModel.onEvent(
+      ProfileSetUpEvents.SelectBaseCurrency(
    currency = "US Dollar",
    expanded = false,
    currencyCode = "USD",

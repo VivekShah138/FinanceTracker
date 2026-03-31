@@ -5,11 +5,11 @@ import android.app.Application
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.example.financetracker.budget_feature.domain.usecases.BudgetUseCaseWrapper
-import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
-import com.example.financetracker.main_page_feature.settings.domain.use_cases.SettingsUseCaseWrapper
-import com.example.financetracker.main_page_feature.view_records.use_cases.ViewRecordsUseCaseWrapper
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SettingsUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.ViewRecordsUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,22 +38,22 @@ class FinanceTracker : Application(), Configuration.Provider {
 
         applicationScope.launch {
 
-            val firstInstall = setupAccountUseCasesWrapper.getFirstTimeInstalled()
+            val firstInstall = setupAccountUseCasesWrapper.getFirstTimeInstalledLocalUseCase()
             Log.d("AppEntry","FirstTimeInstalled -> $firstInstall")
             if(firstInstall){
-                predefinedCategoriesUseCaseWrapper.insertPredefinedCategories()
-                setupAccountUseCasesWrapper.insertCountryLocallyWorkManager()
-                setupAccountUseCasesWrapper.setFirstTimeInstalled()
+                predefinedCategoriesUseCaseWrapper.seedPredefinedCategoriesLocalUseCase()
+                setupAccountUseCasesWrapper.seedCountryLocalUseCase()
+                setupAccountUseCasesWrapper.setFirstTimeInstalledLocalUseCase()
                 Log.d("AppEntry","FirstTimeInstalled set to false")
             }
 
 
 
-            viewRecordsUseCaseWrapper.deleteMultipleTransactionsFromCloud()
+            viewRecordsUseCaseWrapper.deleteTransactionsRemoteUseCase()
             viewRecordsUseCaseWrapper.deleteMultipleSavedItemCloud()
-            settingsUseCaseWrapper.saveMultipleTransactionsCloud()
+            settingsUseCaseWrapper.insertTransactionsRemoteUseCase()
             settingsUseCaseWrapper.saveMultipleSavedItemCloud()
-            budgetUseCaseWrapper.saveMultipleBudgetsToCloudUseCase()
+            budgetUseCaseWrapper.insertBudgetsRemoteUseCase()
         }
     }
 
@@ -79,6 +79,4 @@ class FinanceTracker : Application(), Configuration.Provider {
             notificationManager.createNotificationChannel(channel)
         }
     }
-
-
 }

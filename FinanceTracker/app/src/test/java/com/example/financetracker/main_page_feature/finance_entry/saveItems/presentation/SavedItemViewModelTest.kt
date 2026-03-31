@@ -1,11 +1,12 @@
 package com.example.financetracker.main_page_feature.finance_entry.saveItems.presentation
 
 import app.cash.turbine.test
-import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation.AddTransactionViewModel
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.model.SavedItems
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.local.validation.ValidationResult
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
+import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
+import com.example.financetracker.presentation.features.finance_entry_feature.events.AddSavedItemsEvents
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddSavedItemViewModel
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -19,7 +20,6 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SavedItemsViewModelTest {
@@ -27,7 +27,7 @@ class SavedItemsViewModelTest {
  private val setupAccountUseCasesWrapper = mockk<SetupAccountUseCasesWrapper>(relaxed = true)
  private val savedItemsUseCasesWrapper = mockk<SavedItemsUseCasesWrapper>(relaxed = true)
 
- private lateinit var savedItemViewModel: SavedItemViewModel
+ private lateinit var addSavedItemViewModel: AddSavedItemViewModel
  private val userUID = "testUserId"
  private val testDispatcher = StandardTestDispatcher()
  private val testScope = TestScope(testDispatcher)
@@ -37,7 +37,7 @@ class SavedItemsViewModelTest {
   Dispatchers.setMain(testDispatcher)
 
 
-  savedItemViewModel = SavedItemViewModel(
+  addSavedItemViewModel = AddSavedItemViewModel(
    savedItemsUseCasesWrapper = savedItemsUseCasesWrapper,
    setupAccountUseCasesWrapper = setupAccountUseCasesWrapper
 
@@ -60,20 +60,20 @@ class SavedItemsViewModelTest {
   val testCurrencySymbol = "₹"
 
 
-  every { savedItemsUseCasesWrapper.getCloudSyncLocally() } returns true
+  every { savedItemsUseCasesWrapper.getCloudSyncLocalUseCase() } returns true
   coEvery { savedItemsUseCasesWrapper.internetConnectionAvailability() } returns true
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Name",state = testItemName) } returns ValidationResult(true)
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Price", state =  testItemPrice) } returns ValidationResult(true)
-  coEvery { savedItemsUseCasesWrapper.saveItemLocalUseCase(any()) } just Runs
+  coEvery { savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(any()) } just Runs
 
 
   // When
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemName(testItemName))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemPrice(testItemPrice))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemCurrency(testCurrencyName, testCurrencyCode, testCurrencySymbol,false))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemName(testItemName))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemPrice(testItemPrice))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemCurrency(testCurrencyName, testCurrencyCode, testCurrencySymbol,false))
 
-  savedItemViewModel.savedItemsValidationEvents.test {
-   savedItemViewModel.onEvent(SavedItemsEvent.Submit)
+  addSavedItemViewModel.savedItemsValidationEvents.test {
+   addSavedItemViewModel.onEvent(AddSavedItemsEvents.Submit)
 
    testDispatcher.scheduler.advanceUntilIdle()
 
@@ -94,12 +94,12 @@ class SavedItemsViewModelTest {
 
 
   // When
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemName(testItemName))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemPrice(testItemPrice))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemName(testItemName))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemPrice(testItemPrice))
 
 
-  savedItemViewModel.savedItemsValidationEvents.test {
-   savedItemViewModel.onEvent(SavedItemsEvent.Submit)
+  addSavedItemViewModel.savedItemsValidationEvents.test {
+   addSavedItemViewModel.onEvent(AddSavedItemsEvents.Submit)
 
    testDispatcher.scheduler.advanceUntilIdle()
 
@@ -124,11 +124,11 @@ class SavedItemsViewModelTest {
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Price",state = testItemPrice) } returns ValidationResult(false,"Item price required")
 
 
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemName(testItemName))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemPrice(testItemPrice))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemName(testItemName))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemPrice(testItemPrice))
 
-  savedItemViewModel.savedItemsValidationEvents.test {
-   savedItemViewModel.onEvent(SavedItemsEvent.Submit)
+  addSavedItemViewModel.savedItemsValidationEvents.test {
+   addSavedItemViewModel.onEvent(AddSavedItemsEvents.Submit)
 
    testDispatcher.scheduler.advanceUntilIdle()
 
@@ -157,14 +157,14 @@ class SavedItemsViewModelTest {
 
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Name", state = testItemName) } returns ValidationResult(true)
   coEvery { savedItemsUseCasesWrapper.savedItemsValidationUseCase(stateName = "Item Price", state = testItemPrice) } returns ValidationResult(true)
-  coEvery { savedItemsUseCasesWrapper.saveItemLocalUseCase(any()) } throws RuntimeException("Local save failed")
+  coEvery { savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(any()) } throws RuntimeException("Local save failed")
 
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemName(testItemName))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemPrice(testItemPrice))
-  savedItemViewModel.onEvent(SavedItemsEvent.OnChangeItemCurrency(testCurrencyName, testCurrencyCode, testCurrencySymbol,false))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemName(testItemName))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemPrice(testItemPrice))
+  addSavedItemViewModel.onEvent(AddSavedItemsEvents.OnChangeItemCurrency(testCurrencyName, testCurrencyCode, testCurrencySymbol,false))
 
-  savedItemViewModel.savedItemsValidationEvents.test {
-   savedItemViewModel.onEvent(SavedItemsEvent.Submit)
+  addSavedItemViewModel.savedItemsValidationEvents.test {
+   addSavedItemViewModel.onEvent(AddSavedItemsEvents.Submit)
 
    testDispatcher.scheduler.advanceUntilIdle()
 

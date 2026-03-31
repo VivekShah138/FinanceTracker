@@ -1,16 +1,15 @@
 package com.example.financetracker.main_page_feature.finance_entry.add_transactions.presentation
 
-import org.junit.Assert.*
 import app.cash.turbine.test
-import com.example.financetracker.auth_feature.domain.usecases.ValidationResult
-import com.example.financetracker.core.local.domain.room.usecases.PredefinedCategoriesUseCaseWrapper
-import com.example.financetracker.main_page_feature.finance_entry.add_transactions.domain.usecases.AddTransactionUseCasesWrapper
-import com.example.financetracker.main_page_feature.finance_entry.saveItems.domain.usecases.SavedItemsUseCasesWrapper
-import com.example.financetracker.setup_account.domain.usecases.SetupAccountUseCasesWrapper
+import com.example.financetracker.domain.usecases.local.validation.ValidationResult
+import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCategoriesUseCaseWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.AddTransactionUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
+import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
+import com.example.financetracker.presentation.features.finance_entry_feature.events.AddTransactionEvents
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
 import io.mockk.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Before
@@ -51,20 +50,21 @@ class AddTransactionViewModelTest {
  @Test
  fun `addTransactions sends success event when validation passes and local+cloud save succeeds`() = runTest {
   // Arrange: Validation passes
-  coEvery { addTransactionUseCasesWrapper.validateEmptyField(any()) } returns ValidationResult(true, null)
-  coEvery { addTransactionUseCasesWrapper.validateTransactionPrice(any()) } returns ValidationResult(true, null)
-  coEvery { addTransactionUseCasesWrapper.validateTransactionCategory(any()) } returns ValidationResult(true, null)
+  coEvery { addTransactionUseCasesWrapper.emptyFieldValidationUseCase(any()) } returns ValidationResult(true, null)
+  coEvery { addTransactionUseCasesWrapper.transactionPriceValidationUseCase(any()) } returns ValidationResult(true, null)
+  coEvery { addTransactionUseCasesWrapper.transactionCategoryValidationUseCase(any()) } returns ValidationResult(true, null)
 
   coEvery { addTransactionUseCasesWrapper.internetConnectionAvailability() } returns true
 
-  coEvery { addTransactionUseCasesWrapper.insertNewTransactionsReturnId(any()) } returns 1L
-  coEvery { addTransactionUseCasesWrapper.saveSingleTransactionCloud(any(), any()) } just Runs
-  coEvery { addTransactionUseCasesWrapper.insertTransactionsLocally(any()) } just Runs
+  coEvery { addTransactionUseCasesWrapper.insertTransactionsAndReturnIdLocalUseCase(any()) } returns 1L
+  coEvery { addTransactionUseCasesWrapper.insertSingleTransactionRemoteUseCase(any(), any()) } just Runs
+  coEvery { addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(any()) } just Runs
 
   viewModel.onEvent(AddTransactionEvents.ChangeTransactionName("Coffee"))
   viewModel.onEvent(AddTransactionEvents.ChangeTransactionPrice("3.5"))
   viewModel.onEvent(AddTransactionEvents.SelectCategory("Food", bottomSheetState = false, alertBoxState = false))
-  viewModel.onEvent(AddTransactionEvents.ChangeTransactionCurrency(
+  viewModel.onEvent(
+   AddTransactionEvents.ChangeTransactionCurrency(
    currencyName = "Dollar",
    currencySymbol = "$",
    currencyCode = "USD",
@@ -94,9 +94,9 @@ class AddTransactionViewModelTest {
  @Test
  fun `addTransactions sends failure event when validation fails`() = runTest {
   // Arrange: validation fails on empty field
-  coEvery { addTransactionUseCasesWrapper.validateEmptyField(any()) } returns ValidationResult(false, "Name empty")
-  coEvery { addTransactionUseCasesWrapper.validateTransactionPrice(any()) } returns ValidationResult(true, null)
-  coEvery { addTransactionUseCasesWrapper.validateTransactionCategory(any()) } returns ValidationResult(true, null)
+  coEvery { addTransactionUseCasesWrapper.emptyFieldValidationUseCase(any()) } returns ValidationResult(false, "Name empty")
+  coEvery { addTransactionUseCasesWrapper.transactionPriceValidationUseCase(any()) } returns ValidationResult(true, null)
+  coEvery { addTransactionUseCasesWrapper.transactionCategoryValidationUseCase(any()) } returns ValidationResult(true, null)
 
   viewModel.onEvent(AddTransactionEvents.ChangeTransactionName("")) // Empty name
   viewModel.onEvent(AddTransactionEvents.ChangeTransactionPrice("3.5"))
