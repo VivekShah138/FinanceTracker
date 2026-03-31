@@ -20,43 +20,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.navigation.core.Screens
-import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel
-import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.SavedItemViewModel
-import com.example.financetracker.presentation.features.finance_entry_feature.events.SavedItemsEvents
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddSavedItemViewModel
+import com.example.financetracker.presentation.features.finance_entry_feature.events.AddSavedItemsEvents
+import com.example.financetracker.presentation.features.finance_entry_feature.states.AddSavedItemsStates
+import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel.AddTransactionValidationEvent
 import com.example.financetracker.presentation.features.setup_account_feature.components.SimpleDropdownMenu
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
-fun SavedItemPage(
-    viewModel: SavedItemViewModel,
-    navController: NavController
+fun AddSavedItemsScreen(
+    navController: NavController,
+    savedItemsValidationEvent: Flow<AddTransactionValidationEvent>,
+    states: AddSavedItemsStates,
+    onEvent: (AddSavedItemsEvents) -> Unit
 ) {
-
-    val states by viewModel.savedItemsState.collectAsStateWithLifecycle()
-    val savedItemsValidationEvent = viewModel.savedItemsValidationEvents
     val scrollState = rememberScrollState()
     val context = LocalContext.current
-
 
     LaunchedEffect(key1 = context) {
         savedItemsValidationEvent.collect { event ->
             when (event) {
-                is AddTransactionViewModel.AddTransactionValidationEvent.Failure -> {
+                is AddTransactionValidationEvent.Failure -> {
                     Toast.makeText(context,event.errorMessage, Toast.LENGTH_SHORT).show()
                 }
-                AddTransactionViewModel.AddTransactionValidationEvent.Success -> {
+                is AddTransactionValidationEvent.Success -> {
                     Toast.makeText(context,"Item Successfully Added", Toast.LENGTH_LONG).show()
-//                    navController.navigate(route = Screens.HomePageScreen.routes)
                     navController.navigate(route = Screens.HomePageScreen)
                 }
             }
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -70,8 +72,8 @@ fun SavedItemPage(
         OutlinedTextField(
             value = states.itemName,
             onValueChange = {
-                viewModel.onEvent(
-                    SavedItemsEvents.OnChangeItemName(it)
+                onEvent(
+                    AddSavedItemsEvents.OnChangeItemName(it)
                 )
             },
             label = { Text("Item Name") },
@@ -85,11 +87,9 @@ fun SavedItemPage(
             expanded = states.itemCurrencyExpanded,
             list = states.itemCurrenciesList,
             onExpandedChange = {
-
-                viewModel.onEvent(SavedItemsEvents.LoadCurrencies)
-
-                viewModel.onEvent(
-                    SavedItemsEvents.OnChangeItemCurrency(
+                onEvent(AddSavedItemsEvents.LoadCurrencies)
+                onEvent(
+                    AddSavedItemsEvents.OnChangeItemCurrency(
                         name = states.itemCurrencyName,
                         symbol = states.itemCurrencySymbol,
                         code = states.itemCurrencyCode,
@@ -98,8 +98,8 @@ fun SavedItemPage(
                 )
             },
             onDismissRequest = {
-                viewModel.onEvent(
-                    SavedItemsEvents.OnChangeItemCurrency(
+                onEvent(
+                    AddSavedItemsEvents.OnChangeItemCurrency(
                         name = states.itemCurrencyName,
                         symbol = states.itemCurrencySymbol,
                         code = states.itemCurrencyCode,
@@ -108,13 +108,13 @@ fun SavedItemPage(
                 )
             },
             onItemSelect = {
-                val firstCurrency = it.currencies?.entries?.firstOrNull()
+                val firstCurrency = it.currencies.entries.firstOrNull()
                 val currencyName = firstCurrency?.value?.name ?: "N/A"
                 val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                 val currencyCode = firstCurrency?.key ?: "N/A"
 
-                viewModel.onEvent(
-                    SavedItemsEvents.OnChangeItemCurrency(
+                onEvent(
+                    AddSavedItemsEvents.OnChangeItemCurrency(
                         name = currencyName,
                         symbol = currencySymbol,
                         code = currencyCode,
@@ -123,7 +123,7 @@ fun SavedItemPage(
                 )
             },
             displayText = {
-                it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
             }
         )
 
@@ -131,8 +131,8 @@ fun SavedItemPage(
         OutlinedTextField(
             value = states.itemPrice,
             onValueChange = {
-                viewModel.onEvent(
-                    SavedItemsEvents.OnChangeItemPrice(it)
+                onEvent(
+                    AddSavedItemsEvents.OnChangeItemPrice(it)
                 )
             },
             label = { Text("Item Price") },
@@ -151,8 +151,8 @@ fun SavedItemPage(
         OutlinedTextField(
             value = states.itemDescription,
             onValueChange = {
-                viewModel.onEvent(
-                    SavedItemsEvents.OnChangeItemDescription(it)
+                onEvent(
+                    AddSavedItemsEvents.OnChangeItemDescription(it)
                 )
             },
             label = { Text("Item Description") },
@@ -162,8 +162,8 @@ fun SavedItemPage(
         OutlinedTextField(
             value = states.itemShopName,
             onValueChange = {
-                viewModel.onEvent(
-                    SavedItemsEvents.OnChangeItemShopName(it)
+                onEvent(
+                    AddSavedItemsEvents.OnChangeItemShopName(it)
                 )
             },
             label = { Text("Shop Name") },
@@ -172,13 +172,31 @@ fun SavedItemPage(
 
         Button(
             onClick = {
-                viewModel.onEvent(
-                    SavedItemsEvents.Submit
+                onEvent(
+                    AddSavedItemsEvents.Submit
                 )
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Save Item")
         }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun AddSaveItemsScreenPreview(){
+    FinanceTrackerTheme {
+        AddSavedItemsScreen(
+            navController = rememberNavController(),
+            savedItemsValidationEvent = emptyFlow(),
+            states = AddSavedItemsStates(),
+            onEvent = {
+
+            }
+        )
     }
 }

@@ -2,7 +2,7 @@ package com.example.financetracker.presentation.features.finance_entry_feature.s
 
 import com.example.financetracker.domain.model.Country
 
-data class SavedItemsStates(
+data class AddSavedItemsStates(
     val itemName: String = "",
     val itemPrice: String = "",
     val itemCurrenciesList: List<Country> = emptyList(),

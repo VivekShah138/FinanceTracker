@@ -1,8 +1,6 @@
 package com.example.financetracker.presentation.features.finance_entry_feature.viewmodels
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel.AddTransactionValidationEvent
@@ -10,8 +8,8 @@ import com.example.financetracker.domain.model.SavedItems
 import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
 import com.example.financetracker.domain.model.Currency
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
-import com.example.financetracker.presentation.features.finance_entry_feature.events.SavedItemsEvents
-import com.example.financetracker.presentation.features.finance_entry_feature.states.SavedItemsStates
+import com.example.financetracker.presentation.features.finance_entry_feature.events.AddSavedItemsEvents
+import com.example.financetracker.presentation.features.finance_entry_feature.states.AddSavedItemsStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -24,13 +22,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class SavedItemViewModel @Inject constructor(
+class AddSavedItemViewModel @Inject constructor(
     private val setupAccountUseCasesWrapper: SetupAccountUseCasesWrapper,
     private val savedItemsUseCasesWrapper: SavedItemsUseCasesWrapper
 ): ViewModel() {
 
-    private val _savedItemsState = MutableStateFlow(SavedItemsStates())
-    val savedItemsState: StateFlow<SavedItemsStates> = _savedItemsState.asStateFlow()
+    private val _savedItemsState = MutableStateFlow(AddSavedItemsStates())
+    val savedItemsState: StateFlow<AddSavedItemsStates> = _savedItemsState.asStateFlow()
 
     private val savedItemsValidationEventChannel = Channel<AddTransactionValidationEvent>()
     val savedItemsValidationEvents = savedItemsValidationEventChannel.receiveAsFlow()
@@ -42,45 +40,44 @@ class SavedItemViewModel @Inject constructor(
         loadInitialCurrency()
     }
 
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    fun onEvent(savedItemsEvents: SavedItemsEvents) {
-        when (savedItemsEvents) {
-            SavedItemsEvents.LoadCurrencies -> {
+    fun onEvent(addSavedItemsEvents: AddSavedItemsEvents) {
+        when (addSavedItemsEvents) {
+            AddSavedItemsEvents.LoadCurrencies -> {
                 viewModelScope.launch {
                     fetchBaseCurrencies()
                 }
 
             }
-            is SavedItemsEvents.OnChangeItemCurrency -> {
+            is AddSavedItemsEvents.OnChangeItemCurrency -> {
                 _savedItemsState.value = savedItemsState.value.copy(
-                    itemCurrencyName = savedItemsEvents.name,
-                    itemCurrencySymbol = savedItemsEvents.symbol,
-                    itemCurrencyCode = savedItemsEvents.code,
-                    itemCurrencyExpanded = savedItemsEvents.expanded
+                    itemCurrencyName = addSavedItemsEvents.name,
+                    itemCurrencySymbol = addSavedItemsEvents.symbol,
+                    itemCurrencyCode = addSavedItemsEvents.code,
+                    itemCurrencyExpanded = addSavedItemsEvents.expanded
                 )
             }
-            is SavedItemsEvents.OnChangeItemDescription -> {
+            is AddSavedItemsEvents.OnChangeItemDescription -> {
                 _savedItemsState.value = savedItemsState.value.copy(
-                    itemDescription = savedItemsEvents.description,
+                    itemDescription = addSavedItemsEvents.description,
                 )
             }
-            is SavedItemsEvents.OnChangeItemName -> {
+            is AddSavedItemsEvents.OnChangeItemName -> {
                 _savedItemsState.value = savedItemsState.value.copy(
-                    itemName = savedItemsEvents.name,
+                    itemName = addSavedItemsEvents.name,
                 )
             }
-            is SavedItemsEvents.OnChangeItemPrice -> {
+            is AddSavedItemsEvents.OnChangeItemPrice -> {
                 _savedItemsState.value = savedItemsState.value.copy(
-                    itemPrice = savedItemsEvents.price,
+                    itemPrice = addSavedItemsEvents.price,
                 )
             }
-            is SavedItemsEvents.OnChangeItemShopName -> {
+            is AddSavedItemsEvents.OnChangeItemShopName -> {
                 _savedItemsState.value = savedItemsState.value.copy(
-                    itemShopName = savedItemsEvents.shopName,
+                    itemShopName = addSavedItemsEvents.shopName,
                 )
             }
 
-            SavedItemsEvents.Submit -> {
+            AddSavedItemsEvents.Submit -> {
                 viewModelScope.launch {
                     saveItems()
                 }
