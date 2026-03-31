@@ -14,6 +14,7 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -32,6 +33,10 @@ class FinanceTracker : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
+
         createNotificationChannel()
 
         Log.d("AppEntry", "Enqueuing Workers")
@@ -46,9 +51,6 @@ class FinanceTracker : Application(), Configuration.Provider {
                 setupAccountUseCasesWrapper.setFirstTimeInstalledLocalUseCase()
                 Log.d("AppEntry","FirstTimeInstalled set to false")
             }
-
-
-
             viewRecordsUseCaseWrapper.deleteTransactionsRemoteUseCase()
             viewRecordsUseCaseWrapper.deleteMultipleSavedItemCloud()
             settingsUseCaseWrapper.insertTransactionsRemoteUseCase()

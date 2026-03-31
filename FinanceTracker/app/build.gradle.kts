@@ -128,6 +128,9 @@ dependencies {
     //Work Manager
     implementation(libs.androidx.work.runtime.ktx)
 
+    // logging
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
     // Charts
     implementation("com.patrykandpatrick.vico:core:1.13.0")
     implementation("com.patrykandpatrick.vico:compose:1.13.0")
@@ -139,7 +142,7 @@ dependencies {
     testImplementation ("org.mockito:mockito-core:4.8.0")
     testImplementation("io.mockk:mockk:1.13.5")
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
-    testImplementation ("app.cash.turbine:turbine:1.0.0") // For testing flows
+    testImplementation ("app.cash.turbine:turbine:1.0.0")
     testImplementation ("org.jetbrains.kotlin:kotlin-test:1.9.0")
 
 

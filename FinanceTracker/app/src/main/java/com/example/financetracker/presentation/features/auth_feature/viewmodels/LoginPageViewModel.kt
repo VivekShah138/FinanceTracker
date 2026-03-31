@@ -3,6 +3,7 @@ package com.example.financetracker.presentation.features.auth_feature.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.usecases.usecase_wrapper.AuthFeatureUseCasesWrapper
 import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
 import com.example.financetracker.domain.model.UserProfile
@@ -17,11 +18,14 @@ import com.example.financetracker.presentation.features.auth_feature.states.Logi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,6 +43,9 @@ class LoginPageViewModel @Inject constructor(
 
     private val loginEventChannel = Channel<LoginEvent>()
     val loginEvents = loginEventChannel.receiveAsFlow()
+
+    private val _startUpNavigationFlow = MutableSharedFlow<StartUpNavigation>()
+    val startUpNavigationFlow = _startUpNavigationFlow.asSharedFlow()
 
     fun onEvent(loginPageEvents: LoginPageEvents){
         when(loginPageEvents){
@@ -62,7 +69,7 @@ class LoginPageViewModel @Inject constructor(
                                 loggedInUser = loginPageEvents.result.username,
                                 isLoading = false
                             )
-                            handleUserProfile()
+                            handleUserProfile(loginPageEvents.result.username)
                             loadRemoteDataItems()
                             loginEventChannel.send(LoginEvent.Success(loginPageEvents.result.username))
                         }
@@ -98,8 +105,7 @@ class LoginPageViewModel @Inject constructor(
             }
             is LoginPageEvents.LoginSuccess -> {
                 viewModelScope.launch {
-
-                    handleUserProfile()
+                    handleUserProfile(loginPageEvents.userName)
                     loadRemoteDataItems()
                     loginEventChannel.send(LoginEvent.Success(loginPageEvents.userName))
                 }
@@ -147,115 +153,95 @@ class LoginPageViewModel @Inject constructor(
 
     }
 
-    private suspend fun handleUserProfile(){
-        _loginState.value = _loginState.value.copy(isLoading = true)
-        try {
-            val userId = coreUseCasesWrapper.getUserUIDRemoteUseCase() ?: "Unknown"
-            Log.d("LoginViewModel","userId: $userId")
-
-            authFeatureUseCasesWrapper.insertUIDLocalUseCase(userId)
-            Log.d("LoginViewModel","Inserted UserId")
-            viewModelScope.launch(Dispatchers.IO) {
-                val userId2 = authFeatureUseCasesWrapper.getUIDLocalUseCase()
-                Log.d("LoginViewModel","UserId Local $userId2")
-            }
-
-            val userProfile = coreUseCasesWrapper.getUserProfileRemoteUseCase(userId)
-            val userName = userProfile?.firstName + " " + userProfile?.lastName
-            Log.d("LoginViewModel","userProfile: ${userProfile}")
-            Log.d("LoginViewModel","userName: ${userName}")
-
-            coreUseCasesWrapper.setUserNameLocalUseCase(userName)
-            Log.d("LoginViewModel","userName: ${userName}")
-
-
-            if(userProfile == null){
-                val email = coreUseCasesWrapper.getUserEmailRemoteUserCase() ?: "Unknown"
-                val newUserProfile = UserProfile(email = email, profileSetUpCompleted = false)
-                coreUseCasesWrapper.saveUserProfileRemoteUseCase(userId, newUserProfile)
-                _loginState.value = loginState.value.copy(
-                    userProfile = newUserProfile
-                )
-                Log.d("LoginViewModel","KeepLogIn ${coreUseCasesWrapper.checkIsLoggedInLocalUseCase}")
-            }
-            else{
-                _loginState.value = loginState.value.copy(
-                    userProfile = userProfile
-                )
-                if(userProfile.profileSetUpCompleted){
-                    setupAccountUseCasesWrapper.keepUserLoggedInLocalUseCase(keepLoggedIn = true)
+    private fun handleUserProfile(email: String) {
+        viewModelScope.launch {
+            _loginState.value = _loginState.value.copy(isLoading = true)
+            try {
+                val userId = withContext(Dispatchers.IO) {
+                    coreUseCasesWrapper.getUserUIDRemoteUseCase() ?: "Unknown"
                 }
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "userId: $userId")
+                authFeatureUseCasesWrapper.insertUIDLocalUseCase(userId)
+
+                val userProfile = withContext(Dispatchers.IO) {
+                    coreUseCasesWrapper.getUserProfileRemoteUseCase(userId)
+                }
+
+                val finalProfile = userProfile ?: run {
+                    val newProfile = UserProfile(email = email, profileSetUpCompleted = false)
+                    withContext(Dispatchers.IO) {
+                        coreUseCasesWrapper.saveUserProfileRemoteUseCase(userId, newProfile)
+                    }
+                    newProfile
+                }
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "userProfile: $userProfile")
+
+                val userName = listOfNotNull(finalProfile.firstName, finalProfile.lastName)
+                    .joinToString(" ")
+                coreUseCasesWrapper.setUserNameLocalUseCase(userName)
+
+                _loginState.value = loginState.value.copy(userProfile = finalProfile)
+
+                if(finalProfile.profileSetUpCompleted){
+                    setupAccountUseCasesWrapper.keepUserLoggedInLocalUseCase(true)
+                    _startUpNavigationFlow.emit(StartUpNavigation.NavigateToHome)
+                }
+                else{
+                    _startUpNavigationFlow.emit(StartUpNavigation.NavigateToOnBoarding)
+                }
+
+            } catch (e: Exception) {
+                Logger.e(Logger.Tag.LOGIN_VIEWMODEL, "Error in handleUserProfile", e)
+                loginEventChannel.send(LoginEvent.Error(e.localizedMessage))
+            } finally {
+                _loginState.value = _loginState.value.copy(isLoading = false)
             }
-        }catch (e:Exception){
-            val errorMessage = e.localizedMessage
-            loginEventChannel.send(LoginEvent.Error(errorMessage))
-        }finally {
-            _loginState.value = _loginState.value.copy(isLoading = false)
         }
     }
-
-//    private suspend fun loadRemoteDataItems(){
-//        _loginState.value = _loginState.value.copy(isDataSyncing = true)
-//        try {
-//            val userId = coreUseCasesWrapper.getUserUIDUseCase() ?: "Unknown"
-//            val isFirstTimeLoggedIn = setupAccountUseCasesWrapper.getFirstTimeLoggedIn(userId)
-//            Log.d("AppEntry","FirstTimeLoggedIn -> $isFirstTimeLoggedIn")
-//            if(isFirstTimeLoggedIn){
-//                savedItemsUseCasesWrapper.insertRemoteSavedItemToLocal()
-//                addTransactionUseCasesWrapper.insertRemoteTransactionsToLocal()
-//                coreUseCasesWrapper.insertUserProfileToLocalDb()
-//                budgetUseCaseWrapper.insertRemoteBudgetsToLocal()
-//                setupAccountUseCasesWrapper.setFirstTimeLogin(uid = userId)
-//                setupAccountUseCasesWrapper.setCurrencyRatesUpdated(isUpdated = false)
-//                Log.d("AppEntry","FirstTimeLoggedIn set to false")
-//            }
-//        } catch (e: Exception) {
-//            Log.e("LoadRemoteData", "Failed to sync: ${e.localizedMessage}")
-//        }finally {
-//            _loginState.value = _loginState.value.copy(isDataSyncing = false)
-//        }
-//    }
 
     private suspend fun loadRemoteDataItems() {
         _loginState.value = _loginState.value.copy(isDataSyncing = true)
         try {
             val userId = coreUseCasesWrapper.getUserUIDRemoteUseCase() ?: "Unknown"
             val isFirstTimeLoggedIn = setupAccountUseCasesWrapper.getFirstTimeLoggedIn(userId)
-            Log.d("AppEntry", "FirstTimeLoggedIn -> $isFirstTimeLoggedIn")
+            Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "FirstTimeLoggedIn -> $isFirstTimeLoggedIn")
             if (isFirstTimeLoggedIn) {
-                Log.d("LoadRemoteData", "Starting insertRemoteSavedItemToLocal")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Starting insertRemoteSavedItemToLocal")
                 savedItemsUseCasesWrapper.insertRemoteSavedItemToLocal()
-                Log.d("LoadRemoteData", "Completed insertRemoteSavedItemToLocal")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Completed insertRemoteSavedItemToLocal")
 
-                Log.d("LoadRemoteData", "Starting insertRemoteTransactionsToLocal")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Starting insertRemoteTransactionsToLocal")
                 addTransactionUseCasesWrapper.syncTransactionsRemoteToLocalUseCase()
-                Log.d("LoadRemoteData", "Completed insertRemoteTransactionsToLocal")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Completed insertRemoteTransactionsToLocal")
 
-                Log.d("LoadRemoteData", "Starting insertUserProfileToLocalDb")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Starting insertUserProfileToLocalDb")
                 coreUseCasesWrapper.insertUserProfileLocalUseCase()
-                Log.d("LoadRemoteData", "Completed insertUserProfileToLocalDb")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Completed insertUserProfileToLocalDb")
 
-                Log.d("LoadRemoteData", "Starting insertRemoteBudgetsToLocal")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Starting insertRemoteBudgetsToLocal")
                 budgetUseCaseWrapper.insertBudgetsRemoteToLocalUseCase()
-                Log.d("LoadRemoteData", "Completed insertRemoteBudgetsToLocal")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Completed insertRemoteBudgetsToLocal")
 
                 setupAccountUseCasesWrapper.setFirstTimeLoginUseCase(uid = userId)
                 setupAccountUseCasesWrapper.setCurrencyRatesUpdatedLocalUseCase(isUpdated = false)
-                Log.d("AppEntry", "FirstTimeLoggedIn set to false")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "FirstTimeLoggedIn set to false")
             }
         } catch (e: Exception) {
-            Log.e("LoadRemoteData", "Failed to sync: ${e.localizedMessage}")
+            Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Failed to sync: ${e.localizedMessage}")
         } finally {
             _loginState.value = _loginState.value.copy(isDataSyncing = false)
         }
     }
 
-
-
     sealed class LoginEvent{
         data class Success(val username: String): LoginEvent()
         data class Error(val errorMessage: String?): LoginEvent()
         data object TriggerFirebaseLogIn: LoginEvent()
+    }
+
+    sealed class StartUpNavigation{
+        data object NavigateToHome: StartUpNavigation()
+        data object NavigateToOnBoarding: StartUpNavigation()
     }
 }
 

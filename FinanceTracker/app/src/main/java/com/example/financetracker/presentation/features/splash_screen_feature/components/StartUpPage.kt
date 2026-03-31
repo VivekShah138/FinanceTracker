@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.financetracker.Logger
 import com.example.financetracker.R
 import com.example.financetracker.presentation.features.auth_feature.auth_utils.AccountManager
 import com.example.financetracker.presentation.features.auth_feature.events.LoginPageEvents
@@ -61,6 +62,7 @@ fun StartUpPageRoot(
     val startUpPageStates by startUpPageViewModel.startUpPageStates.collectAsStateWithLifecycle()
     val loginPageStates by loginPageViewModel.loginState.collectAsStateWithLifecycle()
     val loginEvents = loginPageViewModel.loginEvents
+    val startUpNavigationChannel = loginPageViewModel.startUpNavigationFlow
 
     StartUpPageScreen(
         startUpPageOnEvents = { startUpPageViewModel.onEvent(it) },
@@ -68,7 +70,8 @@ fun StartUpPageRoot(
         startUpPageStates = startUpPageStates,
         loginPageStates = loginPageStates,
         loginEvents = loginEvents,
-        navController = navController
+        navController = navController,
+        startUpNavigationChannel = startUpNavigationChannel
     )
 }
 
@@ -81,6 +84,7 @@ fun StartUpPageScreen(
     startUpPageStates: StartUpPageStates,
     loginPageStates: LoginPageStates,
     loginEvents: Flow<LoginPageViewModel. LoginEvent>,
+    startUpNavigationChannel: Flow<LoginPageViewModel.StartUpNavigation>,
     navController: NavController
 ){
 
@@ -94,10 +98,6 @@ fun StartUpPageScreen(
         null
     }
 
-
-    Log.d("StartUpPage","states: $startUpPageStates")
-
-
     LaunchedEffect(key1 = context) {
         loginEvents.collect{event->
             when(event){
@@ -105,13 +105,6 @@ fun StartUpPageScreen(
                     Toast.makeText(context,
                         "Login Successful " + event.username,
                         Toast.LENGTH_SHORT).show()
-
-                    if(!loginPageStates.userProfile.profileSetUpCompleted){
-                        navController.navigate(Screens.NewUserProfileOnBoardingScreen)
-                    }
-                    else{
-                        navController.navigate(Screens.HomePageScreen)
-                    }
                 }
                 is LoginPageViewModel.LoginEvent.Error->{
                     Toast.makeText(context,
@@ -120,6 +113,23 @@ fun StartUpPageScreen(
                 }
                 else -> {
 
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(context) {
+        startUpNavigationChannel.collect { startUpNavigationChannel->
+            when(startUpNavigationChannel){
+                LoginPageViewModel.StartUpNavigation.NavigateToHome -> {
+                    navController.navigate(Screens.HomePageScreen){
+                        popUpTo(0)
+                    }
+                }
+                LoginPageViewModel.StartUpNavigation.NavigateToOnBoarding -> {
+                    navController.navigate(Screens.NewUserProfileOnBoardingScreen){
+                        popUpTo(0)
+                    }
                 }
             }
         }
@@ -197,6 +207,7 @@ fun StartUpPageScreen(
                         accountManager?.let {
                             loginPageOnEvents(LoginPageEvents.SetLoadingTrue(true))
                             val result = accountManager.signInWithGoogle()
+                            Logger.d(Logger.Tag.STARTUP_SCREEN,"Google Result: $result")
                             loginPageOnEvents(LoginPageEvents.ClickLoginWithGoogle(result))
                         }
                     }
@@ -282,7 +293,8 @@ fun StartUpPagePreview(){
         startUpPageOnEvents = {},
         loginPageOnEvents = {},
         loginEvents = emptyFlow(),
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        startUpNavigationChannel = emptyFlow()
     )
 }
 

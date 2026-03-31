@@ -12,7 +12,6 @@ fun NavGraphBuilder.newUserProfileOnBoardingGraph(
     navController: NavController
 ){
     composable<Screens.NewUserProfileOnBoardingScreen>{
-        val viewModel: ProfileSetUpViewModel = hiltViewModel()
-        NewUserProfileOnBoardingScreens(viewModel, navController)
+        NewUserProfileOnBoardingScreens(navController = navController)
     }
 }

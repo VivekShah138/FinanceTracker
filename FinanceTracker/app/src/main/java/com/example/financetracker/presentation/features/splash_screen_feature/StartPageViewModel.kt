@@ -2,11 +2,13 @@ package com.example.financetracker.presentation.features.splash_screen_feature
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.usecases.usecase_wrapper.CoreUseCasesWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,6 +44,6 @@ class StartPageViewModel @Inject constructor(
         _startUpPageStates.value = startUpPageStates.value.copy(
             isLoggedIn = coreUseCasesWrapper.checkIsLoggedInLocalUseCase()
         )
-        Log.d("StartUpViewModel","Is Logged In: ${coreUseCasesWrapper.checkIsLoggedInLocalUseCase()}")
+        Logger.d(Logger.Tag.STARTUP_VIEWMODEL,"Is Logged In: ${coreUseCasesWrapper.checkIsLoggedInLocalUseCase()}")
     }
 }

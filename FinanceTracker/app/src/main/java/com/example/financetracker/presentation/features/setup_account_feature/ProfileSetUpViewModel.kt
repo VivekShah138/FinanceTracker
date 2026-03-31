@@ -3,6 +3,7 @@ package com.example.financetracker.presentation.features.setup_account_feature
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.model.UserProfile
 import com.example.financetracker.domain.model.Currency
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
@@ -36,13 +37,15 @@ class ProfileSetUpViewModel @Inject constructor(
 
     init {
         getProfileInfo()
-        setOldBaseCurrency()
+//        setOldBaseCurrency()
     }
 
     private fun setOldBaseCurrency() {
         viewModelScope.launch(Dispatchers.IO) {
             val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalUseCase(userId)
+            Logger.d(Logger.Tag.LOGIN_VIEWMODEL,"set old currency: userprofile:  $userProfile")
             val baseCurrency = userProfile?.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
+            Logger.d(Logger.Tag.LOGIN_VIEWMODEL,"set old currency: baseCurrency: $userProfile")
             oldBaseCurrency = baseCurrency
         }
     }

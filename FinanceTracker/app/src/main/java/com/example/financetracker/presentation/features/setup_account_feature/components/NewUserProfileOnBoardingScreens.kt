@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpEvents
 import com.example.financetracker.presentation.features.setup_account_feature.ProfileSetUpViewModel
@@ -19,7 +20,7 @@ import com.example.financetracker.navigation.core.Screens
 
 @Composable
 fun NewUserProfileOnBoardingScreens(
-    viewModel: ProfileSetUpViewModel,
+    viewModel: ProfileSetUpViewModel = hiltViewModel(),
     navController: NavController
 ) {
     val context = LocalContext.current
