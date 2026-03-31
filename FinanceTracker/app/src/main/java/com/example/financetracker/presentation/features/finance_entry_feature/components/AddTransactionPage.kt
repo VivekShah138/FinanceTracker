@@ -294,7 +294,7 @@ fun WithoutSearchableMode(
         Spacer(modifier = Modifier.height(15.dp))
 
         // Transaction Type
-        TransactionTypeSegmentedButton2(
+        TransactionTypeSegmentedButton(
             selectedType = states.transactionType,
             onTypeSelected = { type->
 

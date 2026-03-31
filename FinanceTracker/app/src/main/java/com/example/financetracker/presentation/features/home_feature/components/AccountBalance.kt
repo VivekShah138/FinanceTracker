@@ -25,9 +25,7 @@ fun AccountBalance(
         Text(
             text = "Account Balance",
             style = MaterialTheme.typography.titleMedium,
-//            fontSize = 12.sp
         )
-//        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = "$currencySymbol$amount",
             style = MaterialTheme.typography.headlineMedium,
@@ -37,16 +35,6 @@ fun AccountBalance(
     }
 }
 
-//@Preview(showBackground = true)
-@Composable
-fun AccountBalancePreview() {
-    MaterialTheme {
-        AccountBalance(
-            currencySymbol = "$",
-            amount = "2,500.00"
-        )
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -57,8 +45,6 @@ fun Summary(
     balanceAmount:String = "0.00",
 
 ){
-
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,6 +77,4 @@ fun Summary(
             }
         }
     }
-
-
 }

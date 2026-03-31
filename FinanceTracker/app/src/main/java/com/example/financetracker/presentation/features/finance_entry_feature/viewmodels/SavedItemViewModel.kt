@@ -1,6 +1,5 @@
 package com.example.financetracker.presentation.features.finance_entry_feature.viewmodels
 
-import android.net.http.HttpException
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresExtension
@@ -13,7 +12,6 @@ import com.example.financetracker.domain.model.Currency
 import com.example.financetracker.domain.usecases.usecase_wrapper.SetupAccountUseCasesWrapper
 import com.example.financetracker.presentation.features.finance_entry_feature.events.SavedItemsEvents
 import com.example.financetracker.presentation.features.finance_entry_feature.states.SavedItemsStates
-import com.google.gson.JsonParseException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -23,7 +21,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -79,7 +76,7 @@ class SavedItemViewModel @Inject constructor(
             }
             is SavedItemsEvents.OnChangeItemShopName -> {
                 _savedItemsState.value = savedItemsState.value.copy(
-                    itemShopName = savedItemsEvents.shopeName,
+                    itemShopName = savedItemsEvents.shopName,
                 )
             }
 
@@ -97,30 +94,18 @@ class SavedItemViewModel @Inject constructor(
             try {
                 val sortedCurrencies = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
                     .filter {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
                     }
                     .sortedBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
                     }
                     .distinctBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
                     }
 
                 _savedItemsState.value = savedItemsState.value.copy(
                     itemCurrenciesList = sortedCurrencies
                 )
-
-            } catch (e: IOException) {
-                Log.e("SavedItemViewModel", "Network Error: ${e.localizedMessage}", e)
-                // Handle network error (no internet, connection issue, etc.)
-
-            } catch (e: HttpException) {
-                Log.e("SavedItemViewModel", "HTTP Error: ${e.localizedMessage}, Code:", e)
-                // Handle HTTP error (non-2xx responses, etc.)
-
-            } catch (e: JsonParseException) {
-                Log.e("SavedItemViewModel", "JSON Parse Error: ${e.localizedMessage}", e)
-                // Handle JSON parsing errors (e.g., malformed JSON)
 
             } catch (e: Exception) {
                 Log.e("SavedItemViewModel", "Unexpected Error: ${e.localizedMessage}", e)
@@ -130,13 +115,13 @@ class SavedItemViewModel @Inject constructor(
 
                 val sortedCurrenciesLocally = setupAccountUseCasesWrapper.getCountryLocalUseCase()
                     .filter {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
                     }
                     .sortedBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
                     }
                     .distinctBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name ?: "N/A"
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
                     }
 
                 if(sortedCurrenciesLocally.isEmpty()){
@@ -169,8 +154,6 @@ class SavedItemViewModel @Inject constructor(
             )
 
             if(!itemPriceResult.isSuccessful || !itemNameResult.isSuccessful){
-//                val errorToSend = itemPriceResult.errorMessage ?: itemNameResult.errorMessage ?: "Unknown error"
-
                 val errorToSend = listOf(itemPriceResult.errorMessage, itemNameResult.errorMessage)
                     .filterNot { it.isNullOrBlank() }
                     .firstOrNull() ?: "Unknown error"
@@ -207,30 +190,16 @@ class SavedItemViewModel @Inject constructor(
                 if (cloudSyncStatus) {
                     if (isInternetAvailable) {
                         try {
-                            // 1. Insert locally first to generate the ID
                             val rowId = savedItemsUseCasesWrapper.insertSavedItemAndReturnIdLocalUseCase(savedItems = savedItem)
-
-//                            Log.d("SavedItemViewModel", "savedItemId $rowId")
-
-                            // 2. Copy the ID into a new transaction object
                             val savedItemWithId = savedItem.copy(itemId = rowId.toInt(), cloudSync = true)
-
-//                            Log.d("SavedItemViewModel", "savedItemWithId $savedItemWithId")
-
-                            // 3. Save to cloud
                             savedItemsUseCasesWrapper.saveSingleSavedItemCloud(userId = userUID, savedItems = savedItemWithId)
-
-                            // 4. Update local record to reflect cloudSync = true
                             savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems = savedItemWithId)
 
 
                         } catch (e: Exception) {
-//                            Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
-
                             try {
                                 savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
                             } catch (e: Exception) {
-//                                Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                                 savedItemsValidationEventChannel.send(
                                     AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                                 )
@@ -238,12 +207,9 @@ class SavedItemViewModel @Inject constructor(
                             }
                         }
                     } else {
-                        // No internet, save locally
                         try {
                             savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
-//                            Log.d("AddExpenseViewModel", "Local save No Internet")
                         } catch (e: Exception) {
-//                            Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                             savedItemsValidationEventChannel.send(
                                 AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                             )
@@ -251,12 +217,9 @@ class SavedItemViewModel @Inject constructor(
                         }
                     }
                 } else {
-                    // Cloud sync disabled, save locally
                     try {
                         savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
-//                        Log.d("AddExpenseViewModel", "Local save No CloudSync")
                     } catch (e: Exception) {
-//                        Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                         savedItemsValidationEventChannel.send(
                             AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                         )
@@ -276,9 +239,9 @@ class SavedItemViewModel @Inject constructor(
             if(userProfile != null){
                 val baseCurrency = userProfile.baseCurrency
 
-                val itemCurrencyName = baseCurrency.entries?.firstOrNull()?.value?.name ?: "N/A"
-                val itemCurrencySymbol = baseCurrency.entries?.firstOrNull()?.value?.symbol ?: "N/A"
-                val itemCurrencyCode = baseCurrency.entries?.firstOrNull()?.key ?: "N/A"
+                val itemCurrencyName = baseCurrency.entries.firstOrNull()?.value?.name ?: "N/A"
+                val itemCurrencySymbol = baseCurrency.entries.firstOrNull()?.value?.symbol ?: "N/A"
+                val itemCurrencyCode = baseCurrency.entries.firstOrNull()?.key ?: "N/A"
 
                 _savedItemsState.value = savedItemsState.value.copy(
                     itemCurrencyName = itemCurrencyName,
@@ -291,5 +254,4 @@ class SavedItemViewModel @Inject constructor(
             }
         }
     }
-
 }

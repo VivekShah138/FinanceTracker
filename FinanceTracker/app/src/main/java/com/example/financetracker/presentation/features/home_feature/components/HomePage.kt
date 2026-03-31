@@ -22,30 +22,50 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.presentation.features.budget_feature.components.NoBudgetMessage
 import com.example.financetracker.utils.MenuItems
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.home_feature.HomePageEvents
+import com.example.financetracker.presentation.features.home_feature.HomeScreenStates
 import com.example.financetracker.presentation.features.home_feature.HomePageViewModel
 import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun HomePageScreen(
-    viewModel: HomePageViewModel,
+fun HomeRoot(
+    viewModel: HomePageViewModel = hiltViewModel(),
     navController: NavController,
     settingsViewModel: SettingsViewModel
 ){
+    val states by viewModel.homeScreenStates.collectAsStateWithLifecycle()
 
-    val states by viewModel.homePageStates.collectAsStateWithLifecycle()
+    HomeScreen(
+        navController = navController,
+        states = states,
+        loadUserProfileIfReady = settingsViewModel::loadUserProfileIfReady,
+        onEvent = viewModel::onEvent
+    )
+}
 
+
+@Composable
+fun HomeScreen(
+    navController: NavController,
+    states: HomeScreenStates,
+    loadUserProfileIfReady: () -> Unit,
+    onEvent: (HomePageEvents) -> Unit
+){
     LaunchedEffect(Unit) {
-        settingsViewModel.loadUserProfileIfReady()
+        loadUserProfileIfReady()
         Log.d("HomePage","function called")
     }
 
@@ -59,19 +79,17 @@ fun HomePageScreen(
                     showMenu = true,
                     showBackButton = false,
                     onBackClick = {},
-                    menuItems = listOf<MenuItems>(
+                    menuItems = listOf(
                         MenuItems(
                             text = "View Budget",
                             onClick = {
-//                                navController.navigate(route = Screens.BudgetScreen.routes )
                                 navController.navigate(route = Screens.BudgetScreen)
                             }
                         ),
                         MenuItems(
                             text = "Logout",
                             onClick = {
-                                viewModel.onEvent(HomePageEvents.Logout)
-//                                navController.navigate(route = Screens.StartUpPageScreen.routes )
+                               onEvent(HomePageEvents.Logout)
                                 navController.navigate(route = Screens.StartUpPageScreen)
                             }
                         )
@@ -142,7 +160,6 @@ fun HomePageScreen(
                                         BudgetProgressBar(
                                             spentAmount = states.expenseAmount.toFloat(),
                                             totalBudget = states.monthlyBudget.toFloat(),
-                                            sliderAlert = states.receiveAlert,
                                             displayText = "Overall"
                                         )
 
@@ -151,7 +168,6 @@ fun HomePageScreen(
                                             BudgetProgressBar(
                                                 spentAmount = category.value.toFloat(),
                                                 totalBudget = states.monthlyBudget.toFloat(),
-                                                sliderAlert = states.receiveAlert,
                                                 displayText = category.key
                                             )
                                         }
@@ -161,7 +177,6 @@ fun HomePageScreen(
                                         NoBudgetMessage()
                                         Button(
                                             onClick = {
-//                                                navController.navigate(Screens.BudgetScreen.routes)
                                                 navController.navigate(Screens.BudgetScreen)
                                             },
                                             modifier = Modifier
@@ -180,5 +195,25 @@ fun HomePageScreen(
                 }
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Preview(
+    showBackground = true,
+    showSystemUi = true)
+@Composable
+fun HomeScreenPreview(){
+    FinanceTrackerTheme {
+        HomeScreen(
+            states = HomeScreenStates(),
+            loadUserProfileIfReady = {
+
+            },
+            onEvent = {
+
+            },
+            navController = rememberNavController()
+        )
     }
 }

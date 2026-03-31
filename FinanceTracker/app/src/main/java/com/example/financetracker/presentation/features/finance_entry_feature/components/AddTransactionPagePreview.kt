@@ -119,7 +119,7 @@ fun AddTransactionPagePreview(){
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    TransactionTypeSegmentedButton2 (
+                    TransactionTypeSegmentedButton (
                         selectedType = "Expense",
                         onTypeSelected = {}
                     )

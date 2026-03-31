@@ -1,6 +1,6 @@
 package com.example.financetracker.presentation.features.home_feature
 
-data class HomePageStates(
+data class HomeScreenStates(
     val incomeAmount: String = "0",
     val expenseAmount: String = "0",
     val currencySymbol: String = "",

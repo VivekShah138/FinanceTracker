@@ -62,7 +62,7 @@ fun ExpenseIncomeCards(
                         text = "$expenseSymbol$expenseAmount",
                         style = MaterialTheme.typography.headlineSmall.copy(fontSize = 22.sp),
                         maxLines = 1,
-                        overflow = TextOverflow.Clip, // Instead of Ellipsis
+                        overflow = TextOverflow.Clip,
                         softWrap = false,
                         color = Color.Black
                     )
@@ -125,12 +125,9 @@ fun ExpenseIncomeCardsPreview(){
         darkTheme = true,
         dynamicColor = true
     ) {
-
         ExpenseIncomeCards(
             expenseAmount = "5000",
             incomeAmount = "10000"
         )
-
     }
-
 }

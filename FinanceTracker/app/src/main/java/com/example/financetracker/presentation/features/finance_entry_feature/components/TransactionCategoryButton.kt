@@ -38,7 +38,6 @@ fun TransactionCategoryButton(
             modifier = Modifier.padding(bottom = 4.dp)
         )
 
-        // Dropdown button to open Bottom Sheet
         OutlinedButton(
             onClick = onClick,
             modifier = Modifier

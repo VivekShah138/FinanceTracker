@@ -33,8 +33,8 @@ class HomePageViewModel @Inject constructor(
         getIncomeAndExpenseAmount()
     }
 
-    private val _homePageStates = MutableStateFlow(HomePageStates())
-    val homePageStates : StateFlow<HomePageStates> = _homePageStates.asStateFlow()
+    private val _homeScreenStates = MutableStateFlow(HomeScreenStates())
+    val homeScreenStates : StateFlow<HomeScreenStates> = _homeScreenStates.asStateFlow()
 
     fun onEvent(homePageEvents: HomePageEvents){
         when(homePageEvents){
@@ -76,23 +76,14 @@ class HomePageViewModel @Inject constructor(
             val allTransactions = homePageUseCaseWrapper.getAllTransactionsByUIDLocalUseCase(uid = userId2).first()
             Log.d("HomePageViewModel","allTransactions $allTransactions")
 
-
-            val expense = homePageUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId2).first()
-            val income = homePageUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId2).first()
-            val allCategories = expense + income
             val allTransactionsThisMonth = homePageUseCaseWrapper.getAllTransactionsFilters(
                 uid = userId2,
                 filters = listOf(
                     TransactionFilter.TransactionType(TransactionTypeFilter.Both),
                     TransactionFilter.Order(TransactionOrder.Ascending),
-//                    TransactionFilter.Category(allCategories),
                     TransactionFilter.Duration(DurationFilter.ThisMonth)
                 )
             ).first()
-
-
-
-
 
 
             val userProfile = homePageUseCaseWrapper.getUserProfileLocalUseCase()
@@ -106,8 +97,8 @@ class HomePageViewModel @Inject constructor(
             val baseCurrencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
             Log.d("HomePageViewModel","baseCurrency $baseCurrencySymbol")
 
-            val incomeDataWithCategory = _homePageStates.value.incomeDataWithCategory.toMutableMap().apply { clear() }
-            val expenseDataWithCategory = _homePageStates.value.expenseDataWithCategory.toMutableMap().apply { clear() }
+            val incomeDataWithCategory = _homeScreenStates.value.incomeDataWithCategory.toMutableMap().apply { clear() }
+            val expenseDataWithCategory = _homeScreenStates.value.expenseDataWithCategory.toMutableMap().apply { clear() }
 
 
             allTransactionsThisMonth.forEach { transaction ->
@@ -151,7 +142,7 @@ class HomePageViewModel @Inject constructor(
             val formattedExpenseThisMonth = String.format(Locale.US, "%.2f", expenseAmountThisMonth)
             val formattedAccountBalance = String.format(Locale.US, "%.2f", (incomeAmountOverAll - expenseAmountOverAll))
 
-            _homePageStates.value = homePageStates.value.copy(
+            _homeScreenStates.value = homeScreenStates.value.copy(
                 incomeAmount = formattedIncomeThisMonth,
                 expenseAmount = formattedExpenseThisMonth,
                 currencySymbol = baseCurrencySymbol,
@@ -175,7 +166,7 @@ class HomePageViewModel @Inject constructor(
             )
 
             if(budget != null){
-                _homePageStates.value = homePageStates.value.copy(
+                _homeScreenStates.value = homeScreenStates.value.copy(
                     monthlyBudget = budget.amount,
                     receiveAlert = budget.thresholdAmount,
                     budgetExist = true
@@ -187,14 +178,14 @@ class HomePageViewModel @Inject constructor(
 
     private fun sendNotification(){
         viewModelScope.launch(Dispatchers.IO) {
-            val alertNotification = (_homePageStates.value.expenseAmount.toDouble()/_homePageStates.value.monthlyBudget) * 100
+            val alertNotification = (_homeScreenStates.value.expenseAmount.toDouble()/_homeScreenStates.value.monthlyBudget) * 100
 
             Log.d("HomePageViewModelN","Alert Notification $alertNotification")
-            Log.d("HomePageViewModelN","Receive Alert ${_homePageStates.value.receiveAlert}")
+            Log.d("HomePageViewModelN","Receive Alert ${_homeScreenStates.value.receiveAlert}")
 
-            if(alertNotification >= _homePageStates.value.receiveAlert){
+            if(alertNotification >= _homeScreenStates.value.receiveAlert){
                 Log.d("HomePageViewModelN","Inside If")
-                homePageUseCaseWrapper.sendBudgetNotificationLocalUseCase(title = "Alert", message = "You have crossed your ${_homePageStates.value.receiveAlert}% of your budget")
+                homePageUseCaseWrapper.sendBudgetNotificationLocalUseCase(title = "Alert", message = "You have crossed your ${_homeScreenStates.value.receiveAlert}% of your budget")
                 Log.d("HomePageViewModelN","Notification Sent")
             }
         }

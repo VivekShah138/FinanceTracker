@@ -25,7 +25,6 @@ import java.util.Locale
 fun BudgetProgressBar(
     spentAmount: Float,
     totalBudget: Float,
-    sliderAlert: Float,
     modifier: Modifier = Modifier,
     displayText: String
 ) {
@@ -66,8 +65,7 @@ fun BudgetProgressBar(
         Spacer(modifier = Modifier.height(4.dp))
         CustomLinearProgressIndicator(
             spentAmount = spentAmount,
-            totalBudget = totalBudget,
-            sliderAlert = sliderAlert,
+            totalBudget = totalBudget
         )
     }
 }
@@ -79,7 +77,6 @@ fun BudgetProgressBarPreview() {
         BudgetProgressBar(
             spentAmount = 65f,
             totalBudget = 150f,
-            sliderAlert = 80f,
             displayText = "Overall"
         )
     }
@@ -89,9 +86,8 @@ fun BudgetProgressBarPreview() {
 fun CustomLinearProgressIndicator(
     spentAmount: Float,
     totalBudget: Float,
-    sliderAlert: Float,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = Color(0xFFC8E6C9), // Green100
+    backgroundColor: Color = Color(0xFFC8E6C9),
     clipShape: Shape = RoundedCornerShape(16.dp),
     height: Dp = 8.dp,
     animated: Boolean = true
@@ -102,8 +98,6 @@ fun CustomLinearProgressIndicator(
         label = "customProgressAnimation"
     )
 
-
-
     fun interpolateHSV(startColor: Color, endColor: Color, fraction: Float): Color {
         val startHsv = FloatArray(3)
         val endHsv = FloatArray(3)
@@ -112,7 +106,7 @@ fun CustomLinearProgressIndicator(
         android.graphics.Color.colorToHSV(endColor.toArgb(), endHsv)
 
         val interpolatedHsv = FloatArray(3) { i ->
-            if (i == 0) { // hue needs circular interpolation
+            if (i == 0) {
                 val diff = (endHsv[0] - startHsv[0] + 360) % 360
                 val shortestAngle = if (diff > 180) diff - 360 else diff
                 (startHsv[0] + shortestAngle * fraction + 360) % 360
@@ -131,9 +125,6 @@ fun CustomLinearProgressIndicator(
         clampedProgress >= 0.5f -> interpolateHSV(Color(0xFF388E3C), Color(0xFFFF9800), (clampedProgress - 0.5f) / 0.25f)
         else -> Color(0xFF388E3C)
     }
-
-
-
 
     Box(
         modifier = modifier

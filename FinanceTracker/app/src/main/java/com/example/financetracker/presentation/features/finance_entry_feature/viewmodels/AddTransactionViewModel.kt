@@ -64,7 +64,6 @@ class AddTransactionViewModel @Inject constructor(
                     bottomSheetState = addTransactionEvents.bottomSheetState,
                     alertBoxState = addTransactionEvents.alertBoxState
                 )
-//                Log.d("AddExpense","BottomSheetState Changed")
             }
             is AddTransactionEvents.LoadCategory -> {
 
@@ -114,14 +113,9 @@ class AddTransactionViewModel @Inject constructor(
                 )
             }
             is AddTransactionEvents.ChangeSavedItemSearchState -> {
-
-//                Log.d("AddTransactionPage","searchBarFocus viewModel Before ${_addTransactionStates.value.searchBarFocusedState}")
-
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     searchBarFocusedState = addTransactionEvents.state
                 )
-
-//                Log.d("AddTransactionPage","searchBarFocus viewModel After ${_addTransactionStates.value.searchBarFocusedState}")
             }
             is AddTransactionEvents.ChangeQuantity -> {
                 _addTransactionStates.value = addTransactionStates.value.copy(
@@ -283,9 +277,6 @@ class AddTransactionViewModel @Inject constructor(
                 val enteredPrice = _addTransactionStates.value.transactionPrice?.toDoubleOrNull() ?: 0.0
                 val convertedPrice = _addTransactionStates.value.convertedPrice?.toDoubleOrNull()
 
-//                Log.d("AddExpenseViewModelA", "Entered Price: $enteredPrice")
-//                Log.d("AddExpenseViewModelA", "Converted Price: $convertedPrice")
-
                 val transaction = Transactions(
                     amount = convertedPrice ?: enteredPrice,
                     currency = transactionCurrency,
@@ -301,8 +292,6 @@ class AddTransactionViewModel @Inject constructor(
                     transactionName = _addTransactionStates.value.transactionName
                 )
 
-//                Log.d("AddExpenseViewModelA", "Transaction: $transaction")
-
                 val isInternetAvailable = addTransactionUseCasesWrapper.internetConnectionAvailability()
 
                 if (cloudSyncStatus) {
@@ -310,28 +299,19 @@ class AddTransactionViewModel @Inject constructor(
                         try {
                             // 1. Insert locally first to generate the ID
                             val rowId = addTransactionUseCasesWrapper.insertTransactionsAndReturnIdLocalUseCase(transaction)
-//                            Log.d("AddExpenseViewModelA", "RowId: $rowId")
-
 
                             // 2. Copy the ID into a new transaction object
                             val transactionWithId = transaction.copy(transactionId = rowId.toInt(), cloudSync = true)
-//                            Log.d("AddExpenseViewModelA", "TransactionWithId: $transactionWithId")
 
                             // 3. Save to cloud
                             addTransactionUseCasesWrapper.insertSingleTransactionRemoteUseCase(userId = uid, transactions = transactionWithId)
 
                             // 4. Update local record to reflect cloudSync = true
                             addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transactionWithId)
-
-//                            addTransactionUseCasesWrapper.sendBudgetNotificationUseCase(title = "Budget","Your Transaction Added")
-
                         } catch (e: Exception) {
-//                            Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
-
                             try {
                                 addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transaction)
                             } catch (e: Exception) {
-//                                Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                                 addTransactionValidationEventChannel.send(
                                     AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                                 )
@@ -339,12 +319,9 @@ class AddTransactionViewModel @Inject constructor(
                             }
                         }
                     } else {
-                        // No internet, save locally
                         try {
                             addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transaction)
-//                            Log.d("AddExpenseViewModel", "Local save No Internet")
                         } catch (e: Exception) {
-//                            Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                             addTransactionValidationEventChannel.send(
                                 AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                             )
@@ -355,9 +332,7 @@ class AddTransactionViewModel @Inject constructor(
                     // Cloud sync disabled, save locally
                     try {
                         addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transaction)
-//                        Log.d("AddExpenseViewModel", "Local save No CloudSync")
                     } catch (e: Exception) {
-//                        Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                         addTransactionValidationEventChannel.send(
                             AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                         )
@@ -372,25 +347,17 @@ class AddTransactionViewModel @Inject constructor(
     private suspend fun fetchCurrenciesExchangeRates(){
 
             val saveCurrencyMap = setupAccountUseCasesWrapper.getUserProfileFromLocalUseCase(uid)?.baseCurrency
-//            Log.d("AddExpenseViewModel", "saveCurrencyMap: $saveCurrencyMap")
-            val baseCurrencyName = saveCurrencyMap?.values?.firstOrNull()?.name ?: "N/A"
             val baseCurrencyCode = saveCurrencyMap?.keys?.firstOrNull() ?: "N/A"
-            val baseCurrencySymbol = saveCurrencyMap?.values?.firstOrNull()?.symbol ?: "N/A"
-//            Log.d("AddExpenseViewModel", "baseCurrencySymbol: $baseCurrencyCode")
-//            Log.d("AddExpenseViewModel", "baseCurrencySymbol: $baseCurrencySymbol")
 
             val currencyExchangeRate = setupAccountUseCasesWrapper.getCurrencyRatesLocal(baseCurrencyCode)?.conversionRates
-//            Log.d("AddExpenseViewModel", "currencyExchangeRate: $currencyExchangeRate")
             // Check if the map contains the currency code
             val selectedCurrencyRate = if (currencyExchangeRate != null && currencyExchangeRate.containsKey(_addTransactionStates.value.transactionCurrencyCode)) {
                 BigDecimal(currencyExchangeRate[_addTransactionStates.value.transactionCurrencyCode] ?: 1.0)
                     .setScale(4, RoundingMode.HALF_UP)
                     .toString()
             } else {
-                "1.0000" // Default value with 4 decimal places
+                "1.0000"
             }
-//            Log.d("AddExpenseViewModel", "selectedCurrencyRate: $selectedCurrencyRate")
-
             _addTransactionStates.value = addTransactionStates.value.copy(
                 transactionExchangeRate = selectedCurrencyRate
             )
@@ -400,11 +367,7 @@ class AddTransactionViewModel @Inject constructor(
             val price = priceString.toDoubleOrNull() ?: 0.0
             val rate = rateString.toDoubleOrNull() ?: 0.0
 
-//            Log.d("AddExpenseViewModel", "price: $price")
-//            Log.d("AddExpenseViewModel", "rate: $rate")
-
             if (rate != 0.0) {
-                // Perform conversion if both price and rate are valid
                 val conversion = try {
                     val result = BigDecimal(price / rate)
                         .setScale(2, RoundingMode.HALF_UP)
@@ -418,7 +381,6 @@ class AddTransactionViewModel @Inject constructor(
                     convertedPrice = conversion
                 )
             } else {
-                // Handle the error if rate is zero or invalid
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     convertedPrice = "Error: Invalid rate"
                 )
@@ -442,7 +404,6 @@ class AddTransactionViewModel @Inject constructor(
                     category = ""
                 )
             }catch (e: Exception){
-//                Log.d("AddTransactionViewModel", "error: ${e.localizedMessage}")
             }
         }
     }
@@ -475,17 +436,14 @@ class AddTransactionViewModel @Inject constructor(
             try {
                 val sortedCountries = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
                     .filter {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
                     }
                     .sortedBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() ?: ""
                     }
                     .distinctBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() ?: ""
                     }
-
-//                Log.d("AddExpenseViewModel","currencies $sortedCountries")
-
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     currencies = sortedCountries
                 )
@@ -496,19 +454,18 @@ class AddTransactionViewModel @Inject constructor(
 
                 val sortedCountriesLocal = setupAccountUseCasesWrapper.getCountryLocalUseCase()
                     .filter {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
                     }
                     .sortedBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() ?: ""
                     }
                     .distinctBy {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() ?: ""
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() ?: ""
                     }
 
                 _addTransactionStates.value = addTransactionStates.value.copy(
                     currencies = sortedCountriesLocal
                 )
-
                 addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
             }
         }
@@ -518,5 +475,4 @@ class AddTransactionViewModel @Inject constructor(
         data object Success: AddTransactionValidationEvent()
         data class Failure(val errorMessage: String?): AddTransactionValidationEvent()
     }
-
 }
