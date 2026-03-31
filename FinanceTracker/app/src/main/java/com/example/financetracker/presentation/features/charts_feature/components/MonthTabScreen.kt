@@ -35,7 +35,7 @@ fun MonthTabScreen(
     ) {
         Log.d("YearTabScreen", "show Only Year: $showOnlyYear")
 
-        MonthSelectorCharts2(
+        MonthSelectorCharts(
             state = states,
             onEvent = onEvent,
             context = context,

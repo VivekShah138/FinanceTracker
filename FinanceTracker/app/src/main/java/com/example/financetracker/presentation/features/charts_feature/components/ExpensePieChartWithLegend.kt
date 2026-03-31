@@ -60,21 +60,6 @@ fun ExpensePieChartWithLegend(expenseData: Map<String, Double>,currencySymbol: S
     }
 
 
-//    MonthSelectorBudget(
-//        state = BudgetStates(),
-//        onEvent = {},
-//        context = LocalContext.current
-//    )
-
-//    MonthSelectorCharts(
-//        state = ChartStates(),
-//        onEvent = {
-//
-//        },
-//        context = LocalContext.current
-//    )
-
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -82,7 +67,8 @@ fun ExpensePieChartWithLegend(expenseData: Map<String, Double>,currencySymbol: S
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Pie Chart (top)
+
+
         AndroidView(
             modifier = Modifier.size(300.dp),
             factory = { context ->
@@ -115,11 +101,11 @@ fun ExpensePieChartWithLegend(expenseData: Map<String, Double>,currencySymbol: S
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Legend below chart (in 2 vertical columns)
+
         Row(
             horizontalArrangement = Arrangement.Center
         ) {
-            // First column for legend items
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -130,7 +116,6 @@ fun ExpensePieChartWithLegend(expenseData: Map<String, Double>,currencySymbol: S
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Second column for legend items
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {

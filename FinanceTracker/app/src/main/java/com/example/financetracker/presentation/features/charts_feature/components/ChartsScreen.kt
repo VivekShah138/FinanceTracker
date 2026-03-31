@@ -13,69 +13,65 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 //import android.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 
 
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.financetracker.presentation.features.charts_feature.ChartEvents
+import com.example.financetracker.presentation.features.charts_feature.ChartStates
 import com.example.financetracker.presentation.features.charts_feature.ChartsViewModel
+import com.example.financetracker.ui.theme.FinanceTrackerTheme
+
 
 @Composable
-fun ChartsPage(
-    navController: NavController,
-    viewModel: ChartsViewModel
+fun ChartsRoot(
+    viewModel: ChartsViewModel = hiltViewModel()
 ){
-
     val states by viewModel.chartStates.collectAsStateWithLifecycle()
+
+    ChartsScreen(
+        states = states,
+        onEvent = viewModel::onEvent
+    )
+}
+
+@Composable
+fun ChartsScreen(
+    states: ChartStates,
+    onEvent: (ChartEvents) -> Unit
+){
     val context = LocalContext.current
 
     MaterialTheme {
-        Scaffold(
-//            topBar = {
-//                AppTopBar(
-//                    title = "Charts",
-//                    showMenu = true,
-//                    showBackButton = false,
-//                    onBackClick = {},
-//                    menuItems = emptyList()
-//                )
-//            },
-//            bottomBar = {
-//                BottomNavigationBar(navController)
-//            }
-
-        ) { padding ->
+        Scaffold { padding ->
 
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-
-
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(10.dp),
                     horizontalArrangement = Arrangement.Center
                 ){
                     DurationDropDown(
                         onDurationSelected = {
-                            viewModel.onEvent(ChartEvents.ChangeType(type = it, state = false))
+                            onEvent(ChartEvents.ChangeType(type = it, state = false))
                         },
                         onRangeDropDownClick = {
-                            viewModel.onEvent(ChartEvents.ChangeType(type = states.transactionType, state = true))
+                            onEvent(ChartEvents.ChangeType(type = states.transactionType, state = true))
                         },
                         onRangeDropDownDismiss = {
-                            viewModel.onEvent(ChartEvents.ChangeType(type = states.transactionType, state = false))
+                            onEvent(ChartEvents.ChangeType(type = states.transactionType, state = false))
                         },
                         rangeDropDownExpanded = states.typeDropDown,
                         filterOptions = listOf("Expense","Income"),
                         selectedType = states.transactionType
                     )
                 }
-
-
 
                 when(states.transactionType){
                     "Expense" -> {
@@ -85,7 +81,7 @@ fun ChartsPage(
                             showOnlyYear = states.showOnlyYear,
                             states = states,
                             context = context,
-                            onEvent = viewModel::onEvent
+                            onEvent = onEvent
                         )
                     }
                     "Income" -> {
@@ -95,12 +91,27 @@ fun ChartsPage(
                             showOnlyYear = states.showOnlyYear,
                             states = states,
                             context = context,
-                            onEvent = viewModel::onEvent
+                            onEvent = onEvent
                         )
                     }
-
                 }
             }
         }
+    }
+}
+
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true)
+@Composable
+fun ChartsPagePreview() {
+    FinanceTrackerTheme {
+        ChartsScreen(
+            states = ChartStates(),
+            onEvent = {
+
+            }
+        )
     }
 }

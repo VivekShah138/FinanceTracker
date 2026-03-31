@@ -192,7 +192,6 @@ class ChartsViewModel @Inject constructor(
                     month = _chartStates.value.selectedMonth,
                     onlyYear = _chartStates.value.selectedOnlyYear,
                 )
-//
             }
             is ChartEvents.YearSelected -> {
                 _chartStates.value = chartStates.value.copy(
@@ -347,117 +346,117 @@ class ChartsViewModel @Inject constructor(
 
 
 
-    private fun getIncomeAndExpenseAmountYearly(onlyYear: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Log.d("ChartsViewModel","userId $userId")
-            if (userId == null) {
-                Log.e("ChartsViewModel", "UserId is null! Cannot fetch categories.")
-                return@launch
-            }
-            val expense = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId).first()
-            val income = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId).first()
-            val allCategories = expense + income
-
-            val (fromDateYear, toDateYear) = getYearRangeInMillis(year = onlyYear)
-
-            val allTransactionsThisMonth = chartsUseCaseWrapper.getAllTransactionsFilters(
-                uid = userId,
-                filters = listOf(
-                    TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
-                    TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
-                    TransactionFilter.Category(allCategories), // Default to all categories (empty list means no category filter)
-//                    TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
-                    TransactionFilter.Duration(DurationFilter.CustomRange(from = fromDateYear, to = toDateYear))
-                )
-            ).first()
-            Log.d("ChartsViewModel","allTransactionsFilter $allTransactionsThisMonth")
-
-
-            val incomeDataWithCategory = _chartStates.value.incomeDataWithCategory.toMutableMap()
-            val expenseDataWithCategory = _chartStates.value.expenseDataWithCategory.toMutableMap()
-
-            allTransactionsThisMonth.forEach { transaction ->
-                when {
-                    transaction.transactionType.equals("Income", ignoreCase = true) -> {
-                        val currentIncomeAmount = incomeDataWithCategory[transaction.category] ?: 0.0
-                        incomeDataWithCategory[transaction.category] = currentIncomeAmount + transaction.amount
-
-                        Log.d("ChartsViewModel", "income Amount This Month for ${transaction.category}: ${incomeDataWithCategory[transaction.category]}")
-                    }
-                    transaction.transactionType.equals("Expense", ignoreCase = true) -> {
-                        val currentExpenseAmount = expenseDataWithCategory[transaction.category] ?: 0.0
-                        expenseDataWithCategory[transaction.category] = currentExpenseAmount + transaction.amount
-
-                        Log.d("ChartsViewModel", "expense Amount This Month for ${transaction.category}: ${expenseDataWithCategory[transaction.category]}")
-                    }
-                }
-            }
-
-            _chartStates.value = chartStates.value.copy(
-                incomeDataWithCategory = incomeDataWithCategory,
-                expenseDataWithCategory = expenseDataWithCategory
-            )
-
-            Log.d("ChartsViewModel","incomeDataWithCategory: ${_chartStates.value.incomeDataWithCategory}")
-            Log.d("ChartsViewModel","expenseDataWithCategory: ${_chartStates.value.expenseDataWithCategory}")
-        }
-    }
-
-    private fun getIncomeAndExpenseAmountMonthly(year: Int, month: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Log.d("ChartsViewModel","userId $userId")
-            if (userId == null) {
-                Log.e("ChartsViewModel", "UserId is null! Cannot fetch categories.")
-                return@launch
-            }
-            val expense = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId).first()
-            val income = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId).first()
-            val allCategories = expense + income
-
-            val (fromDateMonthYear, toDateMonthYear) = getDateRangeInMillis(year = year, month = month)
-
-            val allTransactionsThisMonth = chartsUseCaseWrapper.getAllTransactionsFilters(
-                uid = userId,
-                filters = listOf(
-                    TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
-                    TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
-                    TransactionFilter.Category(allCategories), // Default to all categories (empty list means no category filter)
-//                    TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
-                    TransactionFilter.Duration(DurationFilter.CustomRange(from = fromDateMonthYear, to = toDateMonthYear))
-                )
-            ).first()
-            Log.d("ChartsViewModel","allTransactionsFilter $allTransactionsThisMonth")
-
-
-            val incomeDataWithCategory = _chartStates.value.incomeDataWithCategory.toMutableMap()
-            val expenseDataWithCategory = _chartStates.value.expenseDataWithCategory.toMutableMap()
-
-            allTransactionsThisMonth.forEach { transaction ->
-                when {
-                    transaction.transactionType.equals("Income", ignoreCase = true) -> {
-                        val currentIncomeAmount = incomeDataWithCategory[transaction.category] ?: 0.0
-                        incomeDataWithCategory[transaction.category] = currentIncomeAmount + transaction.amount
-
-                        Log.d("ChartsViewModel", "income Amount This Month for ${transaction.category}: ${incomeDataWithCategory[transaction.category]}")
-                    }
-                    transaction.transactionType.equals("Expense", ignoreCase = true) -> {
-                        val currentExpenseAmount = expenseDataWithCategory[transaction.category] ?: 0.0
-                        expenseDataWithCategory[transaction.category] = currentExpenseAmount + transaction.amount
-
-                        Log.d("ChartsViewModel", "expense Amount This Month for ${transaction.category}: ${expenseDataWithCategory[transaction.category]}")
-                    }
-                }
-            }
-
-            _chartStates.value = chartStates.value.copy(
-                incomeDataWithCategory = incomeDataWithCategory,
-                expenseDataWithCategory = expenseDataWithCategory
-            )
-
-            Log.d("ChartsViewModel","incomeDataWithCategory: ${_chartStates.value.incomeDataWithCategory}")
-            Log.d("ChartsViewModel","expenseDataWithCategory: ${_chartStates.value.expenseDataWithCategory}")
-        }
-    }
+//    private fun getIncomeAndExpenseAmountYearly(onlyYear: Int) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            Log.d("ChartsViewModel","userId $userId")
+//            if (userId == null) {
+//                Log.e("ChartsViewModel", "UserId is null! Cannot fetch categories.")
+//                return@launch
+//            }
+//            val expense = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId).first()
+//            val income = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId).first()
+//            val allCategories = expense + income
+//
+//            val (fromDateYear, toDateYear) = getYearRangeInMillis(year = onlyYear)
+//
+//            val allTransactionsThisMonth = chartsUseCaseWrapper.getAllTransactionsFilters(
+//                uid = userId,
+//                filters = listOf(
+//                    TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
+//                    TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
+//                    TransactionFilter.Category(allCategories), // Default to all categories (empty list means no category filter)
+////                    TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
+//                    TransactionFilter.Duration(DurationFilter.CustomRange(from = fromDateYear, to = toDateYear))
+//                )
+//            ).first()
+//            Log.d("ChartsViewModel","allTransactionsFilter $allTransactionsThisMonth")
+//
+//
+//            val incomeDataWithCategory = _chartStates.value.incomeDataWithCategory.toMutableMap()
+//            val expenseDataWithCategory = _chartStates.value.expenseDataWithCategory.toMutableMap()
+//
+//            allTransactionsThisMonth.forEach { transaction ->
+//                when {
+//                    transaction.transactionType.equals("Income", ignoreCase = true) -> {
+//                        val currentIncomeAmount = incomeDataWithCategory[transaction.category] ?: 0.0
+//                        incomeDataWithCategory[transaction.category] = currentIncomeAmount + transaction.amount
+//
+//                        Log.d("ChartsViewModel", "income Amount This Month for ${transaction.category}: ${incomeDataWithCategory[transaction.category]}")
+//                    }
+//                    transaction.transactionType.equals("Expense", ignoreCase = true) -> {
+//                        val currentExpenseAmount = expenseDataWithCategory[transaction.category] ?: 0.0
+//                        expenseDataWithCategory[transaction.category] = currentExpenseAmount + transaction.amount
+//
+//                        Log.d("ChartsViewModel", "expense Amount This Month for ${transaction.category}: ${expenseDataWithCategory[transaction.category]}")
+//                    }
+//                }
+//            }
+//
+//            _chartStates.value = chartStates.value.copy(
+//                incomeDataWithCategory = incomeDataWithCategory,
+//                expenseDataWithCategory = expenseDataWithCategory
+//            )
+//
+//            Log.d("ChartsViewModel","incomeDataWithCategory: ${_chartStates.value.incomeDataWithCategory}")
+//            Log.d("ChartsViewModel","expenseDataWithCategory: ${_chartStates.value.expenseDataWithCategory}")
+//        }
+//    }
+//
+//    private fun getIncomeAndExpenseAmountMonthly(year: Int, month: Int) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            Log.d("ChartsViewModel","userId $userId")
+//            if (userId == null) {
+//                Log.e("ChartsViewModel", "UserId is null! Cannot fetch categories.")
+//                return@launch
+//            }
+//            val expense = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId).first()
+//            val income = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId).first()
+//            val allCategories = expense + income
+//
+//            val (fromDateMonthYear, toDateMonthYear) = getDateRangeInMillis(year = year, month = month)
+//
+//            val allTransactionsThisMonth = chartsUseCaseWrapper.getAllTransactionsFilters(
+//                uid = userId,
+//                filters = listOf(
+//                    TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
+//                    TransactionFilter.Order(TransactionOrder.Ascending), // Default to Ascending order
+//                    TransactionFilter.Category(allCategories), // Default to all categories (empty list means no category filter)
+////                    TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
+//                    TransactionFilter.Duration(DurationFilter.CustomRange(from = fromDateMonthYear, to = toDateMonthYear))
+//                )
+//            ).first()
+//            Log.d("ChartsViewModel","allTransactionsFilter $allTransactionsThisMonth")
+//
+//
+//            val incomeDataWithCategory = _chartStates.value.incomeDataWithCategory.toMutableMap()
+//            val expenseDataWithCategory = _chartStates.value.expenseDataWithCategory.toMutableMap()
+//
+//            allTransactionsThisMonth.forEach { transaction ->
+//                when {
+//                    transaction.transactionType.equals("Income", ignoreCase = true) -> {
+//                        val currentIncomeAmount = incomeDataWithCategory[transaction.category] ?: 0.0
+//                        incomeDataWithCategory[transaction.category] = currentIncomeAmount + transaction.amount
+//
+//                        Log.d("ChartsViewModel", "income Amount This Month for ${transaction.category}: ${incomeDataWithCategory[transaction.category]}")
+//                    }
+//                    transaction.transactionType.equals("Expense", ignoreCase = true) -> {
+//                        val currentExpenseAmount = expenseDataWithCategory[transaction.category] ?: 0.0
+//                        expenseDataWithCategory[transaction.category] = currentExpenseAmount + transaction.amount
+//
+//                        Log.d("ChartsViewModel", "expense Amount This Month for ${transaction.category}: ${expenseDataWithCategory[transaction.category]}")
+//                    }
+//                }
+//            }
+//
+//            _chartStates.value = chartStates.value.copy(
+//                incomeDataWithCategory = incomeDataWithCategory,
+//                expenseDataWithCategory = expenseDataWithCategory
+//            )
+//
+//            Log.d("ChartsViewModel","incomeDataWithCategory: ${_chartStates.value.incomeDataWithCategory}")
+//            Log.d("ChartsViewModel","expenseDataWithCategory: ${_chartStates.value.expenseDataWithCategory}")
+//        }
+//    }
 
 
 
@@ -474,8 +473,8 @@ class ChartsViewModel @Inject constructor(
 
         val fromDate = calendar.timeInMillis
 
-        calendar.add(Calendar.MONTH, 1) // move to next month
-        calendar.add(Calendar.MILLISECOND, -1) // subtract 1 ms to get last moment of current month
+        calendar.add(Calendar.MONTH, 1)
+        calendar.add(Calendar.MILLISECOND, -1)
 
         val toDate = calendar.timeInMillis
 

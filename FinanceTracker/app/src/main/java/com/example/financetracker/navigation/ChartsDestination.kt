@@ -6,7 +6,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.charts_feature.ChartsViewModel
-import com.example.financetracker.presentation.features.charts_feature.components.ChartsPage
+import com.example.financetracker.presentation.features.charts_feature.components.ChartsRoot
+import com.example.financetracker.presentation.features.charts_feature.components.ChartsScreen
 
 fun NavGraphBuilder.graphicalVisualizationGraph(
     navController: NavController
@@ -15,6 +16,6 @@ fun NavGraphBuilder.graphicalVisualizationGraph(
 
         val viewModel: ChartsViewModel = hiltViewModel()
 
-        ChartsPage(navController = navController, viewModel = viewModel)
+        ChartsRoot()
     }
 }
