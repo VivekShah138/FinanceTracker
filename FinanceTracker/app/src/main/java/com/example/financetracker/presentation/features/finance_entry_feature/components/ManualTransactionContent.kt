@@ -196,7 +196,6 @@ fun ManualTransactionContent(
                 value = states.transactionName,
                 onValueChange = {
                     onEvent(AddTransactionEvents.ChangeTransactionName(it))
-                    Log.d("AddTransactionPage","List ${states.transactionSearchList}")
                     onEvent(
                         AddTransactionEvents.FilterSavedItemList(
                             list = states.transactionSearchList,
@@ -212,8 +211,6 @@ fun ManualTransactionContent(
                     .fillMaxWidth()
                     .onFocusChanged { focusState ->
                         if (focusState.isFocused && !states.searchBarFocusedState) {
-                            Log.d("AddTransactionPage","focus State $focusState")
-
                             onEvent(AddTransactionEvents.ChangeSavedItemSearchState(true))
                         }
                     }
@@ -307,11 +304,6 @@ fun ManualTransactionContent(
                 val currencyName = firstCurrency?.value?.name ?: "N/A"
                 val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                 val currencyCode = firstCurrency?.key ?: "N/A"
-
-                Log.d("ProfileSetUp","firstCurrency BaseCurrency $firstCurrency")
-                Log.d("ProfileSetUp","currencyName BaseCurrency $currencyName")
-                Log.d("ProfileSetUp","currencyCode BaseCurrency $currencySymbol")
-                Log.d("ProfileSetUp","currencySymbol BaseCurrency $currencyCode")
 
                 onEvent(
                     AddTransactionEvents.ChangeTransactionCurrency(

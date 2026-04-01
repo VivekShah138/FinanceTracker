@@ -70,7 +70,6 @@ class BudgetRemoteRepositoryImpl(
                 budget?.copy(id = budget.id)
             }
         } catch (e: Exception) {
-            Log.e("FirestoreGetRemoteBudget", "Failed to get Budget from cloud: ${e.localizedMessage}")
             emptyList()
         }
     }

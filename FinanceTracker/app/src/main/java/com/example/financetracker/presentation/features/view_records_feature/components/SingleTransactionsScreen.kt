@@ -78,8 +78,7 @@ fun SingleTransactionScreen(
         onEvent(ViewTransactionsEvents.GetSingleTransaction(transactionId))
     }
 
-
-    Log.d("ViewTransactionsViewModelS","transaction Single $singleItemState")
+    
     val baseCurrency: Map<String, Currency> = states.baseCurrency
 
     if(singleItemState != null){

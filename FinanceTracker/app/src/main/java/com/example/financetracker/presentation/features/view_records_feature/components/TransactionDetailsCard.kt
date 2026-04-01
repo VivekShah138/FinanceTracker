@@ -93,7 +93,6 @@ fun TransactionDetailsCard(
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Log.d("ViewTransactionsViewModelS","convertedAmount $convertedAmount")
                     if (convertedAmount != null && convertedAmount != 0.0) {
                         Text(
                             text = "Amount",

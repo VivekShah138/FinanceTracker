@@ -1,8 +1,8 @@
 package com.example.financetracker.presentation.features.finance_entry_feature.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.Logger
 import com.example.financetracker.presentation.features.finance_entry_feature.viewmodels.AddTransactionViewModel.AddTransactionValidationEvent
 import com.example.financetracker.domain.model.SavedItems
 import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
@@ -105,10 +105,7 @@ class AddSavedItemViewModel @Inject constructor(
                 )
 
             } catch (e: Exception) {
-                Log.e("SavedItemViewModel", "Unexpected Error: ${e.localizedMessage}", e)
-                // Handle any other unexpected errors
-
-                Log.d("SavedItemViewModel","Country Error: ${e.localizedMessage}")
+                Logger.e(Logger.Tag.ADD_SAVED_ITEM_VIEWMODEL, "fetchBaseCurrencies -> error in fetching",e)
 
                 val sortedCurrenciesLocally = setupAccountUseCasesWrapper.getCountryLocalUseCase()
                     .filter {
@@ -129,7 +126,8 @@ class AddSavedItemViewModel @Inject constructor(
                         itemCurrenciesList = sortedCurrenciesLocally
                     )
 
-                    Log.d("SavedItemViewModel","currencies ${_savedItemsState.value.itemCurrenciesList}")
+                    Logger.d(Logger.Tag.ADD_SAVED_ITEM_VIEWMODEL, "fetchBaseCurrencies -> currencies ${_savedItemsState.value.itemCurrenciesList}")
+
 
                     savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
                 }

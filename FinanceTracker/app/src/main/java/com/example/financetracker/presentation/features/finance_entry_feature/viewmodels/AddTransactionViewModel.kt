@@ -3,6 +3,7 @@ package com.example.financetracker.presentation.features.finance_entry_feature.v
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.model.Category
 import com.example.financetracker.domain.usecases.usecase_wrapper.PredefinedCategoriesUseCaseWrapper
 import com.example.financetracker.domain.model.Transactions
@@ -159,15 +160,19 @@ class AddTransactionViewModel @Inject constructor(
                     transactionCurrencySymbol = addTransactionEvents.currencySymbol,
                     transactionCurrencyExpanded = addTransactionEvents.currencyExpanded
                 )
-                Log.d("AddTransactionViewModel","Base Currency ${_addTransactionStates.value.baseCurrencyName}")
-                Log.d("AddTransactionViewModel","Transaction Currency ${addTransactionStates.value.transactionCurrencyName}")
+
+                Logger.d(Logger.Tag.ADD_TRANSACTION_VIEWMODEL, "ChangeTransactionCurrency -> Base Currency ${_addTransactionStates.value.baseCurrencyName}")
+                Logger.d(Logger.Tag.ADD_TRANSACTION_VIEWMODEL, "ChangeTransactionCurrency -> Transaction Currency ${addTransactionStates.value.transactionCurrencyName}")
+
                 if(addTransactionStates.value.transactionCurrencyName == _addTransactionStates.value.baseCurrencyName){
                     _addTransactionStates.value = addTransactionStates.value.copy(
                         showConversion = false,
                         showExchangeRate = false
                     )
-                    Log.d("AddTransactionViewModel","Show Conversion Inside if ${_addTransactionStates.value.showConversion}")
-                    Log.d("AddTransactionViewModel","Show Exchange Rate Inside if  ${addTransactionStates.value.showExchangeRate}")
+
+                    Logger.d(Logger.Tag.ADD_TRANSACTION_VIEWMODEL, "ChangeTransactionCurrency -> Show Conversion Inside if ${_addTransactionStates.value.showConversion}")
+                    Logger.d(Logger.Tag.ADD_TRANSACTION_VIEWMODEL, "ChangeTransactionCurrency -> Show Exchange Rate Inside if  ${addTransactionStates.value.showExchangeRate}")
+
                 }
             }
             is AddTransactionEvents.LoadCurrenciesList -> {
@@ -182,7 +187,7 @@ class AddTransactionViewModel @Inject constructor(
             is AddTransactionEvents.SetConvertedTransactionPrice -> {
                 if(_addTransactionStates.value.transactionPrice.isEmpty() || _addTransactionStates.value.transactionPrice.isBlank() ){
 
-                    Log.d("AddTransactionViewModel","transaction price: ${_addTransactionStates.value.transactionPrice}")
+                    Logger.d(Logger.Tag.ADD_TRANSACTION_VIEWMODEL, "SetConvertedTransactionPrice -> transaction price: ${_addTransactionStates.value.transactionPrice}")
 
                     viewModelScope.launch {
                         addTransactionValidationEventChannel.send(

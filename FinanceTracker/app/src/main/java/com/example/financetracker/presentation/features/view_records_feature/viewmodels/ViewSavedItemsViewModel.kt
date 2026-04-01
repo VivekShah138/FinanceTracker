@@ -142,10 +142,6 @@ class ViewSavedItemsViewModel @Inject constructor(
                 _viewSavedItemsStates.value = viewSavedItemsStates.value.copy(
                     selectedSavedItems = current
                 )
-
-                Log.d("ViewSavedItemsViewModel","SelectedTransaction List: $current")
-                Log.d("ViewSavedItemsViewModel","SelectedTransaction state List: ${_viewSavedItemsStates.value.selectedSavedItems}")
-                Log.d("ViewSavedItemsViewModel","SelectedTransaction state List size: ${_viewSavedItemsStates.value.selectedSavedItems.size}")
             }
 
             // Edit Selected SavedItem
@@ -166,11 +162,7 @@ class ViewSavedItemsViewModel @Inject constructor(
                 )
             }
             is ViewSavedItemsEvents.SelectSavedItems -> {
-
-                Log.d("ViewSavedItemsViewModel","SavedItems Before ${_savedItemState.value}")
                 _savedItemState.value = viewSavedItemsEvents.savedItems
-                Log.d("ViewSavedItemsViewModel","SavedItems Before ${_savedItemState.value}")
-
             }
             is ViewSavedItemsEvents.SaveItem -> {
                 viewModelScope.launch {
@@ -220,7 +212,6 @@ class ViewSavedItemsViewModel @Inject constructor(
                     savedItemsList = savedItems
                 )
             }
-            Log.d("ViewTransactionsViewModel","transaction List ${_viewSavedItemsStates.value.savedItemsList}")
         }
     }
 
@@ -241,14 +232,6 @@ class ViewSavedItemsViewModel @Inject constructor(
                 val itemCurrencyName = savedItems.itemCurrency.entries.firstOrNull()?.value?.name ?: "N/A"
                 val itemCurrencyCode = savedItems.itemCurrency.entries.firstOrNull()?.key ?: "N/A"
                 val itemCurrencySymbol = savedItems.itemCurrency.entries.firstOrNull()?.value?.symbol ?: "N/A"
-                val currentItemId = savedItemId
-
-                Log.d("ViewSavedItemsViewModel", "ItemId Before ${_viewSavedItemsStates.value.updatedItemId}")
-                Log.d("ViewSavedItemsViewModel", "ItemName Before ${_viewSavedItemsStates.value.updatedItemName}")
-                Log.d("ViewSavedItemsViewModel", "ItemDescription Before ${_viewSavedItemsStates.value.updatedItemDescription}")
-                Log.d("ViewSavedItemsViewModel", "ItemShopName Before ${_viewSavedItemsStates.value.updatedItemShopName}")
-                Log.d("ViewSavedItemsViewModel", "ItemPrice Before ${_viewSavedItemsStates.value.updatedItemPrice}")
-                Log.d("ViewSavedItemsViewModel", "ItemCurrencyName Before ${_viewSavedItemsStates.value.updatedItemCurrencyName}")
 
                 _viewSavedItemsStates.value = viewSavedItemsStates.value.copy(
                     updatedItemName = itemName,
@@ -258,16 +241,8 @@ class ViewSavedItemsViewModel @Inject constructor(
                     updatedItemCurrencyName = itemCurrencyName,
                     updatedItemCurrencySymbol = itemCurrencySymbol,
                     updatedItemCurrencyCode = itemCurrencyCode,
-                    updatedItemId = currentItemId
+                    updatedItemId = savedItemId
                 )
-
-                Log.d("ViewSavedItemsViewModel", "ItemId After ${_viewSavedItemsStates.value.updatedItemId}")
-                Log.d("ViewSavedItemsViewModel", "ItemName After ${_viewSavedItemsStates.value.updatedItemName}")
-                Log.d("ViewSavedItemsViewModel", "ItemDescription After ${_viewSavedItemsStates.value.updatedItemDescription}")
-                Log.d("ViewSavedItemsViewModel", "ItemShopName After ${_viewSavedItemsStates.value.updatedItemShopName}")
-                Log.d("ViewSavedItemsViewModel", "ItemPrice After ${_viewSavedItemsStates.value.updatedItemPrice}")
-                Log.d("ViewSavedItemsViewModel", "ItemCurrencyName After ${_viewSavedItemsStates.value.updatedItemCurrencyName}")
-
             }
         }
     }
@@ -313,7 +288,6 @@ class ViewSavedItemsViewModel @Inject constructor(
                     userUID = uid,
                     cloudSync = false
                 )
-                Log.d("SavedItemViewModel", "Saved Item $savedItem")
 
                 val isInternetAvailable = viewRecordsUseCaseWrapper.internetConnectionAvailability()
 
@@ -325,8 +299,6 @@ class ViewSavedItemsViewModel @Inject constructor(
                             // 2. Copy the ID into a new transaction object
                             val savedItemWithId = savedItem.copy(cloudSync = true)
 
-                            Log.d("SavedItemViewModel", "savedItemWithId $savedItemWithId")
-
                             // 3. Save to cloud
                             viewRecordsUseCaseWrapper.saveSingleSavedItemCloud(userId = uid, savedItems = savedItemWithId)
 
@@ -335,12 +307,9 @@ class ViewSavedItemsViewModel @Inject constructor(
 
 
                         } catch (e: Exception) {
-                            Log.d("AddExpenseViewModel", "Cloud sync error: ${e.localizedMessage}")
-
                             try {
                                 viewRecordsUseCaseWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
                             } catch (e: Exception) {
-                                Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                                 savedItemsValidationEventChannel.send(
                                     AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                                 )
@@ -351,9 +320,7 @@ class ViewSavedItemsViewModel @Inject constructor(
                         // No internet, save locally
                         try {
                             viewRecordsUseCaseWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
-                            Log.d("AddExpenseViewModel", "Local save No Internet")
                         } catch (e: Exception) {
-                            Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                             savedItemsValidationEventChannel.send(
                                 AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                             )
@@ -364,9 +331,7 @@ class ViewSavedItemsViewModel @Inject constructor(
                     // Cloud sync disabled, save locally
                     try {
                         viewRecordsUseCaseWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
-                        Log.d("AddExpenseViewModel", "Local save No CloudSync")
                     } catch (e: Exception) {
-                        Log.d("AddExpenseViewModel", "Local save error: ${e.localizedMessage}")
                         savedItemsValidationEventChannel.send(
                             AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                         )

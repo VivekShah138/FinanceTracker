@@ -3,6 +3,7 @@ package com.example.financetracker.presentation.features.category_feature.viewmo
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.Logger
 import com.example.financetracker.presentation.features.category_feature.events.SharedCategoriesEvents
 import com.example.financetracker.presentation.features.category_feature.states.CategoriesStates
 import com.example.financetracker.domain.model.Category
@@ -43,7 +44,7 @@ class ExpenseCategoriesViewModel @Inject constructor(
                 )
             }
             is SharedCategoriesEvents.SaveCategory -> {
-                Log.d("ExpenseCategoriesViewModel","category: ${_categoryState.value}")
+                Logger.d(Logger.Tag.EXPENSE_CATEGORY_VIEWMODEL,"SharedCategoriesEvents.SaveCategory: category: ${_categoryState.value} ")
                 viewModelScope.launch(Dispatchers.IO) {
                     predefinedCategoriesUseCaseWrapper.insertCustomCategoriesLocalUseCase(_categoryState.value!!)
                 }
@@ -74,7 +75,8 @@ class ExpenseCategoriesViewModel @Inject constructor(
                 }
 
             }catch (e:Exception){
-                Log.d("ExpenseCategoriesViewModel","Error Message: ${e.localizedMessage}")
+                Logger.e(Logger.Tag.EXPENSE_CATEGORY_VIEWMODEL,"Load predefined Category: error: ${e.localizedMessage}",e)
+
             }
         }
     }
@@ -89,7 +91,8 @@ class ExpenseCategoriesViewModel @Inject constructor(
                 }
 
             }catch (e:Exception){
-                Log.d("ExpenseCategoriesViewModel","Error Message: ${e.localizedMessage}")
+                Logger.e(Logger.Tag.EXPENSE_CATEGORY_VIEWMODEL,"Load Custom Category: error: ${e.localizedMessage}",e)
+
             }
         }
     }

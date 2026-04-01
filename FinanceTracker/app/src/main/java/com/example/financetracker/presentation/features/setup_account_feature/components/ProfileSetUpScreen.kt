@@ -178,11 +178,6 @@ fun ProfileSetUpScreen(
                         val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                         val currencyCode = firstCurrency?.key ?: "N/A"
 
-                        Log.d("ProfileSetUp","firstCurrency Country $firstCurrency")
-                        Log.d("ProfileSetUp","currencyName Country $currencyName")
-                        Log.d("ProfileSetUp","currencyCode Country $currencySymbol")
-                        Log.d("ProfileSetUp","currencySymbol Country $currencyCode")
-
                         onEvent(
                             ProfileSetUpEvents.SelectBaseCurrency(
                                 currency = currencyName,
@@ -258,12 +253,7 @@ fun ProfileSetUpScreen(
                         val currencyName = firstCurrency?.value?.name ?: "N/A"
                         val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
                         val currencyCode = firstCurrency?.key ?: "N/A"
-
-                        Log.d("ProfileSetUp","firstCurrency BaseCurrency $firstCurrency")
-                        Log.d("ProfileSetUp","currencyName BaseCurrency $currencyName")
-                        Log.d("ProfileSetUp","currencyCode BaseCurrency $currencySymbol")
-                        Log.d("ProfileSetUp","currencySymbol BaseCurrency $currencyCode")
-
+                        
                         onEvent(
                             ProfileSetUpEvents.SelectBaseCurrency(
                                 currency = currencyName,

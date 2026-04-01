@@ -66,7 +66,6 @@ fun HomeScreen(
 ){
     LaunchedEffect(Unit) {
         loadUserProfileIfReady()
-        Log.d("HomePage","function called")
     }
 
 

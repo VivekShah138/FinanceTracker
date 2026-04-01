@@ -26,9 +26,7 @@ import javax.inject.Inject
 class RemoteRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth,
-    private val context: Context,
-    private val workManager: WorkManager
-
+    private val context: Context
 ): RemoteRepository {
 
     override suspend fun logoutUser() {

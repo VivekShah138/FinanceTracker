@@ -12,6 +12,7 @@ import androidx.credentials.exceptions.CreateCredentialException
 import androidx.credentials.exceptions.GetCredentialCancellationException
 import androidx.credentials.exceptions.GetCredentialException
 import com.example.financetracker.BuildConfig
+import com.example.financetracker.Logger
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -26,8 +27,6 @@ class AccountManager(
 ) {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val credentialManager = CredentialManager.create(activity)
-
-
 
 
     suspend fun registerUser(username: String, password: String) : RegisterResult {
@@ -149,19 +148,19 @@ class AccountManager(
             val firebaseCredential = GoogleAuthProvider.getCredential(googleCredential.idToken,null)
 
             val authResult = firebaseAuth.signInWithCredential(firebaseCredential).await()
-            Log.d("AccountManager","sucesss")
+
+            Logger.d(Logger.Tag.ACCOUNT_MANAGER,"SignIn With Google Result -> Successful")
+
             GoogleSignInResult.Success(authResult.user?.email ?: "Unknown")
+
         }catch (e: GetCredentialCancellationException){
-            e.printStackTrace()
-            Log.d("AccountManager","error ${e.localizedMessage}")
+            Logger.e(Logger.Tag.ACCOUNT_MANAGER,"SignIn With Google Result -> ${e.message}",e)
             GoogleSignInResult.Cancelled
         }catch (e: GetCredentialException){
-            e.printStackTrace()
-            Log.d("AccountManager","error ${e.localizedMessage}")
+            Logger.e(Logger.Tag.ACCOUNT_MANAGER,"SignIn With Google Result -> ${e.message}",e)
             GoogleSignInResult.Failure
         }catch (e: Exception){
-            e.printStackTrace()
-            Log.d("AccountManager","error ${e.localizedMessage}")
+            Logger.e(Logger.Tag.ACCOUNT_MANAGER,"SignIn With Google Result -> ${e.message}",e)
             GoogleSignInResult.Failure
         }
     }

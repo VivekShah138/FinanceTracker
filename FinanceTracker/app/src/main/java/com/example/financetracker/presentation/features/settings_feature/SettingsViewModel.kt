@@ -4,6 +4,7 @@ package com.example.financetracker.presentation.features.settings_feature
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.usecases.usecase_wrapper.SettingsUseCaseWrapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -40,10 +41,7 @@ class SettingsViewModel @Inject constructor(
 
                 // Setting CloudSync in shared preferences
                 settingsUseCaseWrapper.setCloudSyncLocalUseCase(settingEvents.isChecked)
-                Log.d(
-                    "SettingsViewModel",
-                    "CloudSync: ${settingsUseCaseWrapper.getCloudSyncLocalUseCase()}"
-                )
+                Logger.d(Logger.Tag.SETTING_VIEWMODEL,"ChangeCloudSync -> CloudSync: ${settingsUseCaseWrapper.getCloudSyncLocalUseCase()}")
 
                 if (settingEvents.isChecked) {
                     viewModelScope.launch(Dispatchers.IO) {
@@ -59,10 +57,8 @@ class SettingsViewModel @Inject constructor(
                 )
 
                 settingsUseCaseWrapper.setDarkModeLocalUseCase(settingEvents.isDarkMode)
-                Log.d(
-                    "SettingsViewModel",
-                    "Dark Mode: ${settingsUseCaseWrapper.getDarkModeLocalUseCase}"
-                )
+                Logger.d(Logger.Tag.SETTING_VIEWMODEL,"ChangeCloudSync -> Dark Mode: ${settingsUseCaseWrapper.getDarkModeLocalUseCase}")
+
             }
 
             is SettingEvents.LogOut -> {
@@ -77,13 +73,16 @@ class SettingsViewModel @Inject constructor(
     private fun getUserDetails(uid: String) {
         viewModelScope.launch(Dispatchers.IO) {
 
-            Log.d("SettingsViewModel", "UserId inside Func $uid")
+            Logger.d(Logger.Tag.SETTING_VIEWMODEL,"getUserDetails -> UserId inside Func $uid")
 
             val userProfile = settingsUseCaseWrapper.getUserProfileFromLocalUseCase(uid)
-            Log.d("SettingsViewModel", "User Profile $userProfile")
+
+            Logger.d(Logger.Tag.SETTING_VIEWMODEL,"getUserDetails -> User Profile $userProfile")
 
             val name = (userProfile?.firstName + " " + userProfile?.lastName)
-            Log.d("SettingsViewModel", "User Name $name")
+
+            Logger.d(Logger.Tag.SETTING_VIEWMODEL,"getUserDetails -> User Name $name")
+
 
             val budget = settingsUseCaseWrapper.getBudgetLocalUseCase(
                 userId = uid,
@@ -96,10 +95,8 @@ class SettingsViewModel @Inject constructor(
                 userId = uid,
                 budgetExist = budget != null
             )
-            Log.d("SettingsViewModel","buget: $budget")
-            Log.d("SettingsViewModel","bugetExist State: ${settingStates.value.budgetExist}")
-
-
+            Logger.d(Logger.Tag.SETTING_VIEWMODEL,"getUserDetails -> budget: $budget")
+            Logger.d(Logger.Tag.SETTING_VIEWMODEL,"getUserDetails -> bugetExist State: ${settingStates.value.budgetExist}")
         }
     }
 
@@ -108,7 +105,8 @@ class SettingsViewModel @Inject constructor(
         if (!uid.isNullOrEmpty()) {
             getUserDetails(uid)
         } else {
-            Log.d("SettingsViewModel", "UID still null, cannot load profile.")
+            Logger.d(Logger.Tag.SETTING_VIEWMODEL,"loadUserProfileIfReady() -> UID still null, cannot load profile.")
+
         }
     }
 }

@@ -82,16 +82,11 @@ fun SavedItemTransactionContent(
             focusRequester.requestFocus()
         }
 
-        Log.d("AddTransactionPage","searchBarFocus2 ${states.searchBarFocusedState}")
-
         // Display filtered items in a list
         if (states.transactionSearchFilteredList.isNotEmpty()) {
-            Log.d("AddTransactionPage", "FilteredListNot Empty")
-            Log.d("AddTransactionPage", "FilteredList ${states.transactionSearchFilteredList}")
 
             LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = 800.dp)) {
                 items(states.transactionSearchFilteredList) { item ->
-                    Log.d("AddTransactionPage", "Rendering item: ${item.itemName}")
 
                     SavedItemsCard(
                         item = item,

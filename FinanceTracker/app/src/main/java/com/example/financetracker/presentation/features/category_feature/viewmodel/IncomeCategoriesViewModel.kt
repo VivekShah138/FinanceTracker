@@ -3,6 +3,7 @@ package com.example.financetracker.presentation.features.category_feature.viewmo
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.Logger
 import com.example.financetracker.presentation.features.category_feature.events.SharedCategoriesEvents
 import com.example.financetracker.presentation.features.category_feature.states.CategoriesStates
 import com.example.financetracker.domain.model.Category
@@ -77,7 +78,7 @@ class IncomeCategoriesViewModel @Inject constructor(
                 }
 
             }catch (e:Exception){
-                Log.d("ExpenseCategoriesViewModel","Error Message: ${e.localizedMessage}")
+                Logger.e(Logger.Tag.INCOME_CATEGORY_VIEWMODEL,"Load predefined Category: error: ${e.localizedMessage}",e)
             }
         }
     }
@@ -92,7 +93,7 @@ class IncomeCategoriesViewModel @Inject constructor(
                 }
 
             }catch (e:Exception){
-                Log.d("ExpenseCategoriesViewModel","Error Message: ${e.localizedMessage}")
+                Logger.e(Logger.Tag.INCOME_CATEGORY_VIEWMODEL,"Load predefined Category: error: ${e.localizedMessage}",e)
             }
         }
     }

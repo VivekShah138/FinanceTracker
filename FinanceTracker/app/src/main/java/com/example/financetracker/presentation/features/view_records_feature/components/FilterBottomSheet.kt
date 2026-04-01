@@ -284,7 +284,6 @@ fun FilterBottomSheet(
                                             } else {
                                                 currentCategories + category
                                             }
-                                            Log.d("ViewTransactionsViewModelFilter","Update:  $updated")
                                             onFilterChange(TransactionFilter.Category(updated))
                                         }
                                         .padding(vertical = 4.dp)

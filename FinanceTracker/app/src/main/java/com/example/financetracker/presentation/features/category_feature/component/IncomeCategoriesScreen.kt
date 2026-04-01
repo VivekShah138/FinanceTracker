@@ -100,7 +100,6 @@ fun IncomeCategoriesScreen(
                                     )
                                 },
                                 onClickItem = {
-                                    Log.d("ExpenseCategoriesPage","category: $category")
                                     onEvent(
                                         SharedCategoriesEvents.ChangeSelectedCategory(category)
                                     )

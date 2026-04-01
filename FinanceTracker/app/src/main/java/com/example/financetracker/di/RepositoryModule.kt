@@ -66,8 +66,7 @@ object RepositoryModule {
         return RemoteRepositoryImpl(
             firebaseAuth = firebaseAuth,
             firestore = firestore,
-            context = context,
-            workManager = workManager
+            context = context
         )
     }
 

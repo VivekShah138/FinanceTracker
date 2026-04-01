@@ -3,6 +3,7 @@ package com.example.financetracker.presentation.features.category_feature.viewmo
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.Logger
 import com.example.financetracker.presentation.features.category_feature.states.CategoriesStates
 import com.example.financetracker.presentation.features.category_feature.events.CoreCategoriesEvents
 import com.example.financetracker.domain.model.Category
@@ -64,7 +65,7 @@ class CoreCategoriesViewModel @Inject constructor(
                     categoryName = ""
                 )
             }catch (e: Exception){
-                Log.d("AddTransactionViewModel", "error: ${e.localizedMessage}")
+                Logger.e(Logger.Tag.CORE_CATEGORY_VIEWMODEL,"Insert Custom Category: error: ${e.localizedMessage}",e)
             }
         }
     }

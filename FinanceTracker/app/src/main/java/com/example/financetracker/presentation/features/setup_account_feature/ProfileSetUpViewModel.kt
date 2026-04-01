@@ -37,7 +37,7 @@ class ProfileSetUpViewModel @Inject constructor(
 
     init {
         getProfileInfo()
-//        setOldBaseCurrency()
+        setOldBaseCurrency()
     }
 
     private fun setOldBaseCurrency() {
@@ -136,9 +136,6 @@ class ProfileSetUpViewModel @Inject constructor(
                 )
             }
             is ProfileSetUpEvents.FilterCountryNameList -> {
-
-                Log.d("ProfileCountry", "new Word:  ${profileSetUpEvents.newWord}")
-
                 if (profileSetUpEvents.newWord.isEmpty()) {
                     viewModelScope.launch {
                         fetchCountries()
@@ -150,7 +147,6 @@ class ProfileSetUpViewModel @Inject constructor(
                             ignoreCase = true
                         )
                     }
-                    Log.d("ProfileCountry", "filter :  ${filterList}")
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
                         countryFilteredSearchList = filterList
                     )
@@ -216,20 +212,15 @@ class ProfileSetUpViewModel @Inject constructor(
                 val baseCurrencyName = profileSetUpStates.value.selectedBaseCurrency
                 val baseCurrencySymbol = profileSetUpStates.value.baseCurrencySymbol
 
-                Log.d("ProfileSetUpViewModel","BaseCurrencyCode firebaseUpdate $baseCurrencyCode")
-                Log.d("ProfileSetUpViewModel","BaseCurrencyName firebaseUpdate $baseCurrencyName")
-                Log.d("ProfileSetUpViewModel","BaseCurrencySymbol firebaseUpdate $baseCurrencySymbol")
-
                 // Create the Currency object
                 val selectedCurrency = Currency(name = baseCurrencyName, symbol = baseCurrencySymbol)
 
 
                 // Create the baseCurrency map with the code as key and the map as value
                 val baseCurrency: Map<String, Currency> = mapOf(
-                    baseCurrencyCode to selectedCurrency  // Map the code to the map of currency details
+                    baseCurrencyCode to selectedCurrency
                 )
 
-                Log.d("ProfileSetUpViewModel","baseCurrency firebaseUpdate $baseCurrency")
 
                 setupAccountUseCasesWrapper.updateUserProfileRemoteUseCase(
                     userId = userId ?: "Unknown",
@@ -443,10 +434,6 @@ class ProfileSetUpViewModel @Inject constructor(
                     val baseCurrencyName = userProfile.baseCurrency?.values?.firstOrNull()?.name ?: "N/A"
                     val baseCurrencySymbol = userProfile.baseCurrency?.values?.firstOrNull()?.symbol ?: "N/A"
 
-                    Log.d("ProfileSetUpViewModel","baseCurrencyCode Firebase Receive $baseCurrencyCode")
-                    Log.d("ProfileSetUpViewModel","baseCurrencyName Firebase Receive $baseCurrencyName")
-                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol Firebase Receive $baseCurrencySymbol")
-
                     _profileSetUpStates.value = profileSetUpStates.value.copy(
                         firstName = userProfile.firstName,
                         lastName = userProfile.lastName,
@@ -460,11 +447,6 @@ class ProfileSetUpViewModel @Inject constructor(
                         callingCode = userProfile.callingCode,
                         phoneNumber = userProfile.phoneNumber
                     )
-
-                    Log.d("ProfileSetUpViewModel","baseCurrencyCode state ${_profileSetUpStates.value.baseCurrencyCode}")
-                    Log.d("ProfileSetUpViewModel","baseCurrencyName state ${_profileSetUpStates.value.selectedBaseCurrency}")
-                    Log.d("ProfileSetUpViewModel","baseCurrencySymbol state ${_profileSetUpStates.value.baseCurrencySymbol}")
-
                 }
             }catch (e:Exception){
                 profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching User Details From Cloud.Using Locally Saved Details"))

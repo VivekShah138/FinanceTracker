@@ -53,16 +53,6 @@ import com.example.financetracker.domain.model.Category
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-//fun <T> CustomBottomSheet(
-//    categories: List<T>,
-//    sheetState: SheetState,
-//    onDismissRequest: () -> Unit,
-//    onItemSelect: (T) -> Unit,
-//    displayText: (T) -> String,
-//    onCustomAddClick: () -> Unit,
-//    selectedCategory: String, // Track selected category
-//    onClearSelection: () -> Unit // Callback to clear the selected category
-//)
 fun CustomBottomSheet(
     categories: List<Category>,
     sheetState: SheetState,
@@ -70,8 +60,8 @@ fun CustomBottomSheet(
     onItemSelect: (Category) -> Unit,
     displayText: (Category) -> String,
     onCustomAddClick: () -> Unit,
-    selectedCategory: String, // Track selected category
-    onClearSelection: () -> Unit // Callback to clear the selected category
+    selectedCategory: String,
+    onClearSelection: () -> Unit
 )
 {
     ModalBottomSheet(

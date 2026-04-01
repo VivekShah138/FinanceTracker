@@ -33,8 +33,6 @@ fun MonthTabScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Log.d("YearTabScreen", "show Only Year: $showOnlyYear")
-
         MonthSelectorCharts(
             state = states,
             onEvent = onEvent,

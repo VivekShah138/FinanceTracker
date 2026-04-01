@@ -126,15 +126,11 @@ class GetAllTransactionsFiltersUseCase(
 
     private fun getStartOfMonthInMillis(): Long {
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.DAY_OF_MONTH, 1) // Set to first day of current month
-        Log.d("ViewTransactionsViewModel","This Month First Day ${Calendar.DAY_OF_MONTH}")
-        calendar.set(Calendar.HOUR_OF_DAY, 0)  // Set to 00:00:00
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
-        val dateThisMonth = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.timeInMillis)
-        Log.d("ViewTransactionsViewModel","This Month long${calendar.timeInMillis}")
-        Log.d("ViewTransactionsViewModel","This Month date format $dateThisMonth")
         return calendar.timeInMillis
     }
 
@@ -163,8 +159,8 @@ class GetAllTransactionsFiltersUseCase(
     private fun getStartOfLast3MonthsInMillis(): Long {
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.MONTH, -3)  // Move back by 3 months
-        calendar.set(Calendar.DAY_OF_MONTH, 1) // Set to the first day of that month
-        calendar.set(Calendar.HOUR_OF_DAY, 0)  // Set to 00:00:00
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
         calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
@@ -190,7 +186,4 @@ class GetAllTransactionsFiltersUseCase(
         calendar.set(Calendar.MILLISECOND, 999)
         return calendar.timeInMillis
     }
-
-
-
 }

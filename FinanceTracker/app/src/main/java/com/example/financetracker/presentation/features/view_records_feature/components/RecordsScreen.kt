@@ -71,8 +71,6 @@ fun RecordsScreen(
         pageCount = {2}
     )
 
-    Log.d("RecordsPage", "pagerStateInitial ${pagerState.currentPage}")
-
     val coroutineScope = rememberCoroutineScope()
 
 

@@ -1,14 +1,12 @@
 package com.example.financetracker.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.room.modules.category.CategoryDao
-import com.example.financetracker.mapper.CategoryMapper
-import com.example.financetracker.utils.JsonUtils
+import com.example.financetracker.utils.JsonCategoryMapper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -31,16 +29,16 @@ class PrepopulateCategoryDatabaseWorker @AssistedInject constructor(
 
         return try {
             Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} Inserting predefined categories.")
-            val jsonString = JsonUtils.loadJsonFromAssets(context, "categories.json")
+            val jsonString = JsonCategoryMapper.loadJsonFromAssets(context, "categories.json")
             if (jsonString != null) {
                 Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} jsonString: $jsonString")
             }
             jsonString?.let { it ->
-                val predefinedCategories = JsonUtils.parseJsonToCategories(jsonString = it,uid = "predefined")
+                val predefinedCategories = JsonCategoryMapper.parseJsonToCategories(jsonString = it,uid = "predefined")
                 Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} predefinedCategories: $predefinedCategories")
                 categoryDao.insertCategories(
                     categories = predefinedCategories.map {
-                        CategoryMapper.toEntity(it)
+                        JsonCategoryMapper.toEntity(it)
                     }
                 )
             }

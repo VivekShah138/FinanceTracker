@@ -98,8 +98,7 @@ fun SingleSavedItemScreen(
             }
         }
     }
-
-    Log.d("ViewSavedItemsViewModelS","transaction Single $singleItemState")
+    
 
     if(singleItemState != null){
 

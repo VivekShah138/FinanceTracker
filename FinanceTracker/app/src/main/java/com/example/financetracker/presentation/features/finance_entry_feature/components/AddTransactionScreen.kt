@@ -54,10 +54,6 @@ fun AddTransactionScreen(
         }
     }
 
-    Log.d("AddTransactionPage","searchBarFocus ${states.searchBarFocusedState}")
-    Log.d("AddTransactionPage","saveItemState ${states.saveItemState}")
-    Log.d("AddTransactionPage","searchableList ${states.transactionSearchList}")
-
 
     Box(
         modifier = Modifier.fillMaxSize()

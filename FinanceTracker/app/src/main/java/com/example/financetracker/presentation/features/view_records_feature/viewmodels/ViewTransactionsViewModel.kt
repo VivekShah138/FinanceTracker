@@ -44,26 +44,17 @@ class ViewTransactionsViewModel @Inject constructor(
 
             // Transaction Duration Dropdown
             is ViewTransactionsEvents.SelectTransactionsDuration -> {
-
-                Log.d("ViewTransactionsViewModel","RangeDropDown Before: ${_viewTransactionStates.value.rangeDropDownExpanded}")
-                Log.d("ViewTransactionsViewModel","SelectedDuration Before: ${_viewTransactionStates.value.selectedDuration}")
-
                 _viewTransactionStates.value = viewTransactionStates.value.copy(
                     rangeDropDownExpanded = viewTransactionsEvents.expanded,
                     selectedDuration = viewTransactionsEvents.duration,
                     filters = viewTransactionStates.value.filters.map {
                         if (it is TransactionFilter.Duration) {
-                            it.copy(viewTransactionsEvents.duration) // Update the categories filter with fetched categories
+                            it.copy(durationFilter = viewTransactionsEvents.duration) // Update the categories filter with fetched categories
                         } else {
                             it
                         }
                     }
                 )
-
-                Log.d("ViewTransactionsViewModel","RangeDropDown After: ${_viewTransactionStates.value.rangeDropDownExpanded}")
-                Log.d("ViewTransactionsViewModel","SelectedDuration After: ${_viewTransactionStates.value.selectedDuration}")
-                Log.d("ViewTransactionsViewModelF","SelectedDuration Filter After: ${_viewTransactionStates.value.filters}")
-
                 getTransactionsAllFilter()
             }
 
@@ -72,32 +63,20 @@ class ViewTransactionsViewModel @Inject constructor(
                 viewModelScope.launch(Dispatchers.IO) {
 
                     val transaction = viewRecordsUseCaseWrapper.getTransactionByIdLocalUseCase(viewTransactionsEvents.transactionId)
-                    Log.d("ViewTransactionsViewModelS","SavedItems Before ${_selectedItem.value}")
                     _selectedItem.value = transaction
-                    Log.d("ViewTransactionsViewModelS","SavedItems After ${_selectedItem.value}")
-
                 }
 
             }
 
             is ViewTransactionsEvents.SelectItems -> {
-
-                Log.d("ViewTransactionsViewModelS","SavedItems Before ${_selectedItem.value}")
                 _selectedItem.value = viewTransactionsEvents.transactions
-                Log.d("ViewTransactionsViewModelS","SavedItems After ${_selectedItem.value}")
-
             }
 
             // Transaction Filter
             is ViewTransactionsEvents.SelectTransactionsFilter -> {
-
-                Log.d("ViewTransactionsViewModel","BottomStateAfter Before: ${_viewTransactionStates.value.filterBottomSheetState}")
-
                 _viewTransactionStates.value = viewTransactionStates.value.copy(
                     filterBottomSheetState = viewTransactionsEvents.state
                 )
-
-                Log.d("ViewTransactionsViewModel","BottomStateAfter After: ${_viewTransactionStates.value.filterBottomSheetState}")
             }
 
             is ViewTransactionsEvents.ChangeCustomDateAlertBox -> {
@@ -143,14 +122,10 @@ class ViewTransactionsViewModel @Inject constructor(
             }
             is ViewTransactionsEvents.UpdateFilter -> {
                 val updatedFilters = viewTransactionStates.value.filters.toMutableList()
-                Log.d("ViewTransactionsViewModelFilter","updateFilters:  $updatedFilters")
-                Log.d("ViewTransactionsViewModelFilter","stateFiltersBefore:  ${_viewTransactionStates.value.filters}")
-
                 when (val filter = viewTransactionsEvents.filter) {
                     is TransactionFilter.Category -> {
 
                         if(filter.selectedCategories.isEmpty()){
-                            Log.d("ViewTransactionsViewModelFilter","categories are empty")
                             _viewTransactionStates.value = viewTransactionStates.value.copy(
                                 filterApplyButton = false
                             )
@@ -161,9 +136,6 @@ class ViewTransactionsViewModel @Inject constructor(
                             )
                         }
                         val existingFilter = updatedFilters.filterIsInstance<TransactionFilter.Category>().firstOrNull()
-
-                        Log.d("ViewTransactionsViewModelFilter","existing Filter:  $existingFilter")
-                        Log.d("ViewTransactionsViewModelFilter","filter Selected Categories:  ${filter.selectedCategories}")
                         val newSelectedCategories = if (existingFilter != null) {
                             filter.selectedCategories
                         } else {
@@ -181,20 +153,16 @@ class ViewTransactionsViewModel @Inject constructor(
 
                 _viewTransactionStates.value = viewTransactionStates.value.copy(filters = updatedFilters)
 
-                Log.d("ViewTransactionsViewModelFilter","stateFiltersAfter:  ${_viewTransactionStates.value.filters}")
-
             }
             is ViewTransactionsEvents.ApplyFilter -> {
-                Log.d("ViewTransactionsViewModelApply","Filter State: ${_viewTransactionStates.value.filters}")
                 getTransactionsAllFilter()
             }
             is ViewTransactionsEvents.ClearFilter -> {
-                Log.d("ViewTransactionsViewModelApply","Filter Old State: ${_viewTransactionStates.value.filters}")
                 val defaultFilters: List<TransactionFilter> = listOf(
-                    TransactionFilter.TransactionType(TransactionTypeFilter.Both), // Default transaction type
-                    TransactionFilter.Order(TransactionOrder.Descending), // Default to Ascending order
-                    TransactionFilter.Category(_viewTransactionStates.value.categories), // Default to all categories (empty list means no category filter)
-                    TransactionFilter.Duration(DurationFilter.ThisMonth) // Default to "This Month" filter
+                    TransactionFilter.TransactionType(TransactionTypeFilter.Both),
+                    TransactionFilter.Order(TransactionOrder.Descending),
+                    TransactionFilter.Category(_viewTransactionStates.value.categories),
+                    TransactionFilter.Duration(DurationFilter.ThisMonth)
                 )
 
                 _viewTransactionStates.value = viewTransactionStates.value.copy(
@@ -209,7 +177,7 @@ class ViewTransactionsViewModel @Inject constructor(
 
                     val selectedSingleTransaction = _selectedItem.value?.transactionId?.let { mutableSetOf(it) }
 
-                    val selectedIds = if(_viewTransactionStates.value.selectedTransactions.isEmpty()) selectedSingleTransaction else _viewTransactionStates.value.selectedTransactions
+                    val selectedIds = _viewTransactionStates.value.selectedTransactions.ifEmpty { selectedSingleTransaction }
                     selectedIds!!.forEach { selectedTransactionId ->
 
                         val selectedTransaction =
@@ -249,15 +217,10 @@ class ViewTransactionsViewModel @Inject constructor(
             }
 
             is ViewTransactionsEvents.ExitSelectionMode -> {
-
-                Log.d("ViewTransactionsViewModel","Exit Selection Mode SelectedTransaction Before delete: ${_viewTransactionStates.value.selectedTransactions}")
-
                 _viewTransactionStates.value = viewTransactionStates.value.copy(
                     isSelectionMode = false,
                     selectedTransactions = emptySet()
                 )
-
-                Log.d("ViewTransactionsViewModel","Exit Selection Mode SelectedTransaction After delete: ${_viewTransactionStates.value.selectedTransactions}")
             }
 
             is ViewTransactionsEvents.ToggleTransactionSelection -> {
@@ -271,9 +234,6 @@ class ViewTransactionsViewModel @Inject constructor(
                 _viewTransactionStates.value = viewTransactionStates.value.copy(
                     selectedTransactions = current
                 )
-
-                Log.d("ViewTransactionsViewModel","SelectedTransaction List: $current")
-                Log.d("ViewTransactionsViewModel","SelectedTransaction state List: ${_viewTransactionStates.value.selectedTransactions}")
             }
 
             ViewTransactionsEvents.SelectAllTransactions -> {
@@ -297,8 +257,6 @@ class ViewTransactionsViewModel @Inject constructor(
                 .filterIsInstance<TransactionFilter.TransactionType>()
                 .firstOrNull()?.type ?: TransactionTypeFilter.Both
 
-            Log.d("ViewTransactionsViewModelType","SelectedTransaction Type: $selectedType ")
-
             val allCategories = when (selectedType) {
                 TransactionTypeFilter.Income -> viewRecordsUseCaseWrapper.getAllCategoriesLocalUseCase(type = "income", uid).first()
                 TransactionTypeFilter.Expense -> viewRecordsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", uid).first()
@@ -317,35 +275,23 @@ class ViewTransactionsViewModel @Inject constructor(
                 },
                 categories = allCategories
             )
-
-            Log.d("ViewTransactionsViewModelF", "Updated categories based on type: $selectedType, categories: $allCategories")
         }
     }
 
     private fun getTransactionsAllFilter(){
-        Log.d("ViewTransactionsViewModelF","transaction Before ViewScope Filter")
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("ViewTransactionsViewModelF","transaction Enter ViewScope Filter")
             val transactions = viewRecordsUseCaseWrapper.getAllTransactionsFilters(uid = uid, filters = _viewTransactionStates.value.filters).first()
-            Log.d("ViewTransactionsViewModelF","collected Transactions are $transactions")
 
             _viewTransactionStates.value = viewTransactionStates.value.copy(
                 transactionsList = transactions
             )
-            Log.d("ViewTransactionsViewModelF","transaction List Filter ${_viewTransactionStates.value.transactionsList}")
-            Log.d("ViewTransactionsViewModelF","transaction Filter ${_viewTransactionStates.value.filters}")
-
             getUserProfile()
             getTotalAmount()
         }
-
-
     }
 
     private fun getTotalAmount(){
         val transactions = _viewTransactionStates.value.transactionsList
-        Log.d("ViewTransactionsViewModelT","All Transactions $transactions")
-
         var incomeAmount = 0.0
         var expenseAmount = 0.0
 
@@ -353,24 +299,15 @@ class ViewTransactionsViewModel @Inject constructor(
 
             when {
                 transaction.transactionType.equals("Income", ignoreCase = true) -> {
-                    incomeAmount += transaction.amount
-                    Log.d("ViewTransactionsViewModelT","income Amount OverAll $incomeAmount")
-                }
+                    incomeAmount += transaction.amount }
                 transaction.transactionType.equals("Expense", ignoreCase = true) -> {
                     expenseAmount += transaction.amount
-                    Log.d("ViewTransactionsViewModelT","expense Amount OverAll $expenseAmount")
                 }
             }
         }
-        val totalAmount = incomeAmount - expenseAmount
-        Log.d("ViewTransactionsViewModelT","Total Amount $totalAmount")
-
         _viewTransactionStates.value = viewTransactionStates.value.copy(
             totalAmount = incomeAmount - expenseAmount
         )
-
-        Log.d("ViewTransactionsViewModelT","Total Amount State ${_viewTransactionStates.value.totalAmount}")
-
     }
 
     private fun getUserProfile(){

@@ -160,7 +160,7 @@ class LoginPageViewModel @Inject constructor(
                 val userId = withContext(Dispatchers.IO) {
                     coreUseCasesWrapper.getUserUIDRemoteUseCase() ?: "Unknown"
                 }
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "userId: $userId")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "handle user profile -> userId: $userId")
                 authFeatureUseCasesWrapper.insertUIDLocalUseCase(userId)
 
                 val userProfile = withContext(Dispatchers.IO) {
@@ -174,7 +174,7 @@ class LoginPageViewModel @Inject constructor(
                     }
                     newProfile
                 }
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "userProfile: $userProfile")
+                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "handle user profile -> userProfile: $userProfile")
 
                 val userName = listOfNotNull(finalProfile.firstName, finalProfile.lastName)
                     .joinToString(" ")
@@ -204,30 +204,17 @@ class LoginPageViewModel @Inject constructor(
         try {
             val userId = coreUseCasesWrapper.getUserUIDRemoteUseCase() ?: "Unknown"
             val isFirstTimeLoggedIn = setupAccountUseCasesWrapper.getFirstTimeLoggedIn(userId)
-            Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "FirstTimeLoggedIn -> $isFirstTimeLoggedIn")
+            Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "loadRemoteDataItems FirstTimeLoggedIn -> $isFirstTimeLoggedIn")
             if (isFirstTimeLoggedIn) {
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Starting insertRemoteSavedItemToLocal")
                 savedItemsUseCasesWrapper.insertRemoteSavedItemToLocal()
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Completed insertRemoteSavedItemToLocal")
-
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Starting insertRemoteTransactionsToLocal")
                 addTransactionUseCasesWrapper.syncTransactionsRemoteToLocalUseCase()
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Completed insertRemoteTransactionsToLocal")
-
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Starting insertUserProfileToLocalDb")
                 coreUseCasesWrapper.insertUserProfileLocalUseCase()
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Completed insertUserProfileToLocalDb")
-
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Starting insertRemoteBudgetsToLocal")
                 budgetUseCaseWrapper.insertBudgetsRemoteToLocalUseCase()
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Completed insertRemoteBudgetsToLocal")
-
                 setupAccountUseCasesWrapper.setFirstTimeLoginUseCase(uid = userId)
                 setupAccountUseCasesWrapper.setCurrencyRatesUpdatedLocalUseCase(isUpdated = false)
-                Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "FirstTimeLoggedIn set to false")
             }
         } catch (e: Exception) {
-            Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "Failed to sync: ${e.localizedMessage}")
+            Logger.d(Logger.Tag.LOGIN_VIEWMODEL, "loadRemoteDataItems Failed to sync: ${e.localizedMessage}")
         } finally {
             _loginState.value = _loginState.value.copy(isDataSyncing = false)
         }

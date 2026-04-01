@@ -33,11 +33,6 @@ class RegisterPageViewModel @Inject constructor(
                     emailError = null
                 )
             }
-//            is RegisterPageEvents.ChangeUserName -> {
-//                _registerState.value = registerState.value.copy(
-//                    userName = registerPageEvents.name
-//                )
-//            }
             is RegisterPageEvents.ChangePassword -> {
                 _registerState.value = registerState.value.copy(
                     password = registerPageEvents.password,
@@ -72,7 +67,6 @@ class RegisterPageViewModel @Inject constructor(
     private suspend fun validateFields(){
 
         val emailResult = authFeatureUseCasesWrapper.emailValidationUseCase(registerState.value.email)
-//        val nameResult = useCasesWrapper.validateName(registerState.value.userName)
         val passwordResult = authFeatureUseCasesWrapper.passwordValidationUseCase(registerState.value.password)
         val confirmPasswordResult = authFeatureUseCasesWrapper.confirmPasswordValidationUseCase(
             registerState.value.password,
@@ -81,7 +75,6 @@ class RegisterPageViewModel @Inject constructor(
 
         val hasError = listOf(
             emailResult,
-//            nameResult,
             passwordResult,
             confirmPasswordResult
         )
@@ -89,7 +82,6 @@ class RegisterPageViewModel @Inject constructor(
         if (hasError.any { !it.isSuccessful }) {
             _registerState.value = registerState.value.copy(
                 emailError = emailResult.errorMessage,
-//                userNameError = nameResult.errorMessage,
                 passwordError = passwordResult.errorMessage,
                 confirmPasswordError = confirmPasswordResult.errorMessage
             )
@@ -100,14 +92,11 @@ class RegisterPageViewModel @Inject constructor(
         viewModelScope.launch {
             _registerState.value = registerState.value.copy(
                 emailError = emailResult.errorMessage,
-//                userNameError = nameResult.errorMessage,
                 passwordError = passwordResult.errorMessage,
                 confirmPasswordError = confirmPasswordResult.errorMessage
             )
             registerEventChannel.send(RegisterEvent.TriggerFirebaseRegistration)
         }
-
-
     }
 
 

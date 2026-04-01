@@ -3,6 +3,7 @@ package com.example.financetracker.presentation.features.home_feature
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.usecases.usecase_wrapper.HomePageUseCaseWrapper
 import com.example.financetracker.utils.DurationFilter
 import com.example.financetracker.utils.TransactionFilter
@@ -49,35 +50,34 @@ class HomePageViewModel @Inject constructor(
     fun getUserProfile(){
         viewModelScope.launch {
             val userProfile = homePageUseCaseWrapper.getUserProfileLocalUseCase()
-            Log.d("HomePageViewModel","userProfile $userProfile")
+            Logger.d(Logger.Tag.HOME_VIEWMODEL,"getUserProfile userProfile $userProfile")
         }
     }
 
     private fun updateCurrencyRatesOneTime(){
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("WorkManagerCurrencies","one time function called inside homepage")
-
             userCasesWrapperSetupAccount.seedCurrencyRatesLocalOneTime()
         }
     }
 
     private fun updateCurrencyRatesPeriodically(){
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("WorkManagerCurrencies","periodically time function called inside homepage")
             userCasesWrapperSetupAccount.seedCurrencyRatesLocalPeriodical()
         }
     }
 
     private fun getIncomeAndExpenseAmount() {
         viewModelScope.launch(Dispatchers.IO) {
-            val userId2 = homePageUseCaseWrapper.getUIDLocalUseCase() ?: "Unknown"
-            Log.d("HomePageViewModel","userId $userId2")
+            val userId = homePageUseCaseWrapper.getUIDLocalUseCase() ?: "Unknown"
+            Logger.d(Logger.Tag.HOME_VIEWMODEL,"getIncomeAndExpenseAmount userId $userId")
 
-            val allTransactions = homePageUseCaseWrapper.getAllTransactionsByUIDLocalUseCase(uid = userId2).first()
-            Log.d("HomePageViewModel","allTransactions $allTransactions")
+            val allTransactions = homePageUseCaseWrapper.getAllTransactionsByUIDLocalUseCase(uid = userId).first()
+
+            Logger.d(Logger.Tag.HOME_VIEWMODEL,"getIncomeAndExpenseAmount allTransactions $allTransactions")
+
 
             val allTransactionsThisMonth = homePageUseCaseWrapper.getAllTransactionsFilters(
-                uid = userId2,
+                uid = userId,
                 filters = listOf(
                     TransactionFilter.TransactionType(TransactionTypeFilter.Both),
                     TransactionFilter.Order(TransactionOrder.Ascending),
@@ -87,7 +87,8 @@ class HomePageViewModel @Inject constructor(
 
 
             val userProfile = homePageUseCaseWrapper.getUserProfileLocalUseCase()
-            Log.d("HomePageViewModel","userProfile $userProfile")
+            Logger.d(Logger.Tag.HOME_VIEWMODEL,"getIncomeAndExpenseAmount userProfile $userProfile")
+
 
 
             var incomeAmountThisMonth = 0.0
@@ -95,7 +96,9 @@ class HomePageViewModel @Inject constructor(
             var expenseAmountThisMonth = 0.0
             var expenseAmountOverAll = 0.0
             val baseCurrencySymbol = userProfile?.baseCurrency?.entries?.firstOrNull()?.value?.symbol ?: "$"
-            Log.d("HomePageViewModel","baseCurrency $baseCurrencySymbol")
+
+            Logger.d(Logger.Tag.HOME_VIEWMODEL,"getIncomeAndExpenseAmount baseCurrency $baseCurrencySymbol")
+
 
             val incomeDataWithCategory = _homeScreenStates.value.incomeDataWithCategory.toMutableMap().apply { clear() }
             val expenseDataWithCategory = _homeScreenStates.value.expenseDataWithCategory.toMutableMap().apply { clear() }
@@ -105,22 +108,14 @@ class HomePageViewModel @Inject constructor(
                 when {
                     transaction.transactionType.equals("Income", ignoreCase = true) -> {
                         incomeAmountThisMonth += transaction.amount
-                        Log.d("HomePageViewModel","income Amount This Month $incomeAmountThisMonth")
-
                         val currentIncomeAmount = incomeDataWithCategory[transaction.category] ?: 0.0
                         incomeDataWithCategory[transaction.category] = currentIncomeAmount + transaction.amount
-
-                        Log.d("HomePageViewModel", "income Amount for ${transaction.category}: ${incomeDataWithCategory[transaction.category]}")
-
                     }
                     transaction.transactionType.equals("Expense", ignoreCase = true) -> {
                         expenseAmountThisMonth += transaction.amount
-                        Log.d("HomePageViewModel","expense Amount This Month $expenseAmountThisMonth")
-
                         val currentExpenseAmount = expenseDataWithCategory[transaction.category] ?: 0.0
                         expenseDataWithCategory[transaction.category] = currentExpenseAmount + transaction.amount
 
-                        Log.d("HomePageViewModel", "expense Amount for ${transaction.category}: ${expenseDataWithCategory[transaction.category]}")
                     }
                 }
             }
@@ -129,11 +124,9 @@ class HomePageViewModel @Inject constructor(
                 when {
                     transaction.transactionType.equals("Income", ignoreCase = true) -> {
                         incomeAmountOverAll += transaction.amount
-                        Log.d("HomePageViewModel","income Amount OverAll $incomeAmountOverAll")
                     }
                     transaction.transactionType.equals("Expense", ignoreCase = true) -> {
                         expenseAmountOverAll += transaction.amount
-                        Log.d("HomePageViewModel","expense Amount OverAll $expenseAmountOverAll")
                     }
                 }
             }
@@ -180,13 +173,13 @@ class HomePageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val alertNotification = (_homeScreenStates.value.expenseAmount.toDouble()/_homeScreenStates.value.monthlyBudget) * 100
 
-            Log.d("HomePageViewModelN","Alert Notification $alertNotification")
-            Log.d("HomePageViewModelN","Receive Alert ${_homeScreenStates.value.receiveAlert}")
+            Logger.d(Logger.Tag.HOME_VIEWMODEL,"sendNotification Alert Notification $alertNotification")
+            Logger.d(Logger.Tag.HOME_VIEWMODEL,"sendNotification Receive Alert ${_homeScreenStates.value.receiveAlert}")
 
             if(alertNotification >= _homeScreenStates.value.receiveAlert){
-                Log.d("HomePageViewModelN","Inside If")
                 homePageUseCaseWrapper.sendBudgetNotificationLocalUseCase(title = "Alert", message = "You have crossed your ${_homeScreenStates.value.receiveAlert}% of your budget")
-                Log.d("HomePageViewModelN","Notification Sent")
+                Logger.d(Logger.Tag.HOME_VIEWMODEL,"sendNotification Notification Sent")
+
             }
         }
     }
