@@ -1,10 +1,10 @@
 package com.example.financetracker.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.shared_pref.UserPreferences
 import com.example.financetracker.domain.usecases.usecase_wrapper.ViewRecordsUseCaseWrapper
 import dagger.assisted.Assisted
@@ -20,36 +20,30 @@ class DeletedAllSavedItemsFromCloudDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams)  {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManagerDeletedSavedItems", "Worker started Deleted All SavedItems From Cloud")
+        Logger.d(Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} Worker started. WorkId=${id}")
 
         val userId = userPreferences.getUserIdLocally() ?: return Result.failure()
 
         return try {
-
-            Log.d("WorkManagerDeletedSavedItems","UserId: $userId")
+            Logger.d(Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} Worker started for UserId: $userId")
             val allDeletedSavedItems = viewRecordsUseCaseWrapper.getAllDeletedSavedItemsByUserIdUseCase(userId = userId).first()
 
-            Log.d("WorkManagerDeletedSavedItems","deletedSavedItems $allDeletedSavedItems")
-
+            Logger.d(Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} All deletedSavedItems $allDeletedSavedItems")
 
             if (allDeletedSavedItems.isEmpty() ) {
-                Log.d("WorkManagerDeletedSavedItems", "No deleted saved items to sync.")
+                Logger.d(Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} No deleted saved items to sync.")
                 return Result.success()
-
             }
             else{
                 allDeletedSavedItems.forEach { deletedSavedItems ->
                     viewRecordsUseCaseWrapper.deleteSavedItemCloud(userId = userId, itemId = deletedSavedItems.itemId ?: 0)
                     viewRecordsUseCaseWrapper.deleteDeletedSavedItemByIdUseCase(itemId = deletedSavedItems.itemId ?: 0)
                 }
-                Log.d("WorkManagerDeletedSavedItems", "All Cloud saved items deleted from cloud successfully.")
-
-
+                Logger.d(Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} All Cloud saved items deleted from cloud successfully.")
                 Result.success()
             }
         } catch (e: Exception) {
-            Log.e("WorkManagerDeletedSavedItems", "Error during sync: ${e.message}")
-            e.printStackTrace()
+            Logger.e(Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} Error during sync",e)
             Result.retry()
         }
     }

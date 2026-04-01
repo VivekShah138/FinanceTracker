@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.usecases.usecase_wrapper.SavedItemsUseCasesWrapper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -17,40 +18,37 @@ class InsertAllSavedItemsToLocalDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams)  {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManagerInsertToSavedItems", "Worker started Insert All Saved Items To Local Db from Cloud")
+        Logger.d(Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} Worker started. WorkId=${id}")
 
         val userId = savedItemsUseCasesWrapper.getUserUIDRemoteUseCase() ?: return Result.failure()
 
         return try {
             val allRemoteSavedItems = savedItemsUseCasesWrapper.getRemoteSavedItemList(userId = userId)
 
-            Log.d("WorkManagerInsertToSavedItems", "userId $userId ")
-            Log.d("WorkManagerInsertToSavedItems", "allLocalSavedItems $allRemoteSavedItems")
-
+            Logger.d(Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} Worker started for userId $userId")
+            Logger.d(Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} All remote saved items $allRemoteSavedItems")
 
             if (allRemoteSavedItems.isEmpty()) {
-                Log.d("WorkManagerInsertToSavedItems", "No savedItems to Load.")
+                Logger.d(Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} No savedItems to Load.")
                 return Result.failure()
             }
             else{
                 allRemoteSavedItems.forEach { savedItems ->
                     val itemId = savedItems.itemId!!
-
                     val doesExists = savedItemsUseCasesWrapper.doesSavedItemExistsUseCase(userId = userId,itemId = itemId)
 
                     if(!doesExists){
                         savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems)
-                        Log.d("WorkManagerInsertToSavedItems", "Remote saved item $itemId inserted to Local Database successfully.")
+                        Logger.d(Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} Remote saved item $itemId inserted to local database successfully.")
                     }
                     else{
-                        Log.d("WorkManagerInsertToSavedItems", "Remote saved item $itemId already exits in Local Database")
+                        Logger.d(Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} Remote saved item $itemId already exits in Local Database.")
                     }
                 }
                 Result.success()
             }
         } catch (e: Exception) {
-            Log.e("WorkManagerInsertToSavedItems", "Error during sync: ${e.message}")
-            e.printStackTrace()
+            Logger.e(Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER} Error during sync",e)
             Result.retry()
         }
     }

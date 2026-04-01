@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.usecases.usecase_wrapper.AddTransactionUseCasesWrapper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -17,19 +18,19 @@ class InsertAllTransactionsToLocalDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams)  {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManagerInsertToTransactions", "Worker started Insert All Transactions To Local Db from Cloud")
+        Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Worker started. WorkId=${id}")
 
         val userId = addTransactionUseCasesWrapper.getUserUIDRemoteUseCase() ?: return Result.failure()
 
         return try {
             val allRemoteTransactions = addTransactionUseCasesWrapper.getAllTransactionsRemoteUseCase(userId = userId)
 
-            Log.d("WorkManagerInsertToTransactions", "userId $userId ")
-            Log.d("WorkManagerInsertToTransactions", "allLocalTransactions $allRemoteTransactions")
+            Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Worker started for userId $userId ")
+            Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} all remote transactions $allRemoteTransactions")
 
 
             if (allRemoteTransactions.isEmpty()) {
-                Log.d("WorkManagerInsertToTransactions", "No transactions to Load.")
+                Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} No transactions to Load.")
                 return Result.failure()
             }
             else{
@@ -40,17 +41,17 @@ class InsertAllTransactionsToLocalDatabaseWorker @AssistedInject constructor(
 
                     if(!doesExists){
                         addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transactions = transaction)
-                        Log.d("WorkManagerInsertToTransactions", "Remote Transaction $transactionId inserted to Local Database successfully.")
+                        Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Remote Transaction $transactionId inserted to Local Database successfully.")
+
                     }
                     else{
-                        Log.d("WorkManagerInsertToTransactions", "Remote Transaction $transactionId already exits in Local Database")
+                        Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Remote Transaction $transactionId already exits in Local Database")
                     }
                 }
                 Result.success()
             }
         } catch (e: Exception) {
-            Log.e("WorkManagerInsertToTransactions", "Error during sync: ${e.message}")
-            e.printStackTrace()
+            Logger.e(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER} Error during sync",e)
             Result.retry()
         }
     }

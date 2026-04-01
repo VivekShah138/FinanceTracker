@@ -39,17 +39,15 @@ class FinanceTracker : Application(), Configuration.Provider {
 
         createNotificationChannel()
 
-        Log.d("AppEntry", "Enqueuing Workers")
-
         applicationScope.launch {
 
             val firstInstall = setupAccountUseCasesWrapper.getFirstTimeInstalledLocalUseCase()
-            Log.d("AppEntry","FirstTimeInstalled -> $firstInstall")
+            Logger.d(Logger.Tag.APP_ENTRY,"FirstTimeInstalled -> $firstInstall")
             if(firstInstall){
                 predefinedCategoriesUseCaseWrapper.seedPredefinedCategoriesLocalUseCase()
                 setupAccountUseCasesWrapper.seedCountryLocalUseCase()
                 setupAccountUseCasesWrapper.setFirstTimeInstalledLocalUseCase()
-                Log.d("AppEntry","FirstTimeInstalled set to false")
+                Logger.d(Logger.Tag.APP_ENTRY,"FirstTimeInstalled set to false")
             }
             viewRecordsUseCaseWrapper.deleteTransactionsRemoteUseCase()
             viewRecordsUseCaseWrapper.deleteMultipleSavedItemCloud()

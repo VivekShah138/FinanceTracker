@@ -1,10 +1,10 @@
 package com.example.financetracker.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.shared_pref.UserPreferences
 import com.example.financetracker.domain.usecases.usecase_wrapper.ViewRecordsUseCaseWrapper
 import dagger.assisted.Assisted
@@ -20,20 +20,18 @@ class DeletedAllTransactionsFromCloudDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams)  {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManagerDeletedTransactions", "Worker started Deleted All Transactions From Cloud")
-
+        Logger.d(Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Worker started. WorkId=${id}")
         val userId = userPreferences.getUserIdLocally() ?: return Result.failure()
 
         return try {
+            Logger.d(Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Worker started for UserId: $userId")
 
-            Log.d("WorkManagerDeletedTransactions","UserId: $userId")
             val allDeletedTransactions = viewRecordsUseCaseWrapper.getAllDeletedTransactionByUIDUseCase(userId = userId).first()
 
-            Log.d("WorkManagerDeletedTransactions","deletedTransactions $allDeletedTransactions")
-
+            Logger.d(Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} All deletedTransactions $allDeletedTransactions")
 
             if (allDeletedTransactions.isEmpty() ) {
-                Log.d("WorkManagerDeletedTransactions", "No deleted transactions to sync.")
+                Logger.d(Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} No deleted transactions to sync.")
                 return Result.success()
 
             }
@@ -42,14 +40,11 @@ class DeletedAllTransactionsFromCloudDatabaseWorker @AssistedInject constructor(
                     viewRecordsUseCaseWrapper.deleteTransactionRemoteUseCase(userId = userId, transactionId = deletedTransaction.transactionId)
                     viewRecordsUseCaseWrapper.deleteDeletedTransactionsByIdRemoteUseCase(transactionId = deletedTransaction.transactionId)
                 }
-                Log.d("WorkManagerDeletedTransactions", "All Cloud transactions deleted from cloud successfully.")
-
-
+                Logger.d(Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} All pending transactions deleted from cloud successfully.")
                 Result.success()
             }
         } catch (e: Exception) {
-            Log.e("WorkManagerDeletedTransactions", "Error during sync: ${e.message}")
-            e.printStackTrace()
+            Logger.e(Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Error during sync",e)
             Result.retry()
         }
     }

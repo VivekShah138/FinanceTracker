@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.shared_pref.UserPreferences
 import com.example.financetracker.domain.usecases.usecase_wrapper.AddTransactionUseCasesWrapper
 import dagger.assisted.Assisted
@@ -20,41 +21,36 @@ class UploadAllTransactionsToCloudDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams)  {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManagerUploadTransactions", "Worker started Upload All Transactions To Cloud")
+        Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Worker started. WorkId=${id}")
 
         val userId = userPreferences.getUserIdLocally() ?: return Result.failure()
 
         return try {
             val allLocalTransactions = addTransactionUseCasesWrapper.getAllUnsyncedTransactionsLocalUseCase(uid = userId).first()
 
-            Log.d("WorkManagerUploadTransactions", "userId $userId ")
-            Log.d("WorkManagerUploadTransactions", "allLocalTransactions $allLocalTransactions")
-
-
+            Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Worker started for userId $userId")
+            Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} all local transactions items $allLocalTransactions")
 
             val cloudSync = userPreferences.getCloudSync()
 
             if (allLocalTransactions.isEmpty() || !cloudSync) {
-                Log.d("WorkManagerUploadTransactions", "No transactions to sync.")
-                Log.d("WorkManagerUploadTransactions", "cloudSync: $cloudSync")
+                Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} No transactions to sync.")
+                Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} cloudSync: $cloudSync")
                 return Result.failure()
-
             }
             else{
-
                 allLocalTransactions.forEach { transaction ->
                     val transactionId = transaction.transactionId
                     val transactionWithId = transaction.copy(transactionId = transactionId, cloudSync = true)
-
                     addTransactionUseCasesWrapper.insertSingleTransactionRemoteUseCase(userId = userId, transaction)
                     addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transactionWithId)
+                    Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Local transaction $transactionId inserted to Local Database successfully.")
                 }
-                Log.d("WorkManagerUploadTransactions", "All local transactions inserted to cloud successfully.")
+                Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} All local transactions inserted to cloud successfully.")
                 Result.success()
             }
         } catch (e: Exception) {
-            Log.e("WorkManagerUploadTransactions", "Error during sync: ${e.message}")
-            e.printStackTrace()
+            Logger.e(Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER,"${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Error during sync",e)
             Result.retry()
         }
     }

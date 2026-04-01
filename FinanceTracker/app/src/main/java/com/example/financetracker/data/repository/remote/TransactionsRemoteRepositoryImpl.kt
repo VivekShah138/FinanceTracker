@@ -7,6 +7,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.room.modules.transactions.DeletedTransactionDao
 import com.example.financetracker.worker.DeletedAllTransactionsFromCloudDatabaseWorker
 import com.example.financetracker.domain.model.DeletedTransactions
@@ -38,7 +39,7 @@ class TransactionsRemoteRepositoryImpl(
 
     override suspend fun deleteMultipleTransactionsRemote() {
         val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED) // Ensures work runs only when connected
+            .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val workRequest = OneTimeWorkRequestBuilder<DeletedAllTransactionsFromCloudDatabaseWorker>()
@@ -54,5 +55,7 @@ class TransactionsRemoteRepositoryImpl(
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "Delete transactions remote worker ENQUEUED. WorkId=${workRequest.id}")
     }
 }

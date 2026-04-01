@@ -42,9 +42,9 @@ class MainActivity : ComponentActivity() {
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                Log.d("MainActivity", "Notification permission granted")
+                Logger.d(Logger.Tag.MAIN_ACTIVITY, "Notification permission granted")
             } else {
-                Log.d("MainActivity", "Notification permission denied")
+                Logger.d(Logger.Tag.MAIN_ACTIVITY, "Notification permission denied")
             }
         }
 
@@ -62,8 +62,8 @@ class MainActivity : ComponentActivity() {
                     this,
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED -> {
-                    // Permission already granted
-                    Log.d("MainActivity", "Notification permission already granted")
+
+                    Logger.d(Logger.Tag.MAIN_ACTIVITY, "Notification permission already granted")
                 }
 
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
@@ -88,8 +88,8 @@ class MainActivity : ComponentActivity() {
 
             // Collect the dark mode state reactively
             val settingsState by settingsViewModel.settingStates.collectAsStateWithLifecycle()
-            Log.d("MainActivitySetting","budget state ${settingsState.budgetExist}")
-            Log.d("MainActivitySetting","UserId state ${settingsState.userId}")
+            Logger.d(Logger.Tag.MAIN_ACTIVITY,"settingsState.budgetExist ${settingsState.budgetExist}")
+            Logger.d(Logger.Tag.MAIN_ACTIVITY,"settingsState.userId ${settingsState.userId}")
 
             LaunchedEffect(settingsState.userId) {
                 settingsState.userId.let {
@@ -97,11 +97,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            Log.d("MainActivitySetting","UserId state after launched Effect ${settingsState.userId}")
+            Logger.d(Logger.Tag.MAIN_ACTIVITY,"UserId state after launched Effect ${settingsState.userId}")
 
             val darkMode = settingsState.darkMode || settingsUseCaseWrapper.getDarkModeLocalUseCase() || isSystemInDarkTheme()
-            Log.d("MainActivitySetting","Dark Mode $darkMode")
-            Log.d("MainActivitySettings","Dark Mode State ${settingsState.darkMode}")
+            Logger.d(Logger.Tag.MAIN_ACTIVITY,"Dark Mode $darkMode")
+            Logger.d(Logger.Tag.MAIN_ACTIVITY,"System Dark Mode ${isSystemInDarkTheme()}")
+            Logger.d(Logger.Tag.MAIN_ACTIVITY,"Dark Mode Settings State ${settingsState.darkMode}")
 
             FinanceTrackerTheme (dynamicColor = false, darkTheme = darkMode) {
                 Surface(
@@ -116,13 +117,13 @@ class MainActivity : ComponentActivity() {
                     val bottomNavLabels = BottomNavItemsList.map { it.label }
 
                     val showBottomBar = bottomNavLabels.any { label ->
-                        Log.d("Main Activity","label: $label")
-                        Log.d("Main Activity","currentDestination?.route?: ${currentDestination?.route}")
+                        Logger.d(Logger.Tag.MAIN_ACTIVITY,"label: $label")
+                        Logger.d(Logger.Tag.MAIN_ACTIVITY,"currentDestination?.route?: ${currentDestination?.route}")
                         currentDestination?.route?.contains(label, ignoreCase = true) == true
 
                     }
 
-                    Log.d("Main Activity","show bottom bar: $showBottomBar")
+                    Logger.d(Logger.Tag.MAIN_ACTIVITY,"show bottom bar: $showBottomBar")
 
                     Scaffold(
                         bottomBar = {

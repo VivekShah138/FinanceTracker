@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.usecases.usecase_wrapper.BudgetUseCaseWrapper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -17,19 +18,17 @@ class InsertAllBudgetsToLocalDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams)  {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManagerInsertToBudgets", "Worker started Insert All Budgets To Local Db from Cloud")
+        Logger.d(Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER} Worker started. WorkId=${id}")
 
         val userId = budgetUseCaseWrapper.getUserUIDRemoteUseCase() ?: return Result.failure()
 
         return try {
             val allRemoteBudgets = budgetUseCaseWrapper.getBudgetsRemoteUseCase(userId = userId)
-
-            Log.d("WorkManagerInsertToBudgets", "userId $userId ")
-            Log.d("WorkManagerInsertToBudgets", "allLocalTransactions $allRemoteBudgets")
-
+            Logger.d(Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER} Worker started for userId $userId")
+            Logger.d(Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER} All remote budgets $allRemoteBudgets")
 
             if (allRemoteBudgets.isEmpty()) {
-                Log.d("WorkManagerInsertToBudgets", "No budget to Load.")
+                Logger.d(Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER} No budget to sync.")
                 return Result.failure()
             }
             else{
@@ -40,17 +39,16 @@ class InsertAllBudgetsToLocalDatabaseWorker @AssistedInject constructor(
 
                     if(!doesExists){
                         budgetUseCaseWrapper.insertBudgetLocalUseCase(budget = budget)
-                        Log.d("WorkManagerInsertToBudgets", "Remote Budget $budgetId inserted to Local Database successfully.")
+                        Logger.d(Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER} Remote Budget $budgetId inserted to Local Database successfully.")
                     }
                     else{
-                        Log.d("WorkManagerInsertToBudgets", "Remote Budget $budgetId already exits in Local Database")
+                        Logger.d(Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER} Remote Budget $budgetId already exits in Local Database.")
                     }
                 }
                 Result.success()
             }
         } catch (e: Exception) {
-            Log.e("WorkManagerInsertToBudgets", "Error during sync: ${e.message}")
-            e.printStackTrace()
+            Logger.e(Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER} Error during sync",e)
             Result.retry()
         }
     }
