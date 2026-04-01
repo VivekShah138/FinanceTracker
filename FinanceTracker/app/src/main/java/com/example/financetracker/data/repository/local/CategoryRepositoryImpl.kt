@@ -1,15 +1,19 @@
 package com.example.financetracker.data.repository.local
 
+import androidx.work.BackoffPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.room.modules.category.CategoryDao
 import com.example.financetracker.worker.PrepopulateCategoryDatabaseWorker
 import com.example.financetracker.domain.model.Category
 import com.example.financetracker.domain.repository.local.CategoryRepository
 import com.example.financetracker.mapper.CategoryMapper
+import com.example.financetracker.worker.DeletedAllTransactionsFromCloudDatabaseWorker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CategoryRepositoryImpl @Inject constructor(
@@ -65,11 +69,18 @@ class CategoryRepositoryImpl @Inject constructor(
 
     override suspend fun seedPredefinedCategories() {
         val workRequest = OneTimeWorkRequestBuilder<PrepopulateCategoryDatabaseWorker>()
+            .setBackoffCriteria(
+                BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 30, TimeUnit.SECONDS
+            )
             .build()
         workManager.enqueueUniqueWork(
-            "prepopulate_db",
+            "prepopulate_predefined_category_to_db",
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
+
     }
 }

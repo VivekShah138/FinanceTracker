@@ -8,6 +8,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.room.modules.saved_items.DeletedSavedItemsDao
 import com.example.financetracker.worker.DeletedAllSavedItemsFromCloudDatabaseWorker
 import com.example.financetracker.worker.InsertAllSavedItemsToLocalDatabaseWorker
@@ -62,6 +63,9 @@ class SavedItemsRemoteRepositoryImpl(
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.DELETE_REMOTE_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
+
     }
 
     override suspend fun deleteSavedItemRemote(itemId: Int, userId: String) {
@@ -74,11 +78,7 @@ class SavedItemsRemoteRepositoryImpl(
                 .document(itemIds)
                 .delete()
                 .await()
-
-            Log.d("FirestoreDelete", "Deleted SavedItem $itemId from cloud.")
-
         } catch (e: Exception) {
-            Log.e("FirestoreDelete", "Failed to delete saved item from cloud: ${e.localizedMessage}")
             throw e
         }
     }
@@ -102,11 +102,9 @@ class SavedItemsRemoteRepositoryImpl(
                 .set(savedItems.copy(cloudSync = true))
                 .await()
 
-            // Update local Room DB
             savedItems.itemId?.let { updateCloudSync(it, true) }
 
         }catch (e: Exception){
-
             savedItems.itemId?.let { updateCloudSync(it, false) }
         }
     }
@@ -129,6 +127,9 @@ class SavedItemsRemoteRepositoryImpl(
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.INSERT_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
+
     }
 
     override suspend fun insertSavedItemRemoteToLocal() {
@@ -149,6 +150,8 @@ class SavedItemsRemoteRepositoryImpl(
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_SAVED_ITEMS_TO_LOCAL_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
     }
 
     override suspend fun getSavedItemsRemote(userId: String): List<SavedItems> {
@@ -167,7 +170,6 @@ class SavedItemsRemoteRepositoryImpl(
                 } else null
             }
         } catch (e: Exception) {
-            Log.e("FirestoreGetRemoteSavedItem", "Failed to get savedItems from cloud: ${e.localizedMessage}")
             emptyList()
         }
     }

@@ -9,6 +9,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.room.modules.currency_rates.CurrencyRatesDao
 import com.example.financetracker.data.data_source.local.shared_pref.UserPreferences
 import com.example.financetracker.mapper.CurrencyRatesMapper
@@ -26,19 +27,12 @@ class CurrencyRatesLocalRepositoryImpl(
 
     override suspend fun getCurrencyRatesLocal(baseCurrency: String): CurrencyResponse? {
         return try {
-            val currencyResponseEntity = currencyRatesDao.getCurrencyRates(baseCurrency)
-
-            if (currencyResponseEntity == null) {
-                Log.d("CurrencyRatesRepo", "No currency rates found locally for base currency: $baseCurrency")
-                return null
-            }
+            val currencyResponseEntity =
+                currencyRatesDao.getCurrencyRates(baseCurrency) ?: return null
 
             val currencyResponse = CurrencyRatesMapper.fromEntityToCurrencyResponse(currencyResponseEntity)
-            Log.d("CurrencyRatesRepo", "Successfully retrieved currency rates for $baseCurrency: $currencyResponse")
-
             currencyResponse
         } catch (e: Exception) {
-            Log.e("CurrencyRatesRepo", "Error retrieving local currency rates for $baseCurrency: ${e.message}")
             e.printStackTrace()
             null
         }
@@ -47,7 +41,6 @@ class CurrencyRatesLocalRepositoryImpl(
 
     override suspend fun syncCurrencyRatesOnce() {
         if (!userPreferences.getCurrencyRatesUpdated()) {
-            Log.d("WorkManagerCurrencies", "Currency rates is not updated One Time Request Started.")
             val workRequest = OneTimeWorkRequestBuilder<PrepopulateCurrencyRatesDatabaseWorker>()
                 .setConstraints(
                     Constraints.Builder()
@@ -67,9 +60,10 @@ class CurrencyRatesLocalRepositoryImpl(
                 workRequest
             )
 
-            Log.d("WorkManagerCurrencyRates", "One-time WorkManager task successfully enqueued.")
+            Logger.d(Logger.Tag.INSERT_CURRENCY_RATES_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CURRENCY_RATES_TO_LOCAL_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
+
         } else {
-            Log.d("WorkManagerCurrencyRates", "Currency rates already updated. Skipping one-time worker.")
+            Logger.d(Logger.Tag.INSERT_CURRENCY_RATES_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CURRENCY_RATES_TO_LOCAL_WORK_MANAGER} One time already enqueued.")
         }
     }
 
@@ -77,26 +71,26 @@ class CurrencyRatesLocalRepositoryImpl(
         val workRequest = PeriodicWorkRequestBuilder<PrepopulateCurrencyRatesDatabaseWorker>(
             24, TimeUnit.HOURS
         )
-            .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS) // Start at 6:00 AM
+            .setInitialDelay(calculateInitialDelay(), TimeUnit.MILLISECONDS)
             .setConstraints(
                 Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED) // Only run if internet is available
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build()
             )
             .setBackoffCriteria(
-                BackoffPolicy.EXPONENTIAL, // Ensures exponential retry delay
-                10, TimeUnit.MINUTES       // Starts retrying after 10 minutes, doubles each time
+                BackoffPolicy.EXPONENTIAL,
+                10, TimeUnit.MINUTES
             )
             .addTag("CurrencyUpdateWorker")
             .build()
 
         workManager.enqueueUniquePeriodicWork(
             "CurrencyUpdateWorker",
-            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE, // Ensures it re-enqueues correctly if rescheduled
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
             workRequest
         )
 
-        Log.d("WorkManagerCurrencyRates", "Scheduled daily currency update at 6:00 AM")
+        Logger.d(Logger.Tag.INSERT_CURRENCY_RATES_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CURRENCY_RATES_TO_LOCAL_WORK_MANAGER} periodical worker enqueued.")
     }
 
 
@@ -109,7 +103,7 @@ class CurrencyRatesLocalRepositoryImpl(
         }
 
         if (now.after(targetTime)) {
-            targetTime.add(Calendar.DAY_OF_YEAR, 1) // Schedule for next day if time has passed
+            targetTime.add(Calendar.DAY_OF_YEAR, 1)
         }
         return targetTime.timeInMillis - now.timeInMillis
     }

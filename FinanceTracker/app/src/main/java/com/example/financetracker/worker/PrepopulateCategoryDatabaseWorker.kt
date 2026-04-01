@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.room.modules.category.CategoryDao
 import com.example.financetracker.mapper.CategoryMapper
 import com.example.financetracker.utils.JsonUtils
@@ -20,37 +21,35 @@ class PrepopulateCategoryDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams)  {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManager", "Worker started")
+        Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} Worker started. WorkId=${id}")
+
 
         if(categoryDao.getCategoryCount() > 0) {
-            Log.d("WorkManager", "Categories already exist. Skipping prepopulation.")
+            Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} Categories already exist. Skipping prepopulation.")
             return Result.success()
         }
 
         return try {
-            Log.d("WorkManager", "Inserting predefined categories...")
-
-            Log.d("WorkManager","Reached CategoryImplementation")
+            Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} Inserting predefined categories.")
             val jsonString = JsonUtils.loadJsonFromAssets(context, "categories.json")
             if (jsonString != null) {
-                Log.d("WorkManager","Reached CategoryImplementation inside if jsonString not null")
-                Log.d("WorkManager","jsonString: $jsonString")
+                Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} jsonString: $jsonString")
             }
             jsonString?.let { it ->
                 val predefinedCategories = JsonUtils.parseJsonToCategories(jsonString = it,uid = "predefined")
-                Log.d("WorkManager","predefinedCategories: $predefinedCategories")
+                Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} predefinedCategories: $predefinedCategories")
                 categoryDao.insertCategories(
                     categories = predefinedCategories.map {
                         CategoryMapper.toEntity(it)
                     }
                 )
             }
-            Log.d("WorkManager", "Predefined categories inserted successfully.")
+            Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} Predefined categories inserted successfully.")
+
             Result.success()
         } catch (e: Exception) {
-            Log.e("WorkManager", "Error inserting categories: ${e.message}")
-            e.printStackTrace()
-            Result.failure()
+            Logger.e(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} Error during sync",e)
+            Result.retry()
         }
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.usecases.usecase_wrapper.CoreUseCasesWrapper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -18,27 +19,28 @@ class PrepopulateUserProfileDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManagerUserProfile", "Worker started")
+        Logger.d(Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER} Worker started. WorkId=${id}")
+
 
         val userId = coreUseCasesWrapper.getUserUIDRemoteUseCase() ?: return Result.failure()
 
+        Logger.d(Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER} Worker started for userId: $userId")
+
         return try {
-            Log.d("WorkManagerUserProfile", "Fetching UserProfile Remotely...")
 
             val userProfile = coreUseCasesWrapper.getUserProfileRemoteUseCase(userId = userId)!!
 
-            Log.d("WorkManagerUserProfile", "Received UserProfile: $userProfile")
+            Logger.d(Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER} Received UserProfile: $userProfile")
 
-
-            Log.d("WorkManagerUserProfile", "Inserting userProfile into Room...")
             coreUseCasesWrapper.insertUserProfileLocalUseCase(userProfile = userProfile,uid = userId)
 
-            Log.d("WorkManagerUserProfile", "UserProfile inserted successfully")
+            Logger.d(Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER} UserProfile inserted successfully")
+
             Result.success()
 
         } catch (e: Exception) {
-            Log.e("WorkManagerUserProfile", "Unexpected error occurred", e)
-            Result.failure()
+            Logger.e(Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_USER_PROFILE_TO_LOCAL_WORK_MANAGER} Error during sync",e)
+            Result.retry()
         }
     }
 }

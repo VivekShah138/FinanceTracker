@@ -7,6 +7,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.room.modules.country.CountryDao
 import com.example.financetracker.worker.PrepopulateCountryDatabaseWorker
 import com.example.financetracker.domain.model.Country
@@ -25,7 +26,6 @@ class CountryLocalRepositoryImpl @Inject constructor(
         val countries = countryDao.getAllCountries().map {
             it.toDomain()
         }
-        Log.d("RoomDatabase", "Fetched Countries from Room: $countries")
         return countries
     }
 
@@ -44,12 +44,14 @@ class CountryLocalRepositoryImpl @Inject constructor(
             .addTag("PrepopulateCountries")
             .build()
 
-        Log.d("WorkManagerCountries", "WorkManager enqueued: $workRequest")
         workManager.enqueueUniqueWork(
             "PrepopulateCountries",
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
+
     }
 
     override suspend fun insertCountries(countries: List<Country>) {

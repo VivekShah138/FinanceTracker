@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.financetracker.Logger
 import com.example.financetracker.data.data_source.local.room.modules.country.CountryDao
 import com.example.financetracker.data.data_source.remote.CountryApi
 import com.example.financetracker.domain.model.toEntity
@@ -24,60 +25,35 @@ class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
-        Log.d("WorkManagerCountries", "Worker started")
+        Logger.d(Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER} Worker started. WorkId=${id}")
+
 
         val existingCount = countryDao.getCountryCount()
         if (existingCount > 0) {
-            Log.d("WorkManagerCountries", "Countries already inserted: $existingCount")
+            Logger.d(Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER} Countries details already inserted: $existingCount")
             return Result.success()
         }
 
         return try {
-            Log.d("WorkManagerCountries", "Fetching countries from API...")
+            val countries = api.getCountries()
 
-            val countries = try {
-                api.getCountries()
-            } catch (e: Exception) {
-                Log.e("WorkManagerCountries", "Error fetching countries from API", e)
+            Logger.d(Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER} Received countries: ${countries.size}")
 
-                return when (e) {
-                    is SocketTimeoutException,
-                    is ProtocolException,
-                    is HttpException,
-                    is IOException -> {
-                        Log.d("WorkManagerCountries", "Recoverable error: ${e::class.java.simpleName}, retrying...")
-                        Result.retry()
-                    }
-                    else -> {
-                        Log.d("WorkManagerCountries", "Unrecoverable: ${e::class.java.simpleName}")
-                        Result.failure()
-                    }
-                }
-            }
 
-            Log.d("WorkManagerCountries", "Received countries: ${countries.size}")
+            val countryEntities = countries.map{it.toEntity()}
+            Logger.d(Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER} Mapped to Entity: $countryEntities")
 
-            val countryEntities = countries.map { country ->
-                try {
-                    val entity = country.toEntity()
-                    Log.d("WorkManagerCountries", "Mapped to Entity: $entity")
-                    entity
-                } catch (e: Exception) {
-                    Log.e("WorkManagerCountries", "Error mapping country: $country", e)
-                    throw e
-                }
-            }
-
-            Log.d("WorkManagerCountries", "Inserting countries into Room...")
             countryDao.insertAll(countryEntities)
 
             val insertedData = countryDao.getAllCountries()
-            Log.d("WorkManagerCountries", "Countries inserted successfully: ${insertedData.size}")
+
+            Logger.d(Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER} Countries inserted successfully: ${insertedData.size}")
+
             Result.success()
 
         } catch (e: Exception) {
-            Log.e("WorkManagerCountries", "Unexpected error occurred", e)
-            Result.failure()
+            Logger.e(Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER} Error during sync",e)
+            Result.retry()
         }
     }
 }

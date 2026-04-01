@@ -56,6 +56,6 @@ class TransactionsRemoteRepositoryImpl(
             workRequest
         )
 
-        Logger.d(Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "Delete transactions remote worker ENQUEUED. WorkId=${workRequest.id}")
+        Logger.d(Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.DELETE_REMOTE_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
     }
 }

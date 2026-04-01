@@ -8,6 +8,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.financetracker.Logger
 import com.example.financetracker.worker.InsertAllBudgetsToLocalDatabaseWorker
 import com.example.financetracker.worker.UploadAllBudgetsToCloudDatabaseWorker
 import com.example.financetracker.domain.model.Budget
@@ -51,6 +52,9 @@ class BudgetRemoteRepositoryImpl(
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.INSERT_BUDGETS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_BUDGETS_TO_REMOTE_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
+
     }
 
     override suspend fun getRemoteBudget(userId: String): List<Budget> {
@@ -89,5 +93,8 @@ class BudgetRemoteRepositoryImpl(
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_BUDGETS_TO_LOCAL_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
+
     }
 }

@@ -10,6 +10,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.financetracker.Logger
 import com.example.financetracker.domain.model.UserProfile
 import com.example.financetracker.domain.repository.remote.RemoteRepository
 import com.example.financetracker.worker.InsertAllTransactionsToLocalDatabaseWorker
@@ -54,12 +55,7 @@ class RemoteRepositoryImpl @Inject constructor(
             firestore.collection("Users").document(userId)
                 .set(mapOf("userProfile" to profile))
                 .await()
-
-            Log.d("RemoteRepository", "User profile saved successfully")
-
         } catch (e: Exception) {
-            Log.e("RemoteRepository", "Error saving user profile: ${e.localizedMessage}")
-            e.printStackTrace()
             throw Exception("No internet connection. Profile update failed.")
         }
     }
@@ -72,8 +68,6 @@ class RemoteRepositoryImpl @Inject constructor(
                 .await()
                 .get("userProfile", UserProfile::class.java)
         } catch (e: Exception) {
-            Log.d("RemoteRepository","get profile error ${e.localizedMessage}")
-            Log.d("RemoteRepository","get profile print stack ${e.printStackTrace()}")
             throw Exception("No internet connection. Cannot fetch user profile.")
         }
     }
@@ -126,6 +120,9 @@ class RemoteRepositoryImpl @Inject constructor(
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
+
     }
 
 
@@ -147,11 +144,8 @@ class RemoteRepositoryImpl @Inject constructor(
                 .delete()
                 .await()
 
-            Log.d("FirestoreDelete", "Deleted transaction $transactionId from cloud.")
-
         } catch (e: Exception) {
-            Log.e("FirestoreDelete", "Failed to delete transaction from cloud: ${e.localizedMessage}")
-            throw e // Optional: rethrow to retry from worker
+            throw e
         }
     }
 
@@ -171,7 +165,6 @@ class RemoteRepositoryImpl @Inject constructor(
                 } else null
             }
         } catch (e: Exception) {
-            Log.e("FirestoreGetRemoteTransaction", "Failed to get transaction from cloud: ${e.localizedMessage}")
             emptyList()
         }
     }
@@ -193,5 +186,7 @@ class RemoteRepositoryImpl @Inject constructor(
             ExistingWorkPolicy.KEEP,
             workRequest
         )
+
+        Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER} ENQUEUED. WorkId=${workRequest.id}")
     }
 }
