@@ -89,8 +89,6 @@ class HomePageViewModel @Inject constructor(
             val userProfile = homePageUseCaseWrapper.getUserProfileLocalUseCase()
             Logger.d(Logger.Tag.HOME_VIEWMODEL,"getIncomeAndExpenseAmount userProfile $userProfile")
 
-
-
             var incomeAmountThisMonth = 0.0
             var incomeAmountOverAll = 0.0
             var expenseAmountThisMonth = 0.0

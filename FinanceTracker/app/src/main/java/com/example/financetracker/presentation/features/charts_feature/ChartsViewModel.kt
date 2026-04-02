@@ -274,10 +274,6 @@ class ChartsViewModel @Inject constructor(
                 return@launch
             }
 
-            val expense = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("expense", userId).first()
-            val income = chartsUseCaseWrapper.getAllCategoriesLocalUseCase("income", userId).first()
-            val allCategories = expense + income
-
             val (fromDate, toDate) = if (showOnlyYear) {
                 getYearRangeInMillis(onlyYear)
             } else {
@@ -299,7 +295,6 @@ class ChartsViewModel @Inject constructor(
                 filters = listOf(
                     TransactionFilter.TransactionType(TransactionTypeFilter.Both),
                     TransactionFilter.Order(TransactionOrder.Ascending),
-                    TransactionFilter.Category(allCategories),
                     TransactionFilter.Duration(DurationFilter.CustomRange(from = fromDate, to = toDate))
                 )
             ).first()
@@ -307,18 +302,18 @@ class ChartsViewModel @Inject constructor(
             Logger.d(Logger.Tag.CHARTS_VIEWMODEL,"getIncomeAndExpenseAmount showOnlyYear: $showOnlyYear")
             Logger.d(Logger.Tag.CHARTS_VIEWMODEL,"getIncomeAndExpenseAmount allTransactionsFilter $allTransactions")
 
-            val incomeDataWithCategory = _chartStates.value.incomeDataWithCategory.toMutableMap().apply { clear() }
-            val expenseDataWithCategory = _chartStates.value.expenseDataWithCategory.toMutableMap().apply { clear() }
+            val incomeDataWithCategory = mutableMapOf<String, Double>()
+            val expenseDataWithCategory = mutableMapOf<String, Double>()
 
             allTransactions.forEach { transaction ->
                 when {
                     transaction.transactionType.equals("Income", ignoreCase = true) -> {
-                        val currentIncomeAmount = incomeDataWithCategory[transaction.category] ?: 0.0
-                        incomeDataWithCategory[transaction.category] = currentIncomeAmount + transaction.amount
+                        incomeDataWithCategory[transaction.category] = incomeDataWithCategory
+                            .getOrDefault(transaction.category,0.0) + transaction.amount
                     }
                     transaction.transactionType.equals("Expense", ignoreCase = true) -> {
-                        val currentExpenseAmount = expenseDataWithCategory[transaction.category] ?: 0.0
-                        expenseDataWithCategory[transaction.category] = currentExpenseAmount + transaction.amount
+                        expenseDataWithCategory[transaction.category] = expenseDataWithCategory
+                            .getOrDefault(transaction.category,0.0) + transaction.amount
                     }
                 }
             }
