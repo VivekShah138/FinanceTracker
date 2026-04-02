@@ -38,6 +38,7 @@ class PrepopulateCountryDatabaseWorker @AssistedInject constructor(
             val countries = api.getCountries()
 
             Logger.d(Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER} Received countries: ${countries.size}")
+            Logger.d(Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER,"${Logger.Tag.INSERT_COUNTRY_TO_LOCAL_WORK_MANAGER} countries list: $countries")
 
 
             val countryEntities = countries.map{it.toEntity()}

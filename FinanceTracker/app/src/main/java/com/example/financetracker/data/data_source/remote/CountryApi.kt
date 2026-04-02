@@ -5,6 +5,9 @@ import retrofit2.http.GET
 
 interface CountryApi {
 
-    @GET("v3.1/all")
+//    @GET("v3.1/all")
+//    suspend fun getCountries(): List<Country>
+
+    @GET("v3.1/all?fields=name,flags,idd,currencies")
     suspend fun getCountries(): List<Country>
 }

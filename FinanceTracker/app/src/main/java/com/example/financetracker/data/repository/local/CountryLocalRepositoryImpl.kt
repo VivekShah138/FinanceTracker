@@ -55,9 +55,12 @@ class CountryLocalRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertCountries(countries: List<Country>) {
-        val countriesEntity = countries.map {
-            it.toEntity()
+
+        if(countryDao.getCountryCount() == 0){
+            val countriesEntity = countries.map {
+                it.toEntity()
+            }
+            countryDao.insertAll(countriesEntity)
         }
-        countryDao.insertAll(countriesEntity)
     }
 }

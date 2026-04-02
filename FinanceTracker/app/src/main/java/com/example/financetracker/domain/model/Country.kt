@@ -18,6 +18,7 @@ data class Idd(val root: String, val suffixes: List<String>)
 
 data class Currency(val name: String = "", val symbol: String = "")
 
+
 fun Country.toEntity(): CountryEntity {
     return CountryMapper.fromCountryResponseToEntity(this)
 }

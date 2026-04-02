@@ -311,64 +311,187 @@ class ProfileSetUpViewModel @Inject constructor(
 
 
 
+//    private suspend fun fetchCountries() {
+//        withContext(Dispatchers.IO) {
+//            _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCountry = true)
+//            try {
+//                val sortedCountries = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
+//                    .filter {
+//                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
+//                    }
+//                    .sortedBy {
+//                        it.name.common
+//                    }
+//                    .distinctBy {
+//                        it.name.common
+//                    }
+//
+//                Logger.d(Logger.Tag.PROFILE_SETUP_ACCOUNT_VIEWMODEL,"fetchCountries: $sortedCountries")
+//
+//                setupAccountUseCasesWrapper.insertCountryLocalUseCase(sortedCountries)
+//
+//                _profileSetUpStates.value = profileSetUpStates.value.copy(
+//                    countries = sortedCountries,
+//                )
+//            } catch (e: Exception) {
+//                _profileSetUpStates.value = profileSetUpStates.value.copy(
+//                    currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
+//                )
+//
+//                val sortedCountriesLocally = setupAccountUseCasesWrapper.getCountryLocalUseCase()
+//                    .filter {
+//                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
+//                    }
+//                    .sortedBy {
+//                        it.name.common
+//                    }
+//                    .distinctBy {
+//                        it.name.common
+//                    }
+//
+//                if(sortedCountriesLocally.isEmpty()){
+//                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Country From internet.Try Again Later"))
+//                    setupAccountUseCasesWrapper.seedCountryLocalUseCase()
+//                }
+//                else{
+//                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+//                        countries = sortedCountriesLocally
+//                    )
+//
+//                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Country From internet.Using Locally Saved Details"))
+//                }
+//            }finally {
+//                _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCountry = false)
+//            }
+//        }
+//    }
+
+
     private suspend fun fetchCountries() {
         withContext(Dispatchers.IO) {
-            _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCountry = true)
+
+            _profileSetUpStates.value =
+                profileSetUpStates.value.copy(isLoadingDropdownCountry = true)
+
             try {
-                val sortedCountries = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
+
+                val localCountries = setupAccountUseCasesWrapper.getCountryLocalUseCase()
                     .filter {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
                     }
-                    .sortedBy {
-                        it.name.common
-                    }
-                    .distinctBy {
-                        it.name.common
-                    }
+                    .sortedBy { it.name.common }
+                    .distinctBy { it.name.common }
 
-                setupAccountUseCasesWrapper.insertCountryLocalUseCase(sortedCountries)
+                if (localCountries.isNotEmpty()) {
 
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    countries = sortedCountries,
+                    Logger.d(Logger.Tag.PROFILE_SETUP_ACCOUNT_VIEWMODEL, "fetchCountries: Loaded from Local DB")
+                    Logger.d(Logger.Tag.PROFILE_SETUP_ACCOUNT_VIEWMODEL, "countries: $localCountries")
+
+                    _profileSetUpStates.value =
+                        profileSetUpStates.value.copy(countries = localCountries)
+
+                    return@withContext
+                }
+
+                // If local empty → fetch from API
+                val remoteCountries = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
+                    .filter {
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
+                    }
+                    .sortedBy { it.name.common }
+                    .distinctBy { it.name.common }
+
+                Logger.d(
+                    Logger.Tag.PROFILE_SETUP_ACCOUNT_VIEWMODEL,
+                    "fetchCountries: Loaded from API"
                 )
+
+                // Save to local DB
+                setupAccountUseCasesWrapper.insertCountryLocalUseCase(remoteCountries)
+
+                _profileSetUpStates.value =
+                    profileSetUpStates.value.copy(countries = remoteCountries)
+
             } catch (e: Exception) {
-                _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
-                )
-
-                val sortedCountriesLocally = setupAccountUseCasesWrapper.getCountryLocalUseCase()
-                    .filter {
-                        it.currencies?.entries?.firstOrNull()?.value?.name?.lowercase() != null
-                    }
-                    .sortedBy {
-                        it.name.common
-                    }
-                    .distinctBy {
-                        it.name.common
-                    }
-
-                if(sortedCountriesLocally.isEmpty()){
-                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Country From internet.Try Again Later"))
-                    setupAccountUseCasesWrapper.seedCountryLocalUseCase()
-                }
-                else{
-                    _profileSetUpStates.value = profileSetUpStates.value.copy(
-                        countries = sortedCountriesLocally
+                _profileSetUpStates.value =
+                    profileSetUpStates.value.copy(
+                        currencyErrorMessage = e.localizedMessage ?: "Error Occurred"
                     )
-
-                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Country From internet.Using Locally Saved Details"))
-                }
-            }finally {
+                profileSetUpEventChannel.send(
+                    ProfileUpdateEvent.Failure("Error fetching countries. Try again later.")
+                )
+            } finally {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCountry = false)
             }
         }
     }
 
+//    private suspend fun fetchBaseCurrencies() {
+//        withContext(Dispatchers.IO) {
+//            _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCurrency = true)
+//            try {
+//                val sortedCurrencies = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
+//                    .filter {
+//                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
+//                    }
+//                    .sortedBy {
+//                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
+//                    }
+//                    .distinctBy {
+//                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
+//                    }
+//
+//                setupAccountUseCasesWrapper.insertCountryLocalUseCase(sortedCurrencies)
+//
+//                _profileSetUpStates.value = profileSetUpStates.value.copy(
+//                    currencies = sortedCurrencies,
+//                    currencyFilteredSearchList = sortedCurrencies
+//                )
+//
+//            } catch (e: Exception) {
+//                _profileSetUpStates.value = profileSetUpStates.value.copy(
+//                    currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
+//                )
+//
+//                val sortedCurrenciesLocally = setupAccountUseCasesWrapper.getCountryLocalUseCase()
+//                    .filter {
+//                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
+//                    }
+//                    .sortedBy {
+//                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
+//                    }
+//                    .distinctBy {
+//                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
+//                    }
+//
+//                if(sortedCurrenciesLocally.isEmpty()){
+//                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Try Again Later"))
+//                    setupAccountUseCasesWrapper.seedCountryLocalUseCase()
+//                }
+//                else{
+//                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+//                        currencies = sortedCurrenciesLocally
+//                    )
+//
+//                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
+//                }
+//
+//            }finally {
+//                _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCurrency = false)
+//            }
+//        }
+//    }
+
     private suspend fun fetchBaseCurrencies() {
         withContext(Dispatchers.IO) {
-            _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCurrency = true)
+
+            _profileSetUpStates.value =
+                profileSetUpStates.value.copy(isLoadingDropdownCurrency = true)
+
             try {
-                val sortedCurrencies = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
+
+                // Fetch from local DB first
+                val localCurrencies = setupAccountUseCasesWrapper.getCountryLocalUseCase()
                     .filter {
                         it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
                     }
@@ -379,42 +502,45 @@ class ProfileSetUpViewModel @Inject constructor(
                         it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
                     }
 
-                setupAccountUseCasesWrapper.insertCountryLocalUseCase(sortedCurrencies)
+                if (localCurrencies.isNotEmpty()) {
+
+                    Logger.d(Logger.Tag.PROFILE_SETUP_ACCOUNT_VIEWMODEL, "fetch Currencies: Loaded from Local DB")
+                    Logger.d(Logger.Tag.PROFILE_SETUP_ACCOUNT_VIEWMODEL, "Currencies: $localCurrencies")
+
+                    _profileSetUpStates.value = profileSetUpStates.value.copy(
+                        currencies = localCurrencies,
+                        currencyFilteredSearchList = localCurrencies
+                    )
+
+                    return@withContext
+                }
+
+                // If local empty → fetch from API
+                val remoteCurrencies = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
+                    .filter {
+                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
+                    }
+                    .sortedBy {
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
+                    }
+                    .distinctBy {
+                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
+                    }
+
+                // Save to local DB
+                setupAccountUseCasesWrapper.insertCountryLocalUseCase(remoteCurrencies)
 
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    currencies = sortedCurrencies,
-                    currencyFilteredSearchList = sortedCurrencies
+                    currencies = remoteCurrencies,
+                    currencyFilteredSearchList = remoteCurrencies
                 )
 
             } catch (e: Exception) {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(
-                    currencyErrorMessage = e.localizedMessage ?: " Error Occurred"
+                    currencyErrorMessage = e.localizedMessage ?: "Error Occurred"
                 )
-
-                val sortedCurrenciesLocally = setupAccountUseCasesWrapper.getCountryLocalUseCase()
-                    .filter {
-                        it.currencies.entries.firstOrNull()?.value?.name?.lowercase() != null
-                    }
-                    .sortedBy {
-                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
-                    }
-                    .distinctBy {
-                        it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
-                    }
-
-                if(sortedCurrenciesLocally.isEmpty()){
-                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Try Again Later"))
-                    setupAccountUseCasesWrapper.seedCountryLocalUseCase()
-                }
-                else{
-                    _profileSetUpStates.value = profileSetUpStates.value.copy(
-                        currencies = sortedCurrenciesLocally
-                    )
-
-                    profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
-                }
-
-            }finally {
+                profileSetUpEventChannel.send(ProfileUpdateEvent.Failure("Error fetching currencies. Try again later."))
+            } finally {
                 _profileSetUpStates.value = profileSetUpStates.value.copy(isLoadingDropdownCurrency = false)
             }
         }

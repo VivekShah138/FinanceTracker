@@ -16,6 +16,7 @@ object Logger {
         const val ADD_TRANSACTION_VIEWMODEL = "AddTransactionViewModel"
         const val HOME_VIEWMODEL = "HomeViewModel"
         const val SETTING_VIEWMODEL = "SettingViewModel"
+        const val PROFILE_SETUP_ACCOUNT_VIEWMODEL = "ProfileSetUpAccountViewModel"
         const val STARTUP_SCREEN = "StartUpScreen"
         const val APP_ENTRY = "AppEntry"
         const val MAIN_ACTIVITY = "MainActivity"
