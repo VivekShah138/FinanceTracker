@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.example.financetracker.navigation.core.BottomNavItem
 import com.example.financetracker.navigation.core.BottomNavItemsList
-
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -57,7 +56,6 @@ fun BottomNavigationBar(
                             }
                             launchSingleTop = true
                         }
-                        topLevelNavigator.navigateTo(bottomNavItem)
                     },
                     icon = {
                         if(ifIncluded == true){

@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
@@ -137,6 +139,17 @@ fun SettingsScreen(
                         onCheckChange = {
                             onEvent(SettingEvents.ChangeDarkMode(it))
                         }
+                    )
+
+                    SettingsItemCard(
+                        leadingImageVector = Icons.AutoMirrored.Filled.Help,
+                        leadingImageVectorState = true,
+                        trailingImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                        trailingImageVectorState = true,
+                        onClick = {
+                            navController.navigate(Screens.HelpAndFeedbackScreen)
+                        },
+                        text = "Help and Feedback"
                     )
 
 

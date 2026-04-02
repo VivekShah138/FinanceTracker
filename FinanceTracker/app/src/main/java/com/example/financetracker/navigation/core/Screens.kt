@@ -47,4 +47,8 @@ sealed interface Screens{
 
     @Serializable
     data class SingleSavedItemScreen(val savedItemId: Int): Screens
+    data object HelpAndFeedbackScreen: Screens
+    data object FeedbackScreen: Screens
+    data object AppInfoScreen: Screens
+    data object TermsAndPrivacyPolicyScreen: Screens
 }
