@@ -19,8 +19,8 @@ object CategoryMapper {
         return Category(
             categoryId = entity.categoryId,
             uid = entity.uid,
-            name = entity.name,
-            type = entity.type,
+            name = entity.name.trim(),
+            type = entity.type.trim(),
             icon = entity.icon,
             isCustom = entity.isCustom
         )

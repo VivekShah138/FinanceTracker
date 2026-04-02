@@ -39,14 +39,23 @@ class ExpenseCategoriesViewModel @Inject constructor(
     fun onEvent(sharedCategoriesEvents: SharedCategoriesEvents){
         when(sharedCategoriesEvents){
             is SharedCategoriesEvents.ChangeCategoryName -> {
-                _categoryState.value = categoryState.value!!.copy(
+                _categoryState.value = categoryState.value?.copy(
                     name = sharedCategoriesEvents.name
                 )
             }
             is SharedCategoriesEvents.SaveCategory -> {
-                Logger.d(Logger.Tag.EXPENSE_CATEGORY_VIEWMODEL,"SharedCategoriesEvents.SaveCategory: category: ${_categoryState.value} ")
+                val category = _categoryState.value ?: return
+                val formattedName = category.name
+                    .trim()
+                    .replace("\\s+".toRegex(), " ")
+
+                _categoryState.value = category.copy(
+                    name = formattedName
+                )
+
+                Logger.d(Logger.Tag.EXPENSE_CATEGORY_VIEWMODEL,"SharedCategoriesEvents.SaveCategory: category: $category ")
                 viewModelScope.launch(Dispatchers.IO) {
-                    predefinedCategoriesUseCaseWrapper.insertCustomCategoriesLocalUseCase(_categoryState.value!!)
+                    predefinedCategoriesUseCaseWrapper.insertCustomCategoriesLocalUseCase(category)
                 }
             }
             is SharedCategoriesEvents.ChangeCategoryAlertBoxState -> {
@@ -89,10 +98,8 @@ class ExpenseCategoriesViewModel @Inject constructor(
                         customCategories = customCategories
                     )
                 }
-
             }catch (e:Exception){
                 Logger.e(Logger.Tag.EXPENSE_CATEGORY_VIEWMODEL,"Load Custom Category: error: ${e.localizedMessage}",e)
-
             }
         }
     }

@@ -42,7 +42,6 @@ class InsertAllTransactionsToLocalDatabaseWorker @AssistedInject constructor(
                     if(!doesExists){
                         addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transactions = transaction)
                         Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Remote Transaction $transactionId inserted to Local Database successfully.")
-
                     }
                     else{
                         Logger.d(Logger.Tag.INSERT_TRANSACTIONS_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_TRANSACTIONS_TO_REMOTE_WORK_MANAGER} Remote Transaction $transactionId already exits in Local Database")

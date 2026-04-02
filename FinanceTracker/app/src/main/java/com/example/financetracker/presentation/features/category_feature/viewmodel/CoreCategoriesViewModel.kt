@@ -52,10 +52,15 @@ class CoreCategoriesViewModel @Inject constructor(
     private fun insertCustomCategory() {
         viewModelScope.launch(Dispatchers.IO) {
             val uid = setupAccountUseCasesWrapper.getUIDLocalUseCase() ?: "Unknown"
+
+            val formattedName = _coreCategoriesState.value.categoryName
+                .trim()
+                .replace("\\s+".toRegex(), " ")
+
             val category = Category(
                 uid = uid,
-                name = _coreCategoriesState.value.categoryName,
-                type = _coreCategoriesState.value.categoryType.lowercase(),
+                name = formattedName,
+                type = _coreCategoriesState.value.categoryType.lowercase().trim(),
                 icon = "ic_custom",
                 isCustom = true
             )
