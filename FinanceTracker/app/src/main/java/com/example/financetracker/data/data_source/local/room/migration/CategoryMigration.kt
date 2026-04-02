@@ -43,7 +43,6 @@ val CATEGORY_MIGRATION_2_3 = object : Migration(2, 3) {
 
         db.execSQL("DROP TABLE CategoryEntity")
 
-
         db.execSQL(
             """
             CREATE TABLE IF NOT EXISTS CategoryEntity (
@@ -59,3 +58,34 @@ val CATEGORY_MIGRATION_2_3 = object : Migration(2, 3) {
     }
 }
 
+val CATEGORY_MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+
+        db.execSQL("""
+            CREATE TABLE CategoryEntity_new (
+                categoryId INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                uid TEXT,
+                name TEXT NOT NULL,
+                type TEXT NOT NULL,
+                icon TEXT NOT NULL,
+                isCustom INTEGER NOT NULL
+            )
+        """)
+
+        db.execSQL("""
+            INSERT INTO CategoryEntity_new (categoryId, uid, name, type, icon, isCustom)
+            SELECT MIN(categoryId), uid, name, type, icon, isCustom
+            FROM CategoryEntity
+            GROUP BY uid, name
+        """)
+
+        db.execSQL("DROP TABLE CategoryEntity")
+
+        db.execSQL("ALTER TABLE CategoryEntity_new RENAME TO CategoryEntity")
+
+        db.execSQL("""
+            CREATE UNIQUE INDEX index_CategoryEntity_uid_name
+            ON CategoryEntity(uid, name)
+        """)
+    }
+}

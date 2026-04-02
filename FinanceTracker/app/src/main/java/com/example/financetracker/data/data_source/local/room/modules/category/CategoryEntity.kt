@@ -1,10 +1,15 @@
 package com.example.financetracker.data.data_source.local.room.modules.category
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 
-@Entity
+@Entity(
+    indices = [
+        Index(value = ["uid", "name"], unique = true)
+    ]
+)
 data class CategoryEntity(
 
     @PrimaryKey(autoGenerate = true)

@@ -1,7 +1,6 @@
 package com.example.financetracker.data.data_source.local.room.modules.category
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +15,10 @@ interface CategoryDao {
     fun getCustomCategories(type: String, uid: String): Flow<List<CategoryEntity>>
 
     @Query(" SELECT * FROM CategoryEntity WHERE (type = :type AND isCustom = 0)")
-    fun getPredefinedCategories(type: String): Flow<List<CategoryEntity>>
+    fun getPredefinedCategoriesByType(type: String): Flow<List<CategoryEntity>>
+
+    @Query(" SELECT * FROM CategoryEntity WHERE isCustom = 0")
+    fun getPredefinedCategories(): Flow<List<CategoryEntity>>
 
     @Upsert
     suspend fun insertCategories(categories: List<CategoryEntity>)

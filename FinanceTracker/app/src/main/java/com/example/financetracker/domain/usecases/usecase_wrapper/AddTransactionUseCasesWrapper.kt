@@ -1,6 +1,7 @@
 package com.example.financetracker.domain.usecases.usecase_wrapper
 
 import com.example.financetracker.domain.usecases.local.budget.SendBudgetNotificationLocalUseCase
+import com.example.financetracker.domain.usecases.local.category.GetAllCategoriesLocalUseCase
 import com.example.financetracker.domain.usecases.remote.user_profile.GetUserUIDRemoteUseCase
 import com.example.financetracker.domain.usecases.remote.user_profile.InternetConnectionAvailability
 import com.example.financetracker.domain.usecases.remote.transactions.InsertSingleTransactionRemoteUseCase
@@ -33,6 +34,5 @@ data class AddTransactionUseCasesWrapper (
     val doesTransactionExitsLocalUseCase: DoesTransactionExitsLocalUseCase,
     val getAllTransactionsRemoteUseCase: GetAllTransactionsRemoteUseCase,
     val getUserUIDRemoteUseCase: GetUserUIDRemoteUseCase,
-    val syncTransactionsRemoteToLocalUseCase: SyncTransactionsRemoteToLocalUseCase
-
+    val syncTransactionsRemoteToLocalUseCase: SyncTransactionsRemoteToLocalUseCase,
 )

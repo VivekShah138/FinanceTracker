@@ -11,6 +11,7 @@ import com.example.financetracker.data.data_source.local.room.migration.BUDGET_M
 import com.example.financetracker.data.data_source.local.room.migration.BUDGET_MIGRATION_2_3
 import com.example.financetracker.data.data_source.local.room.migration.CATEGORY_MIGRATION_1_2
 import com.example.financetracker.data.data_source.local.room.migration.CATEGORY_MIGRATION_2_3
+import com.example.financetracker.data.data_source.local.room.migration.CATEGORY_MIGRATION_3_4
 import com.example.financetracker.data.data_source.local.room.migration.SAVED_ITEM_MIGRATION_1_2
 import com.example.financetracker.data.data_source.local.room.migration.SAVED_ITEM_MIGRATION_2_3
 import com.example.financetracker.data.data_source.local.room.migration.USER_PROFILE_MIGRATION_1_2
@@ -85,7 +86,8 @@ object DataModule {
             name = CategoryDatabase.DATABASE_NAME
         ).addMigrations(
             CATEGORY_MIGRATION_1_2,
-            CATEGORY_MIGRATION_2_3
+            CATEGORY_MIGRATION_2_3,
+            CATEGORY_MIGRATION_3_4
         ).build()
     }
 

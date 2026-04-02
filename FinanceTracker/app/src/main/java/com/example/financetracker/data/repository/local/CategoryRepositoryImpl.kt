@@ -10,7 +10,6 @@ import com.example.financetracker.worker.PrepopulateCategoryDatabaseWorker
 import com.example.financetracker.domain.model.Category
 import com.example.financetracker.domain.repository.local.CategoryRepository
 import com.example.financetracker.mapper.CategoryMapper
-import com.example.financetracker.worker.DeletedAllTransactionsFromCloudDatabaseWorker
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.concurrent.TimeUnit
@@ -28,7 +27,7 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCustomCategories(type: String, uid: String): Flow<List<Category>> {
+    override suspend fun getCustomCategoriesByType(type: String, uid: String): Flow<List<Category>> {
         return categoryDao.getCustomCategories(type = type,uid = uid).map { entities ->
             entities.map {
                 CategoryMapper.toDomain(it)
@@ -36,8 +35,16 @@ class CategoryRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPredefinedCategories(type: String): Flow<List<Category>> {
-        return categoryDao.getPredefinedCategories(type = type).map { entities ->
+    override suspend fun getPredefinedCategoriesByType(type: String): Flow<List<Category>> {
+        return categoryDao.getPredefinedCategoriesByType(type = type).map { entities ->
+            entities.map {
+                CategoryMapper.toDomain(it)
+            }
+        }
+    }
+
+    override suspend fun getPredefinedCategories(): Flow<List<Category>> {
+        return categoryDao.getPredefinedCategories().map { entities ->
             entities.map {
                 CategoryMapper.toDomain(it)
             }

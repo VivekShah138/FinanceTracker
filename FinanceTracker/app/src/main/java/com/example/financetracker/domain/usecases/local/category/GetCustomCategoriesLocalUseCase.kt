@@ -9,6 +9,6 @@ class GetCustomCategoriesLocalUseCase (
 ) {
 
     suspend operator fun invoke(type: String,uid: String): Flow<List<Category>> {
-        return categoryRepository.getCustomCategories(type,uid)
+        return categoryRepository.getCustomCategoriesByType(type,uid)
     }
 }

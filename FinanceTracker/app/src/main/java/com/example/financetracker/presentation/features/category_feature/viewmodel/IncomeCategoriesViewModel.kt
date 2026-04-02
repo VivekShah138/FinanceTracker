@@ -1,6 +1,5 @@
 package com.example.financetracker.presentation.features.category_feature.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.Logger
@@ -71,7 +70,7 @@ class IncomeCategoriesViewModel @Inject constructor(
     private fun loadPredefinedCategories(){
         viewModelScope.launch(Dispatchers.IO) {
             try{
-                predefinedCategoriesUseCaseWrapper.getPredefinedCategoriesLocalUseCase("Income".lowercase(),uid).collect{ predefinedCategories ->
+                predefinedCategoriesUseCaseWrapper.getPredefinedCategoriesByTypeLocalUseCase("Income".lowercase()).collect{ predefinedCategories ->
                     _incomeCategoriesState.value = incomeCategoriesState.value.copy(
                         predefinedCategories = predefinedCategories
                     )

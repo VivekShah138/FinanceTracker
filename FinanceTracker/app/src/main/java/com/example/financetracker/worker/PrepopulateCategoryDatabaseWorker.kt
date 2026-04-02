@@ -22,7 +22,6 @@ class PrepopulateCategoryDatabaseWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} Worker started. WorkId=${id}")
 
-
         if(categoryDao.getCategoryCount() > 0) {
             Logger.d(Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER, "${Logger.Tag.INSERT_CATEGORY_TO_LOCAL_WORK_MANAGER} Categories already exist. Skipping prepopulation.")
             return Result.success()

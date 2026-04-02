@@ -41,7 +41,7 @@ import com.example.financetracker.domain.repository.local.UserProfileRepository
 import com.example.financetracker.domain.usecases.local.category.DeleteCustomCategoriesLocalUseCase
 import com.example.financetracker.domain.usecases.local.category.GetCustomCategoriesLocalUseCase
 import com.example.financetracker.domain.usecases.local.category.GetAllCategoriesLocalUseCase
-import com.example.financetracker.domain.usecases.local.category.GetPredefinedCategoriesLocalUseCase
+import com.example.financetracker.domain.usecases.local.category.GetPredefinedCategoriesByTypeLocalUseCase
 import com.example.financetracker.domain.usecases.local.user_profile.GetUserProfileFromLocalUseCase
 import com.example.financetracker.domain.usecases.local.category.InsertCustomCategoriesLocalUseCase
 import com.example.financetracker.domain.usecases.local.category.SeedPredefinedCategoriesLocalUseCase
@@ -107,6 +107,7 @@ import com.example.financetracker.domain.usecases.local.saved_items.InsertDelete
 import com.example.financetracker.domain.usecases.local.transaction.InsertDeletedTransactionsLocalUseCase
 import com.example.financetracker.domain.usecases.usecase_wrapper.ViewRecordsUseCaseWrapper
 import com.example.financetracker.domain.repository.local.CurrencyRatesLocalRepository
+import com.example.financetracker.domain.usecases.local.category.GetPredefinedCategoriesLocalUseCase
 import com.example.financetracker.domain.usecases.remote.country.GetCountryDetailsRemoteUseCase
 import com.example.financetracker.domain.usecases.local.currency_rates.GetCurrencyRatesLocal
 import com.example.financetracker.domain.usecases.local.country.InsertCountryLocalUseCase
@@ -135,11 +136,11 @@ object UseCasesModule {
             getAllCategoriesLocalUseCase = GetAllCategoriesLocalUseCase(categoryRepository),
             seedPredefinedCategoriesLocalUseCase = SeedPredefinedCategoriesLocalUseCase(categoryRepository),
             getCustomCategoriesLocalUseCase = GetCustomCategoriesLocalUseCase(categoryRepository),
-            getPredefinedCategoriesLocalUseCase = GetPredefinedCategoriesLocalUseCase(categoryRepository),
+            getPredefinedCategoriesByTypeLocalUseCase = GetPredefinedCategoriesByTypeLocalUseCase(categoryRepository),
             insertCustomCategoriesLocalUseCase = InsertCustomCategoriesLocalUseCase(categoryRepository),
             deleteCustomCategoriesLocalUseCase = DeleteCustomCategoriesLocalUseCase(categoryRepository),
-
-            )
+            getPredefinedCategoriesLocalUseCase = GetPredefinedCategoriesLocalUseCase(categoryRepository),
+        )
     }
 
     // Core UseCases
