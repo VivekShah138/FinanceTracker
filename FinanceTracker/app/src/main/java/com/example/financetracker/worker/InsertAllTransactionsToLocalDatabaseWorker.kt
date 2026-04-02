@@ -2,6 +2,7 @@ package com.example.financetracker.worker
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.ui.text.toLowerCase
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -61,7 +62,7 @@ class InsertAllTransactionsToLocalDatabaseWorker @AssistedInject constructor(
                         val category = Category(
                             uid = userId,
                             name = transaction.category,
-                            type = transaction.transactionType,
+                            type = transaction.transactionType.lowercase(),
                             isCustom = true,
                             icon = "ic_custom"
                         )
