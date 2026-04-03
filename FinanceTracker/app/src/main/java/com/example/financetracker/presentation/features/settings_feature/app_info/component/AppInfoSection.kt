@@ -22,19 +22,21 @@ import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @Composable
 fun AppInfoSection(
-    title: String,
+    title: String? = null,
     itemCardList: List<AppInfoItem>
 ){
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
+        if(title != null){
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
         Card(
             shape = RoundedCornerShape(16.dp),
@@ -52,7 +54,9 @@ fun AppInfoSection(
                         headlineContent = item.headlineContent,
                         supportingContent = item.supportingContent,
                         externalIcon = item.externalIcon,
-                        onClick = item.onClick
+                        onClick = item.onClick,
+                        isChecked = item.isChecked,
+                        onCheck = item.onCheck
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }

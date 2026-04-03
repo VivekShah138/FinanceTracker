@@ -15,7 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
@@ -101,12 +104,9 @@ fun BudgetScreen(
             Surface(
                 modifier = Modifier.fillMaxWidth().fillMaxHeight(0.90f).padding(vertical = 8.dp)
                     .padding(horizontal = 16.dp),
-                tonalElevation = 2.dp,
                 shape = MaterialTheme.shapes.medium,
-                shadowElevation = 4.dp,
-                color = MaterialTheme.colorScheme.surfaceVariant
+                color = MaterialTheme.colorScheme.surfaceContainer
             ) {
-
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {

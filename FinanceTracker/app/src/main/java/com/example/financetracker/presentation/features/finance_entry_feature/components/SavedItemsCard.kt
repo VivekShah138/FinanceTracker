@@ -30,7 +30,6 @@ import com.example.financetracker.ui.theme.FinanceTrackerTheme
 fun SavedItemsCard(
     item: SavedItems,
     isSelected: Boolean,
-    isSelectionMode: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -45,10 +44,8 @@ fun SavedItemsCard(
                 onClick = onClick,
                 onLongClick = onLongClick
             ),
-        tonalElevation = 2.dp,
         shape = MaterialTheme.shapes.medium,
-        shadowElevation = 4.dp,
-        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant
+        color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer
     ) {
         Row(
             modifier = Modifier
@@ -57,15 +54,6 @@ fun SavedItemsCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            if (isSelectionMode) {
-                Checkbox(
-                    checked = isSelected,
-                    onCheckedChange = { onClick() },
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-            }
-
             // Left: ID
             Text(
                 text = item.itemId.toString(),
@@ -148,7 +136,6 @@ fun SavedItemsCardPreview() {
                 cloudSync = false
             ),
             isSelected = true,
-            isSelectionMode = true,
             onClick = {},
             onLongClick = {}
         )
@@ -183,7 +170,6 @@ fun SavedItemsCardPreview2() {
                 cloudSync = false
             ),
             isSelected = false,
-            isSelectionMode = false,
             onClick = {},
             onLongClick = {}
         )

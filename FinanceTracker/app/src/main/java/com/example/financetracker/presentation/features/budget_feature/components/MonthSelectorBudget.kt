@@ -5,10 +5,12 @@ import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -74,17 +76,21 @@ fun MonthSelectorBudget(
             style = MaterialTheme.typography.titleMedium
         )
 
-        if(state.nextMonthVisibility){
-            IconButton(
-                onClick = { onEvent(BudgetEvents.NextMonthClicked) },
-                modifier = Modifier.align(Alignment.CenterEnd)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowForwardIos,
-                    contentDescription = "Next Month",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+        IconButton(
+            onClick = { onEvent(BudgetEvents.NextMonthClicked) },
+            modifier = Modifier.align(Alignment.CenterEnd),
+            enabled = state.nextMonthVisibility
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                contentDescription = "Next Month",
+                tint = if(state.nextMonthVisibility) {
+                    MaterialTheme.colorScheme.onBackground
+                }
+                else{
+                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+                }
+            )
         }
     }
 }

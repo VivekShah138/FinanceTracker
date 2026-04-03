@@ -7,5 +7,7 @@ data class AppInfoItem(
     val externalIcon: ImageVector? = null,
     val headlineContent: String,
     val supportingContent: String? = null,
-    val onClick: (() -> Unit)? = null
+    val onClick: (() -> Unit)? = null,
+    val isChecked: Boolean = false,
+    val onCheck:((Boolean) -> Unit)? = null,
 )

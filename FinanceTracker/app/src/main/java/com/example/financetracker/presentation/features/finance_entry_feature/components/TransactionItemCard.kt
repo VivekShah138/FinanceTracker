@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,7 +39,6 @@ import com.example.financetracker.domain.model.Transactions
 fun TransactionItemCard(
     item: Transactions,
     isSelected: Boolean,
-    isSelectionMode: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
@@ -51,23 +51,19 @@ fun TransactionItemCard(
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
-            ),
+            )
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Checkbox for selection mode
-        if (isSelectionMode) {
-            Checkbox(
-                checked = isSelected,
-                onCheckedChange = { onClick() },
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-        }
-        Row(modifier = Modifier.padding(start = 16.dp)){
+        Row(modifier = Modifier.padding(start = 16.dp)) {
 
             Card(
                 modifier = Modifier.size(40.dp),
                 shape = CircleShape,
-                border = BorderStroke(width = 0.5.dp,color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface),
+                border = BorderStroke(
+                    width = 0.5.dp,
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+                ),
                 colors = CardDefaults.cardColors(containerColor = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Box(
@@ -100,7 +96,7 @@ fun TransactionItemCard(
                 color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
             )
             Text(
-                text = if(item.description.isNullOrEmpty()) "No Description" else item.description,
+                text = if (item.description.isNullOrEmpty()) "No Description" else item.description,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
                 fontSize = 12.sp,
@@ -112,13 +108,14 @@ fun TransactionItemCard(
 
         // Amount
         Text(
-            text = "${item.currency?.entries?.firstOrNull()?.value?.symbol ?: "$"} ${if(item.convertedAmount != 0.0) item.convertedAmount else item.amount}",
+            text = "${item.currency?.entries?.firstOrNull()?.value?.symbol ?: "$"} ${if (item.convertedAmount != 0.0) item.convertedAmount else item.amount}",
             color = priceColor,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
         )
     }
+
 }
 
 @Preview(
@@ -126,7 +123,7 @@ fun TransactionItemCard(
     showBackground = true
 )
 @Composable
-fun TransactionCardPreview(){
+fun TransactionCardPreview() {
     TransactionItemCard(
         Transactions(
             transactionId = 1,
@@ -144,7 +141,6 @@ fun TransactionCardPreview(){
             transactionName = "Bhavnagri Gathiya"
         ),
         onClick = {},
-        isSelectionMode = true,
         isSelected = true,
         onLongClick = {}
     )

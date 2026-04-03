@@ -125,7 +125,6 @@ fun ViewSavedItemsPage(
                                 onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             }
                         },
-                        isSelectionMode = states.isSelectionMode,
                         isSelected = isSelected
                     )
                 }
@@ -155,7 +154,6 @@ fun ViewSavedItemsPage(
                                 onEvent(ViewSavedItemsEvents.ToggleSavedItemSelection(savedItems.itemId!!))
                             }
                         },
-                        isSelectionMode = states.isSelectionMode,
                         isSelected = isSelected
                     )
                 }

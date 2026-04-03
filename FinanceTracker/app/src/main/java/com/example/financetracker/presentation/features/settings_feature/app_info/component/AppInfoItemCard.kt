@@ -12,13 +12,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.financetracker.ui.theme.FinanceTrackerTheme
@@ -29,7 +32,9 @@ fun AppInfoItemCard(
     externalIcon: ImageVector? = null,
     headlineContent: String,
     supportingContent: String? = null,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    isChecked: Boolean = false,
+    onCheck:((Boolean) -> Unit)? = null,
 ){
     ListItem(
         leadingContent = {
@@ -52,14 +57,16 @@ fun AppInfoItemCard(
         headlineContent = {
             Text(
                 text = headlineContent,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold
             )
         },
         supportingContent = supportingContent?.let{
             {
                 Text(
                     text = it,
-                    color = MaterialTheme.colorScheme.onBackground
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         },
@@ -69,6 +76,13 @@ fun AppInfoItemCard(
                 Icon(imageVector = externalIcon,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            if(onCheck != null){
+                Switch(
+                    checked = isChecked,
+                    onCheckedChange = { onCheck.invoke(it) },
+                    modifier = Modifier.scale(0.8f)
                 )
             }
         },
@@ -82,18 +96,39 @@ fun AppInfoItemCard(
 }
 
 @Preview(
-    showBackground = true
+    showBackground = true,
+    name = "link"
 )
 @Composable
-fun AppInfoItemCardPreview(){
-    FinanceTrackerTheme(darkTheme = true) {
+fun AppInfoItemCardPreviewLink(){
+    FinanceTrackerTheme {
         AppInfoItemCard(
             leadingIcon = Icons.Default.Person,
             externalIcon = Icons.AutoMirrored.Filled.OpenInNew,
             headlineContent = "LinkedIn",
             onClick ={
 
-            }
+            },
+            supportingContent = "Android Developer"
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    name = "switch"
+)
+@Composable
+fun AppInfoItemCardPreview(){
+    FinanceTrackerTheme {
+        AppInfoItemCard(
+            leadingIcon = Icons.Default.Person,
+            headlineContent = "LinkedIn",
+            onCheck = {
+
+            },
+            isChecked = false,
+            supportingContent = "Android Developer"
         )
     }
 }

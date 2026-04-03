@@ -103,7 +103,6 @@ fun SavedItemTransactionContent(
                         },
                         onLongClick = {},
                         isSelected = false,
-                        isSelectionMode = false
                     )
                 }
             }
