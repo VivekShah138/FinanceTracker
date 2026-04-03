@@ -1,7 +1,6 @@
-package com.example.financetracker.presentation.features.settings_feature
+package com.example.financetracker.presentation.features.settings_feature.core_settings
 
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.financetracker.Logger

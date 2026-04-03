@@ -1,4 +1,4 @@
-package com.example.financetracker.presentation.features.help_and_feedback_feature
+package com.example.financetracker.presentation.features.settings_feature.help_and_feedback.core_component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.Help
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Scaffold
@@ -17,8 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.example.financetracker.presentation.features.settings_feature.SettingEvents
-import com.example.financetracker.presentation.features.settings_feature.components.SettingsItemCard
+import com.example.financetracker.presentation.features.settings_feature.core_settings.components.SettingsItemCard
 import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 @Composable
@@ -62,7 +60,6 @@ fun HelpAndFeedbackScreen(
                 trailingImageVectorState = true,
                 onClick = {
                     navController.navigate(Screens.TermsAndPrivacyPolicyScreen)
-
                 },
                 text = "Terms and Privacy Policies"
             )

@@ -1,4 +1,4 @@
-package com.example.financetracker.presentation.features.settings_feature.components
+package com.example.financetracker.presentation.features.settings_feature.core_settings.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

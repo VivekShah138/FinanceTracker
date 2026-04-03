@@ -1,4 +1,4 @@
-package com.example.financetracker.presentation.features.settings_feature.components
+package com.example.financetracker.presentation.features.settings_feature.core_settings.components
 
 
 
@@ -11,7 +11,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
@@ -23,15 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.example.financetracker.navigation.core.Screens
-import com.example.financetracker.presentation.features.settings_feature.SettingEvents
-import com.example.financetracker.presentation.features.settings_feature.SettingStates
-import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
+import com.example.financetracker.presentation.features.settings_feature.core_settings.SettingEvents
+import com.example.financetracker.presentation.features.settings_feature.core_settings.SettingStates
+import com.example.financetracker.presentation.features.settings_feature.core_settings.SettingsViewModel
 import com.example.financetracker.presentation.features.setup_account_feature.components.SettingsSwitchItem
 import com.example.financetracker.ui.theme.FinanceTrackerTheme
 

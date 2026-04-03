@@ -9,6 +9,7 @@ import com.example.financetracker.navigation.budgetGraph
 import com.example.financetracker.navigation.categoriesGraph
 import com.example.financetracker.navigation.forgotPasswordGraph
 import com.example.financetracker.navigation.graphicalVisualizationGraph
+import com.example.financetracker.navigation.helpAndFeedbackGraph
 import com.example.financetracker.navigation.homePageGraph
 import com.example.financetracker.navigation.logInPageGraph
 import com.example.financetracker.navigation.newUserProfileOnBoardingGraph
@@ -19,7 +20,7 @@ import com.example.financetracker.navigation.singleSavedItemGraph
 import com.example.financetracker.navigation.singleTransactionGraph
 import com.example.financetracker.navigation.startUpPageGraph
 import com.example.financetracker.navigation.viewRecordsGraph
-import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
+import com.example.financetracker.presentation.features.settings_feature.core_settings.SettingsViewModel
 
 @Composable
 fun FinanceTrackerNavHost(
@@ -68,5 +69,7 @@ fun FinanceTrackerNavHost(
         singleTransactionGraph(navController = navController)
 
         singleSavedItemGraph(navController = navController)
+
+        helpAndFeedbackGraph(navController = navController)
     }
 }

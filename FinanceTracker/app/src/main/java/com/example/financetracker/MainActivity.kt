@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -29,7 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.navigation.core.BottomNavItemsList
 import com.example.financetracker.domain.usecases.usecase_wrapper.SettingsUseCaseWrapper
 import com.example.financetracker.navigation.core.FinanceTrackerNavHost
-import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
+import com.example.financetracker.presentation.features.settings_feature.core_settings.SettingsViewModel
 import com.example.financetracker.ui.theme.FinanceTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

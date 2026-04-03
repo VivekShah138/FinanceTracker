@@ -34,7 +34,6 @@ object Logger {
         const val INSERT_SAVED_ITEMS_TO_REMOTE_WORK_MANAGER = "InsertSavedItemsToRemoteWorkManager"
         const val JSON_CATEGORY_MAPPER = "JsonCategoryMapper"
         const val ACCOUNT_MANAGER = "AccountManager"
-
     }
 
     fun d(tag: String, message: String) {

@@ -1,7 +1,6 @@
 package com.example.financetracker.presentation.features.home_feature.components
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,7 +34,7 @@ import com.example.financetracker.navigation.core.Screens
 import com.example.financetracker.presentation.features.home_feature.HomePageEvents
 import com.example.financetracker.presentation.features.home_feature.HomeScreenStates
 import com.example.financetracker.presentation.features.home_feature.HomePageViewModel
-import com.example.financetracker.presentation.features.settings_feature.SettingsViewModel
+import com.example.financetracker.presentation.features.settings_feature.core_settings.SettingsViewModel
 import com.example.financetracker.ui.theme.FinanceTrackerTheme
 
 

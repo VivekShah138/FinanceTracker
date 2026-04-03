@@ -1,4 +1,4 @@
-package com.example.financetracker.presentation.features.settings_feature
+package com.example.financetracker.presentation.features.settings_feature.core_settings
 
 data class SettingStates(
     val cloudSync: Boolean = false,
