@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.financetracker.ui.theme.FinanceTrackerTheme
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,19 +24,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.financetracker.R
 import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import java.util.Calendar
 
 @Composable
 fun AppInfoScreen2(
@@ -116,6 +116,8 @@ fun AppInfoScreen(
     val versionName = getVersionName(context)
     val versionCode = getVersionCode(context)
 
+    val year = Calendar.getInstance().get(Calendar.YEAR)
+
     Scaffold(
         topBar = {
             AppTopBar(
@@ -174,113 +176,55 @@ fun AppInfoScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            HorizontalDivider()
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "DEVELOPER",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary
+            HorizontalDivider(
+                thickness = 0.5.dp
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+            AppInfoSection(
+                title = "DEVELOPER",
+                itemCardList = listOf(
+                    AppInfoItem(
+                        leadingIcon = Icons.Default.Person,
+                        headlineContent = "Developed by Vivek Shah",
+                        supportingContent = "Android Developer",
+                    ),
+                    AppInfoItem(
+                        leadingIcon = Icons.Default.Link,
+                        headlineContent = "LinkedIn",
+                        externalIcon = Icons.AutoMirrored.Filled.OpenInNew
+                    ),
+                    AppInfoItem(
+                        leadingIcon = Icons.Default.Code,
+                        headlineContent = "GitHub",
+                        externalIcon = Icons.AutoMirrored.Filled.OpenInNew
+                    )
                 )
-            ) {
-
-                Column {
-                    ListItem(
-                        leadingContent = {
-                            Icon(Icons.Default.Person, contentDescription = null)
-                        },
-                        headlineContent = { Text("Developed by Vivek Shah") },
-                        supportingContent = { Text("Android Developer") }
-                    )
-
-                    Divider()
-
-                    ListItem(
-                        leadingContent = {
-                            Icon(Icons.Default.Link, contentDescription = null)
-                        },
-                        headlineContent = { Text("LinkedIn") },
-                        trailingContent = {
-                            Icon(Icons.Default.OpenInNew, contentDescription = null)
-                        }
-                    )
-
-                    Divider()
-
-                    ListItem(
-                        leadingContent = {
-                            Icon(Icons.Default.Code, contentDescription = null)
-                        },
-                        headlineContent = { Text("GitHub") },
-                        trailingContent = {
-                            Icon(Icons.Default.OpenInNew, contentDescription = null)
-                        }
-                    )
-                }
-            }
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = "APP INFORMATION",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary
+            AppInfoSection(
+                title = "APP INFORMATION",
+                itemCardList = listOf(
+                    AppInfoItem(
+                        leadingIcon = Icons.Default.Security,
+                        headlineContent = "Privacy Policy",
+                        externalIcon = Icons.Default.ChevronRight,
+                    ),
+                    AppInfoItem(
+                        leadingIcon = Icons.Default.Gavel,
+                        headlineContent = "Open Source Licenses",
+                        externalIcon = Icons.Default.ChevronRight,
+                    ),
+                    AppInfoItem(
+                        leadingIcon = Icons.Default.Email,
+                        headlineContent = "Contact Support",
+                        externalIcon = Icons.Default.ChevronRight,
+                    ),
+                )
             )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-                Column {
-
-                    ListItem(
-                        leadingContent = {
-                            Icon(Icons.Default.Security, contentDescription = null)
-                        },
-                        headlineContent = { Text("Privacy Policy") },
-                        trailingContent = {
-                            Icon(Icons.Default.ChevronRight, contentDescription = null)
-                        }
-                    )
-
-                    Divider()
-
-                    ListItem(
-                        leadingContent = {
-                            Icon(Icons.Default.Gavel, contentDescription = null)
-                        },
-                        headlineContent = { Text("Open Source Licenses") },
-                        trailingContent = {
-                            Icon(Icons.Default.ChevronRight, contentDescription = null)
-                        }
-                    )
-
-                    Divider()
-
-                    ListItem(
-                        leadingContent = {
-                            Icon(Icons.Default.Email, contentDescription = null)
-                        },
-                        headlineContent = { Text("Contact Support") },
-                        trailingContent = {
-                            Icon(Icons.Default.ChevronRight, contentDescription = null)
-                        }
-                    )
-                }
-            }
 
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -294,12 +238,7 @@ fun AppInfoScreen(
                 ) {
 
                     Text(
-                        text = "Made with precision in the Financial Atelier.",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-
-                    Text(
-                        text = "© 2024 Finance Tracker App. All rights reserved.",
+                        text = "© $year Finance Tracker App. All rights reserved.",
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -321,7 +260,7 @@ fun getVersionName(context: Context): String {
 fun getVersionCode(context: Context): Long {
     return try {
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             packageInfo.longVersionCode
         } else {
             @Suppress("DEPRECATION")
