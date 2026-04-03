@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MonetizationOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
@@ -69,7 +72,8 @@ fun SettingsScreen(
 
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(padding),
+            .padding(padding)
+            .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ){
 
@@ -80,7 +84,7 @@ fun SettingsScreen(
                 tonalElevation = 2.dp,
                 shape = MaterialTheme.shapes.medium,
                 shadowElevation = 4.dp,
-                color = MaterialTheme.colorScheme.surfaceVariant
+                color = MaterialTheme.colorScheme.surfaceContainer
             ) {
 
                 Column(
@@ -140,14 +144,14 @@ fun SettingsScreen(
                     )
 
                     SettingsItemCard(
-                        leadingImageVector = Icons.AutoMirrored.Filled.Help,
+                        leadingImageVector = Icons.Default.Info,
                         leadingImageVectorState = true,
                         trailingImageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                         trailingImageVectorState = true,
                         onClick = {
-                            navController.navigate(Screens.HelpAndFeedbackScreen)
+                            navController.navigate(Screens.AppInfoScreen)
                         },
-                        text = "Help and Feedback"
+                        text = "App Info"
                     )
 
 

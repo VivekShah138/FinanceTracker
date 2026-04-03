@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Finance Tracker</string>
-    <string name="web_client_id">956959681450-gc05cinjd448lgbs7qvj39l8v0sptfdk.apps.googleusercontent.com</string>
+    <string name="github_url">https://github.com/VivekShah138</string>
+    <string name="linkedin_url">https://www.linkedin.com/in/vivek-shah-36883a235/</string>
+    <string name="portfolio_url">https://vivekshah.vercel.app/</string>
+    <string name="support_mail">shahvivek138@gmail.com</string>
 </resources>

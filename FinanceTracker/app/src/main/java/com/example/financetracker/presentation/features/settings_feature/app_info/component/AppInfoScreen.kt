@@ -1,4 +1,4 @@
-package com.example.financetracker.presentation.features.settings_feature.help_and_feedback.app_info.component
+package com.example.financetracker.presentation.features.settings_feature.app_info.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -10,10 +10,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
@@ -21,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.financetracker.R
 import androidx.compose.foundation.*
 import androidx.compose.foundation.rememberScrollState
@@ -36,73 +33,8 @@ import androidx.compose.ui.graphics.Color
 import com.example.financetracker.presentation.core_components.AppTopBar
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import java.util.Calendar
+import androidx.core.net.toUri
 
-@Composable
-fun AppInfoScreen2(
-    navController: NavController
-) {
-    // Get context to access version info
-    val context = navController.context
-
-    // Get version and build number
-    val versionName = getVersionName(context)
-    val versionCode = getVersionCode(context)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "App Logo",
-            modifier = Modifier.size(200.dp)
-        )
-
-        Text(
-            text = "Finance Tracker",
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Text(
-            text = "Version: $versionName ($versionCode)",
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        HorizontalDivider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp)
-        )
-
-        ListItem(
-            headlineContent = {
-                Text(
-                    text = "Open Source Licenses",
-                    fontWeight = FontWeight.Medium
-                )
-            },
-            supportingContent = {
-                Text("Libraries used in this app")
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    context.startActivity(
-                        Intent(context, OssLicensesMenuActivity::class.java)
-                    )
-                }
-        )
-    }
-}
 
 @Composable
 fun AppInfoScreen(
@@ -117,6 +49,11 @@ fun AppInfoScreen(
     val versionCode = getVersionCode(context)
 
     val year = Calendar.getInstance().get(Calendar.YEAR)
+
+    val github = context.getString(R.string.github_url)
+    val linkedin = context.getString(R.string.linkedin_url)
+    val portfolio = context.getString(R.string.portfolio_url)
+    val email = context.getString(R.string.support_mail)
 
     Scaffold(
         topBar = {
@@ -189,16 +126,37 @@ fun AppInfoScreen(
                         leadingIcon = Icons.Default.Person,
                         headlineContent = "Developed by Vivek Shah",
                         supportingContent = "Android Developer",
+                        onClick = {
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                portfolio.toUri()
+                            )
+                            context.startActivity(intent)
+                        }
                     ),
                     AppInfoItem(
                         leadingIcon = Icons.Default.Link,
                         headlineContent = "LinkedIn",
-                        externalIcon = Icons.AutoMirrored.Filled.OpenInNew
+                        externalIcon = Icons.AutoMirrored.Filled.OpenInNew,
+                        onClick = {
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                linkedin.toUri()
+                            )
+                            context.startActivity(intent)
+                        }
                     ),
                     AppInfoItem(
                         leadingIcon = Icons.Default.Code,
                         headlineContent = "GitHub",
-                        externalIcon = Icons.AutoMirrored.Filled.OpenInNew
+                        externalIcon = Icons.AutoMirrored.Filled.OpenInNew,
+                        onClick = {
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                github.toUri()
+                            )
+                            context.startActivity(intent)
+                        }
                     )
                 )
             )
@@ -212,17 +170,31 @@ fun AppInfoScreen(
                         leadingIcon = Icons.Default.Security,
                         headlineContent = "Privacy Policy",
                         externalIcon = Icons.Default.ChevronRight,
+                        onClick = {
+
+                        }
                     ),
                     AppInfoItem(
                         leadingIcon = Icons.Default.Gavel,
                         headlineContent = "Open Source Licenses",
                         externalIcon = Icons.Default.ChevronRight,
+                        onClick = {
+                            context.startActivity(
+                                Intent(context, OssLicensesMenuActivity::class.java)
+                            )
+                        }
                     ),
                     AppInfoItem(
                         leadingIcon = Icons.Default.Email,
-                        headlineContent = "Contact Support",
+                        headlineContent = "Support and Feedback",
                         externalIcon = Icons.Default.ChevronRight,
-                    ),
+                        onClick = {
+                            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = "mailto:$email".toUri()
+                            }
+                            context.startActivity(intent)
+                        }
+                    )
                 )
             )
 
@@ -230,10 +202,13 @@ fun AppInfoScreen(
 
             Card(
                 shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
@@ -243,7 +218,6 @@ fun AppInfoScreen(
                     )
                 }
             }
-
         }
     }
 }

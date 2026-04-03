@@ -1,6 +1,5 @@
-package com.example.financetracker.presentation.features.settings_feature.help_and_feedback.app_info.component
+package com.example.financetracker.presentation.features.settings_feature.app_info.component
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
