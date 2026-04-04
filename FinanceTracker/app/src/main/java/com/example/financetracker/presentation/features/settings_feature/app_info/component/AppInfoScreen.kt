@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import com.example.financetracker.presentation.core_components.AppTopBar
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import java.util.Calendar
 import androidx.core.net.toUri
 
@@ -53,6 +52,8 @@ fun AppInfoScreen(
     val github = context.getString(R.string.github_url)
     val linkedin = context.getString(R.string.linkedin_url)
     val portfolio = context.getString(R.string.portfolio_url)
+    val privacy_policy = context.getString(R.string.privacy_policy_url)
+    val terms = context.getString(R.string.terms_and_conditions_url)
     val email = context.getString(R.string.support_mail)
 
     Scaffold(
@@ -171,17 +172,33 @@ fun AppInfoScreen(
                         headlineContent = "Privacy Policy",
                         externalIcon = Icons.Default.ChevronRight,
                         onClick = {
-
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                privacy_policy.toUri()
+                            )
+                            context.startActivity(intent)
                         }
                     ),
+//                    AppInfoItem(
+//                        leadingIcon = Icons.Default.Gavel,
+//                        headlineContent = "Open Source Licenses",
+//                        externalIcon = Icons.Default.ChevronRight,
+//                        onClick = {
+//                            context.startActivity(
+//                                Intent(context, OssLicensesMenuActivity::class.java)
+//                            )
+//                        }
+//                    ),
                     AppInfoItem(
-                        leadingIcon = Icons.Default.Gavel,
-                        headlineContent = "Open Source Licenses",
+                        leadingIcon = Icons.Default.Description,
+                        headlineContent = "Terms and Conditions",
                         externalIcon = Icons.Default.ChevronRight,
                         onClick = {
-                            context.startActivity(
-                                Intent(context, OssLicensesMenuActivity::class.java)
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                terms.toUri()
                             )
+                            context.startActivity(intent)
                         }
                     ),
                     AppInfoItem(

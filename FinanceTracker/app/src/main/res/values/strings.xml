@@ -4,4 +4,6 @@
     <string name="linkedin_url">https://www.linkedin.com/in/vivek-shah-36883a235/</string>
     <string name="portfolio_url">https://vivekshah.vercel.app/</string>
     <string name="support_mail">shahvivek138@gmail.com</string>
+    <string name="privacy_policy_url">https://finance-tracker-policies.vercel.app/privacy-policy.html</string>
+    <string name="terms_and_conditions_url">https://finance-tracker-policies.vercel.app/terms.html</string>
 </resources>
