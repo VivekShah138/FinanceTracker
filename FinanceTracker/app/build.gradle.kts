@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.google.devtools.ksp)
 
     id("com.google.android.gms.oss-licenses-plugin")
+
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -103,6 +105,10 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.auth.ktx)
+
+    // Firebase Crashlytics
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
 
     // Credential Manager
     implementation(libs.androidx.credentials)

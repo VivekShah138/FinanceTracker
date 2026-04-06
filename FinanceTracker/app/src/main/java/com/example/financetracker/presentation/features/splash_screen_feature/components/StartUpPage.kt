@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -49,6 +50,8 @@ import com.example.financetracker.presentation.features.splash_screen_feature.St
 import com.example.financetracker.presentation.features.splash_screen_feature.StartUpPageEvents
 import com.example.financetracker.presentation.features.splash_screen_feature.StartUpPageStates
 import com.example.financetracker.navigation.core.Screens
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
@@ -216,7 +219,15 @@ fun StartUpPageScreen(
                 googleText = "Sign in with Google",
             )
 
-
+//            Button(
+//                onClick = {
+//                    val nullPointerException = NullPointerException("Test Crash")
+//                    FirebaseCrashlytics.getInstance().log("Exection: ${nullPointerException.localizedMessage}")
+//                    throw(nullPointerException)
+//                }
+//            ) {
+//                Text("Test Crash")
+//            }
         }
         if(loginPageStates.isLoading){
             Box(
