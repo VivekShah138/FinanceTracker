@@ -75,7 +75,6 @@ fun AddSavedItemsScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(if (states.isLoading) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f) else MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState)
             .imePadding()
     ) {

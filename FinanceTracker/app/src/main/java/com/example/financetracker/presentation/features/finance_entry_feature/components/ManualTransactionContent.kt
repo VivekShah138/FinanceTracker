@@ -363,7 +363,8 @@ fun ManualTransactionContent(
                     AddTransactionEvents.AddTransactionTransaction
                 )
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !states.isLoading
 
         ) {
             Text("Add")

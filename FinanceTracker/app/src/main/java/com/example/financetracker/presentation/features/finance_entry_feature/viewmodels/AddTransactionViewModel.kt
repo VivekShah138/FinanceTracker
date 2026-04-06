@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -301,6 +302,7 @@ class AddTransactionViewModel @Inject constructor(
 
                 if (cloudSyncStatus) {
                     if (isInternetAvailable) {
+                        _addTransactionStates.update { it.copy(isLoading = true) }
                         try {
                             // 1. Insert locally first to generate the ID
                             val rowId = addTransactionUseCasesWrapper.insertTransactionsAndReturnIdLocalUseCase(transaction)
@@ -323,6 +325,9 @@ class AddTransactionViewModel @Inject constructor(
                                 return@launch
                             }
                         }
+                        finally {
+                            _addTransactionStates.update { it.copy(isLoading = false) }
+                        }
                     } else {
                         try {
                             addTransactionUseCasesWrapper.insertTransactionsLocalUseCase(transaction)
@@ -331,6 +336,9 @@ class AddTransactionViewModel @Inject constructor(
                                 AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                             )
                             return@launch
+                        }
+                        finally {
+                            _addTransactionStates.update { it.copy(isLoading = false) }
                         }
                     }
                 } else {
@@ -343,6 +351,7 @@ class AddTransactionViewModel @Inject constructor(
                         )
                         return@launch
                     }
+                    _addTransactionStates.update { it.copy(isLoading = false) }
                 }
                 addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Success)
             }
@@ -350,6 +359,7 @@ class AddTransactionViewModel @Inject constructor(
     }
 
     private suspend fun fetchCurrenciesExchangeRates(){
+        _addTransactionStates.update { it.copy(isLoading = true) }
 
             val saveCurrencyMap = setupAccountUseCasesWrapper.getUserProfileFromLocalUseCase(uid)?.baseCurrency
             val baseCurrencyCode = saveCurrencyMap?.keys?.firstOrNull() ?: "N/A"
@@ -391,6 +401,7 @@ class AddTransactionViewModel @Inject constructor(
                 )
             }
 
+        _addTransactionStates.update { it.copy(isLoading = false) }
     }
 
     private fun insertCustomCategory() {
@@ -414,6 +425,8 @@ class AddTransactionViewModel @Inject constructor(
     }
 
     private fun setTransactionCurrencyToBase(){
+        _addTransactionStates.update { it.copy(isLoading = true) }
+
         viewModelScope.launch(Dispatchers.IO) {
             val saveCurrencyMap = setupAccountUseCasesWrapper.getUserProfileFromLocalUseCase(uid)?.baseCurrency
             val baseCurrencyName = saveCurrencyMap?.values?.firstOrNull()?.name ?: "N/A"
@@ -434,9 +447,12 @@ class AddTransactionViewModel @Inject constructor(
             )
 
         }
+
+        _addTransactionStates.update { it.copy(isLoading = false) }
     }
 
     private fun fetchCurrencies() {
+        _addTransactionStates.update { it.copy(isLoading = true) }
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val sortedCountries = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
@@ -472,6 +488,9 @@ class AddTransactionViewModel @Inject constructor(
                     currencies = sortedCountriesLocal
                 )
                 addTransactionValidationEventChannel.send(AddTransactionValidationEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
+            }
+            finally {
+                _addTransactionStates.update { it.copy(isLoading = false) }
             }
         }
     }

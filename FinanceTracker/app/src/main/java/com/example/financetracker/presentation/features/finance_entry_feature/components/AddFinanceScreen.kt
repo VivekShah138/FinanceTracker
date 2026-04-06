@@ -2,6 +2,7 @@ package com.example.financetracker.presentation.features.finance_entry_feature.c
 
 
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -73,13 +74,22 @@ fun AddFinanceScreen(
         val coroutineScope = rememberCoroutineScope()
 
         Scaffold(
+            containerColor =
+                if (addTransactionsStates.isLoading || addSavedItemsStates.isLoading)
+                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+                else
+                    MaterialTheme.colorScheme.background,
             topBar = {
                 AppTopBar(
                     title = "Finance Entry",
                     showMenu = true,
                     showBackButton = false,
                     onBackClick = {},
-                    menuItems = emptyList()
+                    menuItems = emptyList(),
+                    backgroundColor = if (addTransactionsStates.isLoading || addSavedItemsStates.isLoading)
+                        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+                    else
+                        MaterialTheme.colorScheme.background,
                 )
             },
         ) { padding ->
@@ -89,7 +99,14 @@ fun AddFinanceScreen(
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                TabRow(selectedTabIndex = pagerState.currentPage) {
+                TabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    containerColor =
+                        if (addTransactionsStates.isLoading || addSavedItemsStates.isLoading)
+                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+                        else
+                            MaterialTheme.colorScheme.background
+                ) {
                     Tab(
                         selected = pagerState.currentPage == 0,
                         onClick = {
@@ -97,7 +114,7 @@ fun AddFinanceScreen(
                                 pagerState.animateScrollToPage(0)
                             }
                         },
-                        text = { Text("Expense") }
+                        text = { Text("Transaction") }
                     )
                     Tab(
                         selected = pagerState.currentPage == 1,
@@ -135,7 +152,8 @@ fun AddFinanceScreen(
 
 @Preview(
     showBackground = true,
-    showSystemUi = true
+    showSystemUi = true,
+    name = "Without loading"
 )
 @Composable
 fun AddFinanceScreenPreview() {
@@ -147,6 +165,35 @@ fun AddFinanceScreenPreview() {
             savedItemsValidationEvent = emptyFlow(),
             addTransactionValidationEvents = emptyFlow(),
             addSavedItemsStates = AddSavedItemsStates(),
+            onAddTransactionsEvent = {
+
+            },
+            onAddSavedItemsEvent = {
+
+            }
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "With loading"
+)
+@Composable
+fun AddFinanceScreenPreview2() {
+    FinanceTrackerTheme{
+        AddFinanceScreen(
+            navController = rememberNavController(),
+            addTransactionsStates = AddTransactionStates(
+                isLoading = true
+            ),
+            addTransactionsSelectedItem = null,
+            savedItemsValidationEvent = emptyFlow(),
+            addTransactionValidationEvents = emptyFlow(),
+            addSavedItemsStates = AddSavedItemsStates(
+                isLoading = true
+            ),
             onAddTransactionsEvent = {
 
             },

@@ -53,4 +53,6 @@ data class AddTransactionStates(
     // Transaction Type
     val transactionType: String = "Expense",
     val transactionTypeList: List<String> = listOf("Expense","Income"),
+
+    val isLoading: Boolean =  false
 )
