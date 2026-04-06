@@ -1,25 +1,37 @@
 package com.example.financetracker.presentation.features.finance_entry_feature.components
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,135 +72,198 @@ fun AddSavedItemsScreen(
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(if (states.isLoading) MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f) else MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState)
-            .imePadding(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .imePadding()
     ) {
-
-        OutlinedTextField(
-            value = states.itemName,
-            onValueChange = {
-                onEvent(
-                    AddSavedItemsEvents.OnChangeItemName(it)
-                )
-            },
-            label = { Text("Item Name") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
-        )
-
-        SimpleDropdownMenu(
-            label = "Item Currency",
-            selectedText = "${states.itemCurrencyName} (${states.itemCurrencyCode})",
-            expanded = states.itemCurrencyExpanded,
-            list = states.itemCurrenciesList,
-            onExpandedChange = {
-                onEvent(AddSavedItemsEvents.LoadCurrencies)
-                onEvent(
-                    AddSavedItemsEvents.OnChangeItemCurrency(
-                        name = states.itemCurrencyName,
-                        symbol = states.itemCurrencySymbol,
-                        code = states.itemCurrencyCode,
-                        expanded = true
-                    )
-                )
-            },
-            onDismissRequest = {
-                onEvent(
-                    AddSavedItemsEvents.OnChangeItemCurrency(
-                        name = states.itemCurrencyName,
-                        symbol = states.itemCurrencySymbol,
-                        code = states.itemCurrencyCode,
-                        expanded = false
-                    )
-                )
-            },
-            onItemSelect = {
-                val firstCurrency = it.currencies.entries.firstOrNull()
-                val currencyName = firstCurrency?.value?.name ?: "N/A"
-                val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
-                val currencyCode = firstCurrency?.key ?: "N/A"
-
-                onEvent(
-                    AddSavedItemsEvents.OnChangeItemCurrency(
-                        name = currencyName,
-                        symbol = currencySymbol,
-                        code = currencyCode,
-                        expanded = false
-                    )
-                )
-            },
-            displayText = {
-                it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
-            }
-        )
-
-
-        OutlinedTextField(
-            value = states.itemPrice,
-            onValueChange = {
-                onEvent(
-                    AddSavedItemsEvents.OnChangeItemPrice(it)
-                )
-            },
-            label = { Text("Item Price") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            leadingIcon = {
-                Text(
-                    text = states.itemCurrencySymbol,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        )
-
-        OutlinedTextField(
-            value = states.itemDescription,
-            onValueChange = {
-                onEvent(
-                    AddSavedItemsEvents.OnChangeItemDescription(it)
-                )
-            },
-            label = { Text("Item Description") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = states.itemShopName,
-            onValueChange = {
-                onEvent(
-                    AddSavedItemsEvents.OnChangeItemShopName(it)
-                )
-            },
-            label = { Text("Shop Name") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(
-            onClick = {
-                onEvent(
-                    AddSavedItemsEvents.Submit
-                )
-            },
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .align(Alignment.TopCenter),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Save Item")
+            OutlinedTextField(
+                value = states.itemName,
+                onValueChange = {
+                    onEvent(
+                        AddSavedItemsEvents.OnChangeItemName(it)
+                    )
+                },
+                label = { Text("Item Name") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            SimpleDropdownMenu(
+                label = "Item Currency",
+                selectedText = "${states.itemCurrencyName} (${states.itemCurrencyCode})",
+                expanded = states.itemCurrencyExpanded,
+                list = states.itemCurrenciesList,
+                onExpandedChange = {
+                    onEvent(AddSavedItemsEvents.LoadCurrencies)
+                    onEvent(
+                        AddSavedItemsEvents.OnChangeItemCurrency(
+                            name = states.itemCurrencyName,
+                            symbol = states.itemCurrencySymbol,
+                            code = states.itemCurrencyCode,
+                            expanded = true
+                        )
+                    )
+                },
+                onDismissRequest = {
+                    onEvent(
+                        AddSavedItemsEvents.OnChangeItemCurrency(
+                            name = states.itemCurrencyName,
+                            symbol = states.itemCurrencySymbol,
+                            code = states.itemCurrencyCode,
+                            expanded = false
+                        )
+                    )
+                },
+                onItemSelect = {
+                    val firstCurrency = it.currencies.entries.firstOrNull()
+                    val currencyName = firstCurrency?.value?.name ?: "N/A"
+                    val currencySymbol = firstCurrency?.value?.symbol ?: "N/A"
+                    val currencyCode = firstCurrency?.key ?: "N/A"
+
+                    onEvent(
+                        AddSavedItemsEvents.OnChangeItemCurrency(
+                            name = currencyName,
+                            symbol = currencySymbol,
+                            code = currencyCode,
+                            expanded = false
+                        )
+                    )
+                },
+                displayText = {
+                    it.currencies.entries.firstOrNull()?.value?.name ?: "N/A"
+                }
+            )
+
+
+            OutlinedTextField(
+                value = states.itemPrice,
+                onValueChange = {
+                    onEvent(
+                        AddSavedItemsEvents.OnChangeItemPrice(it)
+                    )
+                },
+                label = { Text("Item Price") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                leadingIcon = {
+                    Text(
+                        text = states.itemCurrencySymbol,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            )
+
+            OutlinedTextField(
+                value = states.itemDescription,
+                onValueChange = {
+                    onEvent(
+                        AddSavedItemsEvents.OnChangeItemDescription(it)
+                    )
+                },
+                label = { Text("Item Description") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = states.itemShopName,
+                onValueChange = {
+                    onEvent(
+                        AddSavedItemsEvents.OnChangeItemShopName(it)
+                    )
+                },
+                label = { Text("Shop Name") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Button(
+                onClick = {
+                    onEvent(
+                        AddSavedItemsEvents.Submit
+                    )
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !states.isLoading
+            ) {
+                Text("Save Item")
+            }
         }
+
+
+        if(states.isLoading){
+            Box(
+                modifier = Modifier
+                    .background(Color.Transparent)
+                    .align(Alignment.Center),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    tonalElevation = 8.dp,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .background(Color.Transparent)
+                            .wrapContentSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.background)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Loading...",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.background,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+            }
+        }
+
     }
 }
 
 @Preview(
     showBackground = true,
-    showSystemUi = true
+    showSystemUi = true,
+    name = "With Loading"
 )
 @Composable
 fun AddSaveItemsScreenPreview(){
+    FinanceTrackerTheme {
+        AddSavedItemsScreen(
+            navController = rememberNavController(),
+            savedItemsValidationEvent = emptyFlow(),
+            states = AddSavedItemsStates(
+                isLoading = true
+            ),
+            onEvent = {
+
+            }
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    name = "Without Loading"
+)
+@Composable
+fun AddSaveItemsScreenPreview2(){
     FinanceTrackerTheme {
         AddSavedItemsScreen(
             navController = rememberNavController(),

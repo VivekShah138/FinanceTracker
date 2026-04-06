@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -87,6 +88,9 @@ class AddSavedItemViewModel @Inject constructor(
 
 
     private suspend fun fetchBaseCurrencies() {
+
+        _savedItemsState.update { it.copy(isLoading = true) }
+
         withContext(Dispatchers.IO) {
             try {
                 val sortedCurrencies = setupAccountUseCasesWrapper.getCountryDetailsRemoteUseCase()
@@ -132,13 +136,14 @@ class AddSavedItemViewModel @Inject constructor(
                     savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Failure("Error in Fetching Currencies From internet.Using Locally Saved Details"))
                 }
 
+            } finally {
+                _savedItemsState.update { it.copy(isLoading = false) }
             }
         }
     }
 
     private suspend fun saveItems() {
         withContext(Dispatchers.IO){
-
             val itemNameResult = savedItemsUseCasesWrapper.savedItemsValidationUseCase(
                 stateName = "Item Name",
                 state = _savedItemsState.value.itemName
@@ -181,6 +186,7 @@ class AddSavedItemViewModel @Inject constructor(
 
                 val isInternetAvailable = savedItemsUseCasesWrapper.internetConnectionAvailability()
 
+                _savedItemsState.update { it.copy(isLoading = true) }
 
                 if (cloudSyncStatus) {
                     if (isInternetAvailable) {
@@ -201,6 +207,9 @@ class AddSavedItemViewModel @Inject constructor(
                                 return@withContext
                             }
                         }
+                        finally {
+                            _savedItemsState.update { it.copy(isLoading = false) }
+                        }
                     } else {
                         try {
                             savedItemsUseCasesWrapper.insertSavedItemLocalUseCase(savedItems = savedItem)
@@ -209,6 +218,9 @@ class AddSavedItemViewModel @Inject constructor(
                                 AddTransactionValidationEvent.Failure(errorMessage = e.localizedMessage)
                             )
                             return@withContext
+                        }
+                        finally {
+                            _savedItemsState.update { it.copy(isLoading = false) }
                         }
                     }
                 } else {
@@ -220,9 +232,11 @@ class AddSavedItemViewModel @Inject constructor(
                         )
                         return@withContext
                     }
+                    finally {
+                        _savedItemsState.update { it.copy(isLoading = false) }
+                    }
                 }
                 savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Success)
-
             }
         }
     }
@@ -230,6 +244,7 @@ class AddSavedItemViewModel @Inject constructor(
     private fun loadInitialCurrency(){
         viewModelScope.launch(Dispatchers.IO){
             val userProfile = setupAccountUseCasesWrapper.getUserProfileFromLocalUseCase(userUID)
+            _savedItemsState.update { it.copy(isLoading = true) }
 
             if(userProfile != null){
                 val baseCurrency = userProfile.baseCurrency
@@ -243,8 +258,10 @@ class AddSavedItemViewModel @Inject constructor(
                     itemCurrencyCode = itemCurrencyCode,
                     itemCurrencySymbol = itemCurrencySymbol
                 )
+                _savedItemsState.update { it.copy(isLoading = false) }
             }
             else{
+                _savedItemsState.update { it.copy(isLoading = false) }
                 savedItemsValidationEventChannel.send(AddTransactionValidationEvent.Failure("Failed to load base currency"))
             }
         }

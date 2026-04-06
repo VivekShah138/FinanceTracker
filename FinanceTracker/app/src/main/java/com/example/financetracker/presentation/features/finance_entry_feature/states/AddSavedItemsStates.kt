@@ -11,5 +11,6 @@ data class AddSavedItemsStates(
     val itemCurrencyCode: String = "",
     val itemCurrencyExpanded: Boolean = false,
     val itemShopName: String = "",
-    val itemDescription: String = ""
+    val itemDescription: String = "",
+    val isLoading: Boolean =  false
 )

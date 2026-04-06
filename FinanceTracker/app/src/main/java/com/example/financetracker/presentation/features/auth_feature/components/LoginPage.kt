@@ -122,7 +122,6 @@ fun LogInPage(
                             handleLoginResult(result, onEvents)
                         }
                     }
-
                 }
             }
         }
