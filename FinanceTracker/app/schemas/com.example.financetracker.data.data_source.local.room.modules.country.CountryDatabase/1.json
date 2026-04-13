@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "e93e00b529aee25cf4e64cd6c20c5036",
+    "entities": [
+      {
+        "tableName": "CountryEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`commonName` TEXT NOT NULL, `flagUrl` TEXT NOT NULL, `iddRoot` TEXT, `iddSuffixes` TEXT, `currencies` TEXT, PRIMARY KEY(`commonName`))",
+        "fields": [
+          {
+            "fieldPath": "commonName",
+            "columnName": "commonName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flagUrl",
+            "columnName": "flagUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "iddRoot",
+            "columnName": "iddRoot",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "iddSuffixes",
+            "columnName": "iddSuffixes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "currencies",
+            "columnName": "currencies",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "commonName"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e93e00b529aee25cf4e64cd6c20c5036')"
+    ]
+  }
+}
