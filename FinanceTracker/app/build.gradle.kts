@@ -135,11 +135,10 @@ dependencies {
     implementation(libs.timber)
 
     // Charts
-    implementation("com.patrykandpatrick.vico:core:1.13.0")
-    implementation("com.patrykandpatrick.vico:compose:1.13.0")
-    implementation("com.patrykandpatrick.vico:compose-m3:1.13.0") // optional for Material 3 styling
-
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation(libs.visco.core)
+    implementation(libs.visco.compose)
+    implementation(libs.visco.compose.m3) // optional for Material 3 styling
+    implementation(libs.mpandroidchart)
 
 
     testImplementation ("org.mockito:mockito-core:4.8.0")
