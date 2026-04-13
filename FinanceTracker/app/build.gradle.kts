@@ -135,7 +135,7 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
 
     // logging
-    implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation(libs.timber)
 
     // Charts
     implementation("com.patrykandpatrick.vico:core:1.13.0")

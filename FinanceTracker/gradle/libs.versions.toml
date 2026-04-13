@@ -33,6 +33,7 @@ hiltWork = "1.2.0"
 uiTextGoogleFonts = "1.8.1"
 firebaseCrashlytics = "3.0.6"
 sqaureupOkhttp3Logging = "4.12.0"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -107,6 +108,12 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+
+#Timber Logging
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
