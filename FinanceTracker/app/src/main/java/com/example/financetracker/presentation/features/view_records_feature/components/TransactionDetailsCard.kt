@@ -204,7 +204,7 @@ fun TransactionDetailsCard(
 
             Spacer(Modifier.height(30.dp))
 
-            if (convertedAmount == null && convertedAmount != 0.0) {
+            if (convertedAmount == null) {
                 Text(
                     text = "Exchange Rate",
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium, fontSize = 18.sp),
