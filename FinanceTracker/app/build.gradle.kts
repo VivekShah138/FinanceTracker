@@ -107,8 +107,13 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
 
     // Firebase Crashlytics
-    implementation("com.google.firebase:firebase-crashlytics")
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.firebase.crashlytics)
+
+    // Firebase Analytics
+    implementation(libs.firebase.analytics)
+
+
+
 
     // Credential Manager
     implementation(libs.androidx.credentials)
