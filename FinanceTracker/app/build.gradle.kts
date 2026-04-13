@@ -12,7 +12,6 @@ plugins {
 
     id("com.google.android.gms.oss-licenses-plugin")
 
-//    id("com.google.firebase.crashlytics")
     alias(libs.plugins.firebase.crashlytics)
 }
 
@@ -113,9 +112,6 @@ dependencies {
     // Firebase Analytics
     implementation(libs.firebase.analytics)
 
-
-
-
     // Credential Manager
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
@@ -126,7 +122,7 @@ dependencies {
     implementation(libs.converter.gson)
 
     // HttpLoggingInterceptor
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation(libs.squareup.okhttp3.logging)
 
     // Room
     implementation(libs.androidx.room.runtime)
