@@ -57,6 +57,10 @@ android {
     }
 }
 
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -140,13 +144,7 @@ dependencies {
     implementation(libs.visco.compose.m3) // optional for Material 3 styling
     implementation(libs.mpandroidchart)
 
-
-//    testImplementation ("org.mockito:mockito-core:4.8.0")
-//    testImplementation("io.mockk:mockk:1.13.5")
-//    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
-//    testImplementation ("app.cash.turbine:turbine:1.0.0")
-//    testImplementation ("org.jetbrains.kotlin:kotlin-test:1.9.0")
-
+    // Testing
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
