@@ -6,12 +6,9 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
-    id("kotlin-kapt")
+    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.devtools.ksp)
-
-    id("com.google.android.gms.oss-licenses-plugin")
-
     alias(libs.plugins.firebase.crashlytics)
 }
 
@@ -143,9 +140,6 @@ dependencies {
     implementation("com.patrykandpatrick.vico:compose-m3:1.13.0") // optional for Material 3 styling
 
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-
-    // Open source licences
-    implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
 
 
     testImplementation ("org.mockito:mockito-core:4.8.0")
