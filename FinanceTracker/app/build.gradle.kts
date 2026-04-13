@@ -12,7 +12,8 @@ plugins {
 
     id("com.google.android.gms.oss-licenses-plugin")
 
-    id("com.google.firebase.crashlytics")
+//    id("com.google.firebase.crashlytics")
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {

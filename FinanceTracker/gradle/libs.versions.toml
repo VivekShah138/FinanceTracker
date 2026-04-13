@@ -15,7 +15,6 @@ composeBom = "2025.03.00"
 materialIconsExtended = "1.7.8"
 composeNavigation = "2.8.9"
 playServicesAuth = "21.3.0"
-playServicesAuthApiIdentity = "20.0.0"
 roomVersion = "2.6.1"
 serialization = "1.6.3"
 googleGmsGoogleServices = "4.4.2"
@@ -32,6 +31,7 @@ kspVersion = "2.0.21-1.0.27"
 workRuntimeKtx = "2.10.1"
 hiltWork = "1.2.0"
 uiTextGoogleFonts = "1.8.1"
+firebaseCrashlytics = "3.0.6"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -120,6 +120,9 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 
 #Google Firebase
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+
+#Firebase Crashlytics
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlytics" }
 
 #Room
 google-devtools-ksp = {id = "com.google.devtools.ksp", version.ref = "kspVersion"}
